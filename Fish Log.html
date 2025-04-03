@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoti - Hooked | Fishing Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @font-face {
+        font-family: 'LucideIcons';
+        /* Using unpkg CDN */
+        src: url(https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.ttf) format('truetype');
+      }
+      .lucide {
+        font-family: 'LucideIcons';
+        font-size: 1.25rem; /* Adjust icon size */
+        line-height: 1;
+        display: inline-block; /* Ensure proper alignment */
+        vertical-align: middle; /* Align icon vertically */
+      }
+      /* Custom style for disabled button */
+      .btn-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      /* Hide elements by default */
+      .hidden {
+        display: none;
+      }
+
+      /* --- Landing Page Background --- */
+      #landing-page {
+        position: relative; /* Needed for the overlay */
+        /*
+          ***************************************************************
+          * IMPORTANT: Placeholder image used for preview compatibility. *
+          * *
+          * TO USE YOUR IMAGE:                                          *
+          * 1. Save your image (e.g., 'IMG-20160902-WA0002.jpg') in    *
+          * the same folder as this HTML file.                       *
+          * 2. Replace the line below with:                             *
+          * background-image: url('IMG-20160902-WA0002.jpg');        *
+          ***************************************************************
+        */
+        background-image: url('IMG-20160902-WA0002'); 
+        background-size: cover; /* Cover the entire div */
+        background-position: center; /* Center the image */
+        color: white; /* Change default text color for better contrast */
+        z-index: 1; /* Ensure content is above the pseudo-element */
+      }
+
+      /* Semi-transparent overlay for text readability */
+      #landing-page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent overlay */
+        /* Match parent's rounded corners (rounded-xl = 0.75rem) */
+        border-radius: 0.75rem;
+        z-index: -1; /* Place overlay behind the content */
+      }
+      /* --- End Landing Page Background --- */
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Tailwind config (works with @tailwindcss/browser)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-sky-100 to-blue-200 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
+
+        <div id="landing-page" class="p-8 md:p-12 text-center relative">
+             <div class="relative z-10">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+                    <span class="lucide text-3xl md:text-4xl"></span> Ghoti - Hooked
+                </h1>
+                <p class="text-lg text-gray-200 mb-8">Your simple, personal fishing log.</p>
+                <p class="text-gray-300 mb-8">Keep track of your catches, locations, and notes all in one place. Your data is saved locally in your browser.</p>
+                <button id="enter-app-btn" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    Enter Logbook
+                </button>
+            </div>
+        </div>
+
+        <div id="app-content" class="hidden p-6 md:p-8">
+            <h1 class="text-3xl font-bold text-center text-blue-800 mb-6 flex items-center justify-center gap-2">
+                <span class="lucide"></span> Ghoti - Hooked Logbook
+            </h1>
+
+            <form id="catch-form" class="mb-8 space-y-4">
+                <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
+
+                <div>
+                    <label for="species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
+                    <input type="text" id="species" name="species" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
+                        <input type="number" id="length" name="length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
+                    <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
+                    <textarea id="notes" name="notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="border-t pt-4 space-y-2">
+                     <label class="block text-sm font-medium text-gray-600">Location:</label>
+                     <div class="flex items-center gap-4 flex-wrap">
+                        <button type="button" id="get-location-btn" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm">
+                            <span class="lucide"></span> Get Current Location
+                        </button>
+                        <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
+                     </div>
+                     <input type="hidden" id="latitude" name="latitude">
+                     <input type="hidden" id="longitude" name="longitude">
+                </div>
+
+                 <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
+
+                <button type="submit" class="w-full flex justify-center items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                     <span class="lucide"></span> Save Catch
+                </button>
+            </form>
+
+            <div>
+                <div class="flex justify-between items-center border-b pb-2 mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700">Catch History</h2>
+                    <button id="back-to-landing-btn" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                         <span class="lucide text-base"></span> Back to Home
+                    </button>
+                </div>
+                <div id="catch-log" class="space-y-4">
+                    <p class="text-gray-500 italic">No catches logged yet.</p>
+                </div>
+                 <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
+                    <span class="lucide"></span> Clear All Logs
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const landingPage = document.getElementById('landing-page');
+        const appContent = document.getElementById('app-content');
+        const enterAppBtn = document.getElementById('enter-app-btn');
+        const backToLandingBtn = document.getElementById('back-to-landing-btn');
+
+        const catchForm = document.getElementById('catch-form');
+        const speciesInput = document.getElementById('species');
+        const lengthInput = document.getElementById('length');
+        const weightInput = document.getElementById('weight');
+        const datetimeInput = document.getElementById('datetime');
+        const notesInput = document.getElementById('notes');
+        const getLocationBtn = document.getElementById('get-location-btn');
+        const locationStatus = document.getElementById('location-status');
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
+        const catchLogContainer = document.getElementById('catch-log');
+        const clearLogBtn = document.getElementById('clear-log-btn');
+        const messageBox = document.getElementById('message-box');
+
+        // --- Navigation ---
+        function showApp() {
+            landingPage.classList.add('hidden');
+            appContent.classList.remove('hidden');
+            renderCatches();
+            setDefaultDateTime();
+        }
+
+        function showLandingPage() {
+            appContent.classList.add('hidden');
+            landingPage.classList.remove('hidden');
+        }
+
+        // --- Utility Functions ---
+        function showMessage(text, type = 'success') {
+            messageBox.textContent = text;
+            messageBox.className = `p-3 rounded-md text-sm ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        }
+
+        function formatDate(date) {
+            if (!date || !(date instanceof Date)) return 'N/A';
+            return date.toLocaleString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: 'numeric', minute: '2-digit', hour12: true
+            });
+        }
+
+         function setDefaultDateTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            datetimeInput.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+        }
+
+        // --- Geolocation ---
+        function handleGetLocation() {
+            if (!navigator.geolocation) {
+                locationStatus.textContent = 'Geolocation not supported.';
+                locationStatus.classList.add('text-red-600');
+                getLocationBtn.disabled = true;
+                getLocationBtn.classList.add('btn-disabled');
+                return;
+            }
+
+            locationStatus.textContent = 'Getting location...';
+            locationStatus.classList.remove('text-red-600', 'text-green-600');
+            getLocationBtn.disabled = true;
+            getLocationBtn.classList.add('btn-disabled');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    latitudeInput.value = lat;
+                    longitudeInput.value = lon;
+                    locationStatus.textContent = `Location captured: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                    locationStatus.classList.add('text-green-600');
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.classList.remove('btn-disabled');
+                },
+                (error) => {
+                    let errorMsg = 'Unable to retrieve location.';
+                    if (error.code === error.PERMISSION_DENIED) errorMsg = "Location access denied.";
+                    else if (error.code === error.POSITION_UNAVAILABLE) errorMsg = "Location unavailable.";
+                    else if (error.code === error.TIMEOUT) errorMsg = "Location request timed out.";
+
+                    locationStatus.textContent = errorMsg;
+                    locationStatus.classList.add('text-red-600');
+                    latitudeInput.value = '';
+                    longitudeInput.value = '';
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.classList.remove('btn-disabled');
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // --- Local Storage & Data Handling ---
+        function getCatches() {
+            const catchesJSON = localStorage.getItem('ghotiFishingLogCatches');
+            try {
+                // Ensure catches are always returned as an array
+                const parsed = catchesJSON ? JSON.parse(catchesJSON) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error("Error parsing catches from localStorage:", e);
+                 localStorage.removeItem('ghotiFishingLogCatches'); // Clear corrupted data
+                return [];
+            }
+        }
+
+        function saveCatches(catches) {
+            // Ensure we are saving an array
+             if (!Array.isArray(catches)) {
+                console.error("Attempted to save non-array data to catches:", catches);
+                return; // Prevent saving invalid data
+            }
+            try {
+                // Sort catches by date descending before saving
+                catches.sort((a, b) => {
+                    // Handle potentially invalid date strings gracefully during sort
+                    const dateA = a.datetime ? new Date(a.datetime) : 0;
+                    const dateB = b.datetime ? new Date(b.datetime) : 0;
+                    return dateB - dateA;
+                });
+                localStorage.setItem('ghotiFishingLogCatches', JSON.stringify(catches));
+            } catch (e) {
+                console.error("Error saving catches to localStorage:", e);
+                showMessage("Could not save catch data. Storage might be full.", 'error');
+            }
+        }
+
+
+        function addCatch(event) {
+            event.preventDefault();
+            const newCatch = {
+                id: Date.now().toString(),
+                species: speciesInput.value.trim(),
+                length: lengthInput.value ? parseFloat(lengthInput.value) : null,
+                weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                datetime: datetimeInput.value, // Stored as ISO string
+                notes: notesInput.value.trim(),
+                latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
+                longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+            };
+
+            if (!newCatch.species || !newCatch.datetime) {
+                showMessage("Species and Date/Time are required.", 'error');
+                return;
+            }
+
+            const catches = getCatches();
+            catches.push(newCatch); // Add new catch (will be sorted on save)
+            saveCatches(catches);
+
+            renderCatches(); // Update the UI
+            catchForm.reset(); // Clear the form
+            setDefaultDateTime(); // Reset date/time input
+            latitudeInput.value = ''; // Clear hidden location fields
+            longitudeInput.value = '';
+            locationStatus.textContent = 'Location not saved.'; // Reset location status text
+            locationStatus.classList.remove('text-green-600', 'text-red-600'); // Reset location status color
+            showMessage('Catch logged successfully!', 'success');
+        }
+
+        function deleteCatch(id) {
+             // Ensure ID is a string for comparison
+            const idToDelete = String(id);
+            if (confirm("Are you sure you want to delete this catch?")) {
+                let catches = getCatches();
+                // Filter out the catch with the matching ID
+                catches = catches.filter(c => String(c.id) !== idToDelete);
+                saveCatches(catches); // Save the updated array
+                renderCatches(); // Update the UI
+                showMessage('Catch deleted.', 'success');
+            }
+        }
+
+
+        function clearAllLogs() {
+            if (confirm("Are you sure you want to delete ALL logged catches? This cannot be undone.")) {
+                saveCatches([]); // Save an empty array
+                renderCatches(); // Update the UI
+                showMessage('All catches cleared.', 'success');
+            }
+        }
+
+
+        // --- Rendering ---
+        function renderCatches() {
+            const catches = getCatches(); // Fetches and ensures it's an array
+            catchLogContainer.innerHTML = ''; // Clear previous entries
+
+            if (catches.length === 0) {
+                catchLogContainer.innerHTML = '<p class="text-gray-500 italic">No catches logged yet.</p>';
+                clearLogBtn.classList.add('hidden'); // Hide clear button if log is empty
+                return;
+            }
+
+            clearLogBtn.classList.remove('hidden'); // Show clear button if there are logs
+
+            catches.forEach(c => {
+                // Check if catch object and id exist before proceeding
+                if (!c || typeof c !== 'object' || !c.id) {
+                    console.warn("Skipping invalid catch object:", c);
+                    return; // Skip rendering this invalid entry
+                }
+
+                const catchElement = document.createElement('div');
+                catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150';
+
+                // Safely create Date object
+                let catchDate = null;
+                try {
+                    if (c.datetime) catchDate = new Date(c.datetime);
+                } catch (e) {
+                    console.error("Error parsing date for catch:", c.id, e);
+                }
+
+
+                let locationString = 'Location not recorded';
+                if (c.latitude !== null && c.longitude !== null && !isNaN(c.latitude) && !isNaN(c.longitude)) {
+                     // Corrected Google Maps link format
+                    const mapsUrl = `https://www.google.com/maps?q=${c.latitude},${c.longitude}`;
+                    locationString = `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View on Map (${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)})</a>`;
+                }
+
+                // Basic sanitization for notes (consider a more robust library for production)
+                const safeNotes = (c.notes || '').replace(/</g, "<").replace(/>/g, ">");
+
+                catchElement.innerHTML = `
+                    <button class="absolute top-2 right-2 text-red-400 hover:text-red-600 focus:outline-none p-1 rounded-full hover:bg-red-100" title="Delete Catch" onclick="deleteCatch('${String(c.id)}')">
+                         <span class="lucide text-base"></span> </button>
+                    <h3 class="text-lg font-semibold text-blue-700 mr-8">${(c.species || 'Unknown Species').replace(/</g, "<").replace(/>/g, ">")}</h3>
+                    <p class="text-sm text-gray-500 mb-1"><strong>Date:</strong> ${formatDate(catchDate)}</p>
+                    <div class="grid grid-cols-2 gap-x-4 text-sm text-gray-600 mb-1">
+                        <span><strong>Length:</strong> ${c.length !== null && !isNaN(c.length) ? c.length + ' cm' : 'N/A'}</span>
+                        <span><strong>Weight:</strong> ${c.weight !== null && !isNaN(c.weight) ? c.weight + ' kg' : 'N/A'}</span>
+                    </div>
+                     <p class="text-sm text-gray-600 mb-1"><strong>Location:</strong> ${locationString}</p>
+                    ${safeNotes ? `<p class="text-sm text-gray-600 mt-2 pt-2 border-t border-gray-100 whitespace-pre-wrap"><strong>Notes:</strong><br>${safeNotes}</p>` : ''}
+                `;
+                catchLogContainer.appendChild(catchElement);
+            });
+        }
+
+        // --- Event Listeners ---
+        enterAppBtn.addEventListener('click', showApp);
+        backToLandingBtn.addEventListener('click', showLandingPage);
+        catchForm.addEventListener('submit', addCatch);
+        getLocationBtn.addEventListener('click', handleGetLocation);
+        clearLogBtn.addEventListener('click', clearAllLogs);
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // Check if there are logs to potentially show the clear button immediately
+             // This handles cases where the user might reload the page while on the app view
+             if (getCatches().length > 0) {
+                clearLogBtn.classList.remove('hidden');
+            }
+             // If app-content is already visible (e.g., after reload), render catches
+             if (!appContent.classList.contains('hidden')) {
+                 renderCatches();
+                 setDefaultDateTime(); // Also set default time if app is visible
+             }
+        });
+
+    </script>
+
+</body>
+</html>
