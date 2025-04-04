@@ -30,14 +30,15 @@
 
       /* --- Landing Page Background --- */
       #landing-page {
-        position: relative;
+        position: fixed;
+        inset: 0;
         color: white;
-        z-index: 1;
-        height: 100vh;
-        width: 100%;
+        z-index: 50;
         display: flex;
         flex-direction: column;
-        padding: 1rem;
+        justify-content: space-between;
+        background-size: cover;
+        background-position: center;
         transition: opacity 0.5s ease-out;
       }
 
@@ -47,63 +48,29 @@
       }
 
       #app-content {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        opacity: 1;
         width: 100%;
-        height: auto;
+        height: 100%;
         overflow-y: auto;
-        position: relative;
-        padding: 1rem;
       }
 
-      /* Adjust container styles */
+      /* Remove unnecessary spacing adjustments */
       .app-container {
-        padding: 0;
-        margin: 0;
-      }
-
-      .container {
-        margin-top: 0;
-        padding-top: 0;
+        height: 100%;
+        overflow-y: auto;
       }
 
       .form-section {
-        margin-top: 0;
-        padding-top: 1rem;
-      }
-
-      /* Photo upload container */
-      .photo-upload {
-        margin: 1rem 0;
-        padding: 1rem;
-        border: 2px dashed #e2e8f0;
-        border-radius: 0.5rem;
-      }
-
-      /* --- End Landing Page Background --- */
-
-      #landing-header {
-        padding-top: 2rem;
-      }
-
-      #landing-footer {
-        margin-top: auto;
-        padding-bottom: 2rem;
+        padding: 1.5rem;
       }
 
       /* Semi-transparent overlay for text readability */
       #landing-page::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent overlay */
-        /* Match parent's rounded corners (rounded-xl = 0.75rem) */
-        border-radius: 0.75rem;
-        z-index: -1; /* Place overlay behind the content */
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
       }
       /* --- End Landing Page Background --- */
 
@@ -126,8 +93,7 @@
 <body class="bg-gradient-to-br from-sky-100 to-blue-200 font-sans min-h-screen flex items-center justify-center p-4">
 
     <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
-
-        <div id="landing-page" class="p-4 md:p-8 text-center relative" style="background-image: url('IMG-20160902-WA0002.jpg'); background-size: cover; background-position: center;">
+        <div id="landing-page" class="p-4 md:p-8 text-center" style="background-image: url('IMG-20160902-WA0002.jpg');">
             <div id="landing-header" class="relative z-10">
                 <h1 class="text-3xl md:text-5xl font-bold mb-2">Ghoti - Hooked</h1>
                 <p class="text-lg md:text-xl">Log your catches and track your fishing journey</p>
