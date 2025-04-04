@@ -143,6 +143,16 @@
                      <input type="hidden" id="longitude" name="longitude">
                 </div>
 
+                <div>
+                    <label for="location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                    <input type="text" id="location-name" name="location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="photo" class="block text-sm font-medium text-gray-600 mb-1">Photo:</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
                  <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
 
                 <button type="submit" class="w-full flex justify-center items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -163,6 +173,10 @@
                  <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
                     <span class="lucide"></span> Clear All Logs
                 </button>
+                <div id="pagination-controls" class="flex justify-between mt-4">
+                    <button id="prev-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Previous</button>
+                    <button id="next-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Next</button>
+                </div>
             </div>
         </div>
     </div>
@@ -187,6 +201,9 @@
         const catchLogContainer = document.getElementById('catch-log');
         const clearLogBtn = document.getElementById('clear-log-btn');
         const messageBox = document.getElementById('message-box');
+
+        let currentPage = 0;
+        const itemsPerPage = 5;
 
         // --- Navigation ---
         function showApp() {
@@ -315,35 +332,67 @@
 
         function addCatch(event) {
             event.preventDefault();
-            const newCatch = {
-                id: Date.now().toString(),
-                species: speciesInput.value.trim(),
-                length: lengthInput.value ? parseFloat(lengthInput.value) : null,
-                weight: weightInput.value ? parseFloat(weightInput.value) : null,
-                datetime: datetimeInput.value, // Stored as ISO string
-                notes: notesInput.value.trim(),
-                latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+
+            const locationNameInput = document.getElementById('location-name');
+            const photoInput = document.getElementById('photo');
+
+            // Convert photo to Base64 if a file is uploaded
+            const photoFile = photoInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                const newCatch = {
+                    id: Date.now().toString(),
+                    species: speciesInput.value.trim(),
+                    length: lengthInput.value ? parseFloat(lengthInput.value) : null,
+                    weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                    datetime: datetimeInput.value, // Stored as ISO string
+                    notes: notesInput.value.trim(),
+                    latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
+                    longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                    locationName: locationNameInput.value.trim() || null, // Custom location name
+                    photo: reader.result || null, // Base64 photo
+                };
+
+                if (!newCatch.species || !newCatch.datetime) {
+                    showMessage("Species and Date/Time are required.", 'error');
+                    return;
+                }
+
+                // Save to IndexedDB
+                const request = indexedDB.open('FishingLogDB', 1);
+
+                request.onsuccess = function (event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction('catches', 'readwrite');
+                    const store = transaction.objectStore('catches');
+
+                    store.add(newCatch);
+
+                    transaction.oncomplete = function () {
+                        renderCatches();
+                        showMessage('Catch logged successfully!', 'success');
+                    };
+
+                    transaction.onerror = function (event) {
+                        console.error('Failed to save catch:', event.target.error);
+                        showMessage('Failed to save catch. Please try again.', 'error');
+                    };
+                };
+
+                request.onerror = function (event) {
+                    console.error('Failed to open IndexedDB:', event.target.error);
+                    showMessage('Database error. Please refresh the page.', 'error');
+                };
             };
 
-            if (!newCatch.species || !newCatch.datetime) {
-                showMessage("Species and Date/Time are required.", 'error');
-                return;
+            if (photoFile) {
+                reader.readAsDataURL(photoFile);
+            } else {
+                reader.onload(); // Trigger the function even if no photo is uploaded
             }
-
-            const catches = getCatches();
-            catches.push(newCatch); // Add new catch (will be sorted on save)
-            saveCatches(catches);
-
-            renderCatches(); // Update the UI
-            catchForm.reset(); // Clear the form
-            setDefaultDateTime(); // Reset date/time input
-            latitudeInput.value = ''; // Clear hidden location fields
-            longitudeInput.value = '';
-            locationStatus.textContent = 'Location not saved.'; // Reset location status text
-            locationStatus.classList.remove('text-green-600', 'text-red-600'); // Reset location status color
-            showMessage('Catch logged successfully!', 'success');
         }
+
 
         function deleteCatch(id) {
              // Ensure ID is a string for comparison
@@ -369,62 +418,64 @@
 
 
         // --- Rendering ---
-        function renderCatches() {
-            const catches = getCatches(); // Fetches and ensures it's an array
+        function renderCatchesUI(catches) {
             catchLogContainer.innerHTML = ''; // Clear previous entries
 
             if (catches.length === 0) {
                 catchLogContainer.innerHTML = '<p class="text-gray-500 italic">No catches logged yet.</p>';
-                clearLogBtn.classList.add('hidden'); // Hide clear button if log is empty
                 return;
             }
 
-            clearLogBtn.classList.remove('hidden'); // Show clear button if there are logs
-
             catches.forEach(c => {
-                // Check if catch object and id exist before proceeding
-                if (!c || typeof c !== 'object' || !c.id) {
-                    console.warn("Skipping invalid catch object:", c);
-                    return; // Skip rendering this invalid entry
-                }
-
                 const catchElement = document.createElement('div');
                 catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150';
 
-                // Safely create Date object
-                let catchDate = null;
-                try {
-                    if (c.datetime) catchDate = new Date(c.datetime);
-                } catch (e) {
-                    console.error("Error parsing date for catch:", c.id, e);
-                }
-
-
-                let locationString = 'Location not recorded';
-                if (c.latitude !== null && c.longitude !== null && !isNaN(c.latitude) && !isNaN(c.longitude)) {
-                     // Corrected Google Maps link format
-                    const mapsUrl = `https://www.google.com/maps?q=${c.latitude},${c.longitude}`;
-                    locationString = `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View on Map (${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)})</a>`;
-                }
-
-                // Basic sanitization for notes (consider a more robust library for production)
-                const safeNotes = (c.notes || '').replace(/</g, "<").replace(/>/g, ">");
-
+                // Render catch details (similar to the existing render logic)
                 catchElement.innerHTML = `
-                    <button class="absolute top-2 right-2 text-red-400 hover:text-red-600 focus:outline-none p-1 rounded-full hover:bg-red-100" title="Delete Catch" onclick="deleteCatch('${String(c.id)}')">
-                         <span class="lucide text-base"></span> </button>
-                    <h3 class="text-lg font-semibold text-blue-700 mr-8">${(c.species || 'Unknown Species').replace(/</g, "<").replace(/>/g, ">")}</h3>
-                    <p class="text-sm text-gray-500 mb-1"><strong>Date:</strong> ${formatDate(catchDate)}</p>
-                    <div class="grid grid-cols-2 gap-x-4 text-sm text-gray-600 mb-1">
-                        <span><strong>Length:</strong> ${c.length !== null && !isNaN(c.length) ? c.length + ' cm' : 'N/A'}</span>
-                        <span><strong>Weight:</strong> ${c.weight !== null && !isNaN(c.weight) ? c.weight + ' kg' : 'N/A'}</span>
-                    </div>
-                     <p class="text-sm text-gray-600 mb-1"><strong>Location:</strong> ${locationString}</p>
-                    ${safeNotes ? `<p class="text-sm text-gray-600 mt-2 pt-2 border-t border-gray-100 whitespace-pre-wrap"><strong>Notes:</strong><br>${safeNotes}</p>` : ''}
+                    <h3 class="text-lg font-semibold text-blue-700">${c.species || 'Unknown Species'}</h3>
+                    <p class="text-sm text-gray-500"><strong>Date:</strong> ${formatDate(new Date(c.datetime))}</p>
+                    <!-- Add other details here -->
                 `;
                 catchLogContainer.appendChild(catchElement);
             });
         }
+
+        function renderCatches(page = 0) {
+            const request = indexedDB.open('FishingLogDB', 1);
+
+            request.onsuccess = function (event) {
+                const db = event.target.result;
+                const transaction = db.transaction('catches', 'readonly');
+                const store = transaction.objectStore('catches');
+                const getAllRequest = store.getAll();
+
+                getAllRequest.onsuccess = function () {
+                    const catches = getAllRequest.result;
+                    const start = page * itemsPerPage;
+                    const end = start + itemsPerPage;
+                    const paginatedCatches = catches.slice(start, end);
+
+                    renderCatchesUI(paginatedCatches); // Render only the current page
+
+                    // Update pagination controls
+                    document.getElementById('prev-page-btn').disabled = page === 0;
+                    document.getElementById('next-page-btn').disabled = end >= catches.length;
+                };
+            };
+        }
+
+        // Event listeners for pagination buttons
+        document.getElementById('prev-page-btn').addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                renderCatches(currentPage);
+            }
+        });
+
+        document.getElementById('next-page-btn').addEventListener('click', () => {
+            currentPage++;
+            renderCatches(currentPage);
+        });
 
         // --- Event Listeners ---
         enterAppBtn.addEventListener('click', showApp);
@@ -455,6 +506,48 @@
                 console.error('Service Worker registration failed:', error);
             });
         }
+
+        // Open IndexedDB
+        const request = indexedDB.open('FishingLogDB', 1);
+
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('catches')) {
+                db.createObjectStore('catches', { keyPath: 'id' });
+            }
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+
+            // Example: Add a catch
+            const transaction = db.transaction('catches', 'readwrite');
+            const store = transaction.objectStore('catches');
+            store.add({
+                id: Date.now(),
+                species: 'Bass',
+                length: 30,
+                weight: 2.5,
+                datetime: new Date().toISOString(),
+                notes: 'Caught near the dock.',
+                latitude: 40.7128,
+                longitude: -74.0060
+            });
+
+            transaction.oncomplete = function() {
+                console.log('Catch saved to IndexedDB!');
+            };
+
+            transaction.onerror = function (event) {
+                console.error('Failed to save catch:', event.target.error);
+                showMessage('Failed to save catch. Please try again.', 'error');
+            };
+        };
+
+        request.onerror = function (event) {
+            console.error('Failed to open IndexedDB:', event.target.error);
+            showMessage('Database error. Please refresh the page.', 'error');
+        };
     </script>
 
 </body>
