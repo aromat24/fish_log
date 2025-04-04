@@ -251,10 +251,16 @@
         }
 
         function formatDate(date) {
-            if (!date || !(date instanceof Date)) return 'N/A';
-            return date.toLocaleString('en-US', {
-                year: 'numeric', month: 'short', day: 'numeric',
-                hour: 'numeric', minute: '2-digit', hour12: true
+            if (!date || !(date instanceof Date) || isNaN(date)) {
+                return 'Invalid Date';
+            }
+            return date.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
             });
         }
 
@@ -429,23 +435,43 @@
             };
 
             if (photoFile) {
-                reader.readAsDataURL(photoFile);
+                resizeImage(photoFile, 800, 800, (resizedImage) => {
+                    reader.result = resizedImage;
+                    reader.onload();
+                });
             } else {
-                reader.onload(); // Trigger the function even if no photo is uploaded
+                reader.onload();
             }
         }
 
 
-        function deleteCatch(id) {
-             // Ensure ID is a string for comparison
-            const idToDelete = String(id);
-            if (confirm("Are you sure you want to delete this catch?")) {
-                let catches = getCatches();
-                // Filter out the catch with the matching ID
-                catches = catches.filter(c => String(c.id) !== idToDelete);
-                saveCatches(catches); // Save the updated array
-                renderCatches(); // Update the UI
-                showMessage('Catch deleted.', 'success');
+        async function deleteCatch(id) {
+            if (!confirm('Are you sure you want to delete this catch?')) {
+                return;
+            }
+
+            try {
+                const db = await new Promise((resolve, reject) => {
+                    const request = indexedDB.open('FishingLogDB', 1);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                });
+
+                const transaction = db.transaction('catches', 'readwrite');
+                const store = transaction.objectStore('catches');
+                
+                await new Promise((resolve, reject) => {
+                    const request = store.delete(id);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve();
+                });
+
+                closeCatchModal();
+                renderCatches();
+                showMessage('Catch deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Delete failed:', error);
+                showMessage('Failed to delete catch. Please try again.', 'error');
             }
         }
 
@@ -551,31 +577,50 @@
 
         function openCatchModal(catchData) {
             const modal = document.getElementById('catch-modal');
+            const modalSpecies = document.getElementById('modal-species');
+            const modalDate = document.getElementById('modal-date');
+            const modalLength = document.getElementById('modal-length');
+            const modalWeight = document.getElementById('modal-weight');
+            const modalLocation = document.getElementById('modal-location');
+            const modalNotes = document.getElementById('modal-notes');
+            const modalPhoto = document.getElementById('modal-photo');
+            const deleteCatchBtn = document.getElementById('delete-catch-btn');
+
+            // Populate modal with catch data
+            modalSpecies.textContent = catchData.species || 'Unknown Species';
+            modalDate.textContent = `Date: ${formatDate(new Date(catchData.datetime))}`;
+            modalLength.textContent = `Length: ${catchData.length ? catchData.length + ' cm' : 'N/A'}`;
+            modalWeight.textContent = `Weight: ${catchData.weight ? catchData.weight + ' kg' : 'N/A'}`;
+
+            let locationStr = 'Location: ';
+            if (catchData.locationName) {
+                locationStr += catchData.locationName;
+                if (catchData.latitude && catchData.longitude) {
+                    locationStr += ` (${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)})`;
+                }
+            } else if (catchData.latitude && catchData.longitude) {
+                locationStr += `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
+            } else {
+                locationStr += 'Not provided';
+            }
+            modalLocation.textContent = locationStr;
+
+            modalNotes.textContent = catchData.notes ? `Notes: ${catchData.notes}` : 'No notes provided';
+
+            if (catchData.photo) {
+                modalPhoto.src = catchData.photo;
+                modalPhoto.classList.remove('hidden');
+            } else {
+                modalPhoto.classList.add('hidden');
+            }
+
+            // Setup delete functionality
+            deleteCatchBtn.onclick = () => deleteCatch(catchData.id);
+
             modal.classList.remove('hidden');
             modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-
-            // Focus the close button
+            document.body.style.overflow = 'hidden';
             document.getElementById('close-modal-btn').focus();
-
-            // Trap focus within the modal
-            modal.addEventListener('keydown', (event) => {
-                if (event.key === 'Tab') {
-                    const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                    const firstElement = focusableElements[0];
-                    const lastElement = focusableElements[focusableElements.length - 1];
-
-                    if (event.shiftKey && document.activeElement === firstElement) {
-                        lastElement.focus();
-                        event.preventDefault();
-                    } else if (!event.shiftKey && document.activeElement === lastElement) {
-                        firstElement.focus();
-                        event.preventDefault();
-                    }
-                } else if (event.key === 'Escape') {
-                    closeCatchModal();
-                }
-            });
         }
 
         function closeCatchModal() {
@@ -585,9 +630,17 @@
             document.body.style.overflow = ''; // Restore background scrolling
         }
 
-        // Close modal when clicking outside the modal content
-        document.getElementById('catch-modal').addEventListener('click', (event) => {
-            if (event.target.getAttribute('data-modal-background') !== null) {
+        // Close modal when clicking outside
+        document.addEventListener('mousedown', (event) => {
+            const modal = document.getElementById('catch-modal');
+            if (event.target.closest('.bg-white') === null && !modal.classList.contains('hidden')) {
+                closeCatchModal();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
                 closeCatchModal();
             }
         });
@@ -635,67 +688,32 @@
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-             // Check if there are logs to potentially show the clear button immediately
-             // This handles cases where the user might reload the page while on the app view
-             if (getCatches().length > 0) {
-                clearLogBtn.classList.remove('hidden');
-            }
-             // If app-content is already visible (e.g., after reload), render catches
-             if (!appContent.classList.contains('hidden')) {
-                 renderCatches();
-                 setDefaultDateTime(); // Also set default time if app is visible
-             }
+            // Set default date/time
+            setDefaultDateTime();
+            
+            // Initialize IndexedDB
+            const request = indexedDB.open('FishingLogDB', 1);
+            
+            request.onupgradeneeded = function(event) {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('catches')) {
+                    db.createObjectStore('catches', { keyPath: 'id' });
+                }
+            };
+            
+            request.onsuccess = function(event) {
+                console.log('IndexedDB initialized successfully');
+                // Check if we should show the app view
+                if (window.location.hash === '#app') {
+                    showApp();
+                }
+            };
+            
+            request.onerror = function(event) {
+                console.error('Failed to initialize IndexedDB:', event.target.error);
+                showMessage('Database error. Please refresh the page.', 'error');
+            };
         });
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then(() => {
-                console.log('Service Worker registered successfully.');
-            }).catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
-        }
-
-        // Open IndexedDB
-        const request = indexedDB.open('FishingLogDB', 1);
-
-        request.onupgradeneeded = function(event) {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains('catches')) {
-                db.createObjectStore('catches', { keyPath: 'id' });
-            }
-        };
-
-        request.onsuccess = function(event) {
-            const db = event.target.result;
-
-            // Example: Add a catch
-            const transaction = db.transaction('catches', 'readwrite');
-            const store = transaction.objectStore('catches');
-            store.add({
-                id: Date.now(),
-                species: 'Bass',
-                length: 30,
-                weight: 2.5,
-                datetime: new Date().toISOString(),
-                notes: 'Caught near the dock.',
-                latitude: 40.7128,
-                longitude: -74.0060
-            });
-
-            transaction.oncomplete = function() {
-                console.log('Catch saved to IndexedDB!');
-            };
-
-            transaction.onerror = function (event) {
-                console.error('Failed to save catch:', event.target.error);
-                showMessage('Failed to save catch. Please try again.', 'error');
-            };
-        };
-
-        request.onerror = function (event) {
-            console.error('Failed to open IndexedDB:', event.target.error);
-            showMessage('Database error. Please refresh the page.', 'error');
-        };
     </script>
 
 </body>
