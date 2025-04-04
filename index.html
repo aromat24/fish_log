@@ -427,7 +427,10 @@
         }
 
         // --- Event Listeners ---
-        enterAppBtn.addEventListener('click', showApp);
+        enterAppBtn.addEventListener('click', () => {
+            console.log('Enter App button clicked');
+            showApp();
+        });
         backToLandingBtn.addEventListener('click', showLandingPage);
         catchForm.addEventListener('submit', addCatch);
         getLocationBtn.addEventListener('click', handleGetLocation);
@@ -458,3 +461,4 @@
 
 </body>
 </html>
+`
