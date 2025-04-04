@@ -51,28 +51,26 @@
         transform: translateY(20px);
         transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         width: 100%;
-        height: 100%;
+        height: auto;
         overflow-y: auto;
         position: relative;
-        padding-bottom: 2rem;
-      }
-
-      #app-content.fade-in {
-        opacity: 1;
-        transform: translateY(0);
+        padding: 1rem;
       }
 
       /* Adjust container styles */
       .app-container {
-        max-height: 100vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 1rem;
+        padding: 0;
+        margin: 0;
       }
 
-      /* Form spacing adjustments */
+      .container {
+        margin-top: 0;
+        padding-top: 0;
+      }
+
       .form-section {
-        margin-bottom: 1.5rem;
+        margin-top: 0;
+        padding-top: 1rem;
       }
 
       /* Photo upload container */
@@ -127,7 +125,7 @@
 </head>
 <body class="bg-gradient-to-br from-sky-100 to-blue-200 font-sans min-h-screen flex items-center justify-center p-4">
 
-    <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden relative min-h-screen">
+    <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
 
         <div id="landing-page" class="p-4 md:p-8 text-center relative" style="background-image: url('IMG-20160902-WA0002.jpg'); background-size: cover; background-position: center;">
             <div id="landing-header" class="relative z-10">
@@ -143,7 +141,7 @@
 
         <div id="app-content" class="hidden app-container">
             <div class="form-section">
-                <h1 class="text-3xl font-bold text-center text-blue-800 mb-6 flex items-center justify-center gap-2">
+                <h1 class="text-3xl font-bold text-center text-blue-800 mb-4 flex items-center justify-center gap-2">
                     <span class="lucide"></span> Ghoti - Hooked Logbook
                 </h1>
 
