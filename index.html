@@ -33,11 +33,30 @@
         position: relative;
         color: white;
         z-index: 1;
-        height: 95vh;
+        height: 100vh;
+        width: 100%;
         display: flex;
         flex-direction: column;
         padding: 1rem;
+        transition: opacity 0.5s ease-out;
       }
+
+      #landing-page.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #app-content.fade-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #app-content {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      }
+      /* --- End Landing Page Background --- */
 
       #landing-header {
         padding-top: 2rem;
@@ -237,15 +256,26 @@
 
         // --- Navigation ---
         function showApp() {
-            landingPage.classList.add('hidden');
+            landingPage.classList.add('fade-out');
             appContent.classList.remove('hidden');
+            // Give a small delay to start the fade in
+            setTimeout(() => {
+                appContent.classList.add('fade-in');
+                // Remove the landing page from DOM after transition
+                setTimeout(() => {
+                    landingPage.classList.add('hidden');
+                }, 500);
+            }, 50);
             renderCatches();
             setDefaultDateTime();
         }
 
         function showLandingPage() {
-            appContent.classList.add('hidden');
-            landingPage.classList.remove('hidden');
+            landingPage.classList.remove('hidden', 'fade-out');
+            appContent.classList.remove('fade-in');
+            setTimeout(() => {
+                appContent.classList.add('hidden');
+            }, 500);
         }
 
         // --- Utility Functions ---
