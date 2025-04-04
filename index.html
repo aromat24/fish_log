@@ -199,6 +199,10 @@
         </div>
     </div>
 
+    <div id="loading-indicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="text-white text-lg">Loading...</div>
+    </div>
+
     <script>
         // DOM Elements
         const landingPage = document.getElementById('landing-page');
@@ -313,6 +317,10 @@
             alert('Local storage is not supported on this device. Data will not be saved.');
         }
 
+        if (!window.indexedDB) {
+            alert('Your browser does not support IndexedDB. Data will not be saved.');
+        }
+
         function getCatches() {
             const catchesJSON = localStorage.getItem('ghotiFishingLogCatches');
             try {
@@ -335,9 +343,8 @@
             try {
                 // Sort catches by date descending before saving
                 catches.sort((a, b) => {
-                    // Handle potentially invalid date strings gracefully during sort
                     const dateA = a.datetime ? new Date(a.datetime) : 0;
-                    const dateB = b.datetime ? new Date(b.datetibe) : 0;
+                    const dateB = b.datetime ? new Date(a.datetime) : 0;
                     return dateB - dateA;
                 });
                 localStorage.setItem('ghotiFishingLogCatches', JSON.stringify(catches));
@@ -369,12 +376,23 @@
                     latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
                     longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
                     locationName: locationNameInput.value.trim() || null, // Custom location name
-                    photo: reader.result || null, // Base64 photo
+                    photo: reader.result || null, // Explicitly set to null if no photo is uploaded
                 };
 
-                if (!newCatch.species || !newCatch.datetime) {
-                    showMessage("Species and Date/Time are required.", 'error');
+                if (!newCatch.species) {
+                    speciesInput.classList.add('border-red-500');
+                    showMessage("Species is required.", 'error');
                     return;
+                } else {
+                    speciesInput.classList.remove('border-red-500');
+                }
+
+                if (!newCatch.datetime) {
+                    datetimeInput.classList.add('border-red-500');
+                    showMessage("Date & Time are required.", 'error');
+                    return;
+                } else {
+                    datetimeInput.classList.remove('border-red-500');
                 }
 
                 // Save to IndexedDB
@@ -433,15 +451,39 @@
 
 
         function clearAllLogs() {
-            if (confirm("Are you sure you want to delete ALL logged catches? This cannot be undone.")) {
-                saveCatches([]); // Save an empty array
-                renderCatches(); // Update the UI
-                showMessage('All catches cleared.', 'success');
+            const confirmation = confirm("Are you sure you want to delete ALL logged catches? This cannot be undone.");
+            if (confirmation) {
+                const request = indexedDB.open('FishingLogDB', 1);
+
+                request.onsuccess = function (event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction('catches', 'readwrite');
+                    const store = transaction.objectStore('catches');
+                    const clearRequest = store.clear();
+
+                    clearRequest.onsuccess = function () {
+                        renderCatches(); // Refresh the UI
+                        showMessage('All catches cleared.', 'success');
+                    };
+
+                    clearRequest.onerror = function (event) {
+                        console.error('Failed to clear logs:', event.target.error);
+                        showMessage('Failed to clear logs. Please try again.', 'error');
+                    };
+                };
             }
         }
 
 
         // --- Rendering ---
+        function showLoading() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-indicator').classList.add('hidden');
+        }
+
         function renderCatchesUI(catches) {
             catchLogContainer.innerHTML = ''; // Clear previous entries
 
@@ -480,6 +522,7 @@
 
                 getAllRequest.onsuccess = function () {
                     const catches = getAllRequest.result;
+                    const totalPages = Math.ceil(catches.length / itemsPerPage);
                     const start = page * itemsPerPage;
                     const end = start + itemsPerPage;
                     const paginatedCatches = catches.slice(start, end);
@@ -488,7 +531,7 @@
 
                     // Update pagination controls
                     document.getElementById('prev-page-btn').disabled = page === 0;
-                    document.getElementById('next-page-btn').disabled = end >= catches.length;
+                    document.getElementById('next-page-btn').disabled = page >= totalPages - 1;
                 };
             };
         }
@@ -508,42 +551,70 @@
 
         function openCatchModal(catchData) {
             const modal = document.getElementById('catch-modal');
-            const modalSpecies = document.getElementById('modal-species');
-            const modalDate = document.getElementById('modal-date');
-            const modalLength = document.getElementById('modal-length');
-            const modalWeight = document.getElementById('modal-weight');
-            const modalLocation = document.getElementById('modal-location');
-            const modalNotes = document.getElementById('modal-notes');
-            const modalPhoto = document.getElementById('modal-photo');
-            const deleteCatchBtn = document.getElementById('delete-catch-btn');
-
-            // Populate modal with catch data
-            modalSpecies.textContent = catchData.species || 'Unknown Species';
-            modalDate.textContent = `Date: ${formatDate(new Date(catchData.datetime))}`;
-            modalLength.textContent = `Length: ${catchData.length ? catchData.length + ' cm' : 'N/A'}`;
-            modalWeight.textContent = `Weight: ${catchData.weight ? catchData.weight + ' kg' : 'N/A'}`;
-            modalLocation.textContent = `Location: ${catchData.locationName || 'Not provided'}`;
-            modalNotes.textContent = `Notes: ${catchData.notes || 'No notes provided'}`;
-
-            if (catchData.photo) {
-                modalPhoto.src = catchData.photo;
-                modalPhoto.classList.remove('hidden');
-            } else {
-                modalPhoto.classList.add('hidden');
-            }
-
-            // Add delete functionality
-            deleteCatchBtn.onclick = () => {
-                deleteCatch(catchData.id);
-                closeCatchModal();
-            };
-
             modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+            // Focus the close button
+            document.getElementById('close-modal-btn').focus();
+
+            // Trap focus within the modal
+            modal.addEventListener('keydown', (event) => {
+                if (event.key === 'Tab') {
+                    const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+
+                    if (event.shiftKey && document.activeElement === firstElement) {
+                        lastElement.focus();
+                        event.preventDefault();
+                    } else if (!event.shiftKey && document.activeElement === lastElement) {
+                        firstElement.focus();
+                        event.preventDefault();
+                    }
+                } else if (event.key === 'Escape') {
+                    closeCatchModal();
+                }
+            });
         }
 
         function closeCatchModal() {
             const modal = document.getElementById('catch-modal');
             modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = ''; // Restore background scrolling
+        }
+
+        function resizeImage(file, maxWidth, maxHeight, callback) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth || height > maxHeight) {
+                        if (width > height) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        } else {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    callback(canvas.toDataURL('image/jpeg', 0.8)); // Adjust quality as needed
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         // --- Event Listeners ---
