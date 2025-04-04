@@ -31,10 +31,6 @@
       /* --- Landing Page Background --- */
       #landing-page {
         position: relative;
-        background-image: url('./IMG-20160902-WA0002.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
         color: white;
         z-index: 1;
       }
@@ -74,8 +70,8 @@
 
     <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
 
-        <div id="landing-page" class="p-8 md:p-12 text-center relative min-h-[60vh] bg-[url('IMG-20160902-WA0002.jpg')] bg-cover bg-center">
-            <div class="relative z-10">
+        <div id="landing-page" class="p-8 md:p-12 text-center relative min-h-[90vh]" style="background-image: url('IMG-20160902-WA0002.jpg');">
+            <div class="relative z-10 mt-[60vh]">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">Ghoti - Hooked</h1>
                 <p class="text-lg md:text-xl mb-8">Log your catches and track your fishing journey</p>
                 <button id="enter-app-btn" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
@@ -115,7 +111,7 @@
 
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                    <textarea id="notes" name="notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    <textarea id="notes" name="notes" rows="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="border-t pt-4 space-y-2">
@@ -160,7 +156,7 @@
                  <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
                     <span class="lucide"></span> Clear All Logs
                 </button>
-                <div id="pagination-controls" class="flex justify-between mt-4">
+                <div id="pagination-controls" class="hidden justify-between mt-4">
                     <button id="prev-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Previous</button>
                     <button id="next-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Next</button>
                 </div>
@@ -189,8 +185,10 @@
         </div>
     </div>
 
-    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" onclick="this.classList.add('hidden')">
-        <img class="max-h-screen max-w-screen p-4" alt="Full size catch photo">
+    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" onclick="this.classList.add('hidden'); document.body.style.overflow = '';">
+        <div class="max-w-full max-h-full p-4">
+            <img class="max-h-[90vh] max-w-[90vw] object-contain" alt="Full size catch photo">
+        </div>
         <p class="text-white text-sm absolute bottom-4">Click anywhere to close</p>
     </div>
 
@@ -463,7 +461,7 @@
         }
 
         function renderCatchesUI(catches) {
-            catchLogContainer.innerHTML = ''; // Clear previous entries
+            catchLogContainer.innerHTML = '';
 
             if (catches.length === 0) {
                 catchLogContainer.innerHTML = '<p class="text-gray-500 italic">No catches logged yet.</p>';
@@ -472,15 +470,27 @@
 
             catches.forEach(c => {
                 const catchElement = document.createElement('div');
-                catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150 cursor-pointer';
+                catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150 cursor-pointer flex justify-between items-center gap-4';
 
-                // Render catch details
-                catchElement.innerHTML = `
-                    <h3 class="text-lg font-semibold text-blue-700">${c.species || 'Unknown Species'}</h3>
+                const textContent = document.createElement('div');
+                textContent.className = 'flex-grow min-w-0'; // min-w-0 prevents text overflow
+                textContent.innerHTML = `
+                    <h3 class="text-lg font-semibold text-blue-700 truncate">${c.species || 'Unknown Species'}</h3>
                     <p class="text-sm text-gray-500"><strong>Date:</strong> ${formatDate(new Date(c.datetime))}</p>
+                    ${c.locationName ? `<p class="text-sm text-gray-500 truncate">${c.locationName}</p>` : ''}
                 `;
 
-                // Add click event to open modal
+                catchElement.appendChild(textContent);
+
+                if (c.photo) {
+                    const imagePreview = document.createElement('div');
+                    imagePreview.className = 'flex-shrink-0 w-24 h-24 overflow-hidden rounded-md shadow-sm';
+                    imagePreview.innerHTML = `
+                        <img src="${c.photo}" alt="Catch preview" class="w-full h-full object-cover hover:opacity-90 transition-opacity">
+                    `;
+                    catchElement.appendChild(imagePreview);
+                }
+
                 catchElement.addEventListener('click', () => {
                     openCatchModal(c);
                 });
@@ -505,11 +515,19 @@
                     const end = start + itemsPerPage;
                     const paginatedCatches = catches.slice(start, end);
 
-                    renderCatchesUI(paginatedCatches); // Render only the current page
+                    renderCatchesUI(paginatedCatches);
 
-                    // Update pagination controls
-                    document.getElementById('prev-page-btn').disabled = page === 0;
-                    document.getElementById('next-page-btn').disabled = page >= totalPages - 1;
+                    // Show/hide pagination controls based on total catches
+                    const paginationControls = document.getElementById('pagination-controls');
+                    if (catches.length > itemsPerPage) {
+                        paginationControls.classList.remove('hidden');
+                        paginationControls.classList.add('flex');
+                        document.getElementById('prev-page-btn').disabled = page === 0;
+                        document.getElementById('next-page-btn').disabled = page >= totalPages - 1;
+                    } else {
+                        paginationControls.classList.remove('flex');
+                        paginationControls.classList.add('hidden');
+                    }
                 };
             };
         }
@@ -631,7 +649,50 @@
 
         function openFullImage(src) {
             const fullscreen = document.getElementById('fullscreen-image');
-            fullscreen.querySelector('img').src = src;
+            const img = fullscreen.querySelector('img');
+            img.src = src;
+            
+            img.onload = function() {
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const imageRatio = this.naturalWidth / this.naturalHeight;
+                
+                // Reset styles
+                this.style = '';
+                this.style.position = 'absolute';
+                
+                if (imageRatio < 1) { // Portrait image
+                    // Use 80% of viewport for better display
+                    const maxDimension = Math.min(viewportWidth, viewportHeight) * 0.8;
+                    const scale = maxDimension / this.naturalHeight;
+                    
+                    // Set dimensions for rotation
+                    const rotatedWidth = this.naturalHeight * scale;
+                    const rotatedHeight = this.naturalWidth * scale;
+                    
+                    // Position the image
+                    this.style.width = rotatedWidth + 'px';
+                    this.style.height = rotatedHeight + 'px';
+                    
+                    // Center using CSS transform
+                    this.style.top = '50%';
+                    this.style.left = '50%';
+                    this.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+                } else {
+                    // Landscape images
+                    const scale = Math.min(
+                        (viewportWidth * 0.8) / this.naturalWidth,
+                        (viewportHeight * 0.8) / this.naturalHeight
+                    );
+                    
+                    this.style.width = (this.naturalWidth * scale) + 'px';
+                    this.style.height = (this.naturalHeight * scale) + 'px';
+                    this.style.left = '50%';
+                    this.style.top = '50%';
+                    this.style.transform = 'translate(-50%, -50%)';
+                }
+            };
+            
             fullscreen.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
