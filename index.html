@@ -66,6 +66,7 @@
 
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
     <script>
         // Tailwind config (works with @tailwindcss/browser)
         tailwind.config = {
@@ -273,6 +274,10 @@
         }
 
         // --- Local Storage & Data Handling ---
+        if (typeof localStorage === 'undefined' || localStorage === null) {
+            alert('Local storage is not supported on this device. Data will not be saved.');
+        }
+
         function getCatches() {
             const catchesJSON = localStorage.getItem('ghotiFishingLogCatches');
             try {
@@ -297,7 +302,7 @@
                 catches.sort((a, b) => {
                     // Handle potentially invalid date strings gracefully during sort
                     const dateA = a.datetime ? new Date(a.datetime) : 0;
-                    const dateB = b.datetime ? new Date(b.datetime) : 0;
+                    const dateB = b.datetime ? new Date(b.datetibe) : 0;
                     return dateB - dateA;
                 });
                 localStorage.setItem('ghotiFishingLogCatches', JSON.stringify(catches));
@@ -442,6 +447,13 @@
              }
         });
 
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(() => {
+                console.log('Service Worker registered successfully.');
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
     </script>
 
 </body>
