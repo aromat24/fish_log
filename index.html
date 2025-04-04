@@ -50,17 +50,39 @@
         opacity: 0;
         transform: translateY(20px);
         transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
         width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        position: relative;
+        padding-bottom: 2rem;
       }
 
       #app-content.fade-in {
         opacity: 1;
         transform: translateY(0);
       }
+
+      /* Adjust container styles */
+      .app-container {
+        max-height: 100vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem;
+      }
+
+      /* Form spacing adjustments */
+      .form-section {
+        margin-bottom: 1.5rem;
+      }
+
+      /* Photo upload container */
+      .photo-upload {
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 2px dashed #e2e8f0;
+        border-radius: 0.5rem;
+      }
+
       /* --- End Landing Page Background --- */
 
       #landing-header {
@@ -119,85 +141,88 @@
             </div>
         </div>
 
-        <div id="app-content" class="hidden p-6 md:p-8">
-            <h1 class="text-3xl font-bold text-center text-blue-800 mb-6 flex items-center justify-center gap-2">
-                <span class="lucide"></span> Ghoti - Hooked Logbook
-            </h1>
+        <div id="app-content" class="hidden app-container">
+            <div class="form-section">
+                <h1 class="text-3xl font-bold text-center text-blue-800 mb-6 flex items-center justify-center gap-2">
+                    <span class="lucide"></span> Ghoti - Hooked Logbook
+                </h1>
 
-            <form id="catch-form" class="mb-8 space-y-4">
-                <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
+                <form id="catch-form" class="mb-8 space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
 
-                <div>
-                    <label for="species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
-                    <input type="text" id="species" name="species" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
-                        <input type="number" id="length" name="length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <label for="species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
+                        <input type="text" id="species" name="species" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
+                            <input type="number" id="length" name="length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
+                            <input type="number" id="weight" name="weight" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+
                     <div>
-                        <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
-                        <input type="number" id="weight" name="weight" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <label for="datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
+                        <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
-                </div>
 
-                <div>
-                    <label for="datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
-                    <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
+                        <textarea id="notes" name="notes" rows="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
 
-                <div>
-                    <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                    <textarea id="notes" name="notes" rows="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
+                    <div class="border-t pt-4 space-y-2">
+                        <label class="block text-sm font-medium text-gray-600">Location:</label>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <button type="button" id="get-location-btn" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm">
+                                <span class="lucide"></span> Get Current Location
+                            </button>
+                            <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
+                        </div>
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+                    </div>
 
-                <div class="border-t pt-4 space-y-2">
-                     <label class="block text-sm font-medium text-gray-600">Location:</label>
-                     <div class="flex items-center gap-4 flex-wrap">
-                        <button type="button" id="get-location-btn" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm">
-                            <span class="lucide"></span> Get Current Location
-                        </button>
-                        <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
-                     </div>
-                     <input type="hidden" id="latitude" name="latitude">
-                     <input type="hidden" id="longitude" name="longitude">
-                </div>
+                    <div>
+                        <label for="location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                        <input type="text" id="location-name" name="location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
 
-                <div>
-                    <label for="location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                    <input type="text" id="location-name" name="location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
+                    <div class="photo-upload">
+                        <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
+                    </div>
 
-                <div>
-                    <label for="photo" class="block text-sm font-medium text-gray-600 mb-1">Photo:</label>
-                    <input type="file" id="photo" name="photo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
+                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
 
-                 <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
-
-                <button type="submit" class="w-full flex justify-center items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                     <span class="lucide"></span> Save Catch
-                </button>
-            </form>
-
-            <div>
-                <div class="flex justify-between items-center border-b pb-2 mb-4">
-                    <h2 class="text-xl font-semibold text-gray-700">Catch History</h2>
-                    <button id="back-to-landing-btn" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                         <span class="lucide text-base"></span> Back to Home
+                    <button type="submit" class="w-full mt-4 flex justify-center items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg">
+                        <span class="lucide"></span> Save Catch
                     </button>
-                </div>
-                <div id="catch-log" class="space-y-4">
-                    <p class="text-gray-500 italic">No catches logged yet.</p>
-                </div>
-                 <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
-                    <span class="lucide"></span> Clear All Logs
-                </button>
-                <div id="pagination-controls" class="hidden justify-between mt-4">
-                    <button id="prev-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Previous</button>
-                    <button id="next-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Next</button>
+                </form>
+
+                <div>
+                    <div class="flex justify-between items-center border-b pb-2 mb-4">
+                        <h2 class="text-xl font-semibold text-gray-700">Catch History</h2>
+                        <button id="back-to-landing-btn" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                            <span class="lucide text-base"></span> Back to Home
+                        </button>
+                    </div>
+                    <div id="catch-log" class="space-y-4">
+                        <p class="text-gray-500 italic">No catches logged yet.</p>
+                    </div>
+                    <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
+                        <span class="lucide"></span> Clear All Logs
+                    </button>
+                    <div id="pagination-controls" class="hidden justify-between mt-4">
+                        <button id="prev-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Previous</button>
+                        <button id="next-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" disabled>Next</button>
+                    </div>
                 </div>
             </div>
         </div>
