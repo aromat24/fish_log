@@ -30,23 +30,13 @@
 
       /* --- Landing Page Background --- */
       #landing-page {
-        position: relative; /* Needed for the overlay */
-        /*
-          ***************************************************************
-          * IMPORTANT: Placeholder image used for preview compatibility. *
-          * *
-          * TO USE YOUR IMAGE:                                          *
-          * 1. Save your image (e.g., 'IMG-20160902-WA0002.jpg') in    *
-          * the same folder as this HTML file.                       *
-          * 2. Replace the line below with:                             *
-          * background-image: url('IMG-20160902-WA0002.jpg');        *
-          ***************************************************************
-        */
-        background-image: url('IMG-20160902-WA0002'); 
-        background-size: cover; /* Cover the entire div */
-        background-position: center; /* Center the image */
-        color: white; /* Change default text color for better contrast */
-        z-index: 1; /* Ensure content is above the pseudo-element */
+        position: relative;
+        background-image: url('./IMG-20160902-WA0002.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        color: white;
+        z-index: 1;
       }
 
       /* Semi-transparent overlay for text readability */
@@ -84,14 +74,11 @@
 
     <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
 
-        <div id="landing-page" class="p-8 md:p-12 text-center relative">
-             <div class="relative z-10">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 flex items-center justify-center gap-3">
-                    <span class="lucide text-3xl md:text-4xl"></span> Ghoti - Hooked
-                </h1>
-                <p class="text-lg text-gray-200 mb-8">Your simple, personal fishing log.</p>
-                <p class="text-gray-300 mb-8">Keep track of your catches, locations, and notes all in one place. Your data is saved locally in your browser.</p>
-                <button id="enter-app-btn" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+        <div id="landing-page" class="p-8 md:p-12 text-center relative min-h-[60vh] bg-[url('IMG-20160902-WA0002.jpg')] bg-cover bg-center">
+            <div class="relative z-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Ghoti - Hooked</h1>
+                <p class="text-lg md:text-xl mb-8">Log your catches and track your fishing journey</p>
+                <button id="enter-app-btn" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
                     Enter Logbook
                 </button>
             </div>
@@ -128,7 +115,7 @@
 
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                    <textarea id="notes" name="notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    <textarea id="notes" name="notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="border-t pt-4 space-y-2">
@@ -192,11 +179,19 @@
             <p id="modal-weight" class="text-sm text-gray-600 mb-2"></p>
             <p id="modal-location" class="text-sm text-gray-600 mb-2"></p>
             <p id="modal-notes" class="text-sm text-gray-600 mb-4"></p>
-            <img id="modal-photo" class="w-full h-auto rounded-md mb-4 hidden" alt="Catch Photo">
+            <div id="modal-photo-container" class="mb-4 hidden">
+                <img id="modal-photo" class="w-full h-auto rounded-md cursor-pointer" alt="Catch Photo" onclick="openFullImage(this.src)">
+                <p class="text-sm text-gray-500 mt-1">Click image to view full size</p>
+            </div>
             <button id="delete-catch-btn" class="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
                 Delete Catch
             </button>
         </div>
+    </div>
+
+    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" onclick="this.classList.add('hidden')">
+        <img class="max-h-screen max-w-screen p-4" alt="Full size catch photo">
+        <p class="text-white text-sm absolute bottom-4">Click anywhere to close</p>
     </div>
 
     <div id="loading-indicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -254,7 +249,8 @@
             if (!date || !(date instanceof Date) || isNaN(date)) {
                 return 'Invalid Date';
             }
-            return date.toLocaleString('en-GB', {
+            const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+            return localDate.toLocaleString('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
@@ -266,7 +262,6 @@
 
          function setDefaultDateTime() {
             const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             const yyyy = now.getFullYear();
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
@@ -369,78 +364,35 @@
 
             // Convert photo to Base64 if a file is uploaded
             const photoFile = photoInput.files[0];
-            const reader = new FileReader();
 
-            reader.onload = function () {
-                const newCatch = {
-                    id: Date.now().toString(),
+            if (photoFile) {
+                resizeImage(photoFile, 800, 800, (resizedDataUrl) => {
+                    const newCatch = createCatchObject({
+                        species: speciesInput.value.trim(),
+                        length: lengthInput.value ? parseFloat(lengthInput.value) : null,
+                        weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                        datetime: datetimeInput.value,
+                        notes: notesInput.value.trim(),
+                        latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
+                        longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                        locationName: locationNameInput.value.trim() || null,
+                        photo: resizedDataUrl
+                    });
+                    saveCatchToIndexedDB(newCatch);
+                });
+            } else {
+                const newCatch = createCatchObject({
                     species: speciesInput.value.trim(),
                     length: lengthInput.value ? parseFloat(lengthInput.value) : null,
                     weight: weightInput.value ? parseFloat(weightInput.value) : null,
-                    datetime: datetimeInput.value, // Stored as ISO string
+                    datetime: datetimeInput.value,
                     notes: notesInput.value.trim(),
                     latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
                     longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
-                    locationName: locationNameInput.value.trim() || null, // Custom location name
-                    photo: reader.result || null, // Explicitly set to null if no photo is uploaded
-                };
-
-                if (!newCatch.species) {
-                    speciesInput.classList.add('border-red-500');
-                    showMessage("Species is required.", 'error');
-                    return;
-                } else {
-                    speciesInput.classList.remove('border-red-500');
-                }
-
-                if (!newCatch.datetime) {
-                    datetimeInput.classList.add('border-red-500');
-                    showMessage("Date & Time are required.", 'error');
-                    return;
-                } else {
-                    datetimeInput.classList.remove('border-red-500');
-                }
-
-                // Save to IndexedDB
-                const request = indexedDB.open('FishingLogDB', 1);
-
-                request.onsuccess = function (event) {
-                    const db = event.target.result;
-                    const transaction = db.transaction('catches', 'readwrite');
-                    const store = transaction.objectStore('catches');
-
-                    store.add(newCatch);
-
-                    transaction.oncomplete = function () {
-                        renderCatches(); // Refresh the catch history
-                        catchForm.reset(); // Clear the form
-                        setDefaultDateTime(); // Reset the date/time input
-                        latitudeInput.value = ''; // Clear hidden location fields
-                        longitudeInput.value = '';
-                        locationStatus.textContent = 'Location not saved.'; // Reset location status text
-                        locationStatus.classList.remove('text-green-600', 'text-red-600'); // Reset location status color
-                        showMessage('Catch logged successfully!', 'success');
-                    };
-
-                    transaction.onerror = function (event) {
-                        console.error('Failed to save catch:', event.target.error);
-                        showMessage('Failed to save catch. Please try again.', 'error');
-                    };
-                };
-
-                request.onerror = function (event) {
-                    console.error('Failed to open IndexedDB:', event.target.error);
-                    showMessage('Database error. Please refresh the page.', 'error');
-                };
-            };
-
-            if (photoFile) {
-                resizeImage(photoFile, 800, 800, (resizedImage) => {
-                    reader.result = resizedImage;
-                    reader.onload();
+                    locationName: locationNameInput.value.trim() || null,
+                    photo: null
                 });
-            } else {
-                reader.onload();
+                saveCatchToIndexedDB(newCatch);
             }
         }
 
@@ -609,9 +561,9 @@
 
             if (catchData.photo) {
                 modalPhoto.src = catchData.photo;
-                modalPhoto.classList.remove('hidden');
+                document.getElementById('modal-photo-container').classList.remove('hidden');
             } else {
-                modalPhoto.classList.add('hidden');
+                document.getElementById('modal-photo-container').classList.add('hidden');
             }
 
             // Setup delete functionality
@@ -675,6 +627,71 @@
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        function openFullImage(src) {
+            const fullscreen = document.getElementById('fullscreen-image');
+            fullscreen.querySelector('img').src = src;
+            fullscreen.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        document.getElementById('fullscreen-image').addEventListener('click', function() {
+            this.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+
+        function createCatchObject(data) {
+            return {
+                id: Date.now().toString(),
+                species: data.species,
+                length: data.length,
+                weight: data.weight,
+                datetime: data.datetime,
+                notes: data.notes,
+                latitude: data.latitude,
+                longitude: data.longitude,
+                locationName: data.locationName,
+                photo: data.photo
+            };
+        }
+
+        function saveCatchToIndexedDB(newCatch) {
+            if (!newCatch.species || !newCatch.datetime) {
+                showMessage("Species and Date/Time are required.", 'error');
+                return;
+            }
+
+            const request = indexedDB.open('FishingLogDB', 1);
+            
+            request.onsuccess = function(event) {
+                const db = event.target.result;
+                const transaction = db.transaction('catches', 'readwrite');
+                const store = transaction.objectStore('catches');
+                
+                store.add(newCatch);
+
+                transaction.oncomplete = function() {
+                    renderCatches();
+                    catchForm.reset();
+                    setDefaultDateTime();
+                    latitudeInput.value = '';
+                    longitudeInput.value = '';
+                    locationStatus.textContent = 'Location not saved.';
+                    locationStatus.classList.remove('text-green-600', 'text-red-600');
+                    showMessage('Catch logged successfully!', 'success');
+                };
+
+                transaction.onerror = function(event) {
+                    console.error('Failed to save catch:', event.target.error);
+                    showMessage('Failed to save catch. Please try again.', 'error');
+                };
+            };
+
+            request.onerror = function(event) {
+                console.error('Failed to open IndexedDB:', event.target.error);
+                showMessage('Database error. Please try again.', 'error');
+            };
         }
 
         // --- Event Listeners ---
