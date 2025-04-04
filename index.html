@@ -181,6 +181,24 @@
         </div>
     </div>
 
+    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+                ✖
+            </button>
+            <h3 id="modal-species" class="text-xl font-bold text-blue-700 mb-4"></h3>
+            <p id="modal-date" class="text-sm text-gray-500 mb-2"></p>
+            <p id="modal-length" class="text-sm text-gray-600 mb-2"></p>
+            <p id="modal-weight" class="text-sm text-gray-600 mb-2"></p>
+            <p id="modal-location" class="text-sm text-gray-600 mb-2"></p>
+            <p id="modal-notes" class="text-sm text-gray-600 mb-4"></p>
+            <img id="modal-photo" class="w-full h-auto rounded-md mb-4 hidden" alt="Catch Photo">
+            <button id="delete-catch-btn" class="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
+                Delete Catch
+            </button>
+        </div>
+    </div>
+
     <script>
         // DOM Elements
         const landingPage = document.getElementById('landing-page');
@@ -370,7 +388,13 @@
                     store.add(newCatch);
 
                     transaction.oncomplete = function () {
-                        renderCatches();
+                        renderCatches(); // Refresh the catch history
+                        catchForm.reset(); // Clear the form
+                        setDefaultDateTime(); // Reset the date/time input
+                        latitudeInput.value = ''; // Clear hidden location fields
+                        longitudeInput.value = '';
+                        locationStatus.textContent = 'Location not saved.'; // Reset location status text
+                        locationStatus.classList.remove('text-green-600', 'text-red-600'); // Reset location status color
                         showMessage('Catch logged successfully!', 'success');
                     };
 
@@ -428,14 +452,19 @@
 
             catches.forEach(c => {
                 const catchElement = document.createElement('div');
-                catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150';
+                catchElement.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-white relative hover:shadow-md transition-shadow duration-150 cursor-pointer';
 
-                // Render catch details (similar to the existing render logic)
+                // Render catch details
                 catchElement.innerHTML = `
                     <h3 class="text-lg font-semibold text-blue-700">${c.species || 'Unknown Species'}</h3>
                     <p class="text-sm text-gray-500"><strong>Date:</strong> ${formatDate(new Date(c.datetime))}</p>
-                    <!-- Add other details here -->
                 `;
+
+                // Add click event to open modal
+                catchElement.addEventListener('click', () => {
+                    openCatchModal(c);
+                });
+
                 catchLogContainer.appendChild(catchElement);
             });
         }
@@ -477,6 +506,46 @@
             renderCatches(currentPage);
         });
 
+        function openCatchModal(catchData) {
+            const modal = document.getElementById('catch-modal');
+            const modalSpecies = document.getElementById('modal-species');
+            const modalDate = document.getElementById('modal-date');
+            const modalLength = document.getElementById('modal-length');
+            const modalWeight = document.getElementById('modal-weight');
+            const modalLocation = document.getElementById('modal-location');
+            const modalNotes = document.getElementById('modal-notes');
+            const modalPhoto = document.getElementById('modal-photo');
+            const deleteCatchBtn = document.getElementById('delete-catch-btn');
+
+            // Populate modal with catch data
+            modalSpecies.textContent = catchData.species || 'Unknown Species';
+            modalDate.textContent = `Date: ${formatDate(new Date(catchData.datetime))}`;
+            modalLength.textContent = `Length: ${catchData.length ? catchData.length + ' cm' : 'N/A'}`;
+            modalWeight.textContent = `Weight: ${catchData.weight ? catchData.weight + ' kg' : 'N/A'}`;
+            modalLocation.textContent = `Location: ${catchData.locationName || 'Not provided'}`;
+            modalNotes.textContent = `Notes: ${catchData.notes || 'No notes provided'}`;
+
+            if (catchData.photo) {
+                modalPhoto.src = catchData.photo;
+                modalPhoto.classList.remove('hidden');
+            } else {
+                modalPhoto.classList.add('hidden');
+            }
+
+            // Add delete functionality
+            deleteCatchBtn.onclick = () => {
+                deleteCatch(catchData.id);
+                closeCatchModal();
+            };
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeCatchModal() {
+            const modal = document.getElementById('catch-modal');
+            modal.classList.add('hidden');
+        }
+
         // --- Event Listeners ---
         enterAppBtn.addEventListener('click', showApp);
         enterAppBtn.addEventListener('touchstart', showApp);
@@ -484,6 +553,7 @@
         catchForm.addEventListener('submit', addCatch);
         getLocationBtn.addEventListener('click', handleGetLocation);
         clearLogBtn.addEventListener('click', clearAllLogs);
+        document.getElementById('close-modal-btn').addEventListener('click', closeCatchModal);
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
