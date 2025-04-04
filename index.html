@@ -258,6 +258,10 @@
                 // Remove the landing page from DOM after transition
                 setTimeout(() => {
                     landingPage.classList.add('hidden');
+                    // Blur any focused elements
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
                 }, 500);
             }, 50);
             renderCatches();
