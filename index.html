@@ -52,12 +52,16 @@
         width: 100%;
         height: 100%;
         overflow-y: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
 
       /* Remove unnecessary spacing adjustments */
       .app-container {
         height: 100%;
         overflow-y: auto;
+        position: relative;
       }
 
       .form-section {
@@ -252,6 +256,8 @@
         function showApp() {
             landingPage.classList.add('fade-out');
             appContent.classList.remove('hidden');
+            // Reset scroll position
+            window.scrollTo(0, 0);
             // Give a small delay to start the fade in
             setTimeout(() => {
                 appContent.classList.add('fade-in');
