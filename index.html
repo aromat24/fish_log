@@ -120,7 +120,20 @@
 
                     <div>
                         <label for="species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
-                        <input type="text" id="species" name="species" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <div class="relative">
+                            <input type="text" id="species" name="species" required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                autocomplete="off"
+                                placeholder="Search or enter species name">
+                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                                <!-- Species suggestions will be populated here -->
+                            </div>
+                            <button type="button" id="manage-species-btn" 
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                title="Manage Species List">
+                                ⚙
+                            </button>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,11 +167,6 @@
                         </div>
                         <input type="hidden" id="latitude" name="latitude">
                         <input type="hidden" id="longitude" name="longitude">
-                    </div>
-
-                    <div>
-                        <label for="location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                        <input type="text" id="location-name" name="location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
                     <div class="photo-upload">
@@ -196,36 +204,175 @@
         </div>
     </div>
 
-    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-modal-background>
-        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" data-modal-background>
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
             </button>
-            <h3 id="modal-species" class="text-xl font-bold text-blue-700 mb-4"></h3>
-            <p id="modal-date" class="text-sm text-gray-500 mb-2"></p>
-            <p id="modal-length" class="text-sm text-gray-600 mb-2"></p>
-            <p id="modal-weight" class="text-sm text-gray-600 mb-2"></p>
-            <p id="modal-location" class="text-sm text-gray-600 mb-2"></p>
-            <p id="modal-notes" class="text-sm text-gray-600 mb-4"></p>
-            <div id="modal-photo-container" class="mb-4 hidden">
-                <img id="modal-photo" class="w-full h-auto rounded-md cursor-pointer" alt="Catch Photo" onclick="openFullImage(this.src)">
-                <p class="text-sm text-gray-500 mt-1">Click image to view full size</p>
+            <div class="space-y-3">
+                <h3 id="modal-species" class="text-xl font-bold text-blue-700 pr-8"></h3>
+                <p id="modal-date" class="text-sm text-gray-500"></p>
+                
+                <div class="flex flex-wrap gap-2">
+                    <p id="modal-length" class="text-sm text-gray-600"></p>
+                    <p id="modal-weight" class="text-sm text-gray-600"></p>
+                </div>
+                
+                <div id="modal-location-container" class="text-sm text-gray-600">
+                    <p class="flex flex-wrap items-center gap-1">
+                        <span>Location:</span>
+                        <a id="modal-location-name" href="#" class="text-blue-600 hover:underline"></a>
+                    </p>
+                </div>
+                
+                <p id="modal-notes" class="text-sm text-gray-600"></p>
+                
+                <div id="modal-photo-container" class="mb-4 hidden">
+                    <img id="modal-photo" class="w-full h-auto rounded-md cursor-pointer" alt="Catch Photo">
+                    <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
+                </div>
+                
+                <div class="flex gap-2 mt-4">
+                    <button id="edit-catch-btn" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                        Edit
+                    </button>
+                    <button id="delete-catch-btn" class="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
+                        Delete
+                    </button>
+                </div>
             </div>
-            <button id="delete-catch-btn" class="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
-                Delete Catch
-            </button>
         </div>
     </div>
 
-    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" onclick="this.classList.add('hidden'); document.body.style.overflow = '';">
-        <div class="max-w-full max-h-full p-4">
-            <img class="max-h-[90vh] max-w-[90vw] object-contain" alt="Full size catch photo">
+    <!-- Edit modal -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+            <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+                ✖
+            </button>
+            <form id="edit-catch-form" class="space-y-4">
+                <h3 class="text-xl font-bold text-blue-700">Edit Catch</h3>
+                
+                <div>
+                    <label for="edit-species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
+                    <input type="text" id="edit-species" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="edit-length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
+                        <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
+                        <input type="number" id="edit-weight" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
+                    <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div>
+                    <label for="edit-location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                    <input type="text" id="edit-location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div>
+                    <label for="edit-notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
+                    <textarea id="edit-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-600">Photo:</label>
+                    <button type="button" id="edit-photo-btn" class="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md border border-gray-300 flex items-center justify-center gap-2">
+                        <span id="edit-photo-text">Edit Photo</span>
+                    </button>
+                    <input type="file" id="edit-photo-input" accept="image/*" class="hidden">
+                </div>
+
+                <input type="hidden" id="edit-catch-id">
+                <input type="hidden" id="edit-latitude">
+                <input type="hidden" id="edit-longitude">
+                <input type="hidden" id="edit-photo">
+
+                <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                    Save Changes
+                </button>
+            </form>
         </div>
-        <p class="text-white text-sm absolute bottom-4">Click anywhere to close</p>
+    </div>
+
+    <!-- Add location name modal -->
+    <div id="location-name-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
+            <h3 class="text-xl font-bold text-blue-700 mb-4">Save Location</h3>
+            <form id="location-name-form" class="space-y-4">
+                <div>
+                    <label for="modal-location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                    <input type="text" id="modal-location-name-input" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                        Save
+                    </button>
+                    <button type="button" id="cancel-location-name-btn" class="flex-1 px-4 py-2 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update fullscreen image modal -->
+    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[60] flex items-center justify-center">
+        <div class="max-w-full max-h-full p-4">
+            <img id="fullscreen-image-content" class="max-h-[90vh] max-w-[90vw] object-contain" alt="Full size catch photo">
+        </div>
+        <button class="absolute top-4 right-4 text-white text-xl" onclick="closeFullscreenImage()">✖</button>
+        <p class="text-white text-sm absolute bottom-4">Tap anywhere to close</p>
     </div>
 
     <div id="loading-indicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="text-white text-lg">Loading...</div>
+    </div>
+
+    <div id="species-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
+            <h3 class="text-xl font-bold text-blue-700 mb-4">Add New Species</h3>
+            <form id="species-form" class="space-y-4">
+                <div>
+                    <label for="new-species-name" class="block text-sm font-medium text-gray-600 mb-1">Species Name:</label>
+                    <input type="text" id="new-species-name" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                        Save
+                    </button>
+                    <button type="button" id="cancel-species-btn" class="flex-1 px-4 py-2 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="manage-species-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-blue-700">Manage Species</h3>
+                <button class="text-gray-500 hover:text-gray-700" id="close-manage-species-btn">✖</button>
+            </div>
+            <div class="space-y-4">
+                <div id="custom-species-list" class="space-y-2">
+                    <!-- Custom species will be listed here -->
+                </div>
+                <button id="add-species-btn" class="w-full px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600">
+                    Add New Species
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -251,6 +398,55 @@
 
         let currentPage = 0;
         const itemsPerPage = 5;
+
+        // --- Species Data and Calculations ---
+        const fishSpeciesData = {
+            // Freshwater Species
+            'Bass, Largemouth': { a: 0.0115, b: 3.0, minLength: 20, maxLength: 70 },
+            'Carp, Common': { a: 0.0305, b: 3.0, minLength: 30, maxLength: 100 },
+            'Carp, Mirror': { a: 0.0305, b: 3.0, minLength: 30, maxLength: 100 },
+            'Carp, Grass': { a: 0.0230, b: 3.0, minLength: 30, maxLength: 120 },
+            'Barbel, Sharptooth Catfish': { a: 0.0260, b: 3.0, minLength: 30, maxLength: 150 },
+            'Yellowfish, Smallscale': { a: 0.0140, b: 3.0, minLength: 20, maxLength: 60 },
+            'Tilapia, Mozambique': { a: 0.0180, b: 3.0, minLength: 15, maxLength: 40 },
+            
+            // Marine Species
+            'Kob, Dusky': { a: 0.0082, b: 3.0, minLength: 40, maxLength: 130 },
+            'Galjoen': { a: 0.0220, b: 3.0, minLength: 30, maxLength: 70 },
+            'Yellowtail': { a: 0.0126, b: 3.0, minLength: 50, maxLength: 120 },
+            'Cape Salmon (Geelbek)': { a: 0.0074, b: 3.0, minLength: 60, maxLength: 130 },
+            'Garrick (Leervis)': { a: 0.0091, b: 3.0, minLength: 50, maxLength: 120 },
+            'Blacktail (Dassie)': { a: 0.0180, b: 3.0, minLength: 20, maxLength: 45 },
+            'White Steenbras': { a: 0.0160, b: 3.0, minLength: 40, maxLength: 90 },
+            'Red Steenbras': { a: 0.0185, b: 3.0, minLength: 50, maxLength: 100 },
+            'White Musselcracker': { a: 0.0200, b: 3.0, minLength: 40, maxLength: 110 },
+            'Black Musselcracker': { a: 0.0210, b: 3.0, minLength: 50, maxLength: 120 }
+        };
+
+        function calculateExpectedWeight(species, length) {
+            const data = fishSpeciesData[species];
+            if (!data) return null;
+            
+            // W = a * L^b where:
+            // W is weight in kg
+            // L is length in cm
+            // a and b are species-specific parameters
+            const weight = data.a * Math.pow(length, data.b);
+            return parseFloat(weight.toFixed(2));
+        }
+
+        function getWeightRange(species, length) {
+            const expectedWeight = calculateExpectedWeight(species, length);
+            if (!expectedWeight) return null;
+            
+            // Calculate a range of ±15% from the expected weight
+            const minWeight = (expectedWeight * 0.85).toFixed(2);
+            const maxWeight = (expectedWeight * 1.15).toFixed(2);
+            return { min: minWeight, max: maxWeight, expected: expectedWeight };
+        }
+
+        // Update predefined species list with the new species data
+        const predefinedSpecies = Object.keys(fishSpeciesData);
 
         // --- Navigation ---
         function showApp() {
@@ -336,12 +532,45 @@
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    latitudeInput.value = lat;
-                    longitudeInput.value = lon;
-                    locationStatus.textContent = `Location captured: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-                    locationStatus.classList.add('text-green-600');
-                    getLocationBtn.disabled = false;
-                    getLocationBtn.classList.remove('btn-disabled');
+                    
+                    // Show location name modal
+                    const locationNameModal = document.getElementById('location-name-modal');
+                    const locationNameInput = document.getElementById('modal-location-name-input');
+                    const locationNameForm = document.getElementById('location-name-form');
+                    const cancelLocationNameBtn = document.getElementById('cancel-location-name-btn');
+
+                    locationNameModal.classList.remove('hidden');
+                    locationNameInput.value = '';
+
+                    locationNameForm.onsubmit = (e) => {
+                        e.preventDefault();
+                        const locationName = locationNameInput.value.trim();
+                        if (locationName) {
+                            latitudeInput.value = lat;
+                            longitudeInput.value = lon;
+                            document.getElementById('location-name').value = locationName;
+                            locationStatus.textContent = `Location saved: ${locationName}`;
+                            locationStatus.classList.add('text-green-600');
+                        } else {
+                            locationStatus.textContent = 'Location not saved.';
+                            locationStatus.classList.remove('text-green-600');
+                            latitudeInput.value = '';
+                            longitudeInput.value = '';
+                        }
+                        locationNameModal.classList.add('hidden');
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.classList.remove('btn-disabled');
+                    };
+
+                    cancelLocationNameBtn.onclick = () => {
+                        locationNameModal.classList.add('hidden');
+                        locationStatus.textContent = 'Location not saved.';
+                        locationStatus.classList.remove('text-green-600');
+                        latitudeInput.value = '';
+                        longitudeInput.value = '';
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.classList.remove('btn-disabled');
+                    };
                 },
                 (error) => {
                     let errorMsg = 'Unable to retrieve location.';
@@ -417,11 +646,11 @@
                     const newCatch = createCatchObject({
                         species: speciesInput.value.trim(),
                         length: lengthInput.value ? parseFloat(lengthInput.value) : null,
-                        weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                        weight: weightInput.value ? parseFloat(lengthInput.value) : null,
                         datetime: datetimeInput.value,
                         notes: notesInput.value.trim(),
                         latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                        longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                        longitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
                         locationName: locationNameInput.value.trim() || null,
                         photo: resizedDataUrl
                     });
@@ -431,11 +660,11 @@
                 const newCatch = createCatchObject({
                     species: speciesInput.value.trim(),
                     length: lengthInput.value ? parseFloat(lengthInput.value) : null,
-                    weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                    weight: weightInput.value ? parseFloat(lengthInput.value) : null,
                     datetime: datetimeInput.value,
                     notes: notesInput.value.trim(),
                     latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                    longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                    longitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
                     locationName: locationNameInput.value.trim() || null,
                     photo: null
                 });
@@ -600,47 +829,166 @@
             const modalDate = document.getElementById('modal-date');
             const modalLength = document.getElementById('modal-length');
             const modalWeight = document.getElementById('modal-weight');
-            const modalLocation = document.getElementById('modal-location');
+            const modalLocationName = document.getElementById('modal-location-name');
             const modalNotes = document.getElementById('modal-notes');
             const modalPhoto = document.getElementById('modal-photo');
+            const modalPhotoContainer = document.getElementById('modal-photo-container');
             const deleteCatchBtn = document.getElementById('delete-catch-btn');
+            const editCatchBtn = document.getElementById('edit-catch-btn');
 
             // Populate modal with catch data
             modalSpecies.textContent = catchData.species || 'Unknown Species';
-            modalDate.textContent = `Date: ${formatDate(new Date(catchData.datetime))}`;
-            modalLength.textContent = `Length: ${catchData.length ? catchData.length + ' cm' : 'N/A'}`;
-            modalWeight.textContent = `Weight: ${catchData.weight ? catchData.weight + ' kg' : 'N/A'}`;
-
-            let locationStr = 'Location: ';
-            if (catchData.locationName) {
-                locationStr += catchData.locationName;
-                if (catchData.latitude && catchData.longitude) {
-                    locationStr += ` (${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)})`;
+            modalDate.textContent = formatDate(new Date(catchData.datetime));
+            
+            modalLength.textContent = catchData.length ? `Length: ${catchData.length} cm` : '';
+            modalWeight.textContent = catchData.weight ? `Weight: ${catchData.weight} kg` : '';
+            
+            // Handle location display - make location name clickable
+            if (catchData.latitude && catchData.longitude) {
+                const mapUrl = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+                if (catchData.locationName) {
+                    modalLocationName.textContent = catchData.locationName;
+                    modalLocationName.href = mapUrl;
+                    modalLocationName.classList.remove('hidden');
+                } else {
+                    modalLocationName.classList.add('hidden');
                 }
-            } else if (catchData.latitude && catchData.longitude) {
-                locationStr += `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
             } else {
-                locationStr += 'Not provided';
+                if (catchData.locationName) {
+                    modalLocationName.textContent = catchData.locationName;
+                    modalLocationName.removeAttribute('href');
+                    modalLocationName.classList.remove('hidden');
+                } else {
+                    modalLocationName.classList.add('hidden');
+                }
             }
-            modalLocation.textContent = locationStr;
 
-            modalNotes.textContent = catchData.notes ? `Notes: ${catchData.notes}` : 'No notes provided';
+            modalNotes.textContent = catchData.notes || '';
 
             if (catchData.photo) {
                 modalPhoto.src = catchData.photo;
-                document.getElementById('modal-photo-container').classList.remove('hidden');
+                modalPhotoContainer.classList.remove('hidden');
+                
+                modalPhoto.onclick = (e) => {
+                    e.stopPropagation(); // Prevent modal close
+                    openFullscreenImage(catchData.photo);
+                };
             } else {
-                document.getElementById('modal-photo-container').classList.add('hidden');
+                modalPhotoContainer.classList.add('hidden');
             }
 
-            // Setup delete functionality
             deleteCatchBtn.onclick = () => deleteCatch(catchData.id);
-
+            editCatchBtn.onclick = () => openEditModal(catchData);
             modal.classList.remove('hidden');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            document.getElementById('close-modal-btn').focus();
         }
+
+        function openEditModal(catchData) {
+            const editModal = document.getElementById('edit-modal');
+            const editSpecies = document.getElementById('edit-species');
+            const editLength = document.getElementById('edit-length');
+            const editWeight = document.getElementById('edit-weight');
+            const editDatetime = document.getElementById('edit-datetime');
+            const editLocationName = document.getElementById('edit-location-name');
+            const editNotes = document.getElementById('edit-notes');
+            const editCatchId = document.getElementById('edit-catch-id');
+            const editLatitude = document.getElementById('edit-latitude');
+            const editLongitude = document.getElementById('edit-longitude');
+            const editPhoto = document.getElementById('edit-photo');
+            const editPhotoInput = document.getElementById('edit-photo-input');
+            const editPhotoBtn = document.getElementById('edit-photo-btn');
+            const editPhotoText = document.getElementById('edit-photo-text');
+
+            // Populate edit form with catch data
+            editSpecies.value = catchData.species || '';
+            editLength.value = catchData.length || '';
+            editWeight.value = catchData.weight || '';
+            editDatetime.value = catchData.datetime;
+            editLocationName.value = catchData.locationName || '';
+            editNotes.value = catchData.notes || '';
+            editCatchId.value = catchData.id;
+            editLatitude.value = catchData.latitude || '';
+            editLongitude.value = catchData.longitude || '';
+            editPhoto.value = catchData.photo || '';
+
+            // Update photo button text based on whether there's an existing photo
+            editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
+            
+            // Handle photo button click
+            editPhotoBtn.onclick = () => {
+                editPhotoInput.click();
+            };
+
+            // Handle file selection
+            editPhotoInput.onchange = () => {
+                const file = editPhotoInput.files[0];
+                if (file) {
+                    editPhotoText.textContent = '✓ New photo selected';
+                    editPhotoBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+                    editPhotoBtn.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-700');
+                } else {
+                    editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
+                    editPhotoBtn.classList.remove('bg-green-100', 'hover:bg-green-200', 'text-green-700');
+                    editPhotoBtn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+                }
+            };
+
+            editModal.classList.remove('hidden');
+        }
+
+        document.getElementById('edit-modal').addEventListener('click', (e) => {
+            if (e.target.closest('.bg-white')) return;
+            document.getElementById('edit-modal').classList.add('hidden');
+        });
+
+        function closeFullscreenImage() {
+            const fullscreen = document.getElementById('fullscreen-image');
+            fullscreen.classList.add('hidden');
+        }
+
+        function openFullscreenImage(src) {
+            const fullscreen = document.getElementById('fullscreen-image');
+            const img = document.getElementById('fullscreen-image-content');
+            img.src = src;
+            fullscreen.classList.remove('hidden');
+            
+            // Prevent modal close when clicking the image
+            img.onclick = (e) => {
+                e.stopPropagation();
+            };
+
+            // Enable closing when clicking outside the image
+            fullscreen.onclick = () => {
+                closeFullscreenImage();
+            };
+        }
+
+        // Add click handlers for fullscreen image view
+        document.getElementById('fullscreen-image').addEventListener('click', function(e) {
+            if (e.target === this || e.target.tagName === 'BUTTON') {
+                closeFullscreenImage();
+            }
+        });
+
+        // Prevent click propagation from image
+        document.getElementById('fullscreen-image-content').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Update modal close handling
+        document.getElementById('catch-modal').addEventListener('click', (e) => {
+            if (e.target.closest('.bg-white')) return; // Click inside modal content
+            closeCatchModal();
+        });
+
+        document.getElementById('close-modal-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeCatchModal();
+        });
+
+        document.getElementById('close-edit-modal-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('edit-modal').classList.add('hidden');
+        });
 
         function closeCatchModal() {
             const modal = document.getElementById('catch-modal');
@@ -649,18 +997,11 @@
             document.body.style.overflow = ''; // Restore background scrolling
         }
 
-        // Close modal when clicking outside
-        document.addEventListener('mousedown', (event) => {
-            const modal = document.getElementById('catch-modal');
-            if (event.target.closest('.bg-white') === null && !modal.classList.contains('hidden')) {
-                closeCatchModal();
-            }
-        });
-
         // Handle escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 closeCatchModal();
+                document.getElementById('edit-modal').classList.add('hidden');
             }
         });
 
@@ -804,42 +1145,243 @@
             };
         }
 
-        // --- Event Listeners ---
-        enterAppBtn.addEventListener('click', showApp);
-        enterAppBtn.addEventListener('touchstart', showApp);
-        backToLandingBtn.addEventListener('click', showLandingPage);
-        catchForm.addEventListener('submit', addCatch);
-        getLocationBtn.addEventListener('click', handleGetLocation);
-        clearLogBtn.addEventListener('click', clearAllLogs);
-        document.getElementById('close-modal-btn').addEventListener('click', closeCatchModal);
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Set default date/time
-            setDefaultDateTime();
+        // Add length-weight calculation functionality
+        lengthInput.addEventListener('input', function() {
+            const species = speciesInput.value;
+            const length = parseFloat(this.value);
             
+            if (species && length && fishSpeciesData[species]) {
+                const weightRange = getWeightRange(species, length);
+                if (weightRange) {
+                    const weightTip = document.createElement('div');
+                    weightTip.className = 'text-sm text-gray-600 mt-1';
+                    weightTip.textContent = `Expected weight: ${weightRange.expected}kg (${weightRange.min}-${weightRange.max}kg)`;
+                    
+                    // Update or add the weight tip
+                    const existingTip = weightInput.parentElement.querySelector('.weight-tip');
+                    if (existingTip) {
+                        existingTip.replaceWith(weightTip);
+                    } else {
+                        weightInput.parentElement.appendChild(weightTip);
+                    }
+                    weightTip.classList.add('weight-tip');
+                }
+            } else {
+                // Remove existing weight tip if present
+                const existingTip = weightInput.parentElement.querySelector('.weight-tip');
+                if (existingTip) {
+                    existingTip.remove();
+                }
+            }
+        });
+
+        // Validate weight against expected range
+        weightInput.addEventListener('input', function() {
+            const species = speciesInput.value;
+            const length = parseFloat(lengthInput.value);
+            const weight = parseFloat(this.value);
+            
+            if (species && length && weight && fishSpeciesData[species]) {
+                const weightRange = getWeightRange(species, length);
+                if (weightRange) {
+                    const isWithinRange = weight >= weightRange.min && weight <= weightRange.max;
+                    
+                    // Add visual feedback
+                    if (!isWithinRange) {
+                        this.classList.add('border-yellow-400');
+                        
+                        // Show warning message
+                        let warningEl = this.parentElement.querySelector('.weight-warning');
+                        if (!warningEl) {
+                            warningEl = document.createElement('div');
+                            warningEl.className = 'text-sm text-yellow-600 mt-1 weight-warning';
+                            this.parentElement.appendChild(warningEl);
+                        }
+                        warningEl.textContent = `Warning: Weight seems unusual for this species and length`;
+                    } else {
+                        this.classList.remove('border-yellow-400');
+                        const warningEl = this.parentElement.querySelector('.weight-warning');
+                        if (warningEl) warningEl.remove();
+                    }
+                }
+            } else {
+                this.classList.remove('border-yellow-400');
+                const warningEl = this.parentElement.querySelector('.weight-warning');
+                if (warningEl) warningEl.remove();
+            }
+        });
+
+        // Add species length range validation
+        function validateSpeciesLength(species, length) {
+            const data = fishSpeciesData[species];
+            if (!data || !length) return null;
+            
+            if (length < data.minLength || length > data.maxLength) {
+                return {
+                    isValid: false,
+                    message: `Typical length range for ${species}: ${data.minLength}-${data.maxLength}cm`
+                };
+            }
+            
+            return { isValid: true };
+        }
+
+        // Add length validation to length input
+        lengthInput.addEventListener('input', function() {
+            const species = speciesInput.value;
+            const length = parseFloat(this.value);
+            
+            if (species && length && fishSpeciesData[species]) {
+                const validation = validateSpeciesLength(species, length);
+                if (!validation.isValid) {
+                    this.classList.add('border-yellow-400');
+                    
+                    // Show warning message
+                    let warningEl = this.parentElement.querySelector('.length-warning');
+                    if (!warningEl) {
+                        warningEl = document.createElement('div');
+                        warningEl.className = 'text-sm text-yellow-600 mt-1 length-warning';
+                        this.parentElement.appendChild(warningEl);
+                    }
+                    warningEl.textContent = validation.message;
+                } else {
+                    this.classList.remove('border-yellow-400');
+                    const warningEl = this.parentElement.querySelector('.length-warning');
+                    if (warningEl) warningEl.remove();
+                }
+            } else {
+                this.classList.remove('border-yellow-400');
+                const warningEl = this.parentElement.querySelector('.length-warning');
+                if (warningEl) warningEl.remove();
+            }
+        });
+
+        function setupSpeciesInput() {
+            const speciesInput = document.getElementById('species');
+            const dropdown = document.getElementById('species-dropdown');
+            const manageBtn = document.getElementById('manage-species-btn');
+            
+            // Setup species search with length-weight info
+            speciesInput.addEventListener('input', debounce(() => {
+                const query = speciesInput.value.trim().toLowerCase();
+                if (query.length < 1) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                const matches = predefinedSpecies.filter(s => 
+                    s.toLowerCase().includes(query)
+                ).sort((a, b) => a.localeCompare(b));
+
+                renderSpeciesDropdown(matches, query);
+            }, 200));
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!speciesInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Setup manage species button
+            manageBtn.addEventListener('click', openManageSpeciesModal);
+        }
+
+        function renderSpeciesDropdown(matches, query) {
+            const dropdown = document.getElementById('species-dropdown');
+            dropdown.innerHTML = '';
+
+            if (matches.length === 0) {
+                const addNew = document.createElement('div');
+                addNew.className = 'p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2';
+                addNew.innerHTML = `
+                    <span class="text-green-600">+</span>
+                    <span>Add "${query}" as custom species</span>
+                `;
+                addNew.onclick = () => openAddSpeciesModal(query);
+                dropdown.appendChild(addNew);
+            } else {
+                matches.forEach(species => {
+                    const div = document.createElement('div');
+                    div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
+                    
+                    // Add species info if available
+                    const data = fishSpeciesData[species];
+                    const infoText = data ? 
+                        `(${data.minLength}-${data.maxLength}cm)` : 
+                        '(Custom species)';
+                    
+                    div.innerHTML = `
+                        <div class="font-medium">${species}</div>
+                        <div class="text-xs text-gray-500">${infoText}</div>
+                    `;
+                    
+                    div.onclick = () => {
+                        document.getElementById('species').value = species;
+                        dropdown.classList.add('hidden');
+                        
+                        // Clear length/weight warnings
+                        const lengthWarning = document.querySelector('.length-warning');
+                        const weightWarning = document.querySelector('.weight-warning');
+                        if (lengthWarning) lengthWarning.remove();
+                        if (weightWarning) weightWarning.remove();
+                        
+                        // Trigger length validation if length is already entered
+                        const length = parseFloat(document.getElementById('length').value);
+                        if (length) {
+                            lengthInput.dispatchEvent(new Event('input'));
+                        }
+                    };
+                    dropdown.appendChild(div);
+                });
+            }
+
+            dropdown.classList.remove('hidden');
+        }
+
+        // Initialize species management
+        document.addEventListener('DOMContentLoaded', () => {
             // Initialize IndexedDB
-            const request = indexedDB.open('FishingLogDB', 1);
+            const request = indexedDB.open('FishingLogDB', 2);
             
             request.onupgradeneeded = function(event) {
                 const db = event.target.result;
                 if (!db.objectStoreNames.contains('catches')) {
                     db.createObjectStore('catches', { keyPath: 'id' });
                 }
+                if (!db.objectStoreNames.contains('species')) {
+                    const speciesStore = db.createObjectStore('species', { keyPath: 'name' });
+                    // Add predefined species
+                    predefinedSpecies.forEach(species => {
+                        speciesStore.add({ name: species, isPredefined: true });
+                    });
+                }
             };
             
             request.onsuccess = function(event) {
                 console.log('IndexedDB initialized successfully');
-                // Check if we should show the app view
-                if (window.location.hash === '#app') {
-                    showApp();
-                }
             };
             
             request.onerror = function(event) {
                 console.error('Failed to initialize IndexedDB:', event.target.error);
                 showMessage('Database error. Please refresh the page.', 'error');
             };
+
+            // Set up enter app button handlers
+            const enterAppBtn = document.getElementById('enter-app-btn');
+            enterAppBtn.addEventListener('click', showApp);
+            document.getElementById('back-to-landing-btn').addEventListener('click', showLandingPage);
+            
+            // Set default date/time
+            setDefaultDateTime();
+            
+            // Initialize species management
+            setupSpeciesInput();
+            
+            // Check if we should show the app view
+            if (window.location.hash === '#app') {
+                showApp();
+            }
         });
     </script>
 
