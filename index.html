@@ -461,25 +461,25 @@
         // --- Species Data and Calculations ---
         const fishSpeciesData = {
             // Freshwater Species
-            'Bass, Largemouth': { a: 0.000013, b: 3.0, minLength: 20, maxLength: 70 }, // Standard bass coefficient
-            'Carp, Common': { a: 0.000018, b: 3.0, minLength: 30, maxLength: 100 }, // Adjusted for typical carp weights
-            'Carp, Mirror': { a: 0.000018, b: 3.0, minLength: 30, maxLength: 100 }, // Similar to Common Carp
-            'Carp, Grass': { a: 0.000015, b: 3.0, minLength: 30, maxLength: 120 }, // Slightly lighter than Common Carp
-            'Barbel, Sharptooth Catfish': { a: 0.000016, b: 3.0, minLength: 30, maxLength: 150 }, // Adjusted for catfish body type
-            'Yellowfish, Smallscale': { a: 0.000012, b: 3.0, minLength: 20, maxLength: 60 }, // Adjusted for yellowfish build
-            'Tilapia, Mozambique': { a: 0.000020, b: 3.0, minLength: 15, maxLength: 40 }, // Adjusted for tilapia body shape
+            'Bass, Largemouth': { a: 0.0136, b: 3.0, minLength: 20, maxLength: 70 }, // Standard bass coefficient
+            'Carp, Common': { a: 0.0185, b: 3.0, minLength: 30, maxLength: 100 }, // Adjusted for typical carp weights
+            'Carp, Mirror': { a: 0.0182, b: 3.0, minLength: 30, maxLength: 100 }, // Similar to Common Carp
+            'Carp, Grass': { a: 0.0150, b: 3.0, minLength: 30, maxLength: 120 }, // Slightly lighter than Common Carp
+            'Barbel, Sharptooth Catfish': { a: 0.0160, b: 3.0, minLength: 30, maxLength: 150 }, // Adjusted for catfish body type
+            'Yellowfish, Smallscale': { a: 0.0120, b: 3.0, minLength: 20, maxLength: 60 }, // Adjusted for yellowfish build
+            'Tilapia, Mozambique': { a: 0.0200, b: 3.0, minLength: 15, maxLength: 40 }, // Adjusted for tilapia body shape
             
             // Marine Species
-            'Kob, Dusky': { a: 0.000014, b: 3.0, minLength: 40, maxLength: 130 },
-            'Galjoen': { a: 0.000022, b: 3.0, minLength: 30, maxLength: 70 },
-            'Yellowtail': { a: 0.000016, b: 3.0, minLength: 50, maxLength: 120 },
-            'Cape Salmon (Geelbek)': { a: 0.000012, b: 3.0, minLength: 60, maxLength: 130 },
-            'Garrick (Leervis)': { a: 0.000015, b: 3.0, minLength: 50, maxLength: 120 },
-            'Blacktail (Dassie)': { a: 0.000020, b: 3.0, minLength: 20, maxLength: 45 },
-            'White Steenbras': { a: 0.000018, b: 3.0, minLength: 40, maxLength: 90 },
-            'Red Steenbras': { a: 0.000019, b: 3.0, minLength: 50, maxLength: 100 },
-            'White Musselcracker': { a: 0.000020, b: 3.0, minLength: 40, maxLength: 110 },
-            'Black Musselcracker': { a: 0.000021, b: 3.0, minLength: 50, maxLength: 120 }
+            'Kob, Dusky': { a: 0.0140, b: 3.0, minLength: 40, maxLength: 130 },
+            'Galjoen': { a: 0.0220, b: 3.0, minLength: 30, maxLength: 70 },
+            'Yellowtail': { a: 0.0160, b: 3.0, minLength: 50, maxLength: 120 },
+            'Cape Salmon (Geelbek)': { a: 0.0120, b: 3.0, minLength: 60, maxLength: 130 },
+            'Garrick (Leervis)': { a: 0.0150, b: 3.0, minLength: 50, maxLength: 120 },
+            'Blacktail (Dassie)': { a: 0.0200, b: 3.0, minLength: 20, maxLength: 45 },
+            'White Steenbras': { a: 0.0180, b: 3.0, minLength: 40, maxLength: 90 },
+            'Red Steenbras': { a: 0.0190, b: 3.0, minLength: 50, maxLength: 100 },
+            'White Musselcracker': { a: 0.0200, b: 3.0, minLength: 40, maxLength: 110 },
+            'Black Musselcracker': { a: 0.0210, b: 3.0, minLength: 50, maxLength: 120 }
         };
 
         function calculateExpectedWeight(species, length) {
