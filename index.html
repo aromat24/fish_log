@@ -115,7 +115,7 @@
                     <span class="lucide"></span> Ghoti - Hooked Logbook
                 </h1>
 
-                <form id="catch-form" class="mb-8 space-y-4">
+                <form id="catch-form" class="mb-8 space-y-4" onsubmit="return false;" novalidate>
                     <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
 
                     <div>
@@ -167,6 +167,7 @@
                         </div>
                         <input type="hidden" id="latitude" name="latitude">
                         <input type="hidden" id="longitude" name="longitude">
+                        <input type="hidden" id="location-name" name="location-name">
                     </div>
 
                     <div class="photo-upload">
@@ -184,14 +185,36 @@
 
                 <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">
-                        <h2 class="text-xl font-semibold text-gray-700">Catch History</h2>
-                        <button id="back-to-landing-btn" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                            <span class="lucide text-base"></span> Back to Home
-                        </button>
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-xl font-semibold text-gray-700">Catch History</h2>
+                            <button id="toggle-view-btn" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium flex items-center gap-1">
+                                <span class="view-text">View Records</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="dropdown relative">
+                                <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
+                                    Data Options ▾
+                                </button>
+                                <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+                                    <button id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
+                                        <span class="text-gray-600">↓</span> Export Data
+                                    </button>
+                                    <label for="import-data-input" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
+                                        <span class="text-gray-600">↑</span> Import Data
+                                    </label>
+                                    <input type="file" id="import-data-input" accept=".json" class="hidden">
+                                </div>
+                            </div>
+                            <button id="back-to-landing-btn" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                                <span class="lucide text-base"></span> Back to Home
+                            </button>
+                        </div>
                     </div>
                     <div id="catch-log" class="space-y-4">
                         <p class="text-gray-500 italic">No catches logged yet.</p>
                     </div>
+                    <div id="records-container" class="hidden space-y-4"></div>
                     <button id="clear-log-btn" class="mt-6 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm flex items-center gap-1 hidden">
                         <span class="lucide"></span> Clear All Logs
                     </button>
@@ -375,7 +398,36 @@
         </div>
     </div>
 
+    <!-- Add confirmation modal -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-sm">
+            <h3 class="text-xl font-bold text-gray-800 mb-4" id="confirmation-title"></h3>
+            <p class="text-gray-600 mb-6" id="confirmation-message"></p>
+            <div class="flex gap-3">
+                <button id="confirm-action-btn" class="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
+                    Delete
+                </button>
+                <button id="cancel-action-btn" class="flex-1 px-4 py-2 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Add debounce utility function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
         // DOM Elements
         const landingPage = document.getElementById('landing-page');
         const appContent = document.getElementById('app-content');
@@ -392,9 +444,16 @@
         const locationStatus = document.getElementById('location-status');
         const latitudeInput = document.getElementById('latitude');
         const longitudeInput = document.getElementById('longitude');
+        const locationNameInput = document.getElementById('location-name');
         const catchLogContainer = document.getElementById('catch-log');
         const clearLogBtn = document.getElementById('clear-log-btn');
         const messageBox = document.getElementById('message-box');
+        const recordsContainer = document.getElementById('records-container');
+        const toggleViewBtn = document.getElementById('toggle-view-btn');
+        const exportDataBtn = document.getElementById('export-data-btn');
+        const importDataInput = document.getElementById('import-data-input');
+        const dataOptionsBtn = document.getElementById('data-options-btn');
+        const dataOptionsMenu = document.getElementById('data-options-menu');
 
         let currentPage = 0;
         const itemsPerPage = 5;
@@ -402,25 +461,25 @@
         // --- Species Data and Calculations ---
         const fishSpeciesData = {
             // Freshwater Species
-            'Bass, Largemouth': { a: 0.0115, b: 3.0, minLength: 20, maxLength: 70 },
-            'Carp, Common': { a: 0.0305, b: 3.0, minLength: 30, maxLength: 100 },
-            'Carp, Mirror': { a: 0.0305, b: 3.0, minLength: 30, maxLength: 100 },
-            'Carp, Grass': { a: 0.0230, b: 3.0, minLength: 30, maxLength: 120 },
-            'Barbel, Sharptooth Catfish': { a: 0.0260, b: 3.0, minLength: 30, maxLength: 150 },
-            'Yellowfish, Smallscale': { a: 0.0140, b: 3.0, minLength: 20, maxLength: 60 },
-            'Tilapia, Mozambique': { a: 0.0180, b: 3.0, minLength: 15, maxLength: 40 },
+            'Bass, Largemouth': { a: 0.000013, b: 3.0, minLength: 20, maxLength: 70 }, // Standard bass coefficient
+            'Carp, Common': { a: 0.000018, b: 3.0, minLength: 30, maxLength: 100 }, // Adjusted for typical carp weights
+            'Carp, Mirror': { a: 0.000018, b: 3.0, minLength: 30, maxLength: 100 }, // Similar to Common Carp
+            'Carp, Grass': { a: 0.000015, b: 3.0, minLength: 30, maxLength: 120 }, // Slightly lighter than Common Carp
+            'Barbel, Sharptooth Catfish': { a: 0.000016, b: 3.0, minLength: 30, maxLength: 150 }, // Adjusted for catfish body type
+            'Yellowfish, Smallscale': { a: 0.000012, b: 3.0, minLength: 20, maxLength: 60 }, // Adjusted for yellowfish build
+            'Tilapia, Mozambique': { a: 0.000020, b: 3.0, minLength: 15, maxLength: 40 }, // Adjusted for tilapia body shape
             
             // Marine Species
-            'Kob, Dusky': { a: 0.0082, b: 3.0, minLength: 40, maxLength: 130 },
-            'Galjoen': { a: 0.0220, b: 3.0, minLength: 30, maxLength: 70 },
-            'Yellowtail': { a: 0.0126, b: 3.0, minLength: 50, maxLength: 120 },
-            'Cape Salmon (Geelbek)': { a: 0.0074, b: 3.0, minLength: 60, maxLength: 130 },
-            'Garrick (Leervis)': { a: 0.0091, b: 3.0, minLength: 50, maxLength: 120 },
-            'Blacktail (Dassie)': { a: 0.0180, b: 3.0, minLength: 20, maxLength: 45 },
-            'White Steenbras': { a: 0.0160, b: 3.0, minLength: 40, maxLength: 90 },
-            'Red Steenbras': { a: 0.0185, b: 3.0, minLength: 50, maxLength: 100 },
-            'White Musselcracker': { a: 0.0200, b: 3.0, minLength: 40, maxLength: 110 },
-            'Black Musselcracker': { a: 0.0210, b: 3.0, minLength: 50, maxLength: 120 }
+            'Kob, Dusky': { a: 0.000014, b: 3.0, minLength: 40, maxLength: 130 },
+            'Galjoen': { a: 0.000022, b: 3.0, minLength: 30, maxLength: 70 },
+            'Yellowtail': { a: 0.000016, b: 3.0, minLength: 50, maxLength: 120 },
+            'Cape Salmon (Geelbek)': { a: 0.000012, b: 3.0, minLength: 60, maxLength: 130 },
+            'Garrick (Leervis)': { a: 0.000015, b: 3.0, minLength: 50, maxLength: 120 },
+            'Blacktail (Dassie)': { a: 0.000020, b: 3.0, minLength: 20, maxLength: 45 },
+            'White Steenbras': { a: 0.000018, b: 3.0, minLength: 40, maxLength: 90 },
+            'Red Steenbras': { a: 0.000019, b: 3.0, minLength: 50, maxLength: 100 },
+            'White Musselcracker': { a: 0.000020, b: 3.0, minLength: 40, maxLength: 110 },
+            'Black Musselcracker': { a: 0.000021, b: 3.0, minLength: 50, maxLength: 120 }
         };
 
         function calculateExpectedWeight(species, length) {
@@ -428,11 +487,11 @@
             if (!data) return null;
             
             // W = a * L^b where:
-            // W is weight in kg
+            // W is weight in grams
             // L is length in cm
             // a and b are species-specific parameters
-            const weight = data.a * Math.pow(length, data.b);
-            return parseFloat(weight.toFixed(2));
+            const weightInGrams = (data.a * Math.pow(length, data.b)); // Remove the * 1000 since 'a' coefficient is already in the right scale
+            return parseFloat(weightInGrams.toFixed(0));
         }
 
         function getWeightRange(species, length) {
@@ -440,9 +499,22 @@
             if (!expectedWeight) return null;
             
             // Calculate a range of ±15% from the expected weight
-            const minWeight = (expectedWeight * 0.85).toFixed(2);
-            const maxWeight = (expectedWeight * 1.15).toFixed(2);
-            return { min: minWeight, max: maxWeight, expected: expectedWeight };
+            const minWeight = Math.round(expectedWeight * 0.85);
+            const maxWeight = Math.round(expectedWeight * 1.15);
+
+            // Format the weights with appropriate units
+            const formatWeight = (weight) => {
+                if (weight >= 1000) {
+                    return (weight / 1000).toFixed(2) + 'kg';
+                }
+                return weight + 'g';
+            };
+
+            return {
+                min: formatWeight(minWeight),
+                max: formatWeight(maxWeight),
+                expected: formatWeight(expectedWeight)
+            };
         }
 
         // Update predefined species list with the new species data
@@ -468,6 +540,7 @@
             }, 50);
             renderCatches();
             setDefaultDateTime();
+            displayCatchStats();
         }
 
         function showLandingPage() {
@@ -493,14 +566,24 @@
                 return 'Invalid Date';
             }
             const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-            return localDate.toLocaleString('en-GB', {
+            return localDate.toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
-                year: 'numeric',
+                year: 'numeric'
+            }) + ' - ' + localDate.toLocaleTimeString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false
             });
+        }
+
+        // Improve weight formatting display
+        function formatWeight(weight) {
+            if (!weight) return '';
+            const weightInGrams = weight * 1000; // Convert kg to g
+            return weightInGrams >= 1000 ? 
+                `Weight: ${(weightInGrams/1000).toFixed(2)} kg` : 
+                `Weight: ${Math.round(weightInGrams)} g`;
         }
 
          function setDefaultDateTime() {
@@ -532,45 +615,9 @@
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    
-                    // Show location name modal
-                    const locationNameModal = document.getElementById('location-name-modal');
-                    const locationNameInput = document.getElementById('modal-location-name-input');
-                    const locationNameForm = document.getElementById('location-name-form');
-                    const cancelLocationNameBtn = document.getElementById('cancel-location-name-btn');
-
-                    locationNameModal.classList.remove('hidden');
-                    locationNameInput.value = '';
-
-                    locationNameForm.onsubmit = (e) => {
-                        e.preventDefault();
-                        const locationName = locationNameInput.value.trim();
-                        if (locationName) {
-                            latitudeInput.value = lat;
-                            longitudeInput.value = lon;
-                            document.getElementById('location-name').value = locationName;
-                            locationStatus.textContent = `Location saved: ${locationName}`;
-                            locationStatus.classList.add('text-green-600');
-                        } else {
-                            locationStatus.textContent = 'Location not saved.';
-                            locationStatus.classList.remove('text-green-600');
-                            latitudeInput.value = '';
-                            longitudeInput.value = '';
-                        }
-                        locationNameModal.classList.add('hidden');
-                        getLocationBtn.disabled = false;
-                        getLocationBtn.classList.remove('btn-disabled');
-                    };
-
-                    cancelLocationNameBtn.onclick = () => {
-                        locationNameModal.classList.add('hidden');
-                        locationStatus.textContent = 'Location not saved.';
-                        locationStatus.classList.remove('text-green-600');
-                        latitudeInput.value = '';
-                        longitudeInput.value = '';
-                        getLocationBtn.disabled = false;
-                        getLocationBtn.classList.remove('btn-disabled');
-                    };
+                    saveLocation(lat, lon);
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.classList.remove('btn-disabled');
                 },
                 (error) => {
                     let errorMsg = 'Unable to retrieve location.';
@@ -588,6 +635,69 @@
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
+
+        // Location tracking functionality
+        getLocationBtn.addEventListener('click', handleGetLocation);
+
+        // Function to handle the location name modal
+        function handleLocationNameModal(locationData) {
+            const modal = document.getElementById('location-name-modal');
+            const input = document.getElementById('modal-location-name-input');
+            const form = document.getElementById('location-name-form');
+            
+            modal.classList.remove('hidden');
+            input.value = '';
+            
+            return new Promise((resolve, reject) => {
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    const name = input.value.trim();
+                    if (name) {
+                        resolve({
+                            ...locationData,
+                            locationName: name
+                        });
+                    } else {
+                        reject(new Error('No location name provided'));
+                    }
+                    modal.classList.add('hidden');
+                };
+                
+                document.getElementById('cancel-location-name-btn').onclick = () => {
+                    modal.classList.add('hidden');
+                    reject(new Error('Location name cancelled'));
+                };
+            });
+        }
+
+        // Function to save location data
+        async function saveLocation(latitude, longitude) {
+            try {
+                const locationData = await handleLocationNameModal({ latitude, longitude });
+                latitudeInput.value = locationData.latitude;
+                longitudeInput.value = locationData.longitude;
+                document.getElementById('location-name').value = locationData.locationName;
+                locationStatus.textContent = `Location saved: ${locationData.locationName}`;
+                locationStatus.classList.add('text-green-600');
+                return true;
+            } catch (error) {
+                locationStatus.textContent = 'Location not saved.';
+                locationStatus.classList.remove('text-green-600');
+                latitudeInput.value = '';
+                longitudeInput.value = '';
+                document.getElementById('location-name').value = '';
+                return false;
+            }
+        }
+
+        // Initialize location modal events
+        document.getElementById('location-name-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.currentTarget.classList.add('hidden');
+                locationStatus.textContent = 'Location not saved.';
+                locationStatus.classList.remove('text-green-600');
+            }
+        });
 
         // --- Local Storage & Data Handling ---
         if (typeof localStorage === 'undefined' || localStorage === null) {
@@ -634,11 +744,14 @@
 
         function addCatch(event) {
             event.preventDefault();
+            event.stopPropagation();
+            
+            if (!speciesInput.value.trim() || !datetimeInput.value) {
+                showMessage("Species and Date/Time are required.", 'error');
+                return;
+            }
 
-            const locationNameInput = document.getElementById('location-name');
             const photoInput = document.getElementById('photo');
-
-            // Convert photo to Base64 if a file is uploaded
             const photoFile = photoInput.files[0];
 
             if (photoFile) {
@@ -646,12 +759,12 @@
                     const newCatch = createCatchObject({
                         species: speciesInput.value.trim(),
                         length: lengthInput.value ? parseFloat(lengthInput.value) : null,
-                        weight: weightInput.value ? parseFloat(lengthInput.value) : null,
+                        weight: weightInput.value ? parseFloat(weightInput.value) : null,
                         datetime: datetimeInput.value,
                         notes: notesInput.value.trim(),
                         latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                        longitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                        locationName: locationNameInput.value.trim() || null,
+                        longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                        locationName: document.getElementById('location-name').value.trim() || null,
                         photo: resizedDataUrl
                     });
                     saveCatchToIndexedDB(newCatch);
@@ -660,12 +773,12 @@
                 const newCatch = createCatchObject({
                     species: speciesInput.value.trim(),
                     length: lengthInput.value ? parseFloat(lengthInput.value) : null,
-                    weight: weightInput.value ? parseFloat(lengthInput.value) : null,
+                    weight: weightInput.value ? parseFloat(weightInput.value) : null,
                     datetime: datetimeInput.value,
                     notes: notesInput.value.trim(),
                     latitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                    longitude: latitudeInput.value ? parseFloat(latitudeInput.value) : null,
-                    locationName: locationNameInput.value.trim() || null,
+                    longitude: longitudeInput.value ? parseFloat(longitudeInput.value) : null,
+                    locationName: document.getElementById('location-name').value.trim() || null,
                     photo: null
                 });
                 saveCatchToIndexedDB(newCatch);
@@ -674,26 +787,19 @@
 
 
         async function deleteCatch(id) {
-            if (!confirm('Are you sure you want to delete this catch?')) {
-                return;
-            }
+            const confirmed = await showConfirmationModal(
+                "Delete Catch",
+                "Are you sure you want to delete this catch? This action cannot be undone."
+            );
+
+            if (!confirmed) return;
 
             try {
-                const db = await new Promise((resolve, reject) => {
-                    const request = indexedDB.open('FishingLogDB', 1);
-                    request.onerror = () => reject(request.error);
-                    request.onsuccess = () => resolve(request.result);
-                });
-
+                const db = await openDB();
                 const transaction = db.transaction('catches', 'readwrite');
                 const store = transaction.objectStore('catches');
+                await store.delete(id);
                 
-                await new Promise((resolve, reject) => {
-                    const request = store.delete(id);
-                    request.onerror = () => reject(request.error);
-                    request.onsuccess = () => resolve();
-                });
-
                 closeCatchModal();
                 renderCatches();
                 showMessage('Catch deleted successfully!', 'success');
@@ -704,28 +810,38 @@
         }
 
 
-        function clearAllLogs() {
-            const confirmation = confirm("Are you sure you want to delete ALL logged catches? This cannot be undone.");
-            if (confirmation) {
-                const request = indexedDB.open('FishingLogDB', 1);
+        async function deleteCustomSpecies(name) {
+            const confirmed = await showConfirmationModal(
+                "Delete Species",
+                `Are you sure you want to delete "${name}" from custom species? This action cannot be undone.`
+            );
+            
+            if (!confirmed) return;
+            
+            const db = await openDB();
+            const transaction = db.transaction('species', 'readwrite');
+            const store = transaction.objectStore('species');
+            
+            await store.delete(name);
+            openManageSpeciesModal(); // Refresh the list
+        }
 
-                request.onsuccess = function (event) {
-                    const db = event.target.result;
-                    const transaction = db.transaction('catches', 'readwrite');
-                    const store = transaction.objectStore('catches');
-                    const clearRequest = store.clear();
 
-                    clearRequest.onsuccess = function () {
-                        renderCatches(); // Refresh the UI
-                        showMessage('All catches cleared.', 'success');
-                    };
+        async function clearAllLogs() {
+            const confirmed = await showConfirmationModal(
+                "Clear All Logs",
+                "Are you sure you want to delete ALL logged catches? This action cannot be undone."
+            );
 
-                    clearRequest.onerror = function (event) {
-                        console.error('Failed to clear logs:', event.target.error);
-                        showMessage('Failed to clear logs. Please try again.', 'error');
-                    };
-                };
-            }
+            if (!confirmed) return;
+
+            const db = await openDB();
+            const transaction = db.transaction('catches', 'readwrite');
+            const store = transaction.objectStore('catches');
+            await store.clear();
+            
+            renderCatches();
+            showMessage('All catches cleared.', 'success');
         }
 
 
@@ -745,6 +861,9 @@
                 catchLogContainer.innerHTML = '<p class="text-gray-500 italic">No catches logged yet.</p>';
                 return;
             }
+
+            // Sort catches by date in descending order (latest first)
+            catches.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
             catches.forEach(c => {
                 const catchElement = document.createElement('div');
@@ -778,7 +897,7 @@
         }
 
         function renderCatches(page = 0) {
-            const request = indexedDB.open('FishingLogDB', 1);
+            const request = indexedDB.open('FishingLogDB', 2);
 
             request.onsuccess = function (event) {
                 const db = event.target.result;
@@ -788,6 +907,9 @@
 
                 getAllRequest.onsuccess = function () {
                     const catches = getAllRequest.result;
+                    // Sort catches by date in descending order (latest first)
+                    catches.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+                    
                     const totalPages = Math.ceil(catches.length / itemsPerPage);
                     const start = page * itemsPerPage;
                     const end = start + itemsPerPage;
@@ -795,7 +917,7 @@
 
                     renderCatchesUI(paginatedCatches);
 
-                    // Show/hide pagination controls based on total catches
+                    // Show/hide pagination controls
                     const paginationControls = document.getElementById('pagination-controls');
                     if (catches.length > itemsPerPage) {
                         paginationControls.classList.remove('hidden');
@@ -841,7 +963,7 @@
             modalDate.textContent = formatDate(new Date(catchData.datetime));
             
             modalLength.textContent = catchData.length ? `Length: ${catchData.length} cm` : '';
-            modalWeight.textContent = catchData.weight ? `Weight: ${catchData.weight} kg` : '';
+            modalWeight.textContent = formatWeight(catchData.weight);
             
             // Handle location display - make location name clickable
             if (catchData.latitude && catchData.longitude) {
@@ -924,7 +1046,6 @@
                 if (file) {
                     editPhotoText.textContent = '✓ New photo selected';
                     editPhotoBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
-                    editPhotoBtn.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-700');
                 } else {
                     editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
                     editPhotoBtn.classList.remove('bg-green-100', 'hover:bg-green-200', 'text-green-700');
@@ -949,7 +1070,6 @@
             const fullscreen = document.getElementById('fullscreen-image');
             const img = document.getElementById('fullscreen-image-content');
             img.src = src;
-            fullscreen.classList.remove('hidden');
             
             // Prevent modal close when clicking the image
             img.onclick = (e) => {
@@ -1113,27 +1233,43 @@
                 return;
             }
 
-            const request = indexedDB.open('FishingLogDB', 1);
+            // If no weight is provided but we have length and species, use the estimated weight
+            if (!newCatch.weight && newCatch.length && newCatch.species && fishSpeciesData[newCatch.species]) {
+                const estimatedWeight = calculateExpectedWeight(newCatch.species, newCatch.length);
+                if (estimatedWeight) {
+                    newCatch.weight = estimatedWeight / 1000; // Convert grams to kg for storage
+                }
+            }
+
+            const request = indexedDB.open('FishingLogDB', 2);
+            
+            request.onupgradeneeded = function(event) {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('catches')) {
+                    db.createObjectStore('catches', { keyPath: 'id' });
+                }
+            };
             
             request.onsuccess = function(event) {
                 const db = event.target.result;
                 const transaction = db.transaction('catches', 'readwrite');
                 const store = transaction.objectStore('catches');
                 
-                store.add(newCatch);
+                const addRequest = store.add(newCatch);
 
-                transaction.oncomplete = function() {
+                addRequest.onsuccess = function() {
                     renderCatches();
                     catchForm.reset();
                     setDefaultDateTime();
                     latitudeInput.value = '';
                     longitudeInput.value = '';
+                    document.getElementById('location-name').value = '';
                     locationStatus.textContent = 'Location not saved.';
-                    locationStatus.classList.remove('text-green-600', 'text-red-600');
+                    locationStatus.classList.remove('text-green-600');
                     showMessage('Catch logged successfully!', 'success');
                 };
 
-                transaction.onerror = function(event) {
+                addRequest.onerror = function(event) {
                     console.error('Failed to save catch:', event.target.error);
                     showMessage('Failed to save catch. Please try again.', 'error');
                 };
@@ -1151,40 +1287,37 @@
             const length = parseFloat(this.value);
             
             if (species && length && fishSpeciesData[species]) {
-                const weightRange = getWeightRange(species, length);
-                if (weightRange) {
-                    const weightTip = document.createElement('div');
-                    weightTip.className = 'text-sm text-gray-600 mt-1';
-                    weightTip.textContent = `Expected weight: ${weightRange.expected}kg (${weightRange.min}-${weightRange.max}kg)`;
-                    
-                    // Update or add the weight tip
-                    const existingTip = weightInput.parentElement.querySelector('.weight-tip');
-                    if (existingTip) {
-                        existingTip.replaceWith(weightTip);
-                    } else {
-                        weightInput.parentElement.appendChild(weightTip);
+                const expectedWeight = calculateExpectedWeight(species, length);
+                if (expectedWeight) {
+                    const weightInKg = expectedWeight / 1000; // Convert grams to kg for the input
+                    // Only set the weight if it's empty or was previously auto-filled
+                    if (!weightInput.value || weightInput.dataset.autoFilled === 'true') {
+                        weightInput.value = weightInKg.toFixed(3); // Back to 3 decimal places
+                        weightInput.dataset.autoFilled = 'true';
                     }
-                    weightTip.classList.add('weight-tip');
-                }
-            } else {
-                // Remove existing weight tip if present
-                const existingTip = weightInput.parentElement.querySelector('.weight-tip');
-                if (existingTip) {
-                    existingTip.remove();
                 }
             }
         });
 
-        // Validate weight against expected range
+        // Modify the weight validation to handle grams
         weightInput.addEventListener('input', function() {
             const species = speciesInput.value;
             const length = parseFloat(lengthInput.value);
-            const weight = parseFloat(this.value);
+            const weight = parseFloat(this.value) * 1000; // Convert kg input to grams
             
             if (species && length && weight && fishSpeciesData[species]) {
-                const weightRange = getWeightRange(species, length);
-                if (weightRange) {
-                    const isWithinRange = weight >= weightRange.min && weight <= weightRange.max;
+                // First check if length is within valid range for species
+                const lengthValidation = validateSpeciesLength(species, length);
+                if (!lengthValidation.isValid) {
+                    return; // Don't validate weight if length is invalid
+                }
+                
+                const expectedWeight = calculateExpectedWeight(species, length);
+                if (expectedWeight) {
+                    // Allow a wider range of ±25% for natural variation
+                    const minWeight = expectedWeight * 0.75;
+                    const maxWeight = expectedWeight * 1.25;
+                    const isWithinRange = weight >= minWeight && weight <= maxWeight;
                     
                     // Add visual feedback
                     if (!isWithinRange) {
@@ -1197,7 +1330,7 @@
                             warningEl.className = 'text-sm text-yellow-600 mt-1 weight-warning';
                             this.parentElement.appendChild(warningEl);
                         }
-                        warningEl.textContent = `Warning: Weight seems unusual for this species and length`;
+                        warningEl.textContent = `Warning: Weight seems unusual for this species and length. Expected range: ${(minWeight/1000).toFixed(3)}kg - ${(maxWeight/1000).toFixed(3)}kg`;
                     } else {
                         this.classList.remove('border-yellow-400');
                         const warningEl = this.parentElement.querySelector('.weight-warning');
@@ -1256,12 +1389,16 @@
             }
         });
 
+        // Update setupSpeciesInput function to re-enable custom species
         function setupSpeciesInput() {
             const speciesInput = document.getElementById('species');
             const dropdown = document.getElementById('species-dropdown');
             const manageBtn = document.getElementById('manage-species-btn');
             
-            // Setup species search with length-weight info
+            // Show manage species button
+            manageBtn.style.display = '';
+            
+            // Setup species search
             speciesInput.addEventListener('input', debounce(() => {
                 const query = speciesInput.value.trim().toLowerCase();
                 if (query.length < 1) {
@@ -1269,12 +1406,53 @@
                     return;
                 }
 
-                const matches = predefinedSpecies.filter(s => 
-                    s.toLowerCase().includes(query)
-                ).sort((a, b) => a.localeCompare(b));
+                // Get all predefined species first
+                const predefinedMatches = Object.keys(fishSpeciesData)
+                    .filter(s => s.toLowerCase().includes(query));
 
-                renderSpeciesDropdown(matches, query);
-            }, 200));
+                // Get custom species from IndexedDB
+                const request = indexedDB.open('FishingLogDB', 2);
+                request.onsuccess = function(event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction('species', 'readonly');
+                    const store = transaction.objectStore('species');
+                    const getAllRequest = store.getAll();
+
+                    getAllRequest.onsuccess = function() {
+                        const customSpecies = getAllRequest.result
+                            .filter(s => !s.isPredefined && s.name.toLowerCase().includes(query))
+                            .map(s => s.name);
+
+                        const allMatches = [...predefinedMatches, ...customSpecies];
+                        
+                        dropdown.innerHTML = '';
+                        
+                        if (allMatches.length === 0) {
+                            const addNew = document.createElement('div');
+                            addNew.className = 'p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2';
+                            addNew.innerHTML = `
+                                <span class="text-green-600">+</span>
+                                <span>Add "${query}" as custom species</span>
+                            `;
+                            addNew.onclick = () => openAddSpeciesModal(query);
+                            dropdown.appendChild(addNew);
+                        } else {
+                            allMatches.forEach(species => {
+                                const option = document.createElement('div');
+                                option.className = 'p-2 hover:bg-gray-100 cursor-pointer';
+                                option.textContent = species;
+                                option.onclick = () => {
+                                    speciesInput.value = species;
+                                    dropdown.classList.add('hidden');
+                                };
+                                dropdown.appendChild(option);
+                            });
+                        }
+                        
+                        dropdown.classList.remove('hidden');
+                    };
+                };
+            }, 300));
 
             // Hide dropdown when clicking outside
             document.addEventListener('click', (e) => {
@@ -1283,107 +1461,454 @@
                 }
             });
 
-            // Setup manage species button
-            manageBtn.addEventListener('click', openManageSpeciesModal);
+            // Handle manage species button click
+            manageBtn.addEventListener('click', () => {
+                openManageSpeciesModal();
+            });
         }
 
-        function renderSpeciesDropdown(matches, query) {
-            const dropdown = document.getElementById('species-dropdown');
-            dropdown.innerHTML = '';
+        // Modify the manageSpeciesBtn click handler
+        document.getElementById('add-species-btn').addEventListener('click', () => {
+            openAddSpeciesModal();
+        });
 
-            if (matches.length === 0) {
-                const addNew = document.createElement('div');
-                addNew.className = 'p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2';
-                addNew.innerHTML = `
-                    <span class="text-green-600">+</span>
-                    <span>Add "${query}" as custom species</span>
-                `;
-                addNew.onclick = () => openAddSpeciesModal(query);
-                dropdown.appendChild(addNew);
-            } else {
-                matches.forEach(species => {
-                    const div = document.createElement('div');
-                    div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
-                    
-                    // Add species info if available
-                    const data = fishSpeciesData[species];
-                    const infoText = data ? 
-                        `(${data.minLength}-${data.maxLength}cm)` : 
-                        '(Custom species)';
-                    
-                    div.innerHTML = `
-                        <div class="font-medium">${species}</div>
-                        <div class="text-xs text-gray-500">${infoText}</div>
-                    `;
-                    
-                    div.onclick = () => {
-                        document.getElementById('species').value = species;
-                        dropdown.classList.add('hidden');
-                        
-                        // Clear length/weight warnings
-                        const lengthWarning = document.querySelector('.length-warning');
-                        const weightWarning = document.querySelector('.weight-warning');
-                        if (lengthWarning) lengthWarning.remove();
-                        if (weightWarning) weightWarning.remove();
-                        
-                        // Trigger length validation if length is already entered
-                        const length = parseFloat(document.getElementById('length').value);
-                        if (length) {
-                            lengthInput.dispatchEvent(new Event('input'));
-                        }
-                    };
-                    dropdown.appendChild(div);
-                });
-            }
-
-            dropdown.classList.remove('hidden');
-        }
-
-        // Initialize species management
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize IndexedDB
-            const request = indexedDB.open('FishingLogDB', 2);
+        // Update custom species modal loading and display
+        async function openManageSpeciesModal() {
+            const modal = document.getElementById('manage-species-modal');
+            const list = document.getElementById('custom-species-list');
+            modal.classList.remove('hidden');
             
-            request.onupgradeneeded = function(event) {
-                const db = event.target.result;
-                if (!db.objectStoreNames.contains('catches')) {
-                    db.createObjectStore('catches', { keyPath: 'id' });
-                }
-                if (!db.objectStoreNames.contains('species')) {
-                    const speciesStore = db.createObjectStore('species', { keyPath: 'name' });
-                    // Add predefined species
-                    predefinedSpecies.forEach(species => {
-                        speciesStore.add({ name: species, isPredefined: true });
+            // Clear existing list
+            list.innerHTML = '';
+            
+            try {
+                const db = await openDB();
+                const transaction = db.transaction('species', 'readonly');
+                const store = transaction.objectStore('species');
+                const species = await store.getAll();
+                
+                // Sort and display custom species
+                const customSpecies = species.filter(s => !s.isPredefined);
+                
+                if (customSpecies.length === 0) {
+                    list.innerHTML = '<p class="text-gray-500 italic p-2">No custom species added yet.</p>';
+                } else {
+                    customSpecies
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .forEach(s => {
+                            const item = document.createElement('div');
+                            item.className = 'flex justify-between items-center p-2 border-b';
+                            item.innerHTML = `
+                                <span class="flex-grow">${s.name}</span>
+                                <button class="text-red-600 hover:text-red-800 delete-species-btn px-2" 
+                                        data-species="${s.name}" 
+                                        title="Delete species">✖</button>
+                            `;
+                            list.appendChild(item);
+                        });
+
+                    // Add delete event listeners
+                    list.querySelectorAll('.delete-species-btn').forEach(btn => {
+                        btn.onclick = async (e) => {
+                            e.stopPropagation();
+                            const speciesName = btn.dataset.species;
+                            await deleteCustomSpecies(speciesName);
+                        };
                     });
                 }
-            };
-            
-            request.onsuccess = function(event) {
-                console.log('IndexedDB initialized successfully');
-            };
-            
-            request.onerror = function(event) {
-                console.error('Failed to initialize IndexedDB:', event.target.error);
-                showMessage('Database error. Please refresh the page.', 'error');
-            };
+            } catch (error) {
+                console.error('Failed to load custom species:', error);
+                showMessage('Failed to load custom species. Please try again.', 'error');
+            }
+        }
 
-            // Set up enter app button handlers
-            const enterAppBtn = document.getElementById('enter-app-btn');
-            enterAppBtn.addEventListener('click', showApp);
-            document.getElementById('back-to-landing-btn').addEventListener('click', showLandingPage);
+        async function openAddSpeciesModal(initialValue = '') {
+            const modal = document.getElementById('species-modal');
+            const input = document.getElementById('new-species-name');
+            modal.classList.remove('hidden');
+            input.value = initialValue;
+            input.focus();
+        }
+
+        async function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('FishingLogDB', 2);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create catches store if it doesn't exist
+                    if (!db.objectStoreNames.contains('catches')) {
+                        db.createObjectStore('catches', { keyPath: 'id' });
+                    }
+                    
+                    // Create species store if it doesn't exist
+                    if (!db.objectStoreNames.contains('species')) {
+                        const speciesStore = db.createObjectStore('species', { keyPath: 'name' });
+                        
+                        // Add predefined species
+                        const transaction = event.target.transaction;
+                        const store = transaction.objectStore('species');
+                        Object.keys(fishSpeciesData).forEach(species => {
+                            store.add({ name: species, isPredefined: true }).catch(e => {
+                                console.warn('Failed to add predefined species:', e);
+                            });
+                        });
+                    }
+                };
+            });
+        }
+
+        // Initialize species management events
+        document.getElementById('species-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('new-species-name');
+            const name = input.value.trim();
             
-            // Set default date/time
-            setDefaultDateTime();
+            if (!name) return;
             
-            // Initialize species management
-            setupSpeciesInput();
+            const db = await openDB();
+            const transaction = db.transaction('species', 'readwrite');
+            const store = transaction.objectStore('species');
             
-            // Check if we should show the app view
-            if (window.location.hash === '#app') {
-                showApp();
+            try {
+                await store.add({ name, isPredefined: false });
+                document.getElementById('species-modal').classList.add('hidden');
+                openManageSpeciesModal();
+                showMessage(`Added "${name}" to custom species.`, 'success');
+            } catch (error) {
+                if (error.name === 'ConstraintError') {
+                    showMessage(`"${name}" already exists.`, 'error');
+                } else {
+                    showMessage('Failed to add species. Please try again.', 'error');
+                }
+            }
+        };
+
+        document.getElementById('cancel-species-btn').onclick = () => {
+            document.getElementById('species-modal').classList.add('hidden');
+        };
+
+        document.getElementById('close-manage-species-btn').onclick = () => {
+            document.getElementById('manage-species-modal').classList.add('hidden');
+        };
+
+        // Add data options dropdown functionality
+        dataOptionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dataOptionsMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dataOptionsBtn.contains(e.target)) {
+                dataOptionsMenu.classList.add('hidden');
             }
         });
-    </script>
 
+        // Export and import functionality
+        exportDataBtn.addEventListener('click', async () => {
+            const db = await openDB();
+            const catchTransaction = db.transaction('catches', 'readonly');
+            const speciesTransaction = db.transaction('species', 'readonly');
+            const catchStore = catchTransaction.objectStore('catches');
+            const speciesStore = speciesTransaction.objectStore('species');
+            
+            const catches = await catchStore.getAll();
+            const species = await speciesStore.getAll();
+            
+            const exportData = {
+                catches,
+                customSpecies: species.filter(s => !s.isPredefined)
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fishing-log-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            dataOptionsMenu.classList.add('hidden');
+        });
+
+        // Add import functionality
+        importDataInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate data structure
+                    if (!data.catches || !Array.isArray(data.catches)) {
+                        throw new Error('Invalid data format: catches not found');
+                    }
+
+                    const confirmed = await showConfirmationModal(
+                        "Import Data",
+                        "This will merge the imported catches with your existing data. Continue?"
+                    );
+
+                    if (!confirmed) {
+                        importDataInput.value = '';
+                        return;
+                    }
+
+                    const db = await openDB();
+                    
+                    // Import catches
+                    const catchTransaction = db.transaction('catches', 'readwrite');
+                    const catchStore = catchTransaction.objectStore('catches');
+                    
+                    // Import custom species if present
+                    if (data.customSpecies && Array.isArray(data.customSpecies)) {
+                        const speciesTransaction = db.transaction('species', 'readwrite');
+                        const speciesStore = speciesTransaction.objectStore('species');
+                        
+                        for (const species of data.customSpecies) {
+                            try {
+                                await speciesStore.add(species);
+                            } catch (e) {
+                                if (e.name !== 'ConstraintError') {
+                                    console.warn('Failed to import species:', e);
+                                }
+                            }
+                        }
+                    }
+
+                    // Import catches after species are imported
+                    for (const catch_ of data.catches) {
+                        try {
+                            await catchStore.add(catch_);
+                        } catch (e) {
+                            console.warn('Failed to import catch:', e);
+                        }
+                    }
+
+                    renderCatches();
+                    showMessage('Data imported successfully!', 'success');
+                } catch (error) {
+                    console.error('Import failed:', error);
+                    showMessage('Failed to import data. Please check the file format.', 'error');
+                }
+                
+                importDataInput.value = '';
+                dataOptionsMenu.classList.add('hidden');
+            };
+
+            reader.readAsText(file);
+        });
+
+        // Add confirmation modal functionality
+        function showConfirmationModal(title, message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmation-modal');
+                const titleEl = document.getElementById('confirmation-title');
+                const messageEl = document.getElementById('confirmation-message');
+                const confirmBtn = document.getElementById('confirm-action-btn');
+                const cancelBtn = document.getElementById('cancel-action-btn');
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                modal.classList.remove('hidden');
+
+                confirmBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    resolve(true);
+                };
+
+                cancelBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    resolve(false);
+                };
+
+                // Close on background click
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                        resolve(false);
+                    }
+                };
+            });
+        }
+
+        // Add displayCatchStats function
+        async function displayCatchStats() {
+            const db = await openDB();
+            const transaction = db.transaction('catches', 'readonly');
+            const store = transaction.objectStore('catches');
+            const catches = await store.getAll();
+
+            // If there are catches, show the clear log button
+            if (catches.length > 0) {
+                clearLogBtn.classList.remove('hidden');
+            } else {
+                clearLogBtn.classList.add('hidden');
+            }
+        }
+
+        // Initialize species input
+        setupSpeciesInput();
+
+        // Add event listeners
+        enterAppBtn.addEventListener('click', showApp);
+        backToLandingBtn.addEventListener('click', showLandingPage);
+        catchForm.addEventListener('submit', addCatch);
+        clearLogBtn.addEventListener('click', clearAllLogs);
+
+        // Add toggle view functionality
+        toggleViewBtn.addEventListener('click', function() {
+            const viewText = toggleViewBtn.querySelector('.view-text');
+            const isShowingRecords = viewText.textContent === 'View Catches';
+            
+            if (isShowingRecords) {
+                catchLogContainer.classList.remove('hidden');
+                recordsContainer.classList.add('hidden');
+                viewText.textContent = 'View Records';
+                renderCatches();
+            } else {
+                catchLogContainer.classList.add('hidden');
+                recordsContainer.classList.remove('hidden');
+                viewText.textContent = 'View Catches';
+                renderRecords();
+            }
+        });
+
+        // Update records view to sort by weight
+        function renderRecords() {
+            const request = indexedDB.open('FishingLogDB', 2);
+            
+            request.onsuccess = function(event) {
+                const db = event.target.result;
+                const transaction = db.transaction('catches', 'readonly');
+                const store = transaction.objectStore('catches');
+                const getAllRequest = store.getAll();
+                
+                getAllRequest.onsuccess = function() {
+                    const catches = getAllRequest.result;
+                    recordsContainer.innerHTML = '';
+                    
+                    if (catches.length === 0) {
+                        recordsContainer.innerHTML = '<p class="text-gray-500 italic">No records available.</p>';
+                        return;
+                    }
+
+                    // Group catches by species and find the biggest for each
+                    const biggestCatches = catches.reduce((acc, catch_) => {
+                        if (!acc[catch_.species]) {
+                            acc[catch_.species] = catch_;
+                        } else if (catch_.weight && (!acc[catch_.species].weight || catch_.weight > acc[catch_.species].weight)) {
+                            acc[catch_.species] = catch_;
+                        }
+                        return acc;
+                    }, {});
+                    
+                    // Convert to array and sort by weight (largest first)
+                    const sortedRecords = Object.values(biggestCatches)
+                        .sort((a, b) => (b.weight || 0) - (a.weight || 0));
+                    
+                    // Create table with sorted records
+                    const table = document.createElement('table');
+                    table.className = 'min-w-full divide-y divide-gray-200';
+                    
+                    table.innerHTML = `
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Species Record Holder</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Length</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            ${sortedRecords.map((c, index) => `
+                                <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} cursor-pointer hover:bg-gray-100" 
+                                    data-catch-id="${c.id}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        ${c.species || '-'}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        ${formatDate(new Date(c.datetime))}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        ${c.length ? `${c.length} cm` : '-'}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        ${formatWeight(c.weight).replace('Weight: ', '')}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        ${c.locationName || '-'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    `;
+                    
+                    // Add click handlers for each row
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        row.addEventListener('click', () => {
+                            const catchId = row.dataset.catchId;
+                            const catch_ = catches.find(c => c.id === catchId);
+                            if (catch_) openCatchModal(catch_);
+                        });
+                    });
+                    
+                    recordsContainer.appendChild(table);
+                };
+            };
+        }
+
+        // Initialize IndexedDB
+        const dbInitRequest = indexedDB.open('FishingLogDB', 2);
+
+        dbInitRequest.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            
+            // Create catches store if it doesn't exist
+            if (!db.objectStoreNames.contains('catches')) {
+                db.createObjectStore('catches', { keyPath: 'id' });
+            }
+            
+            // Create species store if it doesn't exist
+            if (!db.objectStoreNames.contains('species')) {
+                const speciesStore = db.createObjectStore('species', { keyPath: 'name' });
+                
+                // Add predefined species
+                const transaction = event.target.transaction;
+                const store = transaction.objectStore('species');
+                Object.keys(fishSpeciesData).forEach(species => {
+                    store.add({ name: species, isPredefined: true }).catch(e => {
+                        console.warn('Failed to add predefined species:', e);
+                    });
+                });
+            }
+        };
+
+        dbInitRequest.onerror = function(event) {
+            console.error('Database error:', event.target.error);
+            showMessage('Failed to initialize database. Please refresh the page and try again.', 'error');
+        };
+
+        dbInitRequest.onsuccess = function(event) {
+            const db = event.target.result;
+            
+            // Add error handler for all database transactions
+            db.onerror = function(event) {
+                console.error('Database error:', event.target.error);
+                showMessage('A database error occurred. Please try again.', 'error');
+            };
+            
+            renderCatches();
+        };
+    </script>
 </body>
 </html>
