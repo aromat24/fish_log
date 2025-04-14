@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check if backup reminder should be shown
     checkBackupReminder();
+
+    // Initialize species database
+    initializeSpeciesDatabase();
 });
 
 function initLandingPage() {
@@ -351,6 +354,8 @@ function closeFullscreenImage() {
 // Species Management Functions
 function setupSpeciesHandlers() {
     const speciesInput = document.getElementById('species');
+    const lengthInput = document.getElementById('length');
+    const weightInput = document.getElementById('weight');
     const speciesDropdown = document.getElementById('species-dropdown');
     const manageSpeciesBtn = document.getElementById('manage-species-btn');
     
@@ -360,6 +365,62 @@ function setupSpeciesHandlers() {
             'Bass', 'Trout', 'Salmon', 'Pike', 'Catfish', 'Perch', 'Carp'
         ].map(name => ({ name, isCustom: false }));
         localStorage.setItem('species', JSON.stringify(defaultSpecies));
+    }
+
+    // Listen for species changes to update length range and weight placeholder
+    speciesInput.addEventListener('change', () => {
+        updateLengthAndWeightPlaceholders();
+    });
+    
+    // Listen for length changes to calculate weight
+    lengthInput.addEventListener('input', () => {
+        const length = parseFloat(lengthInput.value);
+        const species = speciesInput.value;
+        
+        if (length && species) {
+            const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+            const selectedSpecies = speciesList.find(s => s.name === species);
+            
+            if (selectedSpecies && selectedSpecies.a && selectedSpecies.b) {
+                // Calculate weight using species-specific formula
+                const estimatedWeight = selectedSpecies.a * Math.pow(length, selectedSpecies.b);
+                weightInput.value = estimatedWeight.toFixed(3);
+            } else {
+                // Use default formula
+                calculateEstimatedWeight(species, length);
+            }
+        }
+    });
+    
+    function updateLengthAndWeightPlaceholders() {
+        const species = speciesInput.value;
+        if (!species) {
+            lengthInput.placeholder = "Enter fish length";
+            weightInput.placeholder = "Will auto-calculate from length";
+            return;
+        }
+        
+        const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+        const selectedSpecies = speciesList.find(s => s.name === species);
+        
+        if (selectedSpecies) {
+            // Update length input with min/max range if available
+            if (selectedSpecies.minLength && selectedSpecies.maxLength) {
+                lengthInput.placeholder = `Typical range: ${selectedSpecies.minLength}-${selectedSpecies.maxLength}cm`;
+            } else {
+                lengthInput.placeholder = "Enter fish length";
+            }
+            
+            // Update weight input placeholder to show it will calculate
+            if (selectedSpecies.a && selectedSpecies.b) {
+                weightInput.placeholder = "Will calculate based on species formula";
+            } else {
+                weightInput.placeholder = "Will auto-calculate from length";
+            }
+        } else {
+            lengthInput.placeholder = "Enter fish length";
+            weightInput.placeholder = "Will auto-calculate from length";
+        }
     }
 
     function refreshSpeciesList() {
@@ -407,6 +468,8 @@ function setupSpeciesHandlers() {
                     document.getElementById('new-species-name').focus();
                 } else {
                     speciesInput.value = option.textContent.trim();
+                    // Update length and weight placeholders for selected species
+                    updateLengthAndWeightPlaceholders();
                 }
                 speciesDropdown.classList.add('hidden');
             });
@@ -627,19 +690,27 @@ function setupLocationHandling() {
 // Photo Handling Functions
 function setupPhotoHandling() {
     const photoInput = document.getElementById('photo');
-    photoInput.addEventListener('change', handlePhotoUpload);
-}
-
-function handlePhotoUpload(event) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            // Store the image data URL
-            event.target.dataset.imageData = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+    const photoStatus = document.getElementById('photo-status');
+    const photoBtn = document.getElementById('photo-btn');
+    
+    photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            photoStatus.textContent = `Selected: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Store the image data URL
+                photoInput.dataset.imageData = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else if (file) {
+            photoStatus.textContent = 'Invalid file type. Please select an image.';
+            photoInput.value = '';
+        } else {
+            photoStatus.textContent = 'No photo selected';
+        }
+    });
 }
 
 function showFullscreenImage(imageUrl) {
@@ -679,7 +750,7 @@ function loadCatchHistory() {
         <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${catch_.id}">
             <div class="flex justify-between items-start gap-4">
                 <div class="flex-grow">
-                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species}</h3>
+                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species || 'Unspecified Fish'}</h3>
                     <span class="text-sm text-gray-500">${new Date(catch_.datetime).toLocaleDateString('en-GB', { 
                         day: '2-digit', 
                         month: '2-digit', 
@@ -688,8 +759,8 @@ function loadCatchHistory() {
                         minute: '2-digit'
                     })}</span>
                     <div class="mt-2 space-y-1">
-                        <p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>
-                        <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>
+                        ${catch_.length ? `<p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>` : ''}
+                        ${catch_.weight ? `<p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>` : ''}
                         ${catch_.locationName ? `
                             <p class="text-sm">
                                 <span class="font-medium">Location:</span> ${catch_.locationName}
@@ -818,7 +889,7 @@ function showCatchModal(catchData) {
     const catchModal = document.getElementById('catch-modal');
     
     // Fill in modal content
-    document.getElementById('modal-species').textContent = catchData.species;
+    document.getElementById('modal-species').textContent = catchData.species || 'Unspecified Fish';
     document.getElementById('modal-date').textContent = new Date(catchData.datetime).toLocaleDateString('en-GB', {
         day: '2-digit',
         month: '2-digit',
@@ -826,8 +897,24 @@ function showCatchModal(catchData) {
         hour: '2-digit',
         minute: '2-digit'
     });
-    document.getElementById('modal-length').textContent = `Length: ${catchData.length}cm`;
-    document.getElementById('modal-weight').textContent = `Weight: ${Number(catchData.weight).toFixed(3)}kg`;
+    
+    // Only show length and weight if they exist
+    const modalLength = document.getElementById('modal-length');
+    const modalWeight = document.getElementById('modal-weight');
+    
+    if (catchData.length) {
+        modalLength.textContent = `Length: ${catchData.length}cm`;
+        modalLength.classList.remove('hidden');
+    } else {
+        modalLength.classList.add('hidden');
+    }
+    
+    if (catchData.weight) {
+        modalWeight.textContent = `Weight: ${Number(catchData.weight).toFixed(3)}kg`;
+        modalWeight.classList.remove('hidden');
+    } else {
+        modalWeight.classList.add('hidden');
+    }
     
     const locationContainer = document.getElementById('modal-location-container');
     const locationName = document.getElementById('modal-location-name');
@@ -856,6 +943,9 @@ function showCatchModal(catchData) {
                 
                 // Ensure the map renders correctly
                 modalMap.invalidateSize();
+                
+                // Store map instance for cleanup
+                window.modalMapInstance = modalMap;
             }, 100);
         } else {
             mapContainer.classList.add('hidden');
@@ -1425,4 +1515,89 @@ function clearMapMarkers() {
         catchMap.removeLayer(marker);
     });
     catchMarkers = [];
+}
+
+// Initialize species database with size ranges and weight coefficients
+function initializeSpeciesDatabase() {
+    const currentSpecies = JSON.parse(localStorage.getItem('species') || '[]');
+    
+    // Only add data if it doesn't exist yet
+    if (!currentSpecies.some(s => s.hasOwnProperty('minLength'))) {
+        const speciesData = [
+            { 
+                name: 'Bass', 
+                minLength: 20, 
+                maxLength: 70,
+                a: 0.000013,
+                b: 3.0,
+                isCustom: false 
+            },
+            { 
+                name: 'Trout', 
+                minLength: 15, 
+                maxLength: 80,
+                a: 0.000012,
+                b: 3.0,
+                isCustom: false 
+            },
+            { 
+                name: 'Salmon', 
+                minLength: 30, 
+                maxLength: 150,
+                a: 0.000011,
+                b: 3.02,
+                isCustom: false 
+            },
+            { 
+                name: 'Pike', 
+                minLength: 40, 
+                maxLength: 130,
+                a: 0.000008,
+                b: 3.05,
+                isCustom: false 
+            },
+            { 
+                name: 'Catfish', 
+                minLength: 25, 
+                maxLength: 160,
+                a: 0.000014,
+                b: 3.1,
+                isCustom: false 
+            },
+            { 
+                name: 'Perch', 
+                minLength: 10, 
+                maxLength: 40,
+                a: 0.000017,
+                b: 2.98,
+                isCustom: false 
+            },
+            { 
+                name: 'Carp', 
+                minLength: 25, 
+                maxLength: 100,
+                a: 0.000015,
+                b: 3.08,
+                isCustom: false 
+            }
+        ];
+        
+        // Update species with additional data
+        const updatedSpecies = currentSpecies.map(species => {
+            const matchedData = speciesData.find(s => s.name === species.name);
+            if (matchedData) {
+                return { ...species, ...matchedData };
+            }
+            return species;
+        });
+        
+        // Add any missing default species
+        speciesData.forEach(defaultSpecies => {
+            if (!updatedSpecies.some(s => s.name === defaultSpecies.name)) {
+                updatedSpecies.push(defaultSpecies);
+            }
+        });
+        
+        localStorage.setItem('species', JSON.stringify(updatedSpecies));
+    }
 }

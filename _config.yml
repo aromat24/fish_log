@@ -3,3 +3,15 @@ exclude:
   - "*/*/node_modules"
   - "*/node_modules"
   - Species Data Analyzer/species-data-analyzer/node_modules
+
+# Prevents Jekyll from rendering layout: null in the background
+kramdown:
+  html_to_native: true
+
+# Set layout defaults to prevent frontmatter showing in rendered pages
+defaults:
+  - 
+    scope:
+      path: ""
+    values:
+      layout: default

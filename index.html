@@ -1,5 +1,5 @@
 ---
-layout: null
+layout: default
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +16,11 @@ layout: null
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     <style>
+      /* Hide frontmatter text */
+      .frontmatter-container {
+        display: none;
+      }
+      
       @font-face {
         font-family: 'LucideIcons';
         /* Using unpkg CDN */
@@ -198,9 +203,9 @@ layout: null
 
                     <div>
                         <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                        <textarea id="notes" name="notes" rows="2" 
+                        <input type="text" id="notes" name="notes" 
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Bait used: Sardine, Hook size: 2/0, Location details, Weather conditions, etc."></textarea>
+                            placeholder="Bait used, hook size, location details, weather conditions, etc.">
                     </div>
 
                     <div class="border-t pt-4 space-y-2">
@@ -218,6 +223,16 @@ layout: null
 
                     <div class="photo-upload">
                         <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="file" id="photo" name="photo" accept="image/*" class="hidden">
+                            <button type="button" id="photo-btn" onclick="document.getElementById('photo').click()" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm">
+                                <span class="lucide lucide-camera"></span> Add Photo
+                            </button>
+                            <span id="photo-status" class="text-sm text-gray-500">No photo selected</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 px-4 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 flex items-center justify-center gap-2">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>
@@ -245,7 +260,7 @@ layout: null
                             <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
                                 <span class="lucide lucide-menu"></span> Options
                             </button>
-                            <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+                            <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-[1000] border border-gray-200">
                                 <button id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
                                     <span class="lucide lucide-export"></span> Export Data
                                 </button>
