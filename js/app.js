@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load initial catch history
     loadCatchHistory();
+    
+    // Check if backup reminder should be shown
+    checkBackupReminder();
 });
 
 function initLandingPage() {
@@ -828,17 +831,39 @@ function showCatchModal(catchData) {
     
     const locationContainer = document.getElementById('modal-location-container');
     const locationName = document.getElementById('modal-location-name');
+    const mapContainer = document.getElementById('modal-map-container');
     
     if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
+        
+        // Handle location map
         if (catchData.latitude && catchData.longitude) {
             locationName.href = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+            mapContainer.classList.remove('hidden');
+            
+            // Initialize the map after a brief delay to ensure the modal is visible
+            setTimeout(() => {
+                const modalMap = L.map('modal-map').setView([catchData.latitude, catchData.longitude], 13);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 18
+                }).addTo(modalMap);
+                
+                // Add a marker at the catch location
+                L.marker([catchData.latitude, catchData.longitude]).addTo(modalMap);
+                
+                // Ensure the map renders correctly
+                modalMap.invalidateSize();
+            }, 100);
         } else {
+            mapContainer.classList.add('hidden');
             locationName.removeAttribute('href');
         }
     } else {
         locationContainer.classList.add('hidden');
+        mapContainer.classList.add('hidden');
     }
     
     const notes = document.getElementById('modal-notes');
@@ -861,12 +886,22 @@ function showCatchModal(catchData) {
     
     // Setup edit button
     document.getElementById('edit-catch-btn').onclick = () => {
+        // Clean up the map before closing the modal to prevent issues
+        if (window.modalMapInstance) {
+            window.modalMapInstance.remove();
+            window.modalMapInstance = null;
+        }
         catchModal.classList.add('hidden');
         showEditModal(catchData);
     };
     
     // Setup delete button
     document.getElementById('delete-catch-btn').onclick = () => {
+        // Clean up the map before closing the modal to prevent issues
+        if (window.modalMapInstance) {
+            window.modalMapInstance.remove();
+            window.modalMapInstance = null;
+        }
         catchModal.classList.add('hidden');
         showDeleteConfirmation(catchData);
     };
@@ -877,12 +912,22 @@ function showCatchModal(catchData) {
     // Close modal when clicking outside
     catchModal.addEventListener('click', (e) => {
         if (e.target === catchModal) {
+            // Clean up the map before closing the modal
+            if (window.modalMapInstance) {
+                window.modalMapInstance.remove();
+                window.modalMapInstance = null;
+            }
             catchModal.classList.add('hidden');
         }
     });
 
     // Setup close button
     document.getElementById('close-modal-btn').onclick = () => {
+        // Clean up the map before closing the modal
+        if (window.modalMapInstance) {
+            window.modalMapInstance.remove();
+            window.modalMapInstance = null;
+        }
         catchModal.classList.add('hidden');
     };
 }
@@ -909,10 +954,18 @@ function setupDataOptions() {
     exportDataBtn.addEventListener('click', () => {
         const catches = JSON.parse(localStorage.getItem('catches') || '[]');
         const species = JSON.parse(localStorage.getItem('species') || '[]');
+        // Enhanced export with metadata and versioning
         const exportData = {
             catches,
             species,
-            exportDate: new Date().toISOString()
+            metadata: {
+                version: "1.1.0",
+                exportDate: new Date().toISOString(),
+                catchCount: catches.length,
+                speciesCount: species.length,
+                appName: "Ghoti - Hooked",
+                checksum: generateSimpleChecksum(JSON.stringify(catches) + JSON.stringify(species))
+            }
         };
 
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -926,6 +979,10 @@ function setupDataOptions() {
         URL.revokeObjectURL(url);
         dataOptionsMenu.classList.add('hidden');
         showMessage('Data exported successfully');
+        
+        // Set last backup date
+        localStorage.setItem('lastBackupDate', new Date().toISOString());
+        checkBackupReminder();
     });
 
     // Handle data import
@@ -936,17 +993,13 @@ function setupDataOptions() {
             reader.onload = (e) => {
                 try {
                     const importData = JSON.parse(e.target.result);
-                    if (importData.catches && importData.species) {
-                        localStorage.setItem('catches', JSON.stringify(importData.catches));
-                        localStorage.setItem('species', JSON.stringify(importData.species));
-                        loadCatchHistory();
-                        if (!document.getElementById('records-container').classList.contains('hidden')) {
-                            displayRecords();
-                        }
-                        showMessage('Data imported successfully');
-                    } else {
+                    // Validate import data
+                    if (!validateImportData(importData)) {
                         throw new Error('Invalid data format');
                     }
+                    
+                    // Show import options modal
+                    showImportOptionsModal(importData);
                 } catch (error) {
                     console.error('Error importing data:', error);
                     showMessage('Error importing data. Please check the file format.', 'error');
@@ -959,35 +1012,417 @@ function setupDataOptions() {
     });
 }
 
-function setupViewToggle() {
-    const toggleViewBtn = document.getElementById('toggle-view-btn');
-    const catchLog = document.getElementById('catch-log');
-    const recordsContainer = document.getElementById('records-container');
-    const viewIcon = toggleViewBtn.querySelector('.view-icon');
-    const viewText = toggleViewBtn.querySelector('.view-text');
-    const viewHeading = document.getElementById('view-heading');
+// Helper function to generate a simple checksum for data integrity
+function generateSimpleChecksum(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash.toString(16);
+}
 
-    // Set initial state
-    viewIcon.textContent = '📋';
-    viewText.textContent = 'View Records';
+// Validate imported data
+function validateImportData(importData) {
+    // Check for required data structures
+    if (!importData.catches || !Array.isArray(importData.catches)) {
+        return false;
+    }
+    
+    if (!importData.species || !Array.isArray(importData.species)) {
+        return false;
+    }
+    
+    // Validate each catch has required fields
+    for (const catchItem of importData.catches) {
+        if (!catchItem.id || !catchItem.datetime) {
+            return false;
+        }
+    }
+    
+    // Validate each species has required fields
+    for (const species of importData.species) {
+        if (!species.name) {
+            return false;
+        }
+    }
+    
+    return true;
+}
 
-    toggleViewBtn.addEventListener('click', () => {
-        if (catchLog.classList.contains('hidden')) {
-            // Switch to History view
-            catchLog.classList.remove('hidden');
-            recordsContainer.classList.add('hidden');
-            viewIcon.textContent = '📋';
-            viewText.textContent = 'View Records';
-            viewHeading.textContent = 'Catch History';
-            loadCatchHistory();
-        } else {
-            // Switch to Records view
-            catchLog.classList.add('hidden');
-            recordsContainer.classList.remove('hidden');
-            viewIcon.textContent = '🏆';
-            viewText.textContent = 'View History';
-            viewHeading.textContent = 'Personal Records';
-            displayRecords();
+// Show import options modal
+function showImportOptionsModal(importData) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('import-options-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'import-options-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
+                <h3 class="text-xl font-bold text-blue-700 mb-2">Import Options</h3>
+                <div id="import-summary" class="mb-4 text-sm bg-gray-50 p-3 rounded">
+                    <p><strong>File contains:</strong></p>
+                    <ul class="list-disc list-inside"></ul>
+                </div>
+                <p class="text-gray-600 mb-4">How would you like to import this data?</p>
+                <div class="space-y-3">
+                    <button id="merge-data-btn" class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                        Merge with existing data
+                    </button>
+                    <button id="replace-data-btn" class="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
+                        Replace all existing data
+                    </button>
+                    <button id="cancel-import-btn" class="w-full px-4 py-2 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    // Update import summary
+    const summaryList = modal.querySelector('#import-summary ul');
+    summaryList.innerHTML = `
+        <li>${importData.catches.length} catch records</li>
+        <li>${importData.species.length} species</li>
+        ${importData.metadata ? `<li>Export date: ${new Date(importData.metadata.exportDate).toLocaleDateString()}</li>` : ''}
+    `;
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Setup event handlers
+    document.getElementById('merge-data-btn').onclick = () => {
+        mergeImportedData(importData);
+        modal.classList.add('hidden');
+    };
+    
+    document.getElementById('replace-data-btn').onclick = () => {
+        replaceWithImportedData(importData);
+        modal.classList.add('hidden');
+    };
+    
+    document.getElementById('cancel-import-btn').onclick = () => {
+        modal.classList.add('hidden');
+    };
+    
+    // Close on outside click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
         }
     });
+}
+
+// Merge imported data with existing data
+function mergeImportedData(importData) {
+    try {
+        // Get existing data
+        const existingCatches = JSON.parse(localStorage.getItem('catches') || '[]');
+        const existingSpecies = JSON.parse(localStorage.getItem('species') || '[]');
+        
+        // Create ID sets for faster lookups
+        const existingCatchIds = new Set(existingCatches.map(c => c.id));
+        const existingSpeciesNames = new Set(existingSpecies.map(s => s.name));
+        
+        // Merge catches (avoid duplicates by ID)
+        const newCatches = importData.catches.filter(c => !existingCatchIds.has(c.id));
+        const mergedCatches = [...existingCatches, ...newCatches];
+        
+        // Merge species (avoid duplicates by name)
+        const newSpecies = importData.species.filter(s => !existingSpeciesNames.has(s.name));
+        const mergedSpecies = [...existingSpecies, ...newSpecies];
+        
+        // Save merged data
+        localStorage.setItem('catches', JSON.stringify(mergedCatches));
+        localStorage.setItem('species', JSON.stringify(mergedSpecies));
+        
+        // Update UI
+        loadCatchHistory();
+        if (!document.getElementById('records-container').classList.contains('hidden')) {
+            displayRecords();
+        }
+        
+        showMessage(`Data merged successfully. Added ${newCatches.length} catches and ${newSpecies.length} species.`);
+    } catch (error) {
+        console.error('Error merging data:', error);
+        showMessage('Error merging data. Please try again.', 'error');
+    }
+}
+
+// Replace all existing data with imported data
+function replaceWithImportedData(importData) {
+    try {
+        // Save imported data (replacing existing)
+        localStorage.setItem('catches', JSON.stringify(importData.catches));
+        localStorage.setItem('species', JSON.stringify(importData.species));
+        
+        // Update UI
+        loadCatchHistory();
+        if (!document.getElementById('records-container').classList.contains('hidden')) {
+            displayRecords();
+        }
+        
+        showMessage(`Data replaced successfully. Now have ${importData.catches.length} catches and ${importData.species.length} species.`);
+    } catch (error) {
+        console.error('Error replacing data:', error);
+        showMessage('Error replacing data. Please try again.', 'error');
+    }
+}
+
+// Check if backup reminder should be shown
+function checkBackupReminder() {
+    const lastBackupDate = localStorage.getItem('lastBackupDate');
+    
+    // No reminder if no data or already backed up recently
+    if (!lastBackupDate) {
+        const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+        if (catches.length > 5) {
+            // Show reminder for users with 5+ catches and no backup
+            showBackupReminder();
+        }
+        return;
+    }
+    
+    // Check if backup is older than 30 days
+    const lastBackup = new Date(lastBackupDate);
+    const now = new Date();
+    const daysSinceBackup = Math.floor((now - lastBackup) / (1000 * 60 * 60 * 24));
+    
+    if (daysSinceBackup >= 30) {
+        showBackupReminder();
+    }
+}
+
+// Show backup reminder
+function showBackupReminder() {
+    let reminderBanner = document.getElementById('backup-reminder');
+    if (!reminderBanner) {
+        reminderBanner = document.createElement('div');
+        reminderBanner.id = 'backup-reminder';
+        reminderBanner.className = 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 relative';
+        reminderBanner.innerHTML = `
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-xl">⚠️</span>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm">It's been a while since you backed up your fishing data. Consider exporting your data to avoid losing your records.</p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button id="backup-now-btn" class="bg-yellow-200 hover:bg-yellow-300 text-yellow-800 text-xs font-medium px-3 py-1 rounded">
+                        Backup Now
+                    </button>
+                    <button id="dismiss-reminder-btn" class="ml-2 text-yellow-500 hover:text-yellow-800">
+                        ✕
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Insert after app heading
+        const heading = document.querySelector('#app-content h1');
+        if (heading) {
+            heading.parentNode.insertBefore(reminderBanner, heading.nextSibling);
+        } else {
+            document.querySelector('#app-content .form-section').prepend(reminderBanner);
+        }
+        
+        // Setup event handlers
+        document.getElementById('backup-now-btn').addEventListener('click', () => {
+            document.getElementById('export-data-btn').click();
+            reminderBanner.remove();
+        });
+        
+        document.getElementById('dismiss-reminder-btn').addEventListener('click', () => {
+            // Update last backup date to dismiss for another 30 days
+            localStorage.setItem('lastBackupDate', new Date().toISOString());
+            reminderBanner.remove();
+        });
+    }
+}
+
+function setupViewToggle() {
+    const historyViewBtn = document.getElementById('history-view-btn');
+    const recordsViewBtn = document.getElementById('records-view-btn');
+    const mapViewBtn = document.getElementById('map-view-btn');
+    const catchLog = document.getElementById('catch-log');
+    const recordsContainer = document.getElementById('records-container');
+    const mapContainer = document.getElementById('map-container');
+    const viewHeading = document.getElementById('view-heading');
+
+    // Show history view by default
+    historyViewBtn.classList.add('bg-blue-500', 'text-white');
+    historyViewBtn.classList.remove('bg-blue-100', 'text-blue-700');
+    
+    // Handle history view button click
+    historyViewBtn.addEventListener('click', () => {
+        // Update UI
+        catchLog.classList.remove('hidden');
+        recordsContainer.classList.add('hidden');
+        mapContainer.classList.add('hidden');
+        viewHeading.textContent = 'Catch History';
+        
+        // Update button styles
+        historyViewBtn.classList.add('bg-blue-500', 'text-white');
+        historyViewBtn.classList.remove('bg-blue-100', 'text-blue-700');
+        recordsViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        recordsViewBtn.classList.remove('bg-blue-500', 'text-white');
+        mapViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        mapViewBtn.classList.remove('bg-blue-500', 'text-white');
+        
+        // Update content
+        loadCatchHistory();
+    });
+    
+    // Handle records view button click
+    recordsViewBtn.addEventListener('click', () => {
+        // Update UI
+        catchLog.classList.add('hidden');
+        recordsContainer.classList.remove('hidden');
+        mapContainer.classList.add('hidden');
+        viewHeading.textContent = 'Personal Records';
+        
+        // Update button styles
+        historyViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        historyViewBtn.classList.remove('bg-blue-500', 'text-white');
+        recordsViewBtn.classList.add('bg-blue-500', 'text-white');
+        recordsViewBtn.classList.remove('bg-blue-100', 'text-blue-700');
+        mapViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        mapViewBtn.classList.remove('bg-blue-500', 'text-white');
+        
+        // Update content
+        displayRecords();
+    });
+    
+    // Handle map view button click
+    mapViewBtn.addEventListener('click', () => {
+        // Update UI
+        catchLog.classList.add('hidden');
+        recordsContainer.classList.add('hidden');
+        mapContainer.classList.remove('hidden');
+        viewHeading.textContent = 'Catch Map';
+        
+        // Update button styles
+        historyViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        historyViewBtn.classList.remove('bg-blue-500', 'text-white');
+        recordsViewBtn.classList.add('bg-blue-100', 'text-blue-700');
+        recordsViewBtn.classList.remove('bg-blue-500', 'text-white');
+        mapViewBtn.classList.add('bg-blue-500', 'text-white');
+        mapViewBtn.classList.remove('bg-blue-100', 'text-blue-700');
+        
+        // Initialize and display the map
+        initializeMap();
+    });
+}
+
+// Map handling functions
+let catchMap = null;
+let catchMarkers = [];
+
+function initializeMap() {
+    if (!catchMap) {
+        catchMap = L.map('catch-map').setView([51.505, -0.09], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(catchMap);
+        
+        // Add scale control
+        L.control.scale().addTo(catchMap);
+    }
+    
+    // Refresh markers (in case data has changed)
+    displayCatchesOnMap();
+    
+    // Force map to recalculate its size since it was hidden
+    setTimeout(() => {
+        catchMap.invalidateSize();
+    }, 100);
+}
+
+function displayCatchesOnMap() {
+    // Clear existing markers
+    clearMapMarkers();
+    
+    // Get all catches
+    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    const catchesWithLocation = catches.filter(c => c.latitude && c.longitude);
+    
+    if (catchesWithLocation.length === 0) {
+        // Show message if no catches with location
+        const noLocationMsg = document.createElement('div');
+        noLocationMsg.className = 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4';
+        noLocationMsg.innerHTML = '<p>No catches with location data available. Add location data to your catches to see them on the map.</p>';
+        document.getElementById('map-container').prepend(noLocationMsg);
+        
+        // Set default view
+        catchMap.setView([0, 0], 2);
+        return;
+    }
+    
+    // Remove any existing message
+    const existingMsg = document.getElementById('map-container').querySelector('.bg-yellow-100');
+    if (existingMsg) {
+        existingMsg.remove();
+    }
+    
+    // Add markers for each catch with location
+    const bounds = [];
+    catchesWithLocation.forEach(catch_ => {
+        const marker = L.marker([catch_.latitude, catch_.longitude])
+            .addTo(catchMap)
+            .bindPopup(`
+                <div class="font-semibold text-blue-700">${catch_.species}</div>
+                <div class="text-sm">${catch_.length}cm, ${Number(catch_.weight).toFixed(3)}kg</div>
+                <div class="text-xs text-gray-500">${new Date(catch_.datetime).toLocaleDateString()}</div>
+                ${catch_.locationName ? `<div class="text-xs">${catch_.locationName}</div>` : ''}
+                <div class="mt-2">
+                    <button class="view-catch-btn px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded hover:bg-blue-200" 
+                            data-catch-id="${catch_.id}">
+                        View Details
+                    </button>
+                </div>
+            `);
+            
+        // Setup click handler directly on popup content
+        marker.on('popupopen', function() {
+            setTimeout(() => {
+                const btn = document.querySelector('.view-catch-btn');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        const catchId = this.dataset.catchId;
+                        const catchData = catches.find(c => c.id === catchId);
+                        if (catchData) {
+                            showCatchModal(catchData);
+                        }
+                    });
+                }
+            }, 10);
+        });
+        
+        // Store the marker and add the coordinates to bounds
+        catchMarkers.push(marker);
+        bounds.push([catch_.latitude, catch_.longitude]);
+    });
+    
+    // Fit map to show all markers if there are any
+    if (bounds.length > 0) {
+        catchMap.fitBounds(bounds, {
+            padding: [30, 30],
+            maxZoom: 15
+        });
+    }
+}
+
+function clearMapMarkers() {
+    // Remove all existing markers
+    catchMarkers.forEach(marker => {
+        catchMap.removeLayer(marker);
+    });
+    catchMarkers = [];
 }

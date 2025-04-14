@@ -8,6 +8,13 @@ layout: null
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ghoti - Hooked | Fishing Log</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS and JavaScript -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
     <style>
       @font-face {
         font-family: 'LucideIcons';
@@ -211,25 +218,28 @@ layout: null
 
                     <div class="photo-upload">
                         <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
-                        <input type="file" id="photo" name="photo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
-                    </div>
-
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
-
-                    <button type="submit" class="w-full mt-4 flex justify-center items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>
 
                 <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4 flex-wrap">
                             <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>
-                            <button id="toggle-view-btn" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium flex items-center gap-2">
-                                <span class="lucide lucide-trophy view-icon"></span>
-                                <span class="view-text">View Records</span>
-                            </button>
+                            <div class="flex items-center space-x-2">
+                                <button id="history-view-btn" class="px-4 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm font-medium flex items-center gap-2">
+                                    <span class="lucide lucide-book"></span>
+                                    <span>History</span>
+                                </button>
+                                <button id="records-view-btn" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium flex items-center gap-2">
+                                    <span class="lucide lucide-trophy"></span>
+                                    <span>Records</span>
+                                </button>
+                                <button id="map-view-btn" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium flex items-center gap-2">
+                                    <span class="lucide lucide-map-pin"></span>
+                                    <span>Map</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="dropdown relative">
                             <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
@@ -250,6 +260,12 @@ layout: null
                         <p class="text-gray-500 italic">No catches logged yet.</p>
                     </div>
                     <div id="records-container" class="hidden space-y-4"></div>
+                    <div id="map-container" class="hidden">
+                        <div id="catch-map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Click on any marker to view catch details. Only catches with location data are displayed on the map.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -274,6 +290,9 @@ layout: null
                         <span>Location:</span>
                         <a id="modal-location-name" href="#" class="text-blue-600 hover:underline"></a>
                     </p>
+                    <div id="modal-map-container" class="mt-2 hidden">
+                        <div id="modal-map" style="height: 150px; width: 100%; border-radius: 4px;"></div>
+                    </div>
                 </div>
                 
                 <p id="modal-notes" class="text-sm text-gray-600"></p>
