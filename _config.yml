@@ -1,0 +1,5 @@
+exclude:
+  - node_modules
+  - "*/*/node_modules"
+  - "*/node_modules"
+  - Species Data Analyzer/species-data-analyzer/node_modules
