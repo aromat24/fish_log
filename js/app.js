@@ -1,33 +1,3 @@
-// Helper function to generate UUID
-function generateUUID() {
-    // Try using crypto.randomUUID() if available
-    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-        return crypto.randomUUID();
-    }
-    
-    // Fallback to manual UUID generation
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-// Helper function to format dates consistently as dd/mm/yyyy - time
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    
-    // Format date as dd/mm/yyyy
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    
-    // Format time as HH:MM
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${day}/${month}/${year} - ${hours}:${minutes}`;
-}
-
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize landing page functionality
@@ -47,7 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageContent = document.getElementById('fullscreen-image-content');
     imageContent.addEventListener('click', (e) => {
         e.stopPropagation();
-    });    // Initialize the main app functionality
+    });
+
+    // Initialize the main app functionality
     setupFormHandlers();
     setupLocationHandling();
     setupPhotoHandling();
@@ -55,8 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupViewToggle();
     setupDataOptions();
     setupSpeciesHandlers();
-      // Initialize fish database and update species list
-    initializeFishDatabase();
     
     // Initialize datetime input with current time
     initializeDatetime();
@@ -64,49 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial catch history
     loadCatchHistory();
 });
-
-async function initializeFishDatabase() {
-    console.log('=== FISH DATABASE INITIALIZATION START ===');
-    try {
-        if (window.fishDB) {
-            console.log('Fish database object found, checking if ready...');
-            const isReady = await window.fishDB.isReady();
-            console.log('Fish database ready status:', isReady);
-            
-            if (isReady) {
-                console.log('Fish database initialized successfully');
-                
-                // Test the database
-                const speciesNames = window.fishDB.getSpeciesNames();
-                console.log('Available species from database:', speciesNames);
-                
-                // Refresh species list to include database species
-                // Wait a moment to ensure species handlers are set up
-                setTimeout(async () => {
-                    console.log('Attempting to refresh species list...');
-                    if (typeof window.refreshSpeciesList === 'function') {
-                        console.log('refreshSpeciesList function found, calling it...');
-                        await window.refreshSpeciesList();
-                        console.log('Database species loaded into dropdown');
-                        
-                        // Debug: Check what's in localStorage now
-                        const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
-                        console.log('Species list after refresh:', speciesList);
-                    } else {
-                        console.error('refreshSpeciesList function not yet available');
-                    }
-                }, 100);
-            } else {
-                console.warn('Fish database failed to initialize');
-            }
-        } else {
-            console.error('window.fishDB not found - fishDatabase.js may not have loaded');
-        }
-    } catch (error) {
-        console.error('Error initializing fish database:', error);
-    }
-    console.log('=== FISH DATABASE INITIALIZATION END ===');
-}
 
 function initLandingPage() {
     const landingPage = document.getElementById('landing-page');
@@ -130,135 +57,47 @@ function setupFormHandlers() {
     const speciesInput = document.getElementById('species');
     const weightInput = document.getElementById('weight');
 
-    // Add debug logging to check if elements exist
-    console.log('Setting up form handlers');
-    console.log('catchForm:', catchForm);
-    console.log('lengthInput:', lengthInput);
-    console.log('speciesInput:', speciesInput);
-    console.log('weightInput:', weightInput);
-
-    if (!catchForm) {
-        console.error('catch-form element not found!');
-        return;
-    }
-
-    // Setup automatic weight calculation
-    const autoCalculateWeight = async () => {
-        const species = speciesInput.value.trim();
-        const length = parseFloat(lengthInput.value);
-        
-        if (species && length && length > 0) {
-            await calculateEstimatedWeight(species, length);
-        }
-    };
-
-    // Calculate weight when length or species changes
-    lengthInput.addEventListener('input', autoCalculateWeight);
-    speciesInput.addEventListener('input', autoCalculateWeight);
-    speciesInput.addEventListener('change', autoCalculateWeight);
-
-    // Setup datetime display formatting
-    const datetimeInput = document.getElementById('datetime');
-    const datetimeDisplay = document.getElementById('datetime-display');
-    
-    // Update display when datetime changes
-    const updateDatetimeDisplay = () => {
-        if (datetimeInput.value) {
-            datetimeDisplay.textContent = `Will be saved as: ${formatDate(datetimeInput.value)}`;
-            datetimeDisplay.classList.remove('hidden');
-        } else {
-            datetimeDisplay.textContent = '';
-            datetimeDisplay.classList.add('hidden');
-        }
-    };
-    
-    datetimeInput.addEventListener('input', updateDatetimeDisplay);
-    datetimeInput.addEventListener('change', updateDatetimeDisplay);
-    
-    // Initial display update
-    updateDatetimeDisplay();
-
     // Handle catch form submission
     catchForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('Form submission started');
         
         // Get datetime - the only required field
         const datetime = document.getElementById('datetime').value;
-        const species = speciesInput.value.trim();
-        
-        console.log('Datetime:', datetime);
-        console.log('Species:', species);
-        
-        // Validate required fields
         if (!datetime) {
-            console.log('Missing datetime');
             showMessage('Please enter the date and time', 'error');
             return;
         }
-        
-        if (!species) {
-            console.log('Missing species');
-            showMessage('Please enter the species', 'error');
-            return;
-        }
 
-        console.log('Validation passed, getting length');
         // Get length value - we'll treat it as the optional main field
         const length = lengthInput.value ? parseFloat(lengthInput.value) : null;
-        
-        console.log('Creating catch data object');
-        console.log('Length:', length);
-        console.log('Weight:', weightInput.value);
-        console.log('Photo data:', document.getElementById('photo').dataset.imageData ? 'Present' : 'None');        // Create catch object - making sure to only include non-empty fields
+
+        // Create catch object - making sure to only include non-empty fields
         const catchData = {
-            id: generateUUID(),
+            id: crypto.randomUUID(),
             datetime,
             length,
-            species: species || null,
+            species: speciesInput.value.trim() || null,
             weight: weightInput.value ? parseFloat(weightInput.value) : null,
             notes: document.getElementById('notes').value.trim() || null,
             locationName: document.getElementById('location-name').value || null,
             latitude: document.getElementById('latitude').value ? parseFloat(document.getElementById('latitude').value) : null,
             longitude: document.getElementById('longitude').value ? parseFloat(document.getElementById('longitude').value) : null,
-            mapsUrl: null, // Can be added later through editing
             photo: document.getElementById('photo').dataset.imageData || null,
             timestamp: Date.now()
         };
 
-        console.log('Catch data created:', catchData);        try {
-            console.log('Getting existing catches from localStorage');
+        try {
             // Get existing catches from localStorage
             const catches = JSON.parse(localStorage.getItem('catches') || '[]');
-            
-            console.log('Existing catches:', catches.length);
             
             // Add new catch
             catches.push(catchData);
             
-            console.log('Saving to localStorage');
-            // Save updated catches array with better error handling
-            try {
-                localStorage.setItem('catches', JSON.stringify(catches));
-            } catch (storageError) {
-                console.error('localStorage error:', storageError);
-                if (storageError.name === 'QuotaExceededError') {
-                    // Remove the photo data and try again
-                    const catchDataWithoutPhoto = { ...catchData, photo: null };
-                    catches[catches.length - 1] = catchDataWithoutPhoto;
-                    localStorage.setItem('catches', JSON.stringify(catches));
-                    showMessage('Catch saved successfully! Photo was too large and could not be saved.', 'warning');
-                } else {
-                    throw storageError;
-                }
-            }
+            // Save updated catches array
+            localStorage.setItem('catches', JSON.stringify(catches));
 
-            if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
-                console.log('Save successful, showing message');
-                showMessage('Catch saved successfully!');
-            }
-
-            console.log('Resetting form');
+            // Show success message
+            showMessage('Catch saved successfully!');
 
             // Reset form and clear data
             catchForm.reset();
@@ -283,55 +122,29 @@ function setupFormHandlers() {
     });
 }
 
-async function calculateEstimatedWeight(species, length) {
-    if (!length || length <= 0) return null;
-    
-    // Wait for fish database to be ready
-    if (window.fishDB && await window.fishDB.isReady()) {
-        const result = window.fishDB.calculateWeight(species, length);
-        
-        if (result) {
-            // Update weight input with calculated value
-            const weightInput = document.getElementById('weight');
-            weightInput.value = result.weight.toFixed(3);
-            
-            // Mark the weight as calculated and show info about the calculation
-            weightInput.dataset.calculated = 'true';
-            weightInput.dataset.species = result.species;
-            weightInput.dataset.accuracy = result.accuracy;
-            
-            // Show calculation info as a tooltip or note
-            const calculationInfo = result.isSpeciesSpecific 
-                ? `Calculated using ${result.species} data (${(result.accuracy * 100).toFixed(1)}% accuracy, ${result.measureType})`
-                : `Estimated using generic fish formula (${(result.accuracy * 100).toFixed(1)}% accuracy)`;
-            
-            weightInput.title = calculationInfo;
-            
-            // Show brief message about the calculation
-            if (result.isSpeciesSpecific) {
-                showMessage(`Weight calculated using ${result.species} specific data!`, 'info');
-            }
-            
-            return result.weight;
-        }
-    }
-    
-    // Fallback to original generic calculation if database not available
+function calculateEstimatedWeight(species, length) {
+    // Using more accurate coefficients for common fish species
+    // W = aL^b where:
+    // a = 0.000013 (common coefficient for many freshwater fish)
+    // b = 3.0 (standard length-weight relationship)
+    // Result will be in kg when length is in cm
     const a = 0.000013;
     const b = 3.0;
     const estimatedWeight = a * Math.pow(length, b);
     
+    // Update weight input with calculated value, rounded to 3 decimal places
     const weightInput = document.getElementById('weight');
     weightInput.value = estimatedWeight.toFixed(3);
-    weightInput.dataset.calculated = 'true';
-    weightInput.title = 'Generic estimate (80% accuracy)';
     
+    // Mark the weight as valid since we calculated it
+    weightInput.dataset.calculated = 'true';
     return estimatedWeight;
 }
 
 function showEditModal(catchData) {
     const editModal = document.getElementById('edit-modal');
-      // Fill in form fields
+    
+    // Fill in form fields
     document.getElementById('edit-catch-id').value = catchData.id;
     document.getElementById('edit-species').value = catchData.species;
     document.getElementById('edit-length').value = catchData.length;
@@ -341,33 +154,7 @@ function showEditModal(catchData) {
     document.getElementById('edit-notes').value = catchData.notes || '';
     document.getElementById('edit-latitude').value = catchData.latitude || '';
     document.getElementById('edit-longitude').value = catchData.longitude || '';
-    document.getElementById('edit-maps-link').value = '';
-    document.getElementById('edit-maps-url').value = catchData.mapsUrl || '';
     document.getElementById('edit-photo').value = catchData.photo || '';
-
-    // Setup datetime display formatting for edit modal
-    const editDatetimeInput = document.getElementById('edit-datetime');
-    const editDatetimeDisplay = document.getElementById('edit-datetime-display');
-    
-    // Update display when datetime changes
-    const updateEditDatetimeDisplay = () => {
-        if (editDatetimeInput.value) {
-            editDatetimeDisplay.textContent = `Will be saved as: ${formatDate(editDatetimeInput.value)}`;
-            editDatetimeDisplay.classList.remove('hidden');
-        } else {
-            editDatetimeDisplay.textContent = '';
-            editDatetimeDisplay.classList.add('hidden');
-        }
-    };
-    
-    editDatetimeInput.addEventListener('input', updateEditDatetimeDisplay);
-    editDatetimeInput.addEventListener('change', updateEditDatetimeDisplay);
-    
-    // Initial display update
-    updateEditDatetimeDisplay();
-
-    // Update location status
-    updateEditLocationStatus(catchData);
 
     // Update photo button text
     const editPhotoText = document.getElementById('edit-photo-text');
@@ -377,29 +164,19 @@ function showEditModal(catchData) {
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     const editPhotoInput = document.getElementById('edit-photo-input');
     
-    editPhotoBtn.onclick = () => editPhotoInput.click();    editPhotoInput.onchange = (e) => {
+    editPhotoBtn.onclick = () => editPhotoInput.click();
+    
+    editPhotoInput.onchange = (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            // Show loading indicator
-            showLoadingIndicator(true);
-            
-            compressImage(file, 0.7, 1200) // 70% quality, max 1200px width
-                .then(compressedDataUrl => {
-                    document.getElementById('edit-photo').value = compressedDataUrl;
-                    editPhotoText.textContent = 'Photo Selected';
-                    showLoadingIndicator(false);
-                })
-                .catch(error => {
-                    console.error('Error processing photo:', error);
-                    showLoadingIndicator(false);
-                    showMessage('Error processing photo. Please try a smaller image.', 'error');
-                    e.target.value = ''; // Clear the input
-                });
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('edit-photo').value = e.target.result;
+                editPhotoText.textContent = 'Photo Selected';
+            };
+            reader.readAsDataURL(file);
         }
     };
-
-    // Setup location editing functionality
-    setupEditLocationHandlers(catchData);
 
     // Show the modal
     editModal.classList.remove('hidden');
@@ -433,59 +210,37 @@ function updateCatch() {
     const notes = document.getElementById('edit-notes').value.trim();
     const latitude = document.getElementById('edit-latitude').value;
     const longitude = document.getElementById('edit-longitude').value;
-    const mapsUrl = document.getElementById('edit-maps-url').value.trim();
     const photo = document.getElementById('edit-photo').value;
 
-    // Validate required fields - only species and datetime are required
-    if (!species || !datetime) {
-        showMessage('Please fill in all required fields (species and date/time)', 'error');
-        return;
-    }
-
-    // Validate length and weight if provided (must be positive numbers)
-    if (document.getElementById('edit-length').value && (isNaN(length) || length <= 0)) {
-        showMessage('Length must be a positive number', 'error');
-        return;
-    }
-
-    if (document.getElementById('edit-weight').value && (isNaN(weight) || weight <= 0)) {
-        showMessage('Weight must be a positive number', 'error');
+    // Validate required fields
+    if (!species || !length || !weight || !datetime) {
+        showMessage('Please fill in all required fields (species, length, weight, and date/time)', 'error');
         return;
     }
 
     // Get existing catches
     let catches = JSON.parse(localStorage.getItem('catches') || '[]');
-      // Find and update the catch
+    
+    // Find and update the catch
     const catchIndex = catches.findIndex(c => c.id === catchId);
     if (catchIndex !== -1) {
         catches[catchIndex] = {
             ...catches[catchIndex],
             species,
-            length: isNaN(length) || !document.getElementById('edit-length').value ? null : length,
-            weight: isNaN(weight) || !document.getElementById('edit-weight').value ? null : weight,
+            length,
+            weight,
             datetime,
             locationName: locationName || null,
             notes: notes || null,
             latitude: latitude ? parseFloat(latitude) : null,
             longitude: longitude ? parseFloat(longitude) : null,
-            mapsUrl: mapsUrl || null,
             photo: photo || null,
             lastModified: Date.now()
-        };// Save back to localStorage with error handling
-        try {
-            localStorage.setItem('catches', JSON.stringify(catches));
-        } catch (storageError) {
-            console.error('localStorage error:', storageError);
-            if (storageError.name === 'QuotaExceededError') {
-                // Remove the photo data and try again
-                catches[catchIndex].photo = null;
-                localStorage.setItem('catches', JSON.stringify(catches));
-                showMessage('Catch updated successfully! Photo was too large and could not be saved.', 'warning');
-            } else {
-                showMessage('Error updating catch. Please try again.', 'error');
-                return;
-            }
-        }        
+        };
+
+        // Save back to localStorage
+        localStorage.setItem('catches', JSON.stringify(catches));
+        
         // Hide edit modal
         document.getElementById('edit-modal').classList.add('hidden');
         
@@ -495,9 +250,7 @@ function updateCatch() {
             displayRecords();
         }
         
-        if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
-            showMessage('Catch updated successfully');
-        }
+        showMessage('Catch updated successfully');
     } else {
         showMessage('Error updating catch. Please try again.', 'error');
     }
@@ -538,8 +291,13 @@ function displayRecords() {
                 <div class="space-y-4">
                     <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.largest.id}">
                         <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">                                <span class="font-medium">Longest:</span> 
-                                ${records.largest.length}cm (${formatDate(records.largest.datetime)})
+                            <p class="text-sm hover:text-blue-600">
+                                <span class="font-medium">Longest:</span> 
+                                ${records.largest.length}cm (${new Date(records.largest.datetime).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                })})
                             </p>
                         </div>
                         ${records.largest.photo ? `
@@ -550,8 +308,13 @@ function displayRecords() {
                     </div>
                     <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.heaviest.id}">
                         <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">                                <span class="font-medium">Heaviest:</span> 
-                                ${Number(records.heaviest.weight).toFixed(3)}kg (${formatDate(records.heaviest.datetime)})
+                            <p class="text-sm hover:text-blue-600">
+                                <span class="font-medium">Heaviest:</span> 
+                                ${Number(records.heaviest.weight).toFixed(3)}kg (${new Date(records.heaviest.datetime).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                })})
                             </p>
                         </div>
                         ${records.heaviest.photo ? `
@@ -584,109 +347,45 @@ function closeFullscreenImage() {
 
 // Species Management Functions
 function setupSpeciesHandlers() {
-    console.log('=== SETTING UP SPECIES HANDLERS ===');
     const speciesInput = document.getElementById('species');
     const speciesDropdown = document.getElementById('species-dropdown');
     const manageSpeciesBtn = document.getElementById('manage-species-btn');
-    
-    console.log('Species DOM elements:', {
-        speciesInput: !!speciesInput,
-        speciesDropdown: !!speciesDropdown,
-        manageSpeciesBtn: !!manageSpeciesBtn
-    });
-    
-    if (!speciesInput || !speciesDropdown) {
-        console.error('Critical species DOM elements not found!');
-        return;
-    }
     
     // Initialize species list if empty
     if (!localStorage.getItem('species')) {
         const defaultSpecies = [
             'Bass', 'Trout', 'Salmon', 'Pike', 'Catfish', 'Perch', 'Carp'
         ].map(name => ({ name, isCustom: false }));
-        localStorage.setItem('species', JSON.stringify(defaultSpecies));    }
+        localStorage.setItem('species', JSON.stringify(defaultSpecies));
+    }
 
-    async function refreshSpeciesList() {
-        console.log('=== REFRESH SPECIES LIST START ===');
-        let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
-        console.log('Current species list:', speciesList);
-        
-        // Add species from fish database if available
-        if (window.fishDB && await window.fishDB.isReady()) {
-            console.log('Fish database is ready, getting species names...');
-            const dbSpecies = window.fishDB.getSpeciesNames();
-            console.log('Database species:', dbSpecies);
-            
-            // Add database species that aren't already in the list
-            let addedCount = 0;
-            dbSpecies.forEach(dbSpeciesName => {
-                const exists = speciesList.some(species => 
-                    species.name.toLowerCase() === dbSpeciesName.toLowerCase()
-                );
-                if (!exists) {
-                    speciesList.push({ 
-                        name: dbSpeciesName, 
-                        isCustom: false, 
-                        isFromDatabase: true 
-                    });
-                    addedCount++;
-                    console.log('Added database species:', dbSpeciesName);
-                }
-            });
-            
-            console.log(`Added ${addedCount} species from database`);
-            
-            // Update localStorage with combined list
-            localStorage.setItem('species', JSON.stringify(speciesList));
-            console.log('Updated species list saved to localStorage');
-        } else {
-            console.log('Fish database not ready or not available');
-        }
-        
-        console.log('Final species list:', speciesList);
+    function refreshSpeciesList() {
+        const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
             const matches = speciesList.filter(species => 
-                species.name.toLowerCase().startsWith(searchTerm)
+                species.name.toLowerCase().includes(searchTerm)
             );
-            await updateSpeciesDropdown(matches);
+            updateSpeciesDropdown(matches);
         }
         
         // Update manager list if it's visible
         if (!document.getElementById('manage-species-modal').classList.contains('hidden')) {
             displayCustomSpeciesList();
-        }        console.log('=== REFRESH SPECIES LIST END ===');
+        }
     }
 
-    // Make refreshSpeciesList globally accessible for database initialization
-    window.refreshSpeciesList = refreshSpeciesList;
-
-    async function updateSpeciesDropdown(matches) {
-        const isDbReady = window.fishDB && await window.fishDB.isReady();
-        
+    function updateSpeciesDropdown(matches) {
         if (matches.length > 0) {
-            const dropdownHTML = await Promise.all(matches.map(async species => {
-                let speciesInfo = '';
-                if (isDbReady && species.isFromDatabase) {
-                    const info = window.fishDB.getSpeciesInfo(species.name);
-                    if (info) {
-                        const edibleIcon = info.edible ? '🐟' : '🦈';
-                        const accuracyPercent = (info.accuracy * 100).toFixed(0);
-                        speciesInfo = ` <small class="text-gray-500">${edibleIcon} ${accuracyPercent}% accuracy</small>`;
-                    }
-                }
-                
-                return `
+            speciesDropdown.innerHTML = matches
+                .map(species => `
                     <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                        ${species.name}${speciesInfo}
+                        ${species.name}
                     </div>
-                `;
-            }));
-            
-            speciesDropdown.innerHTML = dropdownHTML.join('');
+                `)
+                .join('');
         } else {
             speciesDropdown.innerHTML = `
                 <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -710,7 +409,9 @@ function setupSpeciesHandlers() {
             });
         });
         speciesDropdown.classList.remove('hidden');
-    }    // Handle species input
+    }
+
+    // Handle species input
     speciesInput.addEventListener('input', () => {
         const searchTerm = speciesInput.value.toLowerCase();
         if (searchTerm.length === 0) {
@@ -720,7 +421,7 @@ function setupSpeciesHandlers() {
 
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         const matches = speciesList.filter(species => 
-            species.name.toLowerCase().startsWith(searchTerm)
+            species.name.toLowerCase().includes(searchTerm)
         );
         updateSpeciesDropdown(matches);
     });
@@ -747,8 +448,10 @@ function setupSpeciesHandlers() {
         speciesModal.classList.remove('hidden');
         document.getElementById('new-species-name').value = '';
         document.getElementById('new-species-name').focus();
-    });    // Handle species form submission
-    speciesForm.addEventListener('submit', async (e) => {
+    });
+
+    // Handle species form submission
+    speciesForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const newSpeciesName = document.getElementById('new-species-name').value.trim();
         
@@ -772,7 +475,7 @@ function setupSpeciesHandlers() {
         // Update UI
         speciesModal.classList.add('hidden');
         document.getElementById('new-species-name').value = '';
-        await refreshSpeciesList();
+        refreshSpeciesList();
         showMessage('Species added successfully');
     });
 
@@ -783,58 +486,17 @@ function setupSpeciesHandlers() {
 
     document.getElementById('cancel-species-btn').addEventListener('click', () => {
         speciesModal.classList.add('hidden');
-    });    // Add click-outside handlers for modals
+    });
+
+    // Add click-outside handlers for modals
     [speciesModal, document.getElementById('manage-species-modal')].forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
             }
         });
-    });    // Initial refresh to include any already-loaded database species
-    setTimeout(async () => {
-        console.log('Running initial species list refresh...');
-        await refreshSpeciesList();
-        console.log('Initial species list refresh completed');
-    }, 50);
+    });
 }
-
-// Debug function to test species loading manually
-window.testSpeciesLoading = async function() {
-    console.log('=== MANUAL SPECIES LOADING TEST ===');
-    
-    // Check if fishDB exists
-    console.log('window.fishDB exists:', !!window.fishDB);
-    
-    if (window.fishDB) {
-        // Check if database is ready
-        const isReady = await window.fishDB.isReady();
-        console.log('Fish database ready:', isReady);
-        
-        if (isReady) {
-            // Get species names
-            const speciesNames = window.fishDB.getSpeciesNames();
-            console.log('Database species:', speciesNames);
-            
-            // Check current localStorage species
-            const currentSpecies = JSON.parse(localStorage.getItem('species') || '[]');
-            console.log('Current localStorage species:', currentSpecies);
-            
-            // Trigger manual refresh
-            if (typeof window.refreshSpeciesList === 'function') {
-                console.log('Calling refreshSpeciesList manually...');
-                await window.refreshSpeciesList();
-                
-                // Check updated localStorage
-                const updatedSpecies = JSON.parse(localStorage.getItem('species') || '[]');
-                console.log('Updated localStorage species:', updatedSpecies);
-            } else {
-                console.error('refreshSpeciesList function not available');
-            }
-        }
-    }
-    
-    console.log('=== TEST COMPLETE ===');
-};
 
 function displayCustomSpeciesList() {
     const customSpeciesList = document.getElementById('custom-species-list');
@@ -959,173 +621,6 @@ function setupLocationHandling() {
     });
 }
 
-// Edit Location Handling Functions
-function setupEditLocationHandlers(catchData) {
-    const extractBtn = document.getElementById('edit-extract-location-btn');
-    const getCurrentLocationBtn = document.getElementById('edit-get-current-location-btn');
-    const openMapsBtn = document.getElementById('edit-open-maps-btn');
-    const mapsLinkInput = document.getElementById('edit-maps-link');
-
-    // Extract location from Google Maps link
-    extractBtn.addEventListener('click', () => {
-        const mapsLink = mapsLinkInput.value.trim();
-        if (!mapsLink) {
-            showMessage('Please paste a Google Maps link first', 'error');
-            return;
-        }
-
-        const locationData = extractLocationFromMapsLink(mapsLink);
-        if (locationData) {
-            document.getElementById('edit-latitude').value = locationData.latitude;
-            document.getElementById('edit-longitude').value = locationData.longitude;
-            document.getElementById('edit-maps-url').value = mapsLink;
-            
-            if (locationData.placeName && !document.getElementById('edit-location-name').value) {
-                document.getElementById('edit-location-name').value = locationData.placeName;
-            }
-            
-            updateEditLocationStatus(locationData);
-            showMessage('Location extracted successfully');
-        } else {
-            showMessage('Could not extract location from the link. Please check the URL format.', 'error');
-        }
-    });
-
-    // Get current location
-    getCurrentLocationBtn.addEventListener('click', () => {
-        if (!navigator.geolocation) {
-            showMessage('Geolocation is not supported by your browser', 'error');
-            return;
-        }
-
-        getCurrentLocationBtn.disabled = true;
-        getCurrentLocationBtn.textContent = 'Getting location...';
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                
-                document.getElementById('edit-latitude').value = latitude;
-                document.getElementById('edit-longitude').value = longitude;
-                
-                // Generate Google Maps URL
-                const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                document.getElementById('edit-maps-url').value = mapsUrl;
-                
-                updateEditLocationStatus({ latitude, longitude });
-                getCurrentLocationBtn.disabled = false;
-                getCurrentLocationBtn.innerHTML = '<span class="lucide lucide-map-pin"></span> Get Current Location';
-                showMessage('Current location captured');
-            },
-            (error) => {
-                console.error('Error getting location:', error);
-                showMessage('Error getting location. Please try again.', 'error');
-                getCurrentLocationBtn.disabled = false;
-                getCurrentLocationBtn.innerHTML = '<span class="lucide lucide-map-pin"></span> Get Current Location';
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    });
-
-    // Open in Maps
-    openMapsBtn.addEventListener('click', () => {
-        const mapsUrl = document.getElementById('edit-maps-url').value;
-        const latitude = document.getElementById('edit-latitude').value;
-        const longitude = document.getElementById('edit-longitude').value;
-        
-        let urlToOpen = mapsUrl;
-        if (!urlToOpen && latitude && longitude) {
-            urlToOpen = `https://www.google.com/maps?q=${latitude},${longitude}`;
-        }
-        
-        if (urlToOpen) {
-            window.open(urlToOpen, '_blank');
-        } else {
-            showMessage('No location available to open in maps', 'error');
-        }
-    });
-}
-
-function updateEditLocationStatus(locationData) {
-    const statusElement = document.getElementById('edit-location-status');
-    const locationName = document.getElementById('edit-location-name').value;
-    
-    if (locationData && (locationData.latitude || locationData.longitude)) {
-        let statusText = '';
-        if (locationName) {
-            statusText += `📍 ${locationName}`;
-        }
-        if (locationData.latitude && locationData.longitude) {
-            statusText += statusText ? ` (${locationData.latitude.toFixed(6)}, ${locationData.longitude.toFixed(6)})` : 
-                         `📍 ${locationData.latitude.toFixed(6)}, ${locationData.longitude.toFixed(6)}`;
-        }
-        statusElement.textContent = statusText || 'Location coordinates available';
-        statusElement.className = 'text-sm text-green-700 bg-green-50 p-2 rounded';
-    } else if (locationName) {
-        statusElement.textContent = `📍 ${locationName} (no coordinates)`;
-        statusElement.className = 'text-sm text-yellow-700 bg-yellow-50 p-2 rounded';
-    } else {
-        statusElement.textContent = 'No location set';
-        statusElement.className = 'text-sm text-gray-600 bg-gray-50 p-2 rounded';
-    }
-}
-
-function extractLocationFromMapsLink(url) {
-    try {
-        // Handle different Google Maps URL formats
-        let latitude, longitude, placeName;
-        
-        // Format 1: https://maps.google.com/?q=lat,lng
-        let match = url.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-        if (match) {
-            latitude = parseFloat(match[1]);
-            longitude = parseFloat(match[2]);
-        }
-        
-        // Format 2: https://www.google.com/maps/@lat,lng,zoom
-        if (!latitude) {
-            match = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*),/);
-            if (match) {
-                latitude = parseFloat(match[1]);
-                longitude = parseFloat(match[2]);
-            }
-        }
-        
-        // Format 3: https://maps.google.com/maps?ll=lat,lng
-        if (!latitude) {
-            match = url.match(/[?&]ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-            if (match) {
-                latitude = parseFloat(match[1]);
-                longitude = parseFloat(match[2]);
-            }
-        }
-        
-        // Format 4: Place name in query
-        if (!latitude) {
-            match = url.match(/[?&]q=([^&]+)/);
-            if (match) {
-                placeName = decodeURIComponent(match[1].replace(/\+/g, ' '));
-            }
-        }
-        
-        if (latitude && longitude) {
-            return { latitude, longitude, placeName };
-        } else if (placeName) {
-            return { placeName };
-        }
-        
-        return null;
-    } catch (error) {
-        console.error('Error parsing Google Maps URL:', error);
-        return null;
-    }
-}
-
 // Photo Handling Functions
 function setupPhotoHandling() {
     const photoInput = document.getElementById('photo');
@@ -1135,81 +630,12 @@ function setupPhotoHandling() {
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-        // Show loading indicator
-        showLoadingIndicator(true);
-        
-        compressImage(file, 0.7, 1200) // 70% quality, max 1200px width
-            .then(compressedDataUrl => {
-                event.target.dataset.imageData = compressedDataUrl;
-                showLoadingIndicator(false);
-                showMessage('Photo processed successfully!');
-            })
-            .catch(error => {
-                console.error('Error processing photo:', error);
-                showLoadingIndicator(false);
-                showMessage('Error processing photo. Please try a smaller image.', 'error');
-                event.target.value = ''; // Clear the input
-            });
-    }
-}
-
-function compressImage(file, quality = 0.7, maxWidth = 1200) {
-    return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        
-        img.onload = () => {
-            try {
-                // Calculate new dimensions maintaining aspect ratio
-                let { width, height } = img;
-                const originalSize = file.size;
-                
-                if (width > maxWidth) {
-                    height = (height * maxWidth) / width;
-                    width = maxWidth;
-                }
-                
-                // Set canvas dimensions
-                canvas.width = width;
-                canvas.height = height;
-                
-                // Draw and compress image
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // Convert to data URL with compression
-                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                
-                // Check if compressed image is still too large (>1.5MB for safety)
-                const compressedSizeEstimate = (compressedDataUrl.length * 0.75) / (1024 * 1024);
-                console.log('Image compression: ' + (originalSize / (1024 * 1024)).toFixed(2) + 'MB -> ~' + compressedSizeEstimate.toFixed(2) + 'MB');
-                
-                if (compressedSizeEstimate > 1.5) {
-                    // Try with much lower quality if still too large
-                    const lowerQuality = Math.max(0.2, quality - 0.3);
-                    const furtherCompressed = canvas.toDataURL('image/jpeg', lowerQuality);
-                    const finalSizeEstimate = (furtherCompressed.length * 0.75) / (1024 * 1024);
-                    console.log('Further compression: ~' + finalSizeEstimate.toFixed(2) + 'MB');
-                    resolve(furtherCompressed);
-                } else {
-                    resolve(compressedDataUrl);
-                }
-            } catch (error) {
-                reject(error);
-            }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            // Store the image data URL
+            event.target.dataset.imageData = e.target.result;
         };
-        
-        img.onerror = () => reject(new Error('Failed to load image'));
-        img.src = URL.createObjectURL(file);
-    });
-}
-
-function showLoadingIndicator(show) {
-    const indicator = document.getElementById('loading-indicator');
-    if (show) {
-        indicator.classList.remove('hidden');
-    } else {
-        indicator.classList.add('hidden');
+        reader.readAsDataURL(file);
     }
 }
 
@@ -1225,27 +651,13 @@ function showFullscreenImage(imageUrl) {
 function showMessage(message, type = 'info') {
     const messageBox = document.getElementById('message-box');
     messageBox.textContent = message;
-    
-    let bgColor, textColor;
-    switch(type) {
-        case 'error':
-            bgColor = 'bg-red-100';
-            textColor = 'text-red-700';
-            break;
-        case 'warning':
-            bgColor = 'bg-yellow-100';
-            textColor = 'text-yellow-700';
-            break;
-        default:
-            bgColor = 'bg-blue-100';
-            textColor = 'text-blue-700';
-    }
-    
-    messageBox.className = `p-3 rounded-md text-sm ${bgColor} ${textColor}`;
+    messageBox.className = `p-3 rounded-md text-sm ${
+        type === 'error' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+    }`;
     messageBox.classList.remove('hidden');
     setTimeout(() => {
         messageBox.classList.add('hidden');
-    }, type === 'warning' ? 5000 : 3000); // Show warnings longer
+    }, 3000);
 }
 
 function loadCatchHistory() {
@@ -1263,14 +675,21 @@ function loadCatchHistory() {
     catchLog.innerHTML = catches.map(catch_ => `
         <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${catch_.id}">
             <div class="flex justify-between items-start gap-4">
-                <div class="flex-grow">                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species}</h3>
-                    <span class="text-sm text-gray-500">${formatDate(catch_.datetime)}</span>
+                <div class="flex-grow">
+                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species}</h3>
+                    <span class="text-sm text-gray-500">${new Date(catch_.datetime).toLocaleDateString('en-GB', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</span>
                     <div class="mt-2 space-y-1">
                         <p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>
-                        <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>                        ${catch_.locationName ? `
+                        <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>
+                        ${catch_.locationName ? `
                             <p class="text-sm">
                                 <span class="font-medium">Location:</span> ${catch_.locationName}
-                                ${catch_.mapsUrl ? ` <a href="${catch_.mapsUrl}" target="_blank" class="text-blue-600 hover:underline">📍</a>` : ''}
                             </p>
                         ` : ''}
                         ${catch_.notes ? `
@@ -1394,21 +813,26 @@ function initializeDatetime() {
 
 function showCatchModal(catchData) {
     const catchModal = document.getElementById('catch-modal');
-      // Fill in modal content
+    
+    // Fill in modal content
     document.getElementById('modal-species').textContent = catchData.species;
-    document.getElementById('modal-date').textContent = formatDate(catchData.datetime);
+    document.getElementById('modal-date').textContent = new Date(catchData.datetime).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
     document.getElementById('modal-length').textContent = `Length: ${catchData.length}cm`;
     document.getElementById('modal-weight').textContent = `Weight: ${Number(catchData.weight).toFixed(3)}kg`;
     
     const locationContainer = document.getElementById('modal-location-container');
     const locationName = document.getElementById('modal-location-name');
-      if (catchData.locationName) {
+    
+    if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
-        // Use stored mapsUrl if available, otherwise create from coordinates
-        if (catchData.mapsUrl) {
-            locationName.href = catchData.mapsUrl;
-        } else if (catchData.latitude && catchData.longitude) {
+        if (catchData.latitude && catchData.longitude) {
             locationName.href = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
         } else {
             locationName.removeAttribute('href');
