@@ -45,12 +45,10 @@ class FishDatabase {
                 }
             };
         });
-    }
-
-    async loadAlgorithms() {
+    }    async loadAlgorithms() {
         try {
             // Load algorithms from the JSON file
-            const response = await fetch('./Fish App DB Files/fish_algorithms.json');
+            const response = await fetch('./fish_algorithms.json');
             const data = await response.json();
             this.algorithms = data;
 

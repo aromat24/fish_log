@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupViewToggle();
     setupDataOptions();
     setupSpeciesHandlers();
-    
-    // Initialize fish database and update species list
+      // Initialize fish database and update species list
     initializeFishDatabase();
     
     // Initialize datetime input with current time
@@ -76,9 +75,11 @@ async function initializeFishDatabase() {
                 // Refresh species list to include database species
                 // Wait a moment to ensure species handlers are set up
                 setTimeout(async () => {
-                    if (typeof refreshSpeciesList !== 'undefined') {
-                        // Note: refreshSpeciesList is not globally accessible, so we'll trigger it differently
-                        console.log('Database species loaded');
+                    if (typeof window.refreshSpeciesList === 'function') {
+                        await window.refreshSpeciesList();
+                        console.log('Database species loaded into dropdown');
+                    } else {
+                        console.log('refreshSpeciesList function not yet available');
                     }
                 }, 100);
             } else {
@@ -608,12 +609,14 @@ function setupSpeciesHandlers() {
             );
             await updateSpeciesDropdown(matches);
         }
-        
-        // Update manager list if it's visible
+          // Update manager list if it's visible
         if (!document.getElementById('manage-species-modal').classList.contains('hidden')) {
             displayCustomSpeciesList();
         }
-    }async function updateSpeciesDropdown(matches) {
+    }
+
+    // Make refreshSpeciesList globally accessible for database initialization
+    window.refreshSpeciesList = refreshSpeciesList;async function updateSpeciesDropdown(matches) {
         const isDbReady = window.fishDB && await window.fishDB.isReady();
         
         if (matches.length > 0) {
@@ -732,9 +735,7 @@ function setupSpeciesHandlers() {
 
     document.getElementById('cancel-species-btn').addEventListener('click', () => {
         speciesModal.classList.add('hidden');
-    });
-
-    // Add click-outside handlers for modals
+    });    // Add click-outside handlers for modals
     [speciesModal, document.getElementById('manage-species-modal')].forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -742,6 +743,11 @@ function setupSpeciesHandlers() {
             }
         });
     });
+
+    // Initial refresh to include any already-loaded database species
+    setTimeout(async () => {
+        await refreshSpeciesList();
+    }, 50);
 }
 
 function displayCustomSpeciesList() {
