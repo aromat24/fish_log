@@ -600,12 +600,11 @@ function setupSpeciesHandlers() {
             // Update localStorage with combined list
             localStorage.setItem('species', JSON.stringify(speciesList));
         }
-        
-        // Update dropdown if it's visible
+          // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
             const matches = speciesList.filter(species => 
-                species.name.toLowerCase().includes(searchTerm)
+                species.name.toLowerCase().startsWith(searchTerm)
             );
             await updateSpeciesDropdown(matches);
         }
@@ -660,9 +659,7 @@ function setupSpeciesHandlers() {
             });
         });
         speciesDropdown.classList.remove('hidden');
-    }
-
-    // Handle species input
+    }    // Handle species input
     speciesInput.addEventListener('input', () => {
         const searchTerm = speciesInput.value.toLowerCase();
         if (searchTerm.length === 0) {
@@ -672,7 +669,7 @@ function setupSpeciesHandlers() {
 
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         const matches = speciesList.filter(species => 
-            species.name.toLowerCase().includes(searchTerm)
+            species.name.toLowerCase().startsWith(searchTerm)
         );
         updateSpeciesDropdown(matches);
     });
