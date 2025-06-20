@@ -66,29 +66,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initializeFishDatabase() {
+    console.log('=== FISH DATABASE INITIALIZATION START ===');
     try {
         if (window.fishDB) {
+            console.log('Fish database object found, checking if ready...');
             const isReady = await window.fishDB.isReady();
+            console.log('Fish database ready status:', isReady);
+            
             if (isReady) {
                 console.log('Fish database initialized successfully');
+                
+                // Test the database
+                const speciesNames = window.fishDB.getSpeciesNames();
+                console.log('Available species from database:', speciesNames);
                 
                 // Refresh species list to include database species
                 // Wait a moment to ensure species handlers are set up
                 setTimeout(async () => {
+                    console.log('Attempting to refresh species list...');
                     if (typeof window.refreshSpeciesList === 'function') {
+                        console.log('refreshSpeciesList function found, calling it...');
                         await window.refreshSpeciesList();
                         console.log('Database species loaded into dropdown');
+                        
+                        // Debug: Check what's in localStorage now
+                        const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+                        console.log('Species list after refresh:', speciesList);
                     } else {
-                        console.log('refreshSpeciesList function not yet available');
+                        console.error('refreshSpeciesList function not yet available');
                     }
                 }, 100);
             } else {
                 console.warn('Fish database failed to initialize');
             }
+        } else {
+            console.error('window.fishDB not found - fishDatabase.js may not have loaded');
         }
     } catch (error) {
         console.error('Error initializing fish database:', error);
     }
+    console.log('=== FISH DATABASE INITIALIZATION END ===');
 }
 
 function initLandingPage() {
@@ -567,24 +584,42 @@ function closeFullscreenImage() {
 
 // Species Management Functions
 function setupSpeciesHandlers() {
+    console.log('=== SETTING UP SPECIES HANDLERS ===');
     const speciesInput = document.getElementById('species');
     const speciesDropdown = document.getElementById('species-dropdown');
     const manageSpeciesBtn = document.getElementById('manage-species-btn');
+    
+    console.log('Species DOM elements:', {
+        speciesInput: !!speciesInput,
+        speciesDropdown: !!speciesDropdown,
+        manageSpeciesBtn: !!manageSpeciesBtn
+    });
+    
+    if (!speciesInput || !speciesDropdown) {
+        console.error('Critical species DOM elements not found!');
+        return;
+    }
     
     // Initialize species list if empty
     if (!localStorage.getItem('species')) {
         const defaultSpecies = [
             'Bass', 'Trout', 'Salmon', 'Pike', 'Catfish', 'Perch', 'Carp'
         ].map(name => ({ name, isCustom: false }));
-        localStorage.setItem('species', JSON.stringify(defaultSpecies));
-    }    async function refreshSpeciesList() {
+        localStorage.setItem('species', JSON.stringify(defaultSpecies));    }
+
+    async function refreshSpeciesList() {
+        console.log('=== REFRESH SPECIES LIST START ===');
         let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+        console.log('Current species list:', speciesList);
         
         // Add species from fish database if available
         if (window.fishDB && await window.fishDB.isReady()) {
+            console.log('Fish database is ready, getting species names...');
             const dbSpecies = window.fishDB.getSpeciesNames();
+            console.log('Database species:', dbSpecies);
             
             // Add database species that aren't already in the list
+            let addedCount = 0;
             dbSpecies.forEach(dbSpeciesName => {
                 const exists = speciesList.some(species => 
                     species.name.toLowerCase() === dbSpeciesName.toLowerCase()
@@ -595,13 +630,23 @@ function setupSpeciesHandlers() {
                         isCustom: false, 
                         isFromDatabase: true 
                     });
+                    addedCount++;
+                    console.log('Added database species:', dbSpeciesName);
                 }
             });
             
+            console.log(`Added ${addedCount} species from database`);
+            
             // Update localStorage with combined list
             localStorage.setItem('species', JSON.stringify(speciesList));
+            console.log('Updated species list saved to localStorage');
+        } else {
+            console.log('Fish database not ready or not available');
         }
-          // Update dropdown if it's visible
+        
+        console.log('Final species list:', speciesList);
+        
+        // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
             const matches = speciesList.filter(species => 
@@ -609,14 +654,17 @@ function setupSpeciesHandlers() {
             );
             await updateSpeciesDropdown(matches);
         }
-          // Update manager list if it's visible
+        
+        // Update manager list if it's visible
         if (!document.getElementById('manage-species-modal').classList.contains('hidden')) {
             displayCustomSpeciesList();
-        }
+        }        console.log('=== REFRESH SPECIES LIST END ===');
     }
 
     // Make refreshSpeciesList globally accessible for database initialization
-    window.refreshSpeciesList = refreshSpeciesList;async function updateSpeciesDropdown(matches) {
+    window.refreshSpeciesList = refreshSpeciesList;
+
+    async function updateSpeciesDropdown(matches) {
         const isDbReady = window.fishDB && await window.fishDB.isReady();
         
         if (matches.length > 0) {
@@ -742,13 +790,51 @@ function setupSpeciesHandlers() {
                 modal.classList.add('hidden');
             }
         });
-    });
-
-    // Initial refresh to include any already-loaded database species
+    });    // Initial refresh to include any already-loaded database species
     setTimeout(async () => {
+        console.log('Running initial species list refresh...');
         await refreshSpeciesList();
+        console.log('Initial species list refresh completed');
     }, 50);
 }
+
+// Debug function to test species loading manually
+window.testSpeciesLoading = async function() {
+    console.log('=== MANUAL SPECIES LOADING TEST ===');
+    
+    // Check if fishDB exists
+    console.log('window.fishDB exists:', !!window.fishDB);
+    
+    if (window.fishDB) {
+        // Check if database is ready
+        const isReady = await window.fishDB.isReady();
+        console.log('Fish database ready:', isReady);
+        
+        if (isReady) {
+            // Get species names
+            const speciesNames = window.fishDB.getSpeciesNames();
+            console.log('Database species:', speciesNames);
+            
+            // Check current localStorage species
+            const currentSpecies = JSON.parse(localStorage.getItem('species') || '[]');
+            console.log('Current localStorage species:', currentSpecies);
+            
+            // Trigger manual refresh
+            if (typeof window.refreshSpeciesList === 'function') {
+                console.log('Calling refreshSpeciesList manually...');
+                await window.refreshSpeciesList();
+                
+                // Check updated localStorage
+                const updatedSpecies = JSON.parse(localStorage.getItem('species') || '[]');
+                console.log('Updated localStorage species:', updatedSpecies);
+            } else {
+                console.error('refreshSpeciesList function not available');
+            }
+        }
+    }
+    
+    console.log('=== TEST COMPLETE ===');
+};
 
 function displayCustomSpeciesList() {
     const customSpeciesList = document.getElementById('custom-species-list');

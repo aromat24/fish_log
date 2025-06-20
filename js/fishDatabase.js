@@ -47,9 +47,18 @@ class FishDatabase {
         });
     }    async loadAlgorithms() {
         try {
+            console.log('Loading fish algorithms from: ./fish_algorithms.json');
             // Load algorithms from the JSON file
             const response = await fetch('./fish_algorithms.json');
+            
+            if (!response.ok) {
+                console.error('Failed to fetch fish algorithms:', response.status, response.statusText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Fish algorithms loaded successfully:', data);
+            console.log('Number of species in database:', Object.keys(data).length);
             this.algorithms = data;
 
             // Store in IndexedDB for offline access
@@ -57,9 +66,18 @@ class FishDatabase {
             
             return data;
         } catch (error) {
-            console.error('Failed to load algorithms:', error);
+            console.error('Failed to load algorithms from network:', error);
+            console.log('Attempting to load from IndexedDB...');
             // Try to load from IndexedDB as fallback
-            return await this.getStoredAlgorithms();
+            const storedData = await this.getStoredAlgorithms();
+            if (storedData && Object.keys(storedData).length > 0) {
+                console.log('Loaded algorithms from IndexedDB:', storedData);
+                this.algorithms = storedData;
+                return storedData;
+            } else {
+                console.error('No algorithms available from IndexedDB either');
+                return null;
+            }
         }
     }
 
@@ -105,13 +123,17 @@ class FishDatabase {
 
             request.onerror = () => reject(request.error);
         });
-    }
-
-    // Get list of all species names for autocomplete
+    }    // Get list of all species names for autocomplete
     getSpeciesNames() {
-        if (!this.algorithms) return [];
+        console.log('getSpeciesNames called, algorithms:', this.algorithms);
+        if (!this.algorithms) {
+            console.log('No algorithms available, returning empty array');
+            return [];
+        }
         
-        return Object.values(this.algorithms).map(species => species.species_name);
+        const speciesNames = Object.values(this.algorithms).map(species => species.species_name);
+        console.log('Returning species names:', speciesNames);
+        return speciesNames;
     }
 
     // Find species by name (fuzzy matching)
