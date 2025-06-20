@@ -12,6 +12,22 @@ function generateUUID() {
     });
 }
 
+// Helper function to format dates consistently as dd/mm/yyyy - time
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    
+    // Format date as dd/mm/yyyy
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    // Format time as HH:MM
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day}/${month}/${year} - ${hours}:${minutes}`;
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize landing page functionality
@@ -122,6 +138,27 @@ function setupFormHandlers() {
     lengthInput.addEventListener('input', autoCalculateWeight);
     speciesInput.addEventListener('input', autoCalculateWeight);
     speciesInput.addEventListener('change', autoCalculateWeight);
+
+    // Setup datetime display formatting
+    const datetimeInput = document.getElementById('datetime');
+    const datetimeDisplay = document.getElementById('datetime-display');
+    
+    // Update display when datetime changes
+    const updateDatetimeDisplay = () => {
+        if (datetimeInput.value) {
+            datetimeDisplay.textContent = `Will be saved as: ${formatDate(datetimeInput.value)}`;
+            datetimeDisplay.classList.remove('hidden');
+        } else {
+            datetimeDisplay.textContent = '';
+            datetimeDisplay.classList.add('hidden');
+        }
+    };
+    
+    datetimeInput.addEventListener('input', updateDatetimeDisplay);
+    datetimeInput.addEventListener('change', updateDatetimeDisplay);
+    
+    // Initial display update
+    updateDatetimeDisplay();
 
     // Handle catch form submission
     catchForm.addEventListener('submit', (e) => {
@@ -289,6 +326,27 @@ function showEditModal(catchData) {
     document.getElementById('edit-maps-link').value = '';
     document.getElementById('edit-maps-url').value = catchData.mapsUrl || '';
     document.getElementById('edit-photo').value = catchData.photo || '';
+
+    // Setup datetime display formatting for edit modal
+    const editDatetimeInput = document.getElementById('edit-datetime');
+    const editDatetimeDisplay = document.getElementById('edit-datetime-display');
+    
+    // Update display when datetime changes
+    const updateEditDatetimeDisplay = () => {
+        if (editDatetimeInput.value) {
+            editDatetimeDisplay.textContent = `Will be saved as: ${formatDate(editDatetimeInput.value)}`;
+            editDatetimeDisplay.classList.remove('hidden');
+        } else {
+            editDatetimeDisplay.textContent = '';
+            editDatetimeDisplay.classList.add('hidden');
+        }
+    };
+    
+    editDatetimeInput.addEventListener('input', updateEditDatetimeDisplay);
+    editDatetimeInput.addEventListener('change', updateEditDatetimeDisplay);
+    
+    // Initial display update
+    updateEditDatetimeDisplay();
 
     // Update location status
     updateEditLocationStatus(catchData);
@@ -462,13 +520,8 @@ function displayRecords() {
                 <div class="space-y-4">
                     <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.largest.id}">
                         <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">
-                                <span class="font-medium">Longest:</span> 
-                                ${records.largest.length}cm (${new Date(records.largest.datetime).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                })})
+                            <p class="text-sm hover:text-blue-600">                                <span class="font-medium">Longest:</span> 
+                                ${records.largest.length}cm (${formatDate(records.largest.datetime)})
                             </p>
                         </div>
                         ${records.largest.photo ? `
@@ -479,13 +532,8 @@ function displayRecords() {
                     </div>
                     <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.heaviest.id}">
                         <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">
-                                <span class="font-medium">Heaviest:</span> 
-                                ${Number(records.heaviest.weight).toFixed(3)}kg (${new Date(records.heaviest.datetime).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                })})
+                            <p class="text-sm hover:text-blue-600">                                <span class="font-medium">Heaviest:</span> 
+                                ${Number(records.heaviest.weight).toFixed(3)}kg (${formatDate(records.heaviest.datetime)})
                             </p>
                         </div>
                         ${records.heaviest.photo ? `
@@ -1126,15 +1174,8 @@ function loadCatchHistory() {
     catchLog.innerHTML = catches.map(catch_ => `
         <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${catch_.id}">
             <div class="flex justify-between items-start gap-4">
-                <div class="flex-grow">
-                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species}</h3>
-                    <span class="text-sm text-gray-500">${new Date(catch_.datetime).toLocaleDateString('en-GB', { 
-                        day: '2-digit', 
-                        month: '2-digit', 
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}</span>
+                <div class="flex-grow">                    <h3 class="text-lg font-semibold text-blue-700">${catch_.species}</h3>
+                    <span class="text-sm text-gray-500">${formatDate(catch_.datetime)}</span>
                     <div class="mt-2 space-y-1">
                         <p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>
                         <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>                        ${catch_.locationName ? `
@@ -1264,16 +1305,9 @@ function initializeDatetime() {
 
 function showCatchModal(catchData) {
     const catchModal = document.getElementById('catch-modal');
-    
-    // Fill in modal content
+      // Fill in modal content
     document.getElementById('modal-species').textContent = catchData.species;
-    document.getElementById('modal-date').textContent = new Date(catchData.datetime).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    document.getElementById('modal-date').textContent = formatDate(catchData.datetime);
     document.getElementById('modal-length').textContent = `Length: ${catchData.length}cm`;
     document.getElementById('modal-weight').textContent = `Weight: ${Number(catchData.weight).toFixed(3)}kg`;
     

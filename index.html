@@ -181,11 +181,10 @@ layout: null
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Will auto-calculate from length">
                         </div>
-                    </div>
-
-                    <div>
+                    </div>                    <div>
                         <label for="datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
                         <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <div id="datetime-display" class="text-sm text-gray-500 mt-1"></div>
                     </div>
 
                     <div>
@@ -314,12 +313,11 @@ layout: null
                     <div>                        <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
                         <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                     </div>
-                </div>
-
-                <div>
+                </div>                <div>
                     <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
                     <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>                <div class="space-y-3">
+                    <div id="edit-datetime-display" class="text-sm text-gray-500 mt-1"></div>
+                </div><div class="space-y-3">
                     <label class="block text-sm font-medium text-gray-600">Location:</label>
                     
                     <!-- Location Name -->
