@@ -1,3 +1,17 @@
+// Helper function to generate UUID
+function generateUUID() {
+    // Try using crypto.randomUUID() if available
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    
+    // Fallback to manual UUID generation
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize landing page functionality
@@ -57,47 +71,99 @@ function setupFormHandlers() {
     const speciesInput = document.getElementById('species');
     const weightInput = document.getElementById('weight');
 
+    // Add debug logging to check if elements exist
+    console.log('Setting up form handlers');
+    console.log('catchForm:', catchForm);
+    console.log('lengthInput:', lengthInput);
+    console.log('speciesInput:', speciesInput);
+    console.log('weightInput:', weightInput);
+
+    if (!catchForm) {
+        console.error('catch-form element not found!');
+        return;
+    }
+
     // Handle catch form submission
     catchForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        console.log('Form submission started');
         
         // Get datetime - the only required field
         const datetime = document.getElementById('datetime').value;
+        const species = speciesInput.value.trim();
+        
+        console.log('Datetime:', datetime);
+        console.log('Species:', species);
+        
+        // Validate required fields
         if (!datetime) {
+            console.log('Missing datetime');
             showMessage('Please enter the date and time', 'error');
             return;
         }
+        
+        if (!species) {
+            console.log('Missing species');
+            showMessage('Please enter the species', 'error');
+            return;
+        }
 
+        console.log('Validation passed, getting length');
         // Get length value - we'll treat it as the optional main field
         const length = lengthInput.value ? parseFloat(lengthInput.value) : null;
-
-        // Create catch object - making sure to only include non-empty fields
+        
+        console.log('Creating catch data object');
+        console.log('Length:', length);
+        console.log('Weight:', weightInput.value);
+        console.log('Photo data:', document.getElementById('photo').dataset.imageData ? 'Present' : 'None');        // Create catch object - making sure to only include non-empty fields
         const catchData = {
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             datetime,
             length,
-            species: speciesInput.value.trim() || null,
+            species: species || null,
             weight: weightInput.value ? parseFloat(weightInput.value) : null,
             notes: document.getElementById('notes').value.trim() || null,
             locationName: document.getElementById('location-name').value || null,
             latitude: document.getElementById('latitude').value ? parseFloat(document.getElementById('latitude').value) : null,
             longitude: document.getElementById('longitude').value ? parseFloat(document.getElementById('longitude').value) : null,
+            mapsUrl: null, // Can be added later through editing
             photo: document.getElementById('photo').dataset.imageData || null,
             timestamp: Date.now()
         };
 
-        try {
+        console.log('Catch data created:', catchData);        try {
+            console.log('Getting existing catches from localStorage');
             // Get existing catches from localStorage
             const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+            
+            console.log('Existing catches:', catches.length);
             
             // Add new catch
             catches.push(catchData);
             
-            // Save updated catches array
-            localStorage.setItem('catches', JSON.stringify(catches));
+            console.log('Saving to localStorage');
+            // Save updated catches array with better error handling
+            try {
+                localStorage.setItem('catches', JSON.stringify(catches));
+            } catch (storageError) {
+                console.error('localStorage error:', storageError);
+                if (storageError.name === 'QuotaExceededError') {
+                    // Remove the photo data and try again
+                    const catchDataWithoutPhoto = { ...catchData, photo: null };
+                    catches[catches.length - 1] = catchDataWithoutPhoto;
+                    localStorage.setItem('catches', JSON.stringify(catches));
+                    showMessage('Catch saved successfully! Photo was too large and could not be saved.', 'warning');
+                } else {
+                    throw storageError;
+                }
+            }
 
-            // Show success message
-            showMessage('Catch saved successfully!');
+            if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
+                console.log('Save successful, showing message');
+                showMessage('Catch saved successfully!');
+            }
+
+            console.log('Resetting form');
 
             // Reset form and clear data
             catchForm.reset();
@@ -143,8 +209,7 @@ function calculateEstimatedWeight(species, length) {
 
 function showEditModal(catchData) {
     const editModal = document.getElementById('edit-modal');
-    
-    // Fill in form fields
+      // Fill in form fields
     document.getElementById('edit-catch-id').value = catchData.id;
     document.getElementById('edit-species').value = catchData.species;
     document.getElementById('edit-length').value = catchData.length;
@@ -154,7 +219,12 @@ function showEditModal(catchData) {
     document.getElementById('edit-notes').value = catchData.notes || '';
     document.getElementById('edit-latitude').value = catchData.latitude || '';
     document.getElementById('edit-longitude').value = catchData.longitude || '';
+    document.getElementById('edit-maps-link').value = '';
+    document.getElementById('edit-maps-url').value = catchData.mapsUrl || '';
     document.getElementById('edit-photo').value = catchData.photo || '';
+
+    // Update location status
+    updateEditLocationStatus(catchData);
 
     // Update photo button text
     const editPhotoText = document.getElementById('edit-photo-text');
@@ -164,19 +234,29 @@ function showEditModal(catchData) {
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     const editPhotoInput = document.getElementById('edit-photo-input');
     
-    editPhotoBtn.onclick = () => editPhotoInput.click();
-    
-    editPhotoInput.onchange = (e) => {
+    editPhotoBtn.onclick = () => editPhotoInput.click();    editPhotoInput.onchange = (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('edit-photo').value = e.target.result;
-                editPhotoText.textContent = 'Photo Selected';
-            };
-            reader.readAsDataURL(file);
+            // Show loading indicator
+            showLoadingIndicator(true);
+            
+            compressImage(file, 0.7, 1200) // 70% quality, max 1200px width
+                .then(compressedDataUrl => {
+                    document.getElementById('edit-photo').value = compressedDataUrl;
+                    editPhotoText.textContent = 'Photo Selected';
+                    showLoadingIndicator(false);
+                })
+                .catch(error => {
+                    console.error('Error processing photo:', error);
+                    showLoadingIndicator(false);
+                    showMessage('Error processing photo. Please try a smaller image.', 'error');
+                    e.target.value = ''; // Clear the input
+                });
         }
     };
+
+    // Setup location editing functionality
+    setupEditLocationHandlers(catchData);
 
     // Show the modal
     editModal.classList.remove('hidden');
@@ -210,6 +290,7 @@ function updateCatch() {
     const notes = document.getElementById('edit-notes').value.trim();
     const latitude = document.getElementById('edit-latitude').value;
     const longitude = document.getElementById('edit-longitude').value;
+    const mapsUrl = document.getElementById('edit-maps-url').value.trim();
     const photo = document.getElementById('edit-photo').value;
 
     // Validate required fields
@@ -234,13 +315,24 @@ function updateCatch() {
             notes: notes || null,
             latitude: latitude ? parseFloat(latitude) : null,
             longitude: longitude ? parseFloat(longitude) : null,
+            mapsUrl: mapsUrl || null,
             photo: photo || null,
             lastModified: Date.now()
-        };
-
-        // Save back to localStorage
-        localStorage.setItem('catches', JSON.stringify(catches));
-        
+        };        // Save back to localStorage with error handling
+        try {
+            localStorage.setItem('catches', JSON.stringify(catches));
+        } catch (storageError) {
+            console.error('localStorage error:', storageError);
+            if (storageError.name === 'QuotaExceededError') {
+                // Remove the photo data and try again
+                catches[catchIndex].photo = null;
+                localStorage.setItem('catches', JSON.stringify(catches));
+                showMessage('Catch updated successfully! Photo was too large and could not be saved.', 'warning');
+            } else {
+                showMessage('Error updating catch. Please try again.', 'error');
+                return;
+            }
+        }        
         // Hide edit modal
         document.getElementById('edit-modal').classList.add('hidden');
         
@@ -250,7 +342,9 @@ function updateCatch() {
             displayRecords();
         }
         
-        showMessage('Catch updated successfully');
+        if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
+            showMessage('Catch updated successfully');
+        }
     } else {
         showMessage('Error updating catch. Please try again.', 'error');
     }
@@ -621,6 +715,173 @@ function setupLocationHandling() {
     });
 }
 
+// Edit Location Handling Functions
+function setupEditLocationHandlers(catchData) {
+    const extractBtn = document.getElementById('edit-extract-location-btn');
+    const getCurrentLocationBtn = document.getElementById('edit-get-current-location-btn');
+    const openMapsBtn = document.getElementById('edit-open-maps-btn');
+    const mapsLinkInput = document.getElementById('edit-maps-link');
+
+    // Extract location from Google Maps link
+    extractBtn.addEventListener('click', () => {
+        const mapsLink = mapsLinkInput.value.trim();
+        if (!mapsLink) {
+            showMessage('Please paste a Google Maps link first', 'error');
+            return;
+        }
+
+        const locationData = extractLocationFromMapsLink(mapsLink);
+        if (locationData) {
+            document.getElementById('edit-latitude').value = locationData.latitude;
+            document.getElementById('edit-longitude').value = locationData.longitude;
+            document.getElementById('edit-maps-url').value = mapsLink;
+            
+            if (locationData.placeName && !document.getElementById('edit-location-name').value) {
+                document.getElementById('edit-location-name').value = locationData.placeName;
+            }
+            
+            updateEditLocationStatus(locationData);
+            showMessage('Location extracted successfully');
+        } else {
+            showMessage('Could not extract location from the link. Please check the URL format.', 'error');
+        }
+    });
+
+    // Get current location
+    getCurrentLocationBtn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            showMessage('Geolocation is not supported by your browser', 'error');
+            return;
+        }
+
+        getCurrentLocationBtn.disabled = true;
+        getCurrentLocationBtn.textContent = 'Getting location...';
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                
+                document.getElementById('edit-latitude').value = latitude;
+                document.getElementById('edit-longitude').value = longitude;
+                
+                // Generate Google Maps URL
+                const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                document.getElementById('edit-maps-url').value = mapsUrl;
+                
+                updateEditLocationStatus({ latitude, longitude });
+                getCurrentLocationBtn.disabled = false;
+                getCurrentLocationBtn.innerHTML = '<span class="lucide lucide-map-pin"></span> Get Current Location';
+                showMessage('Current location captured');
+            },
+            (error) => {
+                console.error('Error getting location:', error);
+                showMessage('Error getting location. Please try again.', 'error');
+                getCurrentLocationBtn.disabled = false;
+                getCurrentLocationBtn.innerHTML = '<span class="lucide lucide-map-pin"></span> Get Current Location';
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    });
+
+    // Open in Maps
+    openMapsBtn.addEventListener('click', () => {
+        const mapsUrl = document.getElementById('edit-maps-url').value;
+        const latitude = document.getElementById('edit-latitude').value;
+        const longitude = document.getElementById('edit-longitude').value;
+        
+        let urlToOpen = mapsUrl;
+        if (!urlToOpen && latitude && longitude) {
+            urlToOpen = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        }
+        
+        if (urlToOpen) {
+            window.open(urlToOpen, '_blank');
+        } else {
+            showMessage('No location available to open in maps', 'error');
+        }
+    });
+}
+
+function updateEditLocationStatus(locationData) {
+    const statusElement = document.getElementById('edit-location-status');
+    const locationName = document.getElementById('edit-location-name').value;
+    
+    if (locationData && (locationData.latitude || locationData.longitude)) {
+        let statusText = '';
+        if (locationName) {
+            statusText += `📍 ${locationName}`;
+        }
+        if (locationData.latitude && locationData.longitude) {
+            statusText += statusText ? ` (${locationData.latitude.toFixed(6)}, ${locationData.longitude.toFixed(6)})` : 
+                         `📍 ${locationData.latitude.toFixed(6)}, ${locationData.longitude.toFixed(6)}`;
+        }
+        statusElement.textContent = statusText || 'Location coordinates available';
+        statusElement.className = 'text-sm text-green-700 bg-green-50 p-2 rounded';
+    } else if (locationName) {
+        statusElement.textContent = `📍 ${locationName} (no coordinates)`;
+        statusElement.className = 'text-sm text-yellow-700 bg-yellow-50 p-2 rounded';
+    } else {
+        statusElement.textContent = 'No location set';
+        statusElement.className = 'text-sm text-gray-600 bg-gray-50 p-2 rounded';
+    }
+}
+
+function extractLocationFromMapsLink(url) {
+    try {
+        // Handle different Google Maps URL formats
+        let latitude, longitude, placeName;
+        
+        // Format 1: https://maps.google.com/?q=lat,lng
+        let match = url.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+        if (match) {
+            latitude = parseFloat(match[1]);
+            longitude = parseFloat(match[2]);
+        }
+        
+        // Format 2: https://www.google.com/maps/@lat,lng,zoom
+        if (!latitude) {
+            match = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*),/);
+            if (match) {
+                latitude = parseFloat(match[1]);
+                longitude = parseFloat(match[2]);
+            }
+        }
+        
+        // Format 3: https://maps.google.com/maps?ll=lat,lng
+        if (!latitude) {
+            match = url.match(/[?&]ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+            if (match) {
+                latitude = parseFloat(match[1]);
+                longitude = parseFloat(match[2]);
+            }
+        }
+        
+        // Format 4: Place name in query
+        if (!latitude) {
+            match = url.match(/[?&]q=([^&]+)/);
+            if (match) {
+                placeName = decodeURIComponent(match[1].replace(/\+/g, ' '));
+            }
+        }
+        
+        if (latitude && longitude) {
+            return { latitude, longitude, placeName };
+        } else if (placeName) {
+            return { placeName };
+        }
+        
+        return null;
+    } catch (error) {
+        console.error('Error parsing Google Maps URL:', error);
+        return null;
+    }
+}
+
 // Photo Handling Functions
 function setupPhotoHandling() {
     const photoInput = document.getElementById('photo');
@@ -630,12 +891,81 @@ function setupPhotoHandling() {
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            // Store the image data URL
-            event.target.dataset.imageData = e.target.result;
+        // Show loading indicator
+        showLoadingIndicator(true);
+        
+        compressImage(file, 0.7, 1200) // 70% quality, max 1200px width
+            .then(compressedDataUrl => {
+                event.target.dataset.imageData = compressedDataUrl;
+                showLoadingIndicator(false);
+                showMessage('Photo processed successfully!');
+            })
+            .catch(error => {
+                console.error('Error processing photo:', error);
+                showLoadingIndicator(false);
+                showMessage('Error processing photo. Please try a smaller image.', 'error');
+                event.target.value = ''; // Clear the input
+            });
+    }
+}
+
+function compressImage(file, quality = 0.7, maxWidth = 1200) {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+            try {
+                // Calculate new dimensions maintaining aspect ratio
+                let { width, height } = img;
+                const originalSize = file.size;
+                
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                
+                // Set canvas dimensions
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress image
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert to data URL with compression
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Check if compressed image is still too large (>1.5MB for safety)
+                const compressedSizeEstimate = (compressedDataUrl.length * 0.75) / (1024 * 1024);
+                console.log('Image compression: ' + (originalSize / (1024 * 1024)).toFixed(2) + 'MB -> ~' + compressedSizeEstimate.toFixed(2) + 'MB');
+                
+                if (compressedSizeEstimate > 1.5) {
+                    // Try with much lower quality if still too large
+                    const lowerQuality = Math.max(0.2, quality - 0.3);
+                    const furtherCompressed = canvas.toDataURL('image/jpeg', lowerQuality);
+                    const finalSizeEstimate = (furtherCompressed.length * 0.75) / (1024 * 1024);
+                    console.log('Further compression: ~' + finalSizeEstimate.toFixed(2) + 'MB');
+                    resolve(furtherCompressed);
+                } else {
+                    resolve(compressedDataUrl);
+                }
+            } catch (error) {
+                reject(error);
+            }
         };
-        reader.readAsDataURL(file);
+        
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+function showLoadingIndicator(show) {
+    const indicator = document.getElementById('loading-indicator');
+    if (show) {
+        indicator.classList.remove('hidden');
+    } else {
+        indicator.classList.add('hidden');
     }
 }
 
@@ -651,13 +981,27 @@ function showFullscreenImage(imageUrl) {
 function showMessage(message, type = 'info') {
     const messageBox = document.getElementById('message-box');
     messageBox.textContent = message;
-    messageBox.className = `p-3 rounded-md text-sm ${
-        type === 'error' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-    }`;
+    
+    let bgColor, textColor;
+    switch(type) {
+        case 'error':
+            bgColor = 'bg-red-100';
+            textColor = 'text-red-700';
+            break;
+        case 'warning':
+            bgColor = 'bg-yellow-100';
+            textColor = 'text-yellow-700';
+            break;
+        default:
+            bgColor = 'bg-blue-100';
+            textColor = 'text-blue-700';
+    }
+    
+    messageBox.className = `p-3 rounded-md text-sm ${bgColor} ${textColor}`;
     messageBox.classList.remove('hidden');
     setTimeout(() => {
         messageBox.classList.add('hidden');
-    }, 3000);
+    }, type === 'warning' ? 5000 : 3000); // Show warnings longer
 }
 
 function loadCatchHistory() {
@@ -686,10 +1030,10 @@ function loadCatchHistory() {
                     })}</span>
                     <div class="mt-2 space-y-1">
                         <p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>
-                        <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>
-                        ${catch_.locationName ? `
+                        <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>                        ${catch_.locationName ? `
                             <p class="text-sm">
                                 <span class="font-medium">Location:</span> ${catch_.locationName}
+                                ${catch_.mapsUrl ? ` <a href="${catch_.mapsUrl}" target="_blank" class="text-blue-600 hover:underline">📍</a>` : ''}
                             </p>
                         ` : ''}
                         ${catch_.notes ? `
@@ -828,11 +1172,13 @@ function showCatchModal(catchData) {
     
     const locationContainer = document.getElementById('modal-location-container');
     const locationName = document.getElementById('modal-location-name');
-    
-    if (catchData.locationName) {
+      if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
-        if (catchData.latitude && catchData.longitude) {
+        // Use stored mapsUrl if available, otherwise create from coordinates
+        if (catchData.mapsUrl) {
+            locationName.href = catchData.mapsUrl;
+        } else if (catchData.latitude && catchData.longitude) {
             locationName.href = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
         } else {
             locationName.removeAttribute('href');

@@ -148,7 +148,7 @@ layout: null
                     <span class="lucide"></span> Ghoti - Hooked Logbook
                 </h1>
 
-                <form id="catch-form" class="mb-8 space-y-4" onsubmit="return false;" novalidate>
+                <form id="catch-form" class="mb-8 space-y-4" novalidate>
                     <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
 
                     <div>
@@ -321,11 +321,41 @@ layout: null
                 <div>
                     <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
                     <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-
-                <div>
-                    <label for="edit-location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                    <input type="text" id="edit-location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>                <div class="space-y-3">
+                    <label class="block text-sm font-medium text-gray-600">Location:</label>
+                    
+                    <!-- Location Name -->
+                    <div>
+                        <label for="edit-location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                        <input type="text" id="edit-location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter location name">
+                    </div>
+                    
+                    <!-- Google Maps Link -->
+                    <div>
+                        <label for="edit-maps-link" class="block text-sm font-medium text-gray-600 mb-1">Google Maps Link:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="edit-maps-link" class="flex-1 px-3 py-2 border border-gray-300 rounded-md" placeholder="Paste Google Maps link here">
+                            <button type="button" id="edit-extract-location-btn" class="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm">
+                                Extract
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Paste a Google Maps share link to automatically extract location details</p>
+                    </div>
+                    
+                    <!-- Current Location Button -->
+                    <div class="flex gap-2">
+                        <button type="button" id="edit-get-current-location-btn" class="flex items-center gap-1 px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm">
+                            <span class="lucide lucide-map-pin"></span> Get Current Location
+                        </button>
+                        <button type="button" id="edit-open-maps-btn" class="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm">
+                            📍 Open in Maps
+                        </button>
+                    </div>
+                    
+                    <!-- Location Status -->
+                    <div id="edit-location-status" class="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                        No location set
+                    </div>
                 </div>
 
                 <div>
@@ -339,11 +369,10 @@ layout: null
                         <span id="edit-photo-text">Edit Photo</span>
                     </button>
                     <input type="file" id="edit-photo-input" accept="image/*" class="hidden">
-                </div>
-
-                <input type="hidden" id="edit-catch-id">
+                </div>                <input type="hidden" id="edit-catch-id">
                 <input type="hidden" id="edit-latitude">
                 <input type="hidden" id="edit-longitude">
+                <input type="hidden" id="edit-maps-url">
                 <input type="hidden" id="edit-photo">
 
                 <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
