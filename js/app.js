@@ -31,9 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageContent = document.getElementById('fullscreen-image-content');
     imageContent.addEventListener('click', (e) => {
         e.stopPropagation();
-    });
-
-    // Initialize the main app functionality
+    });    // Initialize the main app functionality
     setupFormHandlers();
     setupLocationHandling();
     setupPhotoHandling();
@@ -42,12 +40,39 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDataOptions();
     setupSpeciesHandlers();
     
+    // Initialize fish database and update species list
+    initializeFishDatabase();
+    
     // Initialize datetime input with current time
     initializeDatetime();
 
     // Load initial catch history
     loadCatchHistory();
 });
+
+async function initializeFishDatabase() {
+    try {
+        if (window.fishDB) {
+            const isReady = await window.fishDB.isReady();
+            if (isReady) {
+                console.log('Fish database initialized successfully');
+                
+                // Refresh species list to include database species
+                // Wait a moment to ensure species handlers are set up
+                setTimeout(async () => {
+                    if (typeof refreshSpeciesList !== 'undefined') {
+                        // Note: refreshSpeciesList is not globally accessible, so we'll trigger it differently
+                        console.log('Database species loaded');
+                    }
+                }, 100);
+            } else {
+                console.warn('Fish database failed to initialize');
+            }
+        }
+    } catch (error) {
+        console.error('Error initializing fish database:', error);
+    }
+}
 
 function initLandingPage() {
     const landingPage = document.getElementById('landing-page');
@@ -82,6 +107,21 @@ function setupFormHandlers() {
         console.error('catch-form element not found!');
         return;
     }
+
+    // Setup automatic weight calculation
+    const autoCalculateWeight = async () => {
+        const species = speciesInput.value.trim();
+        const length = parseFloat(lengthInput.value);
+        
+        if (species && length && length > 0) {
+            await calculateEstimatedWeight(species, length);
+        }
+    };
+
+    // Calculate weight when length or species changes
+    lengthInput.addEventListener('input', autoCalculateWeight);
+    speciesInput.addEventListener('input', autoCalculateWeight);
+    speciesInput.addEventListener('change', autoCalculateWeight);
 
     // Handle catch form submission
     catchForm.addEventListener('submit', (e) => {
@@ -188,22 +228,49 @@ function setupFormHandlers() {
     });
 }
 
-function calculateEstimatedWeight(species, length) {
-    // Using more accurate coefficients for common fish species
-    // W = aL^b where:
-    // a = 0.000013 (common coefficient for many freshwater fish)
-    // b = 3.0 (standard length-weight relationship)
-    // Result will be in kg when length is in cm
+async function calculateEstimatedWeight(species, length) {
+    if (!length || length <= 0) return null;
+    
+    // Wait for fish database to be ready
+    if (window.fishDB && await window.fishDB.isReady()) {
+        const result = window.fishDB.calculateWeight(species, length);
+        
+        if (result) {
+            // Update weight input with calculated value
+            const weightInput = document.getElementById('weight');
+            weightInput.value = result.weight.toFixed(3);
+            
+            // Mark the weight as calculated and show info about the calculation
+            weightInput.dataset.calculated = 'true';
+            weightInput.dataset.species = result.species;
+            weightInput.dataset.accuracy = result.accuracy;
+            
+            // Show calculation info as a tooltip or note
+            const calculationInfo = result.isSpeciesSpecific 
+                ? `Calculated using ${result.species} data (${(result.accuracy * 100).toFixed(1)}% accuracy, ${result.measureType})`
+                : `Estimated using generic fish formula (${(result.accuracy * 100).toFixed(1)}% accuracy)`;
+            
+            weightInput.title = calculationInfo;
+            
+            // Show brief message about the calculation
+            if (result.isSpeciesSpecific) {
+                showMessage(`Weight calculated using ${result.species} specific data!`, 'info');
+            }
+            
+            return result.weight;
+        }
+    }
+    
+    // Fallback to original generic calculation if database not available
     const a = 0.000013;
     const b = 3.0;
     const estimatedWeight = a * Math.pow(length, b);
     
-    // Update weight input with calculated value, rounded to 3 decimal places
     const weightInput = document.getElementById('weight');
     weightInput.value = estimatedWeight.toFixed(3);
-    
-    // Mark the weight as valid since we calculated it
     weightInput.dataset.calculated = 'true';
+    weightInput.title = 'Generic estimate (80% accuracy)';
+    
     return estimatedWeight;
 }
 
@@ -293,23 +360,33 @@ function updateCatch() {
     const mapsUrl = document.getElementById('edit-maps-url').value.trim();
     const photo = document.getElementById('edit-photo').value;
 
-    // Validate required fields
-    if (!species || !length || !weight || !datetime) {
-        showMessage('Please fill in all required fields (species, length, weight, and date/time)', 'error');
+    // Validate required fields - only species and datetime are required
+    if (!species || !datetime) {
+        showMessage('Please fill in all required fields (species and date/time)', 'error');
+        return;
+    }
+
+    // Validate length and weight if provided (must be positive numbers)
+    if (document.getElementById('edit-length').value && (isNaN(length) || length <= 0)) {
+        showMessage('Length must be a positive number', 'error');
+        return;
+    }
+
+    if (document.getElementById('edit-weight').value && (isNaN(weight) || weight <= 0)) {
+        showMessage('Weight must be a positive number', 'error');
         return;
     }
 
     // Get existing catches
     let catches = JSON.parse(localStorage.getItem('catches') || '[]');
-    
-    // Find and update the catch
+      // Find and update the catch
     const catchIndex = catches.findIndex(c => c.id === catchId);
     if (catchIndex !== -1) {
         catches[catchIndex] = {
             ...catches[catchIndex],
             species,
-            length,
-            weight,
+            length: isNaN(length) || !document.getElementById('edit-length').value ? null : length,
+            weight: isNaN(weight) || !document.getElementById('edit-weight').value ? null : weight,
             datetime,
             locationName: locationName || null,
             notes: notes || null,
@@ -318,7 +395,7 @@ function updateCatch() {
             mapsUrl: mapsUrl || null,
             photo: photo || null,
             lastModified: Date.now()
-        };        // Save back to localStorage with error handling
+        };// Save back to localStorage with error handling
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
         } catch (storageError) {
@@ -451,10 +528,30 @@ function setupSpeciesHandlers() {
             'Bass', 'Trout', 'Salmon', 'Pike', 'Catfish', 'Perch', 'Carp'
         ].map(name => ({ name, isCustom: false }));
         localStorage.setItem('species', JSON.stringify(defaultSpecies));
-    }
-
-    function refreshSpeciesList() {
-        const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+    }    async function refreshSpeciesList() {
+        let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+        
+        // Add species from fish database if available
+        if (window.fishDB && await window.fishDB.isReady()) {
+            const dbSpecies = window.fishDB.getSpeciesNames();
+            
+            // Add database species that aren't already in the list
+            dbSpecies.forEach(dbSpeciesName => {
+                const exists = speciesList.some(species => 
+                    species.name.toLowerCase() === dbSpeciesName.toLowerCase()
+                );
+                if (!exists) {
+                    speciesList.push({ 
+                        name: dbSpeciesName, 
+                        isCustom: false, 
+                        isFromDatabase: true 
+                    });
+                }
+            });
+            
+            // Update localStorage with combined list
+            localStorage.setItem('species', JSON.stringify(speciesList));
+        }
         
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
@@ -462,24 +559,36 @@ function setupSpeciesHandlers() {
             const matches = speciesList.filter(species => 
                 species.name.toLowerCase().includes(searchTerm)
             );
-            updateSpeciesDropdown(matches);
+            await updateSpeciesDropdown(matches);
         }
         
         // Update manager list if it's visible
         if (!document.getElementById('manage-species-modal').classList.contains('hidden')) {
             displayCustomSpeciesList();
         }
-    }
-
-    function updateSpeciesDropdown(matches) {
+    }async function updateSpeciesDropdown(matches) {
+        const isDbReady = window.fishDB && await window.fishDB.isReady();
+        
         if (matches.length > 0) {
-            speciesDropdown.innerHTML = matches
-                .map(species => `
+            const dropdownHTML = await Promise.all(matches.map(async species => {
+                let speciesInfo = '';
+                if (isDbReady && species.isFromDatabase) {
+                    const info = window.fishDB.getSpeciesInfo(species.name);
+                    if (info) {
+                        const edibleIcon = info.edible ? '🐟' : '🦈';
+                        const accuracyPercent = (info.accuracy * 100).toFixed(0);
+                        speciesInfo = ` <small class="text-gray-500">${edibleIcon} ${accuracyPercent}% accuracy</small>`;
+                    }
+                }
+                
+                return `
                     <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                        ${species.name}
+                        ${species.name}${speciesInfo}
                     </div>
-                `)
-                .join('');
+                `;
+            }));
+            
+            speciesDropdown.innerHTML = dropdownHTML.join('');
         } else {
             speciesDropdown.innerHTML = `
                 <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -542,10 +651,8 @@ function setupSpeciesHandlers() {
         speciesModal.classList.remove('hidden');
         document.getElementById('new-species-name').value = '';
         document.getElementById('new-species-name').focus();
-    });
-
-    // Handle species form submission
-    speciesForm.addEventListener('submit', (e) => {
+    });    // Handle species form submission
+    speciesForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newSpeciesName = document.getElementById('new-species-name').value.trim();
         
@@ -569,7 +676,7 @@ function setupSpeciesHandlers() {
         // Update UI
         speciesModal.classList.add('hidden');
         document.getElementById('new-species-name').value = '';
-        refreshSpeciesList();
+        await refreshSpeciesList();
         showMessage('Species added successfully');
     });
 

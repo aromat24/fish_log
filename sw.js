@@ -1,8 +1,11 @@
-const CACHE_NAME = 'ghoti-fishing-cache-v1';
+const CACHE_NAME = 'ghoti-fishing-cache-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/manifest.json',
+    '/fish_algorithms.json',
+    '/js/app.js',
+    '/js/fishDatabase.js',
     '/IMG-20160902-WA0002.jpg'
 ];
 
