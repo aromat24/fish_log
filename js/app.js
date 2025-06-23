@@ -339,14 +339,15 @@ function showEditModal(catchData) {
     document.getElementById('edit-notes').value = catchData.notes || '';
     document.getElementById('edit-latitude').value = catchData.latitude || '';
     document.getElementById('edit-longitude').value = catchData.longitude || '';
-    document.getElementById('edit-photo').value = catchData.photo || '';
-
-    // Update photo button text
+    document.getElementById('edit-photo').value = catchData.photo || '';    // Update photo button text and reset styling
     const editPhotoText = document.getElementById('edit-photo-text');
+    const editPhotoBtn = document.getElementById('edit-photo-btn');
     editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
+    
+    // Reset button styling to default
+    editPhotoBtn.className = 'w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md border border-gray-300 flex items-center justify-center gap-2';
 
     // Setup photo editing
-    const editPhotoBtn = document.getElementById('edit-photo-btn');
     const editPhotoInput = document.getElementById('edit-photo-input');
       editPhotoBtn.onclick = () => editPhotoInput.click();
     
@@ -478,12 +479,14 @@ function updateCatch() {
         }        
         // Hide edit modal
         document.getElementById('edit-modal').classList.add('hidden');
-        
-        // Refresh displays
+          // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
+        
+        // Refresh map if the map tab is currently active
+        refreshMapIfVisible();
         
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
             showMessage('Catch updated successfully');
@@ -1211,12 +1214,14 @@ function deleteCatch(catchId) {
         
         // Close any open modals
         document.getElementById('catch-modal').classList.add('hidden');
-        
-        // Refresh displays
+          // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
+        
+        // Refresh map if the map tab is currently active
+        refreshMapIfVisible();
         
         showMessage('Catch deleted successfully');
     } catch (error) {
@@ -1825,14 +1830,16 @@ function saveCatchData() {
 
         console.log('Step 13: Reinitializing datetime');
         // Reset datetime to current time
-        initializeDatetime();
-
-        console.log('Step 14: Updating displays');
+        initializeDatetime();        console.log('Step 14: Updating displays');
         // Update displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
+        
+        console.log('Step 15: Refreshing map if visible');
+        // Refresh map if the map tab is currently active
+        refreshMapIfVisible();
         
         console.log('=== SAVE CATCH DATA COMPLETED SUCCESSFULLY ===');
         
@@ -1841,151 +1848,6 @@ function saveCatchData() {
         console.error('Error stack:', error.stack);
         showMessage('Error saving catch. Please try again.', 'error');
     }
-}
-
-// Setup edit modal location handlers
-function setupEditModalLocationHandlers() {
-    console.log('Setting up edit modal location handlers');
-    
-    const editLocationBtn = document.getElementById('edit-location-btn');
-    const editGetLocationBtn = document.getElementById('edit-get-location-btn');
-    const editLocationStatus = document.getElementById('edit-location-status');
-    const editLatitudeInput = document.getElementById('edit-latitude');
-    const editLongitudeInput = document.getElementById('edit-longitude');
-    const editLocationNameInput = document.getElementById('edit-location-name');
-    
-    if (editLocationBtn) {
-        editLocationBtn.addEventListener('click', () => {
-            console.log('Edit location button clicked');
-            // Open map modal for location selection
-            openMapModalForEdit();
-        });
-    }
-    
-    if (editGetLocationBtn) {
-        editGetLocationBtn.addEventListener('click', async () => {
-            console.log('Edit get current location button clicked');
-            editLocationStatus.textContent = 'Getting location...';
-            editLocationStatus.className = 'text-sm text-blue-600';
-            
-            try {
-                const location = await getCurrentLocation();
-                
-                // Set the coordinates
-                editLatitudeInput.value = location.coords.latitude;
-                editLongitudeInput.value = location.coords.longitude;
-                
-                // Update status
-                editLocationStatus.textContent = `Location updated (${location.coords.latitude.toFixed(6)}, ${location.coords.longitude.toFixed(6)})`;
-                editLocationStatus.className = 'text-sm text-green-600';
-                
-                // If no location name is set, try to get one
-                if (!editLocationNameInput.value.trim()) {
-                    editLocationNameInput.value = `Location ${Date.now()}`;
-                }
-                
-            } catch (error) {
-                console.error('Error getting location for edit:', error);
-                editLocationStatus.textContent = 'Failed to get location. Please try again.';
-                editLocationStatus.className = 'text-sm text-red-600';
-            }
-        });
-    }
-}
-
-// Create a separate function for opening map modal in edit mode
-function openMapModalForEdit() {
-    console.log('Opening map modal for edit...');
-    const mapModal = document.getElementById('map-modal');
-    mapModal.classList.remove('hidden');
-    
-    // Store edit mode flag
-    mapModal.dataset.editMode = 'true';
-    
-    // Initialize map if not already done
-    setTimeout(() => {
-        if (!map) {
-            initializeMap();
-        } else {
-            map.invalidateSize();
-        }
-        
-        // Set initial position from edit form if available
-        const editLat = document.getElementById('edit-latitude').value;
-        const editLng = document.getElementById('edit-longitude').value;
-        
-        if (editLat && editLng) {
-            const lat = parseFloat(editLat);
-            const lng = parseFloat(editLng);
-            
-            // Set map view and marker
-            map.setView([lat, lng], 13);
-            
-            if (currentMarker) {
-                map.removeLayer(currentMarker);
-            }
-            
-            currentMarker = L.marker([lat, lng]).addTo(map);
-            selectedLatitude = lat;
-            selectedLongitude = lng;
-            
-            // Update UI
-            document.getElementById('coord-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            document.getElementById('save-map-location-btn').disabled = false;
-            
-            // Set location name if available
-            const editLocationName = document.getElementById('edit-location-name').value;
-            if (editLocationName) {
-                document.getElementById('location-name-input').value = editLocationName;
-            }        }
-    }, 100);
-}
-
-// Helper function to get current location
-function getCurrentLocation() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            reject(new Error('Geolocation is not supported by your browser'));
-            return;
-        }
-
-        // Check if we're on HTTPS (required for geolocation on mobile)
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-            reject(new Error('Geolocation requires HTTPS. Please use a secure connection.'));
-            return;
-        }
-
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 30000
-        };
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                resolve(position);
-            },
-            (error) => {
-                console.error('Geolocation error:', error);
-                let message = 'Could not get current location. ';
-                
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        message = 'Location access denied';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        message = 'Location unavailable';
-                        break;
-                    case error.TIMEOUT:
-                        message = 'Location request timed out';
-                        break;
-                }
-                
-                reject(new Error(message));
-            },
-            options
-        );
-    });
 }
 
 // Main map functionality for the Map tab
@@ -2075,11 +1937,14 @@ function setupMainMap() {
     console.log('Main map setup complete');
 }
 
-// Helper function to show catch details from map popup
-window.showCatchFromMap = function(catchId) {
-    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
-    const catchData = catches.find(c => c.id === catchId);
-    if (catchData) {
-        showCatchModal(catchData);
+// Function to refresh the map when data changes
+function refreshMapIfVisible() {
+    // Check if the map tab is currently active
+    const mapContainer = document.getElementById('map-view-container');
+    const mapTab = document.getElementById('map-tab-btn');
+    
+    if (mapContainer && !mapContainer.classList.contains('hidden') && mapTab && mapTab.classList.contains('active')) {
+        console.log('Map tab is active, refreshing map...');
+        setupMainMap();
     }
-};
+}

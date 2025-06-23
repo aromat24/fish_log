@@ -179,6 +179,7 @@
         
         button {
           min-height: 44px;
+          touch-action: manipulation; /* Prevent double-tap zoom and accidental activation */
         }
         
         .species-option {
@@ -327,9 +328,7 @@
                         <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
-
-                    <button type="submit" class="w-full mt-4 flex justify-center items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg">
+                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="w-full mt-4 flex justify-center items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg" style="touch-action: manipulation;">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>                <div>
@@ -376,7 +375,7 @@
         </div>
     </div>
 
-    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[90] p-4" data-modal-background>
+    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[95] p-4" data-modal-background>
         <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
