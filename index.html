@@ -227,8 +227,10 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
-    </style><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.svg">
     
     <!-- Leaflet.js for mapping -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
@@ -645,38 +647,41 @@
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                                 window.matchMedia('(display-mode: fullscreen)').matches ||
                 (navigator.standalone === true) || // iOS Safari
-                document.referrer.includes('android-app://'); // Android
-
-            if (isStandalone) {
+                document.referrer.includes('android-app://'); // Android            if (isStandalone) {
                 console.log('App launched in PWA mode from home screen');
                 
                 // Add PWA class for any specific styling
                 document.body.classList.add('pwa-mode');
                 
-                // Try to enter fullscreen if not already
+                // Force fullscreen for true app experience
                 if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen().catch(err => {
                         console.log('Fullscreen request failed:', err);
                     });
                 }
+                
+                console.log('PWA fullscreen mode activated for native app experience');
             }
-
-            // Add fullscreen toggle functionality
-            window.toggleFullscreen = function() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.log('Error attempting to enable fullscreen:', err);
-                    });
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            };
         }
 
+        // Add fullscreen functionality for PWA
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen request failed:', err);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        };
+
         // Initialize fullscreen when page loads
-        document.addEventListener('DOMContentLoaded', initializeFullscreenMode);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFullscreenMode();
+            preventBackNavigation();
+        });
 
         // Handle iOS Safari specific PWA detection
         if (navigator.standalone) {
@@ -693,6 +698,121 @@
                 }
             }
         }
+
+        // Back navigation prevention for PWA
+        function preventBackNavigation() {
+            // Add a fake history entry to prevent back navigation
+            history.pushState(null, '', window.location.href);
+            
+            // Listen for back button attempts
+            window.addEventListener('popstate', (event) => {
+                // Push another state to prevent going back
+                history.pushState(null, '', window.location.href);
+                
+                // Show confirmation dialog for PWA mode
+                const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                             window.matchMedia('(display-mode: fullscreen)').matches ||
+                             (navigator.standalone === true);
+                
+                if (isPWA) {
+                    // In PWA mode, show a custom confirmation
+                    showExitConfirmation();
+                } else {
+                    // In browser mode, allow standard browser behavior but warn
+                    const shouldExit = confirm('Are you sure you want to leave the Ghoti Fishing Log?');
+                    if (shouldExit) {
+                        // Allow navigation by going back in history
+                        history.go(-2);
+                    }
+                }
+            });
+            
+            // Prevent accidental page refresh/close
+            window.addEventListener('beforeunload', (event) => {
+                const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                             window.matchMedia('(display-mode: fullscreen)').matches ||
+                             (navigator.standalone === true);
+                
+                if (isPWA) {
+                    // Prevent the default behavior
+                    event.preventDefault();
+                    // Some browsers require returnValue to be set
+                    event.returnValue = '';
+                    return '';
+                }
+            });
+        }
+
+        // Show custom exit confirmation for PWA
+        function showExitConfirmation() {
+            const existingModal = document.getElementById('exit-confirmation-modal');
+            if (existingModal) {
+                existingModal.classList.remove('hidden');
+                return;
+            }
+            
+            // Create exit confirmation modal
+            const modal = document.createElement('div');
+            modal.id = 'exit-confirmation-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🐟</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Exit Fishing Log?</h3>
+                        <p class="text-gray-600 mb-6">Are you sure you want to close the app? Any unsaved changes will be lost.</p>
+                        <div class="flex gap-3">
+                            <button id="stay-in-app-btn" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                                Stay in App
+                            </button>
+                            <button id="exit-app-btn" class="flex-1 px-4 py-2 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600">
+                                Exit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Handle staying in app
+            modal.querySelector('#stay-in-app-btn').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            // Handle exit
+            modal.querySelector('#exit-app-btn').addEventListener('click', () => {
+                // For PWA, we can't actually close the app, but we can navigate to a "goodbye" state
+                // or minimize it if possible
+                if (window.close) {
+                    window.close();
+                } else {
+                    // Fallback: navigate to a minimal page or show goodbye message
+                    document.body.innerHTML = `
+                        <div class="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center p-4">
+                            <div class="text-center">
+                                <div class="text-6xl mb-4">🐟</div>
+                                <h1 class="text-2xl font-bold text-gray-800 mb-2">Thanks for using Ghoti!</h1>
+                                <p class="text-gray-600 mb-4">Your fishing data is safely stored.</p>
+                                <button onclick="location.reload()" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                    Return to App
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Prevent back navigation for PWA
+        preventBackNavigation();
     </script>
 </body>
 </html>

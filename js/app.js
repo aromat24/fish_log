@@ -472,70 +472,49 @@ function displayRecords() {
         return;
     }
 
-    // Group catches by species
+    // Group catches by species and find the best overall catch
+    // Since longest fish is generally heaviest, we'll prioritize by length
     const speciesRecords = {};
     catches.forEach(catch_ => {
-        if (!speciesRecords[catch_.species]) {
-            speciesRecords[catch_.species] = {
-                largest: catch_,
-                heaviest: catch_
-            };
-        } else {
-            if (catch_.length > speciesRecords[catch_.species].largest.length) {
-                speciesRecords[catch_.species].largest = catch_;
-            }
-            if (catch_.weight > speciesRecords[catch_.species].heaviest.weight) {
-                speciesRecords[catch_.species].heaviest = catch_;
-            }
+        if (!catch_.length || catch_.length <= 0) return; // Skip catches without valid length
+        
+        if (!speciesRecords[catch_.species] || catch_.length > speciesRecords[catch_.species].length) {
+            speciesRecords[catch_.species] = catch_;
         }
     });
 
-    // Display records with click handlers
+    // Display consolidated records with click handlers
     recordsContainer.innerHTML = Object.entries(speciesRecords)
-        .map(([species, records]) => `
-            <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
-                <h3 class="text-lg font-semibold text-blue-700 mb-2">${cleanSpeciesName(species)}</h3>
-                <div class="space-y-4">
-                    <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.largest.id}">
-                        <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">
-                                <span class="font-medium">Longest:</span> 
-                                ${records.largest.length}cm (${new Date(records.largest.datetime).toLocaleDateString('en-GB', {
+        .sort(([,a], [,b]) => b.length - a.length) // Sort by length descending
+        .map(([species, record]) => `
+            <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${record.id}">
+                <div class="flex items-start gap-4">
+                    <div class="flex-grow">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-2">${cleanSpeciesName(species)}</h3>
+                        <div class="space-y-1">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium">Length:</span> ${record.length}cm
+                                ${record.weight ? ` • <span class="font-medium">Weight:</span> ${Number(record.weight).toFixed(3)}kg` : ''}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                ${new Date(record.datetime).toLocaleDateString('en-GB', {
                                     day: '2-digit',
                                     month: '2-digit',
                                     year: 'numeric'
-                                })})
+                                })}
+                                ${record.locationName ? ` • ${record.locationName}` : ''}
                             </p>
                         </div>
-                        ${records.largest.photo ? `
-                            <div class="flex-shrink-0">
-                                <img src="${records.largest.photo}" alt="Longest catch" class="w-16 h-16 object-cover rounded-md">
-                            </div>
-                        ` : ''}
                     </div>
-                    <div class="flex items-start gap-4 cursor-pointer" data-catch-id="${records.heaviest.id}">
-                        <div class="flex-grow">
-                            <p class="text-sm hover:text-blue-600">
-                                <span class="font-medium">Heaviest:</span> 
-                                ${Number(records.heaviest.weight).toFixed(3)}kg (${new Date(records.heaviest.datetime).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                })})
-                            </p>
+                    ${record.photo ? `
+                        <div class="flex-shrink-0">
+                            <img src="${record.photo}" alt="Record catch" class="w-16 h-16 object-cover rounded-md">
                         </div>
-                        ${records.heaviest.photo ? `
-                            <div class="flex-shrink-0">
-                                <img src="${records.heaviest.photo}" alt="Heaviest catch" class="w-16 h-16 object-cover rounded-md">
-                            </div>
-                        ` : ''}
-                    </div>
+                    ` : ''}
                 </div>
             </div>
         `)
-        .join('');
-
-    // Add click handlers for record entries
+        .join('');    // Add click handlers for record entries
     recordsContainer.querySelectorAll('[data-catch-id]').forEach(element => {
         element.addEventListener('click', () => {
             const catchId = element.dataset.catchId;
@@ -1309,8 +1288,7 @@ function setupTabSystem() {
             displayRecords(); // Load records when tab is clicked
         });
     }
-    
-    // Map tab click handler
+      // Map tab click handler
     if (mapTab) {
         mapTab.addEventListener('click', () => {
             console.log('Map tab clicked');
@@ -1319,19 +1297,7 @@ function setupTabSystem() {
             
             // Initialize or refresh map view
             setTimeout(() => {
-                if (typeof setupMainMap === 'function') {
-                    setupMainMap();
-                } else {
-                    // Fallback: show a simple message for now
-                    if (mapContainer) {
-                        mapContainer.innerHTML = `
-                            <div class="bg-white p-6 rounded-lg shadow text-center">
-                                <p class="text-gray-600 mb-4">Map view coming soon!</p>
-                                <p class="text-sm text-gray-500">This will show all your catches on an interactive map.</p>
-                            </div>
-                        `;
-                    }
-                }
+                setupMainMap();
             }, 100);
         });
     }
@@ -1857,3 +1823,99 @@ function getCurrentLocation() {
         );
     });
 }
+
+// Main map functionality for the Map tab
+function setupMainMap() {
+    console.log('=== SETTING UP MAIN MAP ===');
+    
+    const mapContainer = document.getElementById('map-view-container');
+    const mapElement = document.getElementById('main-map');
+    
+    if (!mapContainer || !mapElement) {
+        console.error('Map container elements not found');
+        return;
+    }
+    
+    // Get all catches with location data
+    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    const catchesWithLocation = catches.filter(c => c.latitude && c.longitude);
+    
+    console.log('Catches with location:', catchesWithLocation.length);
+    
+    if (catchesWithLocation.length === 0) {
+        mapContainer.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow text-center">
+                <div class="text-6xl mb-4">🗺️</div>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">No catches with location data yet</h3>
+                <p class="text-gray-500 mb-4">Start logging catches with location to see them on the map!</p>
+                <p class="text-sm text-gray-400">Use the "Get Current Location" button when logging a catch.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Initialize map if not already done
+    if (!mainMap) {
+        console.log('Initializing main map...');
+        
+        // Calculate center point from all catches
+        const avgLat = catchesWithLocation.reduce((sum, c) => sum + c.latitude, 0) / catchesWithLocation.length;
+        const avgLng = catchesWithLocation.reduce((sum, c) => sum + c.longitude, 0) / catchesWithLocation.length;
+        
+        mainMap = L.map('main-map').setView([avgLat, avgLng], 10);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mainMap);
+    }
+    
+    // Clear existing markers
+    catchMarkers.forEach(marker => mainMap.removeLayer(marker));
+    catchMarkers = [];
+    
+    // Add markers for each catch
+    catchesWithLocation.forEach(catch_ => {
+        const marker = L.marker([catch_.latitude, catch_.longitude])
+            .addTo(mainMap);
+        
+        // Create popup content
+        const popupContent = `
+            <div class="p-2 max-w-xs">
+                <div class="font-semibold text-blue-700 mb-2">${cleanSpeciesName(catch_.species)}</div>
+                ${catch_.photo ? `<img src="${catch_.photo}" alt="Catch photo" class="w-full h-20 object-cover rounded mb-2">` : ''}
+                <div class="text-sm text-gray-600 space-y-1">
+                    ${catch_.length ? `<div><span class="font-medium">Length:</span> ${catch_.length}cm</div>` : ''}
+                    ${catch_.weight ? `<div><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</div>` : ''}
+                    <div><span class="font-medium">Date:</span> ${new Date(catch_.datetime).toLocaleDateString('en-GB')}</div>
+                    ${catch_.locationName ? `<div><span class="font-medium">Location:</span> ${catch_.locationName}</div>` : ''}
+                    ${catch_.notes ? `<div class="mt-2 p-2 bg-gray-50 rounded text-xs">${catch_.notes}</div>` : ''}
+                </div>
+                <button class="mt-2 w-full px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600" 
+                        onclick="showCatchFromMap('${catch_.id}')">
+                    View Details
+                </button>
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent);
+        catchMarkers.push(marker);
+    });
+    
+    // Fit map to show all markers if we have multiple catches
+    if (catchesWithLocation.length > 1) {
+        const group = new L.featureGroup(catchMarkers);
+        mainMap.fitBounds(group.getBounds().pad(0.1));
+    }
+    
+    console.log('Main map setup complete');
+}
+
+// Helper function to show catch details from map popup
+window.showCatchFromMap = function(catchId) {
+    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    const catchData = catches.find(c => c.id === catchId);
+    if (catchData) {
+        showCatchModal(catchData);
+    }
+};
