@@ -1,9 +1,8 @@
-{
-    "name": "Ghoti - Fishing Log",
+{    "name": "Ghoti - Fishing Log",
     "short_name": "Ghoti",
     "description": "Track your fishing catches and maintain a detailed fishing log",
-    "start_url": "/",
-    "display": "standalone",
+    "start_url": "./",
+    "display": "fullscreen",
     "background_color": "#ffffff",
     "theme_color": "#3b82f6",
     "orientation": "portrait-primary",

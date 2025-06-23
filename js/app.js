@@ -9,50 +9,67 @@ let catchMarkers = [];
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOM CONTENT LOADED ===');
+    console.log('Current URL:', window.location.href);
+    console.log('User Agent:', navigator.userAgent);
     
-    // Initialize landing page functionality
-    initLandingPage();
-    
-    // Setup fullscreen image handling
-    const fullscreenModal = document.getElementById('fullscreen-image');
-    const closeBtn = fullscreenModal.querySelector('button');
-    closeBtn.addEventListener('click', closeFullscreenImage);
-    
-    fullscreenModal.addEventListener('click', (e) => {
-        if (e.target === fullscreenModal) {
-            closeFullscreenImage();
+    try {
+        // Initialize landing page functionality
+        initLandingPage();
+        
+        // Setup fullscreen image handling
+        const fullscreenModal = document.getElementById('fullscreen-image');
+        const closeBtn = fullscreenModal.querySelector('button');
+        closeBtn.addEventListener('click', closeFullscreenImage);
+        
+        fullscreenModal.addEventListener('click', (e) => {
+            if (e.target === fullscreenModal) {
+                closeFullscreenImage();
+            }
+        });
+
+        const imageContent = document.getElementById('fullscreen-image-content');
+        imageContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        console.log('About to initialize main app functionality...');
+
+        // Initialize the main app functionality
+        setupFormHandlers();
+        setupLocationHandling();
+        setupPhotoHandling();
+        setupModalHandlers();
+        setupTabSystem(); // Updated from setupViewToggle
+        setupDataOptions();
+        setupSpeciesHandlers();
+        setupMapHandlers(); // New map functionality
+        setupEditModalLocationHandlers(); // Add edit modal location functionality
+        
+        console.log('Main app functionality initialized');
+        
+        // Initialize fish database and update species list
+        initializeFishDatabase();
+        
+        // Initialize datetime input with current time
+        initializeDatetime();
+
+        // Load initial catch history
+        loadCatchHistory();
+        
+        console.log('=== INITIALIZATION COMPLETE ===');
+        
+    } catch (error) {
+        console.error('Error during app initialization:', error);
+        console.error('Error stack:', error.stack);
+        
+        // Show user-friendly error message
+        const messageBox = document.getElementById('message-box');
+        if (messageBox) {
+            messageBox.textContent = 'Error initializing app. Please refresh the page.';
+            messageBox.className = 'p-3 rounded-md text-sm bg-red-100 text-red-700';
+            messageBox.classList.remove('hidden');
         }
-    });
-
-    const imageContent = document.getElementById('fullscreen-image-content');
-    imageContent.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
-    console.log('About to initialize main app functionality...');
-
-    // Initialize the main app functionality
-    setupFormHandlers();
-    setupLocationHandling();
-    setupPhotoHandling();    setupModalHandlers();
-    setupTabSystem(); // Updated from setupViewToggle
-    setupDataOptions();
-    setupSpeciesHandlers();
-    setupMapHandlers(); // New map functionality
-    setupEditModalLocationHandlers(); // Add edit modal location functionality
-    
-    console.log('Main app functionality initialized');
-    
-    // Initialize fish database and update species list
-    initializeFishDatabase();
-    
-    // Initialize datetime input with current time
-    initializeDatetime();
-
-    // Load initial catch history
-    loadCatchHistory();
-    
-    console.log('=== INITIALIZATION COMPLETE ===');
+    }
 });
 
 async function initializeFishDatabase() {
@@ -1325,6 +1342,12 @@ function setupTabSystem() {
     }
     
     console.log('Tab system setup complete');
+}
+
+// Compatibility function for any legacy references
+function setupViewToggle() {
+    console.warn('setupViewToggle is deprecated, using setupTabSystem instead');
+    setupTabSystem();
 }
 
 // Map functionality
