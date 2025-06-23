@@ -610,11 +610,10 @@ function setupSpeciesHandlers() {
                     // Show add species modal with the current input value
                     document.getElementById('species-modal').classList.remove('hidden');
                     document.getElementById('new-species-name').value = speciesInput.value;
-                    document.getElementById('new-species-name').focus();
-                } else {
-                    // Use the original name if available, otherwise use the cleaned display name
+                    document.getElementById('new-species-name').focus();                } else {
+                    // Always use the cleaned name for display in the input field
                     const originalName = option.dataset.originalName;
-                    speciesInput.value = originalName || cleanSpeciesName(option.textContent.trim());
+                    speciesInput.value = cleanSpeciesName(originalName || option.textContent.trim());
                 }
                 speciesDropdown.classList.add('hidden');
             });

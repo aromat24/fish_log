@@ -1,0 +1,145 @@
+{
+  "342": {
+    "species_name": "Blacktail (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.746667675335004e-06,
+      "b": 3.2179529036703953,
+      "r_squared": 0.981916317649533,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "333": {
+    "species_name": "Dusky kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.314000631977542e-06,
+      "b": 3.026615580596188,
+      "r_squared": 0.9989996454212032,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "345": {
+    "species_name": "Galjoen (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.94615030727897e-06,
+      "b": 3.584837066010104,
+      "r_squared": 0.9994991700600645,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "350": {
+    "species_name": "Garrick (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.435466493740513e-07,
+      "b": 4.128618996872737,
+      "r_squared": 0.9963818972680293,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "535": {
+    "species_name": "Malabar kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.152237299727735e-06,
+      "b": 3.446745555397344,
+      "r_squared": 0.9841123834776946,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "344": {
+    "species_name": "Shad (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.423675728988069e-05,
+      "b": 2.9815854258538184,
+      "r_squared": 0.9994904099023428,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "432": {
+    "species_name": "Brown shyshark (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.702049599936564e-06,
+      "b": 3.0333326838960497,
+      "r_squared": 0.9801282849318997,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "385": {
+    "species_name": "Shortfin mako (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.810437526917688e-05,
+      "b": 2.828891054932965,
+      "r_squared": 0.9989084290981057,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "386": {
+    "species_name": "Great white shark (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.2201355244762483e-05,
+      "b": 2.935860837863082,
+      "r_squared": 0.9997265793350347,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Pre-caudal"
+    }
+  },
+  "335": {
+    "species_name": "Great hammerhead (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.2201355244762483e-05,
+      "b": 2.935860837863082,
+      "r_squared": 0.9997265793350347,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "400": {
+    "species_name": "Giant guitarfish (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.565101340895593e-07,
+      "b": 3.7242416187337324,
+      "r_squared": 0.997902339994792,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  }
+}

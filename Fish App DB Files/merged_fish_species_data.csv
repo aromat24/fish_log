@@ -1,0 +1,1025 @@
+Measure_Type,Length,Weight,Species,Species_ID,Edible
+Fork length,15,0.1,Blacktail (M&F),342,True
+Fork length,16,0.1,Blacktail (M&F),342,True
+Fork length,17,0.1,Blacktail (M&F),342,True
+Fork length,18,0.1,Blacktail (M&F),342,True
+Fork length,19,0.1,Blacktail (M&F),342,True
+Fork length,20,0.1,Blacktail (M&F),342,True
+Fork length,21,0.2,Blacktail (M&F),342,True
+Fork length,22,0.2,Blacktail (M&F),342,True
+Fork length,23,0.2,Blacktail (M&F),342,True
+Fork length,24,0.2,Blacktail (M&F),342,True
+Fork length,25,0.3,Blacktail (M&F),342,True
+Fork length,26,0.3,Blacktail (M&F),342,True
+Fork length,27,0.4,Blacktail (M&F),342,True
+Fork length,28,0.4,Blacktail (M&F),342,True
+Fork length,29,0.5,Blacktail (M&F),342,True
+Fork length,30,0.5,Blacktail (M&F),342,True
+Fork length,31,0.6,Blacktail (M&F),342,True
+Fork length,32,0.7,Blacktail (M&F),342,True
+Fork length,33,0.7,Blacktail (M&F),342,True
+Fork length,34,0.8,Blacktail (M&F),342,True
+Fork length,35,0.9,Blacktail (M&F),342,True
+Fork length,36,1.0,Blacktail (M&F),342,True
+Fork length,37,1.1,Blacktail (M&F),342,True
+Fork length,38,1.2,Blacktail (M&F),342,True
+Fork length,39,1.3,Blacktail (M&F),342,True
+Fork length,40,1.4,Blacktail (M&F),342,True
+Fork length,41,1.5,Blacktail (M&F),342,True
+Fork length,42,1.7,Blacktail (M&F),342,True
+Fork length,43,1.8,Blacktail (M&F),342,True
+Fork length,44,2.0,Blacktail (M&F),342,True
+Fork length,45,2.1,Blacktail (M&F),342,True
+Fork length,46,2.3,Blacktail (M&F),342,True
+Fork length,47,2.5,Blacktail (M&F),342,True
+Fork length,48,2.7,Blacktail (M&F),342,True
+Fork length,49,2.9,Blacktail (M&F),342,True
+Fork length,50,3.1,Blacktail (M&F),342,True
+Total length,25,0.2,Dusky kob (M&F),333,True
+Total length,26,0.2,Dusky kob (M&F),333,True
+Total length,27,0.2,Dusky kob (M&F),333,True
+Total length,28,0.2,Dusky kob (M&F),333,True
+Total length,29,0.2,Dusky kob (M&F),333,True
+Total length,30,0.3,Dusky kob (M&F),333,True
+Total length,31,0.3,Dusky kob (M&F),333,True
+Total length,32,0.3,Dusky kob (M&F),333,True
+Total length,33,0.4,Dusky kob (M&F),333,True
+Total length,34,0.4,Dusky kob (M&F),333,True
+Total length,35,0.4,Dusky kob (M&F),333,True
+Total length,36,0.5,Dusky kob (M&F),333,True
+Total length,37,0.5,Dusky kob (M&F),333,True
+Total length,38,0.6,Dusky kob (M&F),333,True
+Total length,39,0.6,Dusky kob (M&F),333,True
+Total length,40,0.7,Dusky kob (M&F),333,True
+Total length,41,0.7,Dusky kob (M&F),333,True
+Total length,42,0.8,Dusky kob (M&F),333,True
+Total length,43,0.8,Dusky kob (M&F),333,True
+Total length,44,0.9,Dusky kob (M&F),333,True
+Total length,45,0.9,Dusky kob (M&F),333,True
+Total length,46,1.0,Dusky kob (M&F),333,True
+Total length,47,1.1,Dusky kob (M&F),333,True
+Total length,48,1.1,Dusky kob (M&F),333,True
+Total length,49,1.2,Dusky kob (M&F),333,True
+Total length,50,1.3,Dusky kob (M&F),333,True
+Total length,51,1.4,Dusky kob (M&F),333,True
+Total length,52,1.4,Dusky kob (M&F),333,True
+Total length,53,1.5,Dusky kob (M&F),333,True
+Total length,54,1.6,Dusky kob (M&F),333,True
+Total length,55,1.7,Dusky kob (M&F),333,True
+Total length,56,1.8,Dusky kob (M&F),333,True
+Total length,57,1.9,Dusky kob (M&F),333,True
+Total length,58,2.0,Dusky kob (M&F),333,True
+Total length,59,2.1,Dusky kob (M&F),333,True
+Total length,60,2.2,Dusky kob (M&F),333,True
+Total length,61,2.3,Dusky kob (M&F),333,True
+Total length,62,2.5,Dusky kob (M&F),333,True
+Total length,63,2.6,Dusky kob (M&F),333,True
+Total length,64,2.7,Dusky kob (M&F),333,True
+Total length,65,2.8,Dusky kob (M&F),333,True
+Total length,66,3.0,Dusky kob (M&F),333,True
+Total length,67,3.1,Dusky kob (M&F),333,True
+Total length,68,3.3,Dusky kob (M&F),333,True
+Total length,69,3.4,Dusky kob (M&F),333,True
+Total length,70,3.6,Dusky kob (M&F),333,True
+Total length,71,3.7,Dusky kob (M&F),333,True
+Total length,72,3.9,Dusky kob (M&F),333,True
+Total length,73,4.1,Dusky kob (M&F),333,True
+Total length,74,4.2,Dusky kob (M&F),333,True
+Total length,75,4.4,Dusky kob (M&F),333,True
+Total length,76,4.6,Dusky kob (M&F),333,True
+Total length,77,4.8,Dusky kob (M&F),333,True
+Total length,78,5.0,Dusky kob (M&F),333,True
+Total length,79,5.2,Dusky kob (M&F),333,True
+Total length,80,5.4,Dusky kob (M&F),333,True
+Total length,81,5.6,Dusky kob (M&F),333,True
+Total length,82,5.8,Dusky kob (M&F),333,True
+Total length,83,6.0,Dusky kob (M&F),333,True
+Total length,84,6.2,Dusky kob (M&F),333,True
+Total length,85,6.4,Dusky kob (M&F),333,True
+Total length,86,6.7,Dusky kob (M&F),333,True
+Total length,87,6.9,Dusky kob (M&F),333,True
+Total length,88,7.2,Dusky kob (M&F),333,True
+Total length,89,7.4,Dusky kob (M&F),333,True
+Total length,90,7.7,Dusky kob (M&F),333,True
+Total length,91,7.9,Dusky kob (M&F),333,True
+Total length,92,8.2,Dusky kob (M&F),333,True
+Total length,93,8.5,Dusky kob (M&F),333,True
+Total length,94,8.7,Dusky kob (M&F),333,True
+Total length,95,9.0,Dusky kob (M&F),333,True
+Total length,96,9.3,Dusky kob (M&F),333,True
+Total length,97,9.6,Dusky kob (M&F),333,True
+Total length,98,9.9,Dusky kob (M&F),333,True
+Total length,99,10.2,Dusky kob (M&F),333,True
+Total length,100,10.5,Dusky kob (M&F),333,True
+Total length,101,10.9,Dusky kob (M&F),333,True
+Total length,102,11.2,Dusky kob (M&F),333,True
+Total length,103,11.5,Dusky kob (M&F),333,True
+Total length,104,11.9,Dusky kob (M&F),333,True
+Total length,105,12.2,Dusky kob (M&F),333,True
+Total length,106,12.6,Dusky kob (M&F),333,True
+Total length,107,13.0,Dusky kob (M&F),333,True
+Total length,108,13.3,Dusky kob (M&F),333,True
+Total length,109,13.7,Dusky kob (M&F),333,True
+Total length,110,14.1,Dusky kob (M&F),333,True
+Total length,111,14.5,Dusky kob (M&F),333,True
+Total length,112,14.9,Dusky kob (M&F),333,True
+Total length,113,15.3,Dusky kob (M&F),333,True
+Total length,114,15.7,Dusky kob (M&F),333,True
+Total length,115,16.1,Dusky kob (M&F),333,True
+Total length,116,16.6,Dusky kob (M&F),333,True
+Total length,117,17.0,Dusky kob (M&F),333,True
+Total length,118,17.4,Dusky kob (M&F),333,True
+Total length,119,17.9,Dusky kob (M&F),333,True
+Total length,120,18.4,Dusky kob (M&F),333,True
+Total length,121,18.8,Dusky kob (M&F),333,True
+Total length,122,19.3,Dusky kob (M&F),333,True
+Total length,123,19.8,Dusky kob (M&F),333,True
+Total length,124,20.3,Dusky kob (M&F),333,True
+Total length,125,20.8,Dusky kob (M&F),333,True
+Total length,126,21.3,Dusky kob (M&F),333,True
+Total length,127,21.8,Dusky kob (M&F),333,True
+Total length,25,0.4,Galjoen (M&F),345,True
+Total length,26,0.5,Galjoen (M&F),345,True
+Total length,27,0.5,Galjoen (M&F),345,True
+Total length,28,0.6,Galjoen (M&F),345,True
+Total length,29,0.7,Galjoen (M&F),345,True
+Total length,30,0.8,Galjoen (M&F),345,True
+Total length,31,0.9,Galjoen (M&F),345,True
+Total length,32,1.0,Galjoen (M&F),345,True
+Total length,33,1.1,Galjoen (M&F),345,True
+Total length,34,1.2,Galjoen (M&F),345,True
+Total length,35,1.3,Galjoen (M&F),345,True
+Total length,36,1.5,Galjoen (M&F),345,True
+Total length,37,1.6,Galjoen (M&F),345,True
+Total length,38,1.8,Galjoen (M&F),345,True
+Total length,39,2.0,Galjoen (M&F),345,True
+Total length,40,2.2,Galjoen (M&F),345,True
+Total length,41,2.4,Galjoen (M&F),345,True
+Total length,42,2.6,Galjoen (M&F),345,True
+Total length,43,2.8,Galjoen (M&F),345,True
+Total length,44,3.1,Galjoen (M&F),345,True
+Total length,45,3.3,Galjoen (M&F),345,True
+Total length,46,3.6,Galjoen (M&F),345,True
+Total length,47,3.9,Galjoen (M&F),345,True
+Total length,48,4.2,Galjoen (M&F),345,True
+Total length,49,4.5,Galjoen (M&F),345,True
+Total length,50,4.9,Galjoen (M&F),345,True
+Total length,51,5.2,Galjoen (M&F),345,True
+Total length,52,5.6,Galjoen (M&F),345,True
+Total length,53,6.0,Galjoen (M&F),345,True
+Total length,54,6.4,Galjoen (M&F),345,True
+Total length,55,6.9,Galjoen (M&F),345,True
+Total length,56,7.3,Galjoen (M&F),345,True
+Total length,57,7.8,Galjoen (M&F),345,True
+Total length,58,8.3,Galjoen (M&F),345,True
+Total length,59,8.8,Galjoen (M&F),345,True
+Total length,60,9.4,Galjoen (M&F),345,True
+Fork length,30,0.2,Garrick (M&F),350,True
+Fork length,31,0.3,Garrick (M&F),350,True
+Fork length,32,0.3,Garrick (M&F),350,True
+Fork length,33,0.4,Garrick (M&F),350,True
+Fork length,34,0.4,Garrick (M&F),350,True
+Fork length,35,0.5,Garrick (M&F),350,True
+Fork length,36,0.6,Garrick (M&F),350,True
+Fork length,37,0.7,Garrick (M&F),350,True
+Fork length,38,0.8,Garrick (M&F),350,True
+Fork length,39,0.9,Garrick (M&F),350,True
+Fork length,40,1.0,Garrick (M&F),350,True
+Fork length,41,1.1,Garrick (M&F),350,True
+Fork length,42,1.2,Garrick (M&F),350,True
+Fork length,43,1.4,Garrick (M&F),350,True
+Fork length,44,1.5,Garrick (M&F),350,True
+Fork length,45,1.7,Garrick (M&F),350,True
+Fork length,46,1.9,Garrick (M&F),350,True
+Fork length,47,2.1,Garrick (M&F),350,True
+Fork length,48,2.3,Garrick (M&F),350,True
+Fork length,49,2.5,Garrick (M&F),350,True
+Fork length,50,2.7,Garrick (M&F),350,True
+Fork length,51,3.0,Garrick (M&F),350,True
+Fork length,52,3.2,Garrick (M&F),350,True
+Fork length,53,3.5,Garrick (M&F),350,True
+Fork length,54,3.8,Garrick (M&F),350,True
+Fork length,55,4.1,Garrick (M&F),350,True
+Fork length,56,4.4,Garrick (M&F),350,True
+Fork length,57,4.8,Garrick (M&F),350,True
+Fork length,58,5.1,Garrick (M&F),350,True
+Fork length,59,5.5,Garrick (M&F),350,True
+Fork length,60,5.9,Garrick (M&F),350,True
+Fork length,61,6.3,Garrick (M&F),350,True
+Fork length,62,6.8,Garrick (M&F),350,True
+Fork length,63,7.2,Garrick (M&F),350,True
+Fork length,64,7.7,Garrick (M&F),350,True
+Fork length,65,8.2,Garrick (M&F),350,True
+Fork length,66,8.7,Garrick (M&F),350,True
+Fork length,67,9.3,Garrick (M&F),350,True
+Fork length,68,9.8,Garrick (M&F),350,True
+Fork length,69,10.4,Garrick (M&F),350,True
+Fork length,70,11.0,Garrick (M&F),350,True
+Fork length,71,11.7,Garrick (M&F),350,True
+Fork length,72,12.3,Garrick (M&F),350,True
+Fork length,73,13.0,Garrick (M&F),350,True
+Fork length,74,13.7,Garrick (M&F),350,True
+Fork length,75,14.5,Garrick (M&F),350,True
+Fork length,76,15.2,Garrick (M&F),350,True
+Fork length,77,16.0,Garrick (M&F),350,True
+Fork length,78,16.8,Garrick (M&F),350,True
+Fork length,79,17.7,Garrick (M&F),350,True
+Fork length,80,18.5,Garrick (M&F),350,True
+Fork length,81,19.4,Garrick (M&F),350,True
+Fork length,82,20.3,Garrick (M&F),350,True
+Fork length,83,21.3,Garrick (M&F),350,True
+Fork length,84,22.3,Garrick (M&F),350,True
+Fork length,85,23.3,Garrick (M&F),350,True
+Fork length,86,24.3,Garrick (M&F),350,True
+Fork length,87,25.4,Garrick (M&F),350,True
+Fork length,88,26.5,Garrick (M&F),350,True
+Fork length,89,27.7,Garrick (M&F),350,True
+Fork length,90,28.8,Garrick (M&F),350,True
+Fork length,91,30.0,Garrick (M&F),350,True
+Fork length,92,31.3,Garrick (M&F),350,True
+Fork length,93,32.5,Garrick (M&F),350,True
+Fork length,94,33.8,Garrick (M&F),350,True
+Fork length,95,35.2,Garrick (M&F),350,True
+Fork length,96,36.5,Garrick (M&F),350,True
+Fork length,97,38.0,Garrick (M&F),350,True
+Fork length,98,39.4,Garrick (M&F),350,True
+Fork length,99,40.9,Garrick (M&F),350,True
+Fork length,100,42.4,Garrick (M&F),350,True
+Fork length,101,44.0,Garrick (M&F),350,True
+Fork length,102,45.6,Garrick (M&F),350,True
+Fork length,103,47.2,Garrick (M&F),350,True
+Fork length,104,48.9,Garrick (M&F),350,True
+Fork length,105,50.6,Garrick (M&F),350,True
+Fork length,106,52.4,Garrick (M&F),350,True
+Fork length,107,54.2,Garrick (M&F),350,True
+Fork length,108,56.0,Garrick (M&F),350,True
+Fork length,109,57.9,Garrick (M&F),350,True
+Fork length,110,59.8,Garrick (M&F),350,True
+Fork length,111,61.8,Garrick (M&F),350,True
+Fork length,112,63.8,Garrick (M&F),350,True
+Fork length,113,65.8,Garrick (M&F),350,True
+Fork length,114,67.9,Garrick (M&F),350,True
+Fork length,115,70.0,Garrick (M&F),350,True
+Fork length,116,72.2,Garrick (M&F),350,True
+Fork length,117,74.4,Garrick (M&F),350,True
+Fork length,118,76.7,Garrick (M&F),350,True
+Fork length,119,79.0,Garrick (M&F),350,True
+Fork length,15,0.1,Malabar kingfish (M&F),535,True
+Fork length,16,0.1,Malabar kingfish (M&F),535,True
+Fork length,17,0.1,Malabar kingfish (M&F),535,True
+Fork length,18,0.1,Malabar kingfish (M&F),535,True
+Fork length,19,0.1,Malabar kingfish (M&F),535,True
+Fork length,20,0.1,Malabar kingfish (M&F),535,True
+Fork length,21,0.2,Malabar kingfish (M&F),535,True
+Fork length,22,0.2,Malabar kingfish (M&F),535,True
+Fork length,23,0.2,Malabar kingfish (M&F),535,True
+Fork length,24,0.3,Malabar kingfish (M&F),535,True
+Fork length,25,0.3,Malabar kingfish (M&F),535,True
+Fork length,26,0.4,Malabar kingfish (M&F),535,True
+Fork length,27,0.4,Malabar kingfish (M&F),535,True
+Fork length,28,0.5,Malabar kingfish (M&F),535,True
+Fork length,29,0.5,Malabar kingfish (M&F),535,True
+Fork length,30,0.6,Malabar kingfish (M&F),535,True
+Fork length,31,0.7,Malabar kingfish (M&F),535,True
+Fork length,32,0.8,Malabar kingfish (M&F),535,True
+Fork length,33,0.9,Malabar kingfish (M&F),535,True
+Fork length,34,1.0,Malabar kingfish (M&F),535,True
+Fork length,35,1.1,Malabar kingfish (M&F),535,True
+Fork length,36,1.2,Malabar kingfish (M&F),535,True
+Fork length,37,1.3,Malabar kingfish (M&F),535,True
+Fork length,38,1.4,Malabar kingfish (M&F),535,True
+Fork length,39,1.6,Malabar kingfish (M&F),535,True
+Fork length,40,1.7,Malabar kingfish (M&F),535,True
+Fork length,41,1.9,Malabar kingfish (M&F),535,True
+Fork length,42,2.1,Malabar kingfish (M&F),535,True
+Fork length,43,2.3,Malabar kingfish (M&F),535,True
+Fork length,44,2.5,Malabar kingfish (M&F),535,True
+Fork length,45,2.7,Malabar kingfish (M&F),535,True
+Fork length,46,2.9,Malabar kingfish (M&F),535,True
+Fork length,47,3.1,Malabar kingfish (M&F),535,True
+Fork length,48,3.4,Malabar kingfish (M&F),535,True
+Fork length,49,3.6,Malabar kingfish (M&F),535,True
+Fork length,50,3.9,Malabar kingfish (M&F),535,True
+Fork length,25,0.2,Shad (M&F),344,True
+Fork length,26,0.2,Shad (M&F),344,True
+Fork length,27,0.3,Shad (M&F),344,True
+Fork length,28,0.3,Shad (M&F),344,True
+Fork length,29,0.3,Shad (M&F),344,True
+Fork length,30,0.4,Shad (M&F),344,True
+Fork length,31,0.4,Shad (M&F),344,True
+Fork length,32,0.4,Shad (M&F),344,True
+Fork length,33,0.5,Shad (M&F),344,True
+Fork length,34,0.5,Shad (M&F),344,True
+Fork length,35,0.6,Shad (M&F),344,True
+Fork length,36,0.6,Shad (M&F),344,True
+Fork length,37,0.7,Shad (M&F),344,True
+Fork length,38,0.7,Shad (M&F),344,True
+Fork length,39,0.8,Shad (M&F),344,True
+Fork length,40,0.9,Shad (M&F),344,True
+Fork length,41,0.9,Shad (M&F),344,True
+Fork length,42,1.0,Shad (M&F),344,True
+Fork length,43,1.1,Shad (M&F),344,True
+Fork length,44,1.1,Shad (M&F),344,True
+Fork length,45,1.2,Shad (M&F),344,True
+Fork length,46,1.3,Shad (M&F),344,True
+Fork length,47,1.4,Shad (M&F),344,True
+Fork length,48,1.5,Shad (M&F),344,True
+Fork length,49,1.6,Shad (M&F),344,True
+Fork length,50,1.7,Shad (M&F),344,True
+Fork length,51,1.8,Shad (M&F),344,True
+Fork length,52,1.9,Shad (M&F),344,True
+Fork length,53,2.0,Shad (M&F),344,True
+Fork length,54,2.1,Shad (M&F),344,True
+Fork length,55,2.2,Shad (M&F),344,True
+Fork length,56,2.3,Shad (M&F),344,True
+Fork length,57,2.4,Shad (M&F),344,True
+Fork length,58,2.6,Shad (M&F),344,True
+Fork length,59,2.7,Shad (M&F),344,True
+Fork length,60,2.9,Shad (M&F),344,True
+Fork length,61,3.0,Shad (M&F),344,True
+Fork length,62,3.1,Shad (M&F),344,True
+Fork length,63,3.3,Shad (M&F),344,True
+Fork length,64,3.5,Shad (M&F),344,True
+Fork length,65,3.6,Shad (M&F),344,True
+Fork length,66,3.8,Shad (M&F),344,True
+Fork length,67,4.0,Shad (M&F),344,True
+Fork length,68,4.1,Shad (M&F),344,True
+Fork length,69,4.3,Shad (M&F),344,True
+Fork length,70,4.5,Shad (M&F),344,True
+Fork length,71,4.7,Shad (M&F),344,True
+Fork length,72,4.9,Shad (M&F),344,True
+Fork length,73,5.1,Shad (M&F),344,True
+Fork length,74,5.3,Shad (M&F),344,True
+Fork length,75,5.5,Shad (M&F),344,True
+Fork length,76,5.8,Shad (M&F),344,True
+Fork length,77,6.0,Shad (M&F),344,True
+Fork length,78,6.2,Shad (M&F),344,True
+Fork length,79,6.5,Shad (M&F),344,True
+Fork length,80,6.7,Shad (M&F),344,True
+Fork length,81,7.0,Shad (M&F),344,True
+Fork length,82,7.2,Shad (M&F),344,True
+Fork length,83,7.5,Shad (M&F),344,True
+Fork length,84,7.8,Shad (M&F),344,True
+Fork length,85,8.0,Shad (M&F),344,True
+Fork length,86,8.3,Shad (M&F),344,True
+Fork length,87,8.6,Shad (M&F),344,True
+Fork length,88,8.9,Shad (M&F),344,True
+Fork length,89,9.2,Shad (M&F),344,True
+Fork length,90,9.5,Shad (M&F),344,True
+Fork length,91,9.9,Shad (M&F),344,True
+Fork length,92,10.2,Shad (M&F),344,True
+Fork length,93,10.5,Shad (M&F),344,True
+Fork length,94,10.9,Shad (M&F),344,True
+Fork length,95,11.2,Shad (M&F),344,True
+Fork length,96,11.6,Shad (M&F),344,True
+Fork length,97,11.9,Shad (M&F),344,True
+Fork length,98,12.3,Shad (M&F),344,True
+Fork length,99,12.7,Shad (M&F),344,True
+Fork length,100,13.1,Shad (M&F),344,True
+Fork length,101,13.5,Shad (M&F),344,True
+Fork length,102,13.9,Shad (M&F),344,True
+Fork length,103,14.3,Shad (M&F),344,True
+Fork length,104,14.7,Shad (M&F),344,True
+Fork length,105,15.1,Shad (M&F),344,True
+Fork length,106,15.5,Shad (M&F),344,True
+Fork length,107,16.0,Shad (M&F),344,True
+Fork length,108,16.4,Shad (M&F),344,True
+Fork length,109,16.9,Shad (M&F),344,True
+Fork length,110,17.4,Shad (M&F),344,True
+Fork length,111,17.8,Shad (M&F),344,True
+Fork length,112,18.3,Shad (M&F),344,True
+Fork length,113,18.8,Shad (M&F),344,True
+Fork length,114,19.3,Shad (M&F),344,True
+Fork length,115,19.8,Shad (M&F),344,True
+Fork length,116,20.3,Shad (M&F),344,True
+Fork length,117,20.9,Shad (M&F),344,True
+Fork length,118,21.4,Shad (M&F),344,True
+Fork length,119,21.9,Shad (M&F),344,True
+Fork length,120,22.5,Shad (M&F),344,True
+Fork length,121,23.1,Shad (M&F),344,True
+Fork length,122,23.6,Shad (M&F),344,True
+Fork length,123,24.2,Shad (M&F),344,True
+Fork length,124,24.8,Shad (M&F),344,True
+Fork length,125,25.4,Shad (M&F),344,True
+Fork length,126,26.0,Shad (M&F),344,True
+Fork length,127,26.6,Shad (M&F),344,True
+Fork length,128,27.3,Shad (M&F),344,True
+Total length,25,0.2,Brown shyshark (M&F),432,False
+Total length,26,0.2,Brown shyshark (M&F),432,False
+Total length,27,0.2,Brown shyshark (M&F),432,False
+Total length,28,0.2,Brown shyshark (M&F),432,False
+Total length,29,0.3,Brown shyshark (M&F),432,False
+Total length,30,0.3,Brown shyshark (M&F),432,False
+Total length,31,0.3,Brown shyshark (M&F),432,False
+Total length,32,0.4,Brown shyshark (M&F),432,False
+Total length,33,0.4,Brown shyshark (M&F),432,False
+Total length,34,0.5,Brown shyshark (M&F),432,False
+Total length,35,0.5,Brown shyshark (M&F),432,False
+Total length,36,0.6,Brown shyshark (M&F),432,False
+Total length,37,0.6,Brown shyshark (M&F),432,False
+Total length,38,0.7,Brown shyshark (M&F),432,False
+Total length,39,0.8,Brown shyshark (M&F),432,False
+Total length,40,0.8,Brown shyshark (M&F),432,False
+Total length,41,0.9,Brown shyshark (M&F),432,False
+Total length,42,1.0,Brown shyshark (M&F),432,False
+Total length,43,1.1,Brown shyshark (M&F),432,False
+Total length,44,1.2,Brown shyshark (M&F),432,False
+Total length,45,1.3,Brown shyshark (M&F),432,False
+Total length,46,1.4,Brown shyshark (M&F),432,False
+Total length,47,1.5,Brown shyshark (M&F),432,False
+Total length,48,1.6,Brown shyshark (M&F),432,False
+Total length,49,1.7,Brown shyshark (M&F),432,False
+Total length,50,1.9,Brown shyshark (M&F),432,False
+Total length,51,2.0,Brown shyshark (M&F),432,False
+Total length,52,2.2,Brown shyshark (M&F),432,False
+Total length,53,2.3,Brown shyshark (M&F),432,False
+Total length,54,2.5,Brown shyshark (M&F),432,False
+Total length,55,2.7,Brown shyshark (M&F),432,False
+Total length,56,2.9,Brown shyshark (M&F),432,False
+Total length,57,3.1,Brown shyshark (M&F),432,False
+Total length,58,3.3,Brown shyshark (M&F),432,False
+Total length,59,3.5,Brown shyshark (M&F),432,False
+Total length,60,3.7,Brown shyshark (M&F),432,False
+Total length,61,3.9,Brown shyshark (M&F),432,False
+Total length,62,4.2,Brown shyshark (M&F),432,False
+Total length,63,4.4,Brown shyshark (M&F),432,False
+Total length,64,4.7,Brown shyshark (M&F),432,False
+Total length,65,5.0,Brown shyshark (M&F),432,False
+Total length,66,5.3,Brown shyshark (M&F),432,False
+Total length,67,5.6,Brown shyshark (M&F),432,False
+Total length,68,5.9,Brown shyshark (M&F),432,False
+Total length,69,6.2,Brown shyshark (M&F),432,False
+Total length,70,6.5,Brown shyshark (M&F),432,False
+Total length,71,6.9,Brown shyshark (M&F),432,False
+Total length,72,7.3,Brown shyshark (M&F),432,False
+Total length,73,7.6,Brown shyshark (M&F),432,False
+Total length,74,8.0,Brown shyshark (M&F),432,False
+Total length,75,8.4,Brown shyshark (M&F),432,False
+Total length,76,8.9,Brown shyshark (M&F),432,False
+Total length,77,9.3,Brown shyshark (M&F),432,False
+Total length,78,9.8,Brown shyshark (M&F),432,False
+Total length,79,10.2,Brown shyshark (M&F),432,False
+Total length,80,10.7,Brown shyshark (M&F),432,False
+Total length,81,11.2,Brown shyshark (M&F),432,False
+Total length,82,11.7,Brown shyshark (M&F),432,False
+Total length,83,12.3,Brown shyshark (M&F),432,False
+Total length,84,12.8,Brown shyshark (M&F),432,False
+Total length,85,13.4,Brown shyshark (M&F),432,False
+Total length,86,14.0,Brown shyshark (M&F),432,False
+Total length,87,14.6,Brown shyshark (M&F),432,False
+Total length,88,15.2,Brown shyshark (M&F),432,False
+Total length,89,15.9,Brown shyshark (M&F),432,False
+Total length,90,16.5,Brown shyshark (M&F),432,False
+Total length,91,17.2,Brown shyshark (M&F),432,False
+Total length,92,17.9,Brown shyshark (M&F),432,False
+Total length,93,18.6,Brown shyshark (M&F),432,False
+Total length,94,19.4,Brown shyshark (M&F),432,False
+Total length,95,20.1,Brown shyshark (M&F),432,False
+Total length,96,20.9,Brown shyshark (M&F),432,False
+Total length,97,21.7,Brown shyshark (M&F),432,False
+Total length,98,22.5,Brown shyshark (M&F),432,False
+Total length,99,23.4,Brown shyshark (M&F),432,False
+Total length,100,24.2,Brown shyshark (M&F),432,False
+Total length,101,25.1,Brown shyshark (M&F),432,False
+Total length,102,26.0,Brown shyshark (M&F),432,False
+Total length,103,27.0,Brown shyshark (M&F),432,False
+Total length,104,27.9,Brown shyshark (M&F),432,False
+Total length,105,28.9,Brown shyshark (M&F),432,False
+Total length,106,29.9,Brown shyshark (M&F),432,False
+Total length,107,30.9,Brown shyshark (M&F),432,False
+Total length,108,32.0,Brown shyshark (M&F),432,False
+Total length,109,33.1,Brown shyshark (M&F),432,False
+Total length,110,34.2,Brown shyshark (M&F),432,False
+Total length,111,35.3,Brown shyshark (M&F),432,False
+Total length,112,36.4,Brown shyshark (M&F),432,False
+Total length,113,37.6,Brown shyshark (M&F),432,False
+Total length,114,38.8,Brown shyshark (M&F),432,False
+Total length,115,40.0,Brown shyshark (M&F),432,False
+Total length,116,41.2,Brown shyshark (M&F),432,False
+Total length,117,42.5,Brown shyshark (M&F),432,False
+Total length,118,43.8,Brown shyshark (M&F),432,False
+Total length,119,45.1,Brown shyshark (M&F),432,False
+Total length,120,46.4,Brown shyshark (M&F),432,False
+Total length,25,0.0,Brown shyshark (M&F),432,False
+Total length,26,0.1,Brown shyshark (M&F),432,False
+Total length,27,0.1,Brown shyshark (M&F),432,False
+Total length,28,0.1,Brown shyshark (M&F),432,False
+Total length,29,0.1,Brown shyshark (M&F),432,False
+Total length,30,0.1,Brown shyshark (M&F),432,False
+Total length,31,0.1,Brown shyshark (M&F),432,False
+Total length,32,0.1,Brown shyshark (M&F),432,False
+Total length,33,0.1,Brown shyshark (M&F),432,False
+Total length,34,0.1,Brown shyshark (M&F),432,False
+Total length,35,0.1,Brown shyshark (M&F),432,False
+Total length,36,0.1,Brown shyshark (M&F),432,False
+Total length,37,0.2,Brown shyshark (M&F),432,False
+Total length,38,0.2,Brown shyshark (M&F),432,False
+Total length,39,0.2,Brown shyshark (M&F),432,False
+Total length,40,0.2,Brown shyshark (M&F),432,False
+Total length,41,0.2,Brown shyshark (M&F),432,False
+Total length,42,0.2,Brown shyshark (M&F),432,False
+Total length,43,0.2,Brown shyshark (M&F),432,False
+Total length,44,0.3,Brown shyshark (M&F),432,False
+Total length,45,0.3,Brown shyshark (M&F),432,False
+Total length,46,0.3,Brown shyshark (M&F),432,False
+Total length,47,0.3,Brown shyshark (M&F),432,False
+Total length,48,0.3,Brown shyshark (M&F),432,False
+Total length,49,0.4,Brown shyshark (M&F),432,False
+Total length,50,0.4,Brown shyshark (M&F),432,False
+Total length,51,0.4,Brown shyshark (M&F),432,False
+Total length,52,0.4,Brown shyshark (M&F),432,False
+Total length,53,0.5,Brown shyshark (M&F),432,False
+Total length,54,0.5,Brown shyshark (M&F),432,False
+Total length,55,0.5,Brown shyshark (M&F),432,False
+Total length,56,0.5,Brown shyshark (M&F),432,False
+Total length,57,0.6,Brown shyshark (M&F),432,False
+Total length,58,0.6,Brown shyshark (M&F),432,False
+Total length,59,0.6,Brown shyshark (M&F),432,False
+Total length,60,0.7,Brown shyshark (M&F),432,False
+Total length,61,0.7,Brown shyshark (M&F),432,False
+Total length,62,0.7,Brown shyshark (M&F),432,False
+Total length,63,0.8,Brown shyshark (M&F),432,False
+Total length,64,0.8,Brown shyshark (M&F),432,False
+Total length,65,0.8,Brown shyshark (M&F),432,False
+Total length,66,0.9,Brown shyshark (M&F),432,False
+Total length,67,0.9,Brown shyshark (M&F),432,False
+Total length,68,1.0,Brown shyshark (M&F),432,False
+Total length,69,1.0,Brown shyshark (M&F),432,False
+Total length,70,1.1,Brown shyshark (M&F),432,False
+Total length,71,1.1,Brown shyshark (M&F),432,False
+Total length,72,1.2,Brown shyshark (M&F),432,False
+Total length,73,1.2,Brown shyshark (M&F),432,False
+Total length,74,1.3,Brown shyshark (M&F),432,False
+Total length,75,1.3,Brown shyshark (M&F),432,False
+Total length,76,1.4,Brown shyshark (M&F),432,False
+Total length,77,1.4,Brown shyshark (M&F),432,False
+Total length,78,1.5,Brown shyshark (M&F),432,False
+Total length,79,1.5,Brown shyshark (M&F),432,False
+Total length,80,1.6,Brown shyshark (M&F),432,False
+Total length,81,1.7,Brown shyshark (M&F),432,False
+Total length,82,1.7,Brown shyshark (M&F),432,False
+Total length,83,1.8,Brown shyshark (M&F),432,False
+Total length,84,1.9,Brown shyshark (M&F),432,False
+Total length,85,1.9,Brown shyshark (M&F),432,False
+Total length,86,2.0,Brown shyshark (M&F),432,False
+Total length,87,2.1,Brown shyshark (M&F),432,False
+Total length,88,2.1,Brown shyshark (M&F),432,False
+Total length,89,2.2,Brown shyshark (M&F),432,False
+Total length,90,2.3,Brown shyshark (M&F),432,False
+Total length,91,2.4,Brown shyshark (M&F),432,False
+Total length,92,2.4,Brown shyshark (M&F),432,False
+Total length,93,2.5,Brown shyshark (M&F),432,False
+Total length,94,2.6,Brown shyshark (M&F),432,False
+Total length,95,2.7,Brown shyshark (M&F),432,False
+Total length,96,2.8,Brown shyshark (M&F),432,False
+Total length,97,2.9,Brown shyshark (M&F),432,False
+Total length,98,3.0,Brown shyshark (M&F),432,False
+Total length,99,3.1,Brown shyshark (M&F),432,False
+Total length,100,3.1,Brown shyshark (M&F),432,False
+Total length,101,3.2,Brown shyshark (M&F),432,False
+Total length,102,3.3,Brown shyshark (M&F),432,False
+Total length,103,3.4,Brown shyshark (M&F),432,False
+Total length,104,3.5,Brown shyshark (M&F),432,False
+Total length,105,3.7,Brown shyshark (M&F),432,False
+Total length,106,3.8,Brown shyshark (M&F),432,False
+Total length,107,3.9,Brown shyshark (M&F),432,False
+Total length,108,4.0,Brown shyshark (M&F),432,False
+Total length,109,4.1,Brown shyshark (M&F),432,False
+Total length,110,4.2,Brown shyshark (M&F),432,False
+Total length,111,4.3,Brown shyshark (M&F),432,False
+Total length,112,4.4,Brown shyshark (M&F),432,False
+Total length,113,4.6,Brown shyshark (M&F),432,False
+Total length,114,4.7,Brown shyshark (M&F),432,False
+Total length,115,4.8,Brown shyshark (M&F),432,False
+Total length,116,5.0,Brown shyshark (M&F),432,False
+Total length,117,5.1,Brown shyshark (M&F),432,False
+Total length,118,5.2,Brown shyshark (M&F),432,False
+Total length,119,5.4,Brown shyshark (M&F),432,False
+Total length,120,5.5,Brown shyshark (M&F),432,False
+Total length,121,5.6,Brown shyshark (M&F),432,False
+Total length,122,5.8,Brown shyshark (M&F),432,False
+Total length,123,5.9,Brown shyshark (M&F),432,False
+Total length,124,6.1,Brown shyshark (M&F),432,False
+Total length,125,6.2,Brown shyshark (M&F),432,False
+Total length,126,6.4,Brown shyshark (M&F),432,False
+Total length,127,6.5,Brown shyshark (M&F),432,False
+Total length,128,6.7,Brown shyshark (M&F),432,False
+Fork length,25,0.2,Shortfin mako (M&F),385,False
+Fork length,26,0.2,Shortfin mako (M&F),385,False
+Fork length,27,0.2,Shortfin mako (M&F),385,False
+Fork length,28,0.2,Shortfin mako (M&F),385,False
+Fork length,29,0.2,Shortfin mako (M&F),385,False
+Fork length,30,0.3,Shortfin mako (M&F),385,False
+Fork length,31,0.3,Shortfin mako (M&F),385,False
+Fork length,32,0.3,Shortfin mako (M&F),385,False
+Fork length,33,0.4,Shortfin mako (M&F),385,False
+Fork length,34,0.4,Shortfin mako (M&F),385,False
+Fork length,35,0.4,Shortfin mako (M&F),385,False
+Fork length,36,0.5,Shortfin mako (M&F),385,False
+Fork length,37,0.5,Shortfin mako (M&F),385,False
+Fork length,38,0.5,Shortfin mako (M&F),385,False
+Fork length,39,0.6,Shortfin mako (M&F),385,False
+Fork length,40,0.6,Shortfin mako (M&F),385,False
+Fork length,41,0.7,Shortfin mako (M&F),385,False
+Fork length,42,0.7,Shortfin mako (M&F),385,False
+Fork length,43,0.7,Shortfin mako (M&F),385,False
+Fork length,44,0.8,Shortfin mako (M&F),385,False
+Fork length,45,0.9,Shortfin mako (M&F),385,False
+Fork length,46,0.9,Shortfin mako (M&F),385,False
+Fork length,47,1.0,Shortfin mako (M&F),385,False
+Fork length,48,1.0,Shortfin mako (M&F),385,False
+Fork length,49,1.1,Shortfin mako (M&F),385,False
+Fork length,50,1.1,Shortfin mako (M&F),385,False
+Fork length,51,1.2,Shortfin mako (M&F),385,False
+Fork length,52,1.3,Shortfin mako (M&F),385,False
+Fork length,53,1.4,Shortfin mako (M&F),385,False
+Fork length,54,1.4,Shortfin mako (M&F),385,False
+Fork length,55,1.5,Shortfin mako (M&F),385,False
+Fork length,56,1.6,Shortfin mako (M&F),385,False
+Fork length,57,1.7,Shortfin mako (M&F),385,False
+Fork length,58,1.8,Shortfin mako (M&F),385,False
+Fork length,59,1.8,Shortfin mako (M&F),385,False
+Fork length,60,1.9,Shortfin mako (M&F),385,False
+Fork length,61,2.0,Shortfin mako (M&F),385,False
+Fork length,62,2.1,Shortfin mako (M&F),385,False
+Fork length,63,2.2,Shortfin mako (M&F),385,False
+Fork length,64,2.3,Shortfin mako (M&F),385,False
+Fork length,65,2.4,Shortfin mako (M&F),385,False
+Fork length,66,2.5,Shortfin mako (M&F),385,False
+Fork length,67,2.6,Shortfin mako (M&F),385,False
+Fork length,68,2.8,Shortfin mako (M&F),385,False
+Fork length,69,2.9,Shortfin mako (M&F),385,False
+Fork length,70,3.0,Shortfin mako (M&F),385,False
+Fork length,71,3.1,Shortfin mako (M&F),385,False
+Fork length,72,3.2,Shortfin mako (M&F),385,False
+Fork length,73,3.4,Shortfin mako (M&F),385,False
+Fork length,74,3.5,Shortfin mako (M&F),385,False
+Fork length,75,3.6,Shortfin mako (M&F),385,False
+Fork length,76,3.8,Shortfin mako (M&F),385,False
+Fork length,77,3.9,Shortfin mako (M&F),385,False
+Fork length,78,4.1,Shortfin mako (M&F),385,False
+Fork length,79,4.2,Shortfin mako (M&F),385,False
+Fork length,80,4.4,Shortfin mako (M&F),385,False
+Fork length,81,4.5,Shortfin mako (M&F),385,False
+Fork length,82,4.7,Shortfin mako (M&F),385,False
+Fork length,83,4.9,Shortfin mako (M&F),385,False
+Fork length,84,5.0,Shortfin mako (M&F),385,False
+Fork length,85,5.2,Shortfin mako (M&F),385,False
+Fork length,86,5.4,Shortfin mako (M&F),385,False
+Fork length,87,5.6,Shortfin mako (M&F),385,False
+Fork length,88,5.7,Shortfin mako (M&F),385,False
+Fork length,89,5.9,Shortfin mako (M&F),385,False
+Fork length,90,6.1,Shortfin mako (M&F),385,False
+Fork length,91,6.3,Shortfin mako (M&F),385,False
+Fork length,92,6.5,Shortfin mako (M&F),385,False
+Fork length,93,6.7,Shortfin mako (M&F),385,False
+Fork length,94,6.9,Shortfin mako (M&F),385,False
+Fork length,95,7.1,Shortfin mako (M&F),385,False
+Fork length,96,7.3,Shortfin mako (M&F),385,False
+Fork length,97,7.6,Shortfin mako (M&F),385,False
+Fork length,98,7.8,Shortfin mako (M&F),385,False
+Fork length,99,8.0,Shortfin mako (M&F),385,False
+Fork length,100,8.3,Shortfin mako (M&F),385,False
+Fork length,101,8.5,Shortfin mako (M&F),385,False
+Fork length,102,8.7,Shortfin mako (M&F),385,False
+Fork length,103,9.0,Shortfin mako (M&F),385,False
+Fork length,104,9.2,Shortfin mako (M&F),385,False
+Fork length,105,9.5,Shortfin mako (M&F),385,False
+Fork length,106,9.7,Shortfin mako (M&F),385,False
+Fork length,107,10.0,Shortfin mako (M&F),385,False
+Fork length,108,10.3,Shortfin mako (M&F),385,False
+Fork length,109,10.6,Shortfin mako (M&F),385,False
+Fork length,110,10.8,Shortfin mako (M&F),385,False
+Fork length,111,11.1,Shortfin mako (M&F),385,False
+Fork length,112,11.4,Shortfin mako (M&F),385,False
+Fork length,113,11.7,Shortfin mako (M&F),385,False
+Fork length,114,12.0,Shortfin mako (M&F),385,False
+Fork length,115,12.3,Shortfin mako (M&F),385,False
+Fork length,116,12.6,Shortfin mako (M&F),385,False
+Fork length,117,12.9,Shortfin mako (M&F),385,False
+Fork length,118,13.2,Shortfin mako (M&F),385,False
+Fork length,119,13.5,Shortfin mako (M&F),385,False
+Fork length,120,13.9,Shortfin mako (M&F),385,False
+Fork length,121,14.2,Shortfin mako (M&F),385,False
+Fork length,122,14.5,Shortfin mako (M&F),385,False
+Fork length,123,14.9,Shortfin mako (M&F),385,False
+Fork length,124,15.2,Shortfin mako (M&F),385,False
+Fork length,125,15.6,Shortfin mako (M&F),385,False
+Fork length,126,15.9,Shortfin mako (M&F),385,False
+Fork length,127,16.3,Shortfin mako (M&F),385,False
+Fork length,128,16.7,Shortfin mako (M&F),385,False
+Pre-caudal,25,0.3,Great white shark (M&F),386,False
+Pre-caudal,26,0.3,Great white shark (M&F),386,False
+Pre-caudal,27,0.4,Great white shark (M&F),386,False
+Pre-caudal,28,0.4,Great white shark (M&F),386,False
+Pre-caudal,29,0.4,Great white shark (M&F),386,False
+Pre-caudal,30,0.5,Great white shark (M&F),386,False
+Pre-caudal,31,0.5,Great white shark (M&F),386,False
+Pre-caudal,32,0.6,Great white shark (M&F),386,False
+Pre-caudal,33,0.6,Great white shark (M&F),386,False
+Pre-caudal,34,0.7,Great white shark (M&F),386,False
+Pre-caudal,35,0.8,Great white shark (M&F),386,False
+Pre-caudal,36,0.8,Great white shark (M&F),386,False
+Pre-caudal,37,0.9,Great white shark (M&F),386,False
+Pre-caudal,38,1.0,Great white shark (M&F),386,False
+Pre-caudal,39,1.0,Great white shark (M&F),386,False
+Pre-caudal,40,1.1,Great white shark (M&F),386,False
+Pre-caudal,41,1.2,Great white shark (M&F),386,False
+Pre-caudal,42,1.3,Great white shark (M&F),386,False
+Pre-caudal,43,1.4,Great white shark (M&F),386,False
+Pre-caudal,44,1.5,Great white shark (M&F),386,False
+Pre-caudal,45,1.6,Great white shark (M&F),386,False
+Pre-caudal,46,1.7,Great white shark (M&F),386,False
+Pre-caudal,47,1.8,Great white shark (M&F),386,False
+Pre-caudal,48,1.9,Great white shark (M&F),386,False
+Pre-caudal,49,2.0,Great white shark (M&F),386,False
+Pre-caudal,50,2.1,Great white shark (M&F),386,False
+Pre-caudal,51,2.3,Great white shark (M&F),386,False
+Pre-caudal,52,2.4,Great white shark (M&F),386,False
+Pre-caudal,53,2.6,Great white shark (M&F),386,False
+Pre-caudal,54,2.7,Great white shark (M&F),386,False
+Pre-caudal,55,2.8,Great white shark (M&F),386,False
+Pre-caudal,56,3.0,Great white shark (M&F),386,False
+Pre-caudal,57,3.2,Great white shark (M&F),386,False
+Pre-caudal,58,3.3,Great white shark (M&F),386,False
+Pre-caudal,59,3.5,Great white shark (M&F),386,False
+Pre-caudal,60,3.7,Great white shark (M&F),386,False
+Pre-caudal,61,3.9,Great white shark (M&F),386,False
+Pre-caudal,62,4.0,Great white shark (M&F),386,False
+Pre-caudal,63,4.2,Great white shark (M&F),386,False
+Pre-caudal,64,4.4,Great white shark (M&F),386,False
+Pre-caudal,65,4.7,Great white shark (M&F),386,False
+Pre-caudal,66,4.9,Great white shark (M&F),386,False
+Pre-caudal,67,5.1,Great white shark (M&F),386,False
+Pre-caudal,68,5.3,Great white shark (M&F),386,False
+Pre-caudal,69,5.5,Great white shark (M&F),386,False
+Pre-caudal,70,5.8,Great white shark (M&F),386,False
+Pre-caudal,71,6.0,Great white shark (M&F),386,False
+Pre-caudal,72,6.3,Great white shark (M&F),386,False
+Pre-caudal,73,6.5,Great white shark (M&F),386,False
+Pre-caudal,74,6.8,Great white shark (M&F),386,False
+Pre-caudal,75,7.1,Great white shark (M&F),386,False
+Pre-caudal,76,7.4,Great white shark (M&F),386,False
+Pre-caudal,77,7.7,Great white shark (M&F),386,False
+Pre-caudal,78,8.0,Great white shark (M&F),386,False
+Pre-caudal,79,8.3,Great white shark (M&F),386,False
+Pre-caudal,80,8.6,Great white shark (M&F),386,False
+Pre-caudal,81,8.9,Great white shark (M&F),386,False
+Pre-caudal,82,9.2,Great white shark (M&F),386,False
+Pre-caudal,83,9.6,Great white shark (M&F),386,False
+Pre-caudal,84,9.9,Great white shark (M&F),386,False
+Pre-caudal,85,10.2,Great white shark (M&F),386,False
+Pre-caudal,86,10.6,Great white shark (M&F),386,False
+Pre-caudal,87,11.0,Great white shark (M&F),386,False
+Pre-caudal,88,11.4,Great white shark (M&F),386,False
+Pre-caudal,89,11.7,Great white shark (M&F),386,False
+Pre-caudal,90,12.1,Great white shark (M&F),386,False
+Pre-caudal,91,12.5,Great white shark (M&F),386,False
+Pre-caudal,92,12.9,Great white shark (M&F),386,False
+Pre-caudal,93,13.4,Great white shark (M&F),386,False
+Pre-caudal,94,13.8,Great white shark (M&F),386,False
+Pre-caudal,95,14.2,Great white shark (M&F),386,False
+Pre-caudal,96,14.7,Great white shark (M&F),386,False
+Pre-caudal,97,15.1,Great white shark (M&F),386,False
+Pre-caudal,98,15.6,Great white shark (M&F),386,False
+Pre-caudal,99,16.1,Great white shark (M&F),386,False
+Pre-caudal,100,16.5,Great white shark (M&F),386,False
+Pre-caudal,101,17.0,Great white shark (M&F),386,False
+Pre-caudal,102,17.5,Great white shark (M&F),386,False
+Pre-caudal,103,18.0,Great white shark (M&F),386,False
+Pre-caudal,104,18.6,Great white shark (M&F),386,False
+Pre-caudal,105,19.1,Great white shark (M&F),386,False
+Pre-caudal,106,19.6,Great white shark (M&F),386,False
+Pre-caudal,107,20.2,Great white shark (M&F),386,False
+Pre-caudal,108,20.7,Great white shark (M&F),386,False
+Pre-caudal,109,21.3,Great white shark (M&F),386,False
+Pre-caudal,110,21.9,Great white shark (M&F),386,False
+Pre-caudal,111,22.5,Great white shark (M&F),386,False
+Pre-caudal,112,23.1,Great white shark (M&F),386,False
+Pre-caudal,113,23.7,Great white shark (M&F),386,False
+Pre-caudal,114,24.3,Great white shark (M&F),386,False
+Pre-caudal,115,25.0,Great white shark (M&F),386,False
+Pre-caudal,116,25.6,Great white shark (M&F),386,False
+Pre-caudal,117,26.3,Great white shark (M&F),386,False
+Pre-caudal,118,26.9,Great white shark (M&F),386,False
+Pre-caudal,119,27.6,Great white shark (M&F),386,False
+Pre-caudal,120,28.3,Great white shark (M&F),386,False
+Pre-caudal,121,29.0,Great white shark (M&F),386,False
+Pre-caudal,122,29.7,Great white shark (M&F),386,False
+Pre-caudal,123,30.4,Great white shark (M&F),386,False
+Pre-caudal,124,31.2,Great white shark (M&F),386,False
+Pre-caudal,125,31.9,Great white shark (M&F),386,False
+Pre-caudal,126,32.7,Great white shark (M&F),386,False
+Pre-caudal,127,33.4,Great white shark (M&F),386,False
+Pre-caudal,128,34.2,Great white shark (M&F),386,False
+Pre-caudal,129,35.0,Great white shark (M&F),386,False
+Total length,25,0.3,Great hammerhead (M&F),335,False
+Total length,26,0.3,Great hammerhead (M&F),335,False
+Total length,27,0.4,Great hammerhead (M&F),335,False
+Total length,28,0.4,Great hammerhead (M&F),335,False
+Total length,29,0.4,Great hammerhead (M&F),335,False
+Total length,30,0.5,Great hammerhead (M&F),335,False
+Total length,31,0.5,Great hammerhead (M&F),335,False
+Total length,32,0.6,Great hammerhead (M&F),335,False
+Total length,33,0.6,Great hammerhead (M&F),335,False
+Total length,34,0.7,Great hammerhead (M&F),335,False
+Total length,35,0.8,Great hammerhead (M&F),335,False
+Total length,36,0.8,Great hammerhead (M&F),335,False
+Total length,37,0.9,Great hammerhead (M&F),335,False
+Total length,38,1.0,Great hammerhead (M&F),335,False
+Total length,39,1.0,Great hammerhead (M&F),335,False
+Total length,40,1.1,Great hammerhead (M&F),335,False
+Total length,41,1.2,Great hammerhead (M&F),335,False
+Total length,42,1.3,Great hammerhead (M&F),335,False
+Total length,43,1.4,Great hammerhead (M&F),335,False
+Total length,44,1.5,Great hammerhead (M&F),335,False
+Total length,45,1.6,Great hammerhead (M&F),335,False
+Total length,46,1.7,Great hammerhead (M&F),335,False
+Total length,47,1.8,Great hammerhead (M&F),335,False
+Total length,48,1.9,Great hammerhead (M&F),335,False
+Total length,49,2.0,Great hammerhead (M&F),335,False
+Total length,50,2.1,Great hammerhead (M&F),335,False
+Total length,51,2.3,Great hammerhead (M&F),335,False
+Total length,52,2.4,Great hammerhead (M&F),335,False
+Total length,53,2.6,Great hammerhead (M&F),335,False
+Total length,54,2.7,Great hammerhead (M&F),335,False
+Total length,55,2.8,Great hammerhead (M&F),335,False
+Total length,56,3.0,Great hammerhead (M&F),335,False
+Total length,57,3.2,Great hammerhead (M&F),335,False
+Total length,58,3.3,Great hammerhead (M&F),335,False
+Total length,59,3.5,Great hammerhead (M&F),335,False
+Total length,60,3.7,Great hammerhead (M&F),335,False
+Total length,61,3.9,Great hammerhead (M&F),335,False
+Total length,62,4.0,Great hammerhead (M&F),335,False
+Total length,63,4.2,Great hammerhead (M&F),335,False
+Total length,64,4.4,Great hammerhead (M&F),335,False
+Total length,65,4.7,Great hammerhead (M&F),335,False
+Total length,66,4.9,Great hammerhead (M&F),335,False
+Total length,67,5.1,Great hammerhead (M&F),335,False
+Total length,68,5.3,Great hammerhead (M&F),335,False
+Total length,69,5.5,Great hammerhead (M&F),335,False
+Total length,70,5.8,Great hammerhead (M&F),335,False
+Total length,71,6.0,Great hammerhead (M&F),335,False
+Total length,72,6.3,Great hammerhead (M&F),335,False
+Total length,73,6.5,Great hammerhead (M&F),335,False
+Total length,74,6.8,Great hammerhead (M&F),335,False
+Total length,75,7.1,Great hammerhead (M&F),335,False
+Total length,76,7.4,Great hammerhead (M&F),335,False
+Total length,77,7.7,Great hammerhead (M&F),335,False
+Total length,78,8.0,Great hammerhead (M&F),335,False
+Total length,79,8.3,Great hammerhead (M&F),335,False
+Total length,80,8.6,Great hammerhead (M&F),335,False
+Total length,81,8.9,Great hammerhead (M&F),335,False
+Total length,82,9.2,Great hammerhead (M&F),335,False
+Total length,83,9.6,Great hammerhead (M&F),335,False
+Total length,84,9.9,Great hammerhead (M&F),335,False
+Total length,85,10.2,Great hammerhead (M&F),335,False
+Total length,86,10.6,Great hammerhead (M&F),335,False
+Total length,87,11.0,Great hammerhead (M&F),335,False
+Total length,88,11.4,Great hammerhead (M&F),335,False
+Total length,89,11.7,Great hammerhead (M&F),335,False
+Total length,90,12.1,Great hammerhead (M&F),335,False
+Total length,91,12.5,Great hammerhead (M&F),335,False
+Total length,92,12.9,Great hammerhead (M&F),335,False
+Total length,93,13.4,Great hammerhead (M&F),335,False
+Total length,94,13.8,Great hammerhead (M&F),335,False
+Total length,95,14.2,Great hammerhead (M&F),335,False
+Total length,96,14.7,Great hammerhead (M&F),335,False
+Total length,97,15.1,Great hammerhead (M&F),335,False
+Total length,98,15.6,Great hammerhead (M&F),335,False
+Total length,99,16.1,Great hammerhead (M&F),335,False
+Total length,100,16.5,Great hammerhead (M&F),335,False
+Total length,101,17.0,Great hammerhead (M&F),335,False
+Total length,102,17.5,Great hammerhead (M&F),335,False
+Total length,103,18.0,Great hammerhead (M&F),335,False
+Total length,104,18.6,Great hammerhead (M&F),335,False
+Total length,105,19.1,Great hammerhead (M&F),335,False
+Total length,106,19.6,Great hammerhead (M&F),335,False
+Total length,107,20.2,Great hammerhead (M&F),335,False
+Total length,108,20.7,Great hammerhead (M&F),335,False
+Total length,109,21.3,Great hammerhead (M&F),335,False
+Total length,110,21.9,Great hammerhead (M&F),335,False
+Total length,111,22.5,Great hammerhead (M&F),335,False
+Total length,112,23.1,Great hammerhead (M&F),335,False
+Total length,113,23.7,Great hammerhead (M&F),335,False
+Total length,114,24.3,Great hammerhead (M&F),335,False
+Total length,115,25.0,Great hammerhead (M&F),335,False
+Total length,116,25.6,Great hammerhead (M&F),335,False
+Total length,117,26.3,Great hammerhead (M&F),335,False
+Total length,118,26.9,Great hammerhead (M&F),335,False
+Total length,119,27.6,Great hammerhead (M&F),335,False
+Total length,120,28.3,Great hammerhead (M&F),335,False
+Total length,121,29.0,Great hammerhead (M&F),335,False
+Total length,122,29.7,Great hammerhead (M&F),335,False
+Total length,123,30.4,Great hammerhead (M&F),335,False
+Total length,124,31.2,Great hammerhead (M&F),335,False
+Total length,125,31.9,Great hammerhead (M&F),335,False
+Total length,126,32.7,Great hammerhead (M&F),335,False
+Total length,127,33.4,Great hammerhead (M&F),335,False
+Total length,128,34.2,Great hammerhead (M&F),335,False
+Total length,129,35.0,Great hammerhead (M&F),335,False
+Total length,25,0.1,Giant guitarfish (M&F),400,False
+Total length,26,0.1,Giant guitarfish (M&F),400,False
+Total length,27,0.1,Giant guitarfish (M&F),400,False
+Total length,28,0.1,Giant guitarfish (M&F),400,False
+Total length,29,0.2,Giant guitarfish (M&F),400,False
+Total length,30,0.2,Giant guitarfish (M&F),400,False
+Total length,31,0.2,Giant guitarfish (M&F),400,False
+Total length,32,0.3,Giant guitarfish (M&F),400,False
+Total length,33,0.3,Giant guitarfish (M&F),400,False
+Total length,34,0.3,Giant guitarfish (M&F),400,False
+Total length,35,0.4,Giant guitarfish (M&F),400,False
+Total length,36,0.4,Giant guitarfish (M&F),400,False
+Total length,37,0.5,Giant guitarfish (M&F),400,False
+Total length,38,0.5,Giant guitarfish (M&F),400,False
+Total length,39,0.6,Giant guitarfish (M&F),400,False
+Total length,40,0.6,Giant guitarfish (M&F),400,False
+Total length,41,0.7,Giant guitarfish (M&F),400,False
+Total length,42,0.8,Giant guitarfish (M&F),400,False
+Total length,43,0.8,Giant guitarfish (M&F),400,False
+Total length,44,0.9,Giant guitarfish (M&F),400,False
+Total length,45,1.0,Giant guitarfish (M&F),400,False
+Total length,46,1.1,Giant guitarfish (M&F),400,False
+Total length,47,1.2,Giant guitarfish (M&F),400,False
+Total length,48,1.3,Giant guitarfish (M&F),400,False
+Total length,49,1.4,Giant guitarfish (M&F),400,False
+Total length,50,1.5,Giant guitarfish (M&F),400,False
+Total length,51,1.6,Giant guitarfish (M&F),400,False
+Total length,52,1.7,Giant guitarfish (M&F),400,False
+Total length,53,1.8,Giant guitarfish (M&F),400,False
+Total length,54,2.0,Giant guitarfish (M&F),400,False
+Total length,55,2.1,Giant guitarfish (M&F),400,False
+Total length,56,2.3,Giant guitarfish (M&F),400,False
+Total length,57,2.4,Giant guitarfish (M&F),400,False
+Total length,58,2.6,Giant guitarfish (M&F),400,False
+Total length,59,2.8,Giant guitarfish (M&F),400,False
+Total length,60,2.9,Giant guitarfish (M&F),400,False
+Total length,61,3.1,Giant guitarfish (M&F),400,False
+Total length,62,3.3,Giant guitarfish (M&F),400,False
+Total length,63,3.5,Giant guitarfish (M&F),400,False
+Total length,64,3.7,Giant guitarfish (M&F),400,False
+Total length,65,3.9,Giant guitarfish (M&F),400,False
+Total length,66,4.1,Giant guitarfish (M&F),400,False
+Total length,67,4.3,Giant guitarfish (M&F),400,False
+Total length,68,4.6,Giant guitarfish (M&F),400,False
+Total length,69,4.8,Giant guitarfish (M&F),400,False
+Total length,70,5.1,Giant guitarfish (M&F),400,False
+Total length,71,5.3,Giant guitarfish (M&F),400,False
+Total length,72,5.6,Giant guitarfish (M&F),400,False
+Total length,73,5.9,Giant guitarfish (M&F),400,False
+Total length,74,6.2,Giant guitarfish (M&F),400,False
+Total length,75,6.5,Giant guitarfish (M&F),400,False
+Total length,76,6.8,Giant guitarfish (M&F),400,False
+Total length,77,7.1,Giant guitarfish (M&F),400,False
+Total length,78,7.4,Giant guitarfish (M&F),400,False
+Total length,79,7.8,Giant guitarfish (M&F),400,False
+Total length,80,8.1,Giant guitarfish (M&F),400,False
+Total length,81,8.5,Giant guitarfish (M&F),400,False
+Total length,82,8.9,Giant guitarfish (M&F),400,False
+Total length,83,9.3,Giant guitarfish (M&F),400,False
+Total length,84,9.7,Giant guitarfish (M&F),400,False
+Total length,85,10.1,Giant guitarfish (M&F),400,False
+Total length,86,10.5,Giant guitarfish (M&F),400,False
+Total length,87,11.0,Giant guitarfish (M&F),400,False
+Total length,88,11.4,Giant guitarfish (M&F),400,False
+Total length,89,11.9,Giant guitarfish (M&F),400,False
+Total length,90,12.4,Giant guitarfish (M&F),400,False
+Total length,91,12.9,Giant guitarfish (M&F),400,False
+Total length,92,13.4,Giant guitarfish (M&F),400,False
+Total length,93,13.9,Giant guitarfish (M&F),400,False
+Total length,94,14.5,Giant guitarfish (M&F),400,False
+Total length,95,15.0,Giant guitarfish (M&F),400,False
+Total length,96,15.6,Giant guitarfish (M&F),400,False
+Total length,97,16.2,Giant guitarfish (M&F),400,False
+Total length,98,16.8,Giant guitarfish (M&F),400,False
+Total length,99,17.4,Giant guitarfish (M&F),400,False
+Total length,100,18.1,Giant guitarfish (M&F),400,False
+Total length,101,18.7,Giant guitarfish (M&F),400,False
+Total length,102,19.4,Giant guitarfish (M&F),400,False
+Total length,103,20.1,Giant guitarfish (M&F),400,False
+Total length,104,20.8,Giant guitarfish (M&F),400,False
+Total length,105,21.6,Giant guitarfish (M&F),400,False
+Total length,106,22.3,Giant guitarfish (M&F),400,False
+Total length,107,23.1,Giant guitarfish (M&F),400,False
+Total length,108,23.9,Giant guitarfish (M&F),400,False
+Total length,109,24.7,Giant guitarfish (M&F),400,False
+Total length,110,25.5,Giant guitarfish (M&F),400,False
+Total length,111,26.4,Giant guitarfish (M&F),400,False
+Total length,112,27.3,Giant guitarfish (M&F),400,False
+Total length,113,28.2,Giant guitarfish (M&F),400,False
+Total length,114,29.1,Giant guitarfish (M&F),400,False
+Total length,115,30.0,Giant guitarfish (M&F),400,False
+Total length,116,31.0,Giant guitarfish (M&F),400,False
+Total length,117,32.0,Giant guitarfish (M&F),400,False
+Total length,118,33.0,Giant guitarfish (M&F),400,False
+Total length,119,34.0,Giant guitarfish (M&F),400,False
+Total length,120,35.1,Giant guitarfish (M&F),400,False
+Total length,121,36.2,Giant guitarfish (M&F),400,False
+Total length,122,37.3,Giant guitarfish (M&F),400,False
+Total length,123,38.4,Giant guitarfish (M&F),400,False
+Total length,124,39.6,Giant guitarfish (M&F),400,False
+Total length,125,40.8,Giant guitarfish (M&F),400,False
+Total length,126,42.0,Giant guitarfish (M&F),400,False
+Total length,127,43.2,Giant guitarfish (M&F),400,False
+Total length,128,44.5,Giant guitarfish (M&F),400,False
+Total length,129,45.8,Giant guitarfish (M&F),400,False
