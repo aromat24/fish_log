@@ -348,18 +348,48 @@ function showEditModal(catchData) {
     // Setup photo editing
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     const editPhotoInput = document.getElementById('edit-photo-input');
+      editPhotoBtn.onclick = () => editPhotoInput.click();
     
-    editPhotoBtn.onclick = () => editPhotoInput.click();
-    
-    editPhotoInput.onchange = (e) => {
+    editPhotoInput.onchange = async (e) => {
         const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('edit-photo').value = e.target.result;
-                editPhotoText.textContent = 'Photo Selected';
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showMessage('Please select a valid image file.', 'error');
+            e.target.value = '';
+            return;
+        }
+
+        // Validate file size (max 50MB raw file)
+        const maxRawFileSize = 50 * 1024 * 1024; // 50MB
+        if (file.size > maxRawFileSize) {
+            showMessage('Image file is too large. Please choose a smaller image (max 50MB).', 'error');
+            e.target.value = '';
+            return;
+        }        try {
+            // Show processing message and change button appearance
+            editPhotoText.textContent = 'Processing...';
+            editPhotoBtn.className = 'w-full px-4 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium rounded-md border border-yellow-300 flex items-center justify-center gap-2';
+            
+            // Compress the image
+            const compressedDataUrl = await compressImage(file);
+            
+            // Store the compressed image
+            document.getElementById('edit-photo').value = compressedDataUrl;
+            editPhotoText.textContent = 'Photo Updated';
+            
+            // Change button to green to indicate success
+            editPhotoBtn.className = 'w-full px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-md border border-green-300 flex items-center justify-center gap-2';
+            
+        } catch (error) {
+            console.error('Image compression failed:', error);
+            showMessage('Failed to process image. Please try a different image.', 'error');
+            e.target.value = '';
+            editPhotoText.textContent = 'Photo Upload Failed';
+            
+            // Change button to red to indicate error
+            editPhotoBtn.className = 'w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-md border border-red-300 flex items-center justify-center gap-2';
         }
     };
 
@@ -888,22 +918,139 @@ function setupLocationHandling() {
     }
 }
 
-// Photo Handling Functions
+// Photo Handling Functions with Compression
 function setupPhotoHandling() {
     const photoInput = document.getElementById('photo');
     photoInput.addEventListener('change', handlePhotoUpload);
 }
 
-function handlePhotoUpload(event) {
+async function handlePhotoUpload(event) {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            // Store the image data URL
-            event.target.dataset.imageData = e.target.result;
-        };
-        reader.readAsDataURL(file);
+    const photoInput = document.getElementById('photo');
+    const helperText = document.getElementById('photo-helper-text');
+    
+    if (!file) {
+        // Reset to default state if no file selected
+        photoInput.className = 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500';
+        helperText.textContent = 'Upload a photo of your catch (optional)';
+        helperText.className = 'text-xs text-gray-500 mt-1';
+        return;
     }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        photoInput.className = 'w-full px-3 py-2 border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500';
+        helperText.textContent = 'Please select a valid image file';
+        helperText.className = 'text-xs text-red-500 mt-1';
+        showMessage('Please select a valid image file.', 'error');
+        event.target.value = '';
+        return;
+    }
+
+    // Validate file size (max 50MB raw file)
+    const maxRawFileSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxRawFileSize) {
+        photoInput.className = 'w-full px-3 py-2 border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500';
+        helperText.textContent = 'Image file too large (max 50MB)';
+        helperText.className = 'text-xs text-red-500 mt-1';
+        showMessage('Image file is too large. Please choose a smaller image (max 50MB).', 'error');
+        event.target.value = '';
+        return;
+    }
+
+    try {
+        // Show processing state
+        photoInput.className = 'w-full px-3 py-2 border border-yellow-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500';
+        helperText.textContent = 'Processing image...';
+        helperText.className = 'text-xs text-yellow-600 mt-1';
+        showMessage('Processing image...', 'info');
+        
+        // Compress the image
+        const compressedDataUrl = await compressImage(file);
+        
+        // Store the compressed image data URL
+        event.target.dataset.imageData = compressedDataUrl;
+        
+        // Calculate compressed size for user feedback
+        const compressedSizeKB = Math.round((compressedDataUrl.length * 0.75) / 1024); // Approximate size in KB
+        
+        // Show success state
+        photoInput.className = 'w-full px-3 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500';
+        helperText.textContent = `Image processed successfully! (${compressedSizeKB}KB)`;
+        helperText.className = 'text-xs text-green-600 mt-1';
+        showMessage(`Image processed successfully! Compressed to ${compressedSizeKB}KB.`, 'success');
+        
+    } catch (error) {
+        console.error('Image compression failed:', error);
+        photoInput.className = 'w-full px-3 py-2 border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500';
+        helperText.textContent = 'Failed to process image';
+        helperText.className = 'text-xs text-red-500 mt-1';
+        showMessage('Failed to process image. Please try a different image.', 'error');
+        event.target.value = '';
+    }
+}
+
+// Image compression function
+function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+            try {
+                // Calculate new dimensions while maintaining aspect ratio
+                let { width, height } = img;
+                
+                // Calculate scaling factor
+                const scaleX = maxWidth / width;
+                const scaleY = maxHeight / height;
+                const scale = Math.min(scaleX, scaleY, 1); // Don't upscale
+                
+                const newWidth = Math.round(width * scale);
+                const newHeight = Math.round(height * scale);
+                
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // Draw with high quality settings
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                
+                // Convert to compressed JPEG
+                let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Check if still too large for localStorage (aim for <2MB base64)
+                const maxBase64Size = 2 * 1024 * 1024; // 2MB
+                if (compressedDataUrl.length > maxBase64Size) {
+                    console.log('Image still too large, reducing quality further...');
+                    
+                    // Try with lower quality
+                    compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    // If still too large, reduce dimensions further
+                    if (compressedDataUrl.length > maxBase64Size) {
+                        console.log('Reducing dimensions further...');
+                        return compressImage(file, 800, 800, 0.5).then(resolve).catch(reject);
+                    }
+                }
+                
+                console.log(`Image compressed: ${Math.round(file.size/1024)}KB → ${Math.round(compressedDataUrl.length*0.75/1024)}KB`);
+                resolve(compressedDataUrl);
+                
+            } catch (error) {
+                reject(error);
+            }
+        };
+        
+        img.onerror = () => {
+            reject(new Error('Failed to load image'));
+        };
+        
+        // Create object URL for the image to avoid memory issues with large files
+        img.src = URL.createObjectURL(file);
+    });
 }
 
 function showFullscreenImage(imageUrl) {
@@ -918,13 +1065,30 @@ function showFullscreenImage(imageUrl) {
 function showMessage(message, type = 'info') {
     const messageBox = document.getElementById('message-box');
     messageBox.textContent = message;
-    messageBox.className = `p-3 rounded-md text-sm ${
-        type === 'error' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-    }`;
+    
+    let bgColor, textColor;
+    switch(type) {
+        case 'error':
+            bgColor = 'bg-red-100';
+            textColor = 'text-red-700';
+            break;
+        case 'success':
+            bgColor = 'bg-green-100';
+            textColor = 'text-green-700';
+            break;
+        default:
+            bgColor = 'bg-blue-100';
+            textColor = 'text-blue-700';
+    }
+    
+    messageBox.className = `p-3 rounded-md text-sm ${bgColor} ${textColor}`;
     messageBox.classList.remove('hidden');
+    
+    // Auto-hide after different durations based on type
+    const duration = type === 'success' ? 4000 : 3000;
     setTimeout(() => {
         messageBox.classList.add('hidden');
-    }, 3000);
+    }, duration);
 }
 
 function loadCatchHistory() {

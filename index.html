@@ -118,9 +118,8 @@
         background-color: rgba(0, 0, 0, 0.75);
       }
 
-      /* Map modal styles */
-      #map-modal {
-        z-index: 70; /* Higher than other modals */
+      /* Map modal styles */      #map-modal {
+        z-index: 80; /* Above edit modal but below catch details */
       }
 
       #map-container {
@@ -322,12 +321,10 @@
                         <input type="hidden" id="latitude" name="latitude">
                         <input type="hidden" id="longitude" name="longitude">
                         <input type="hidden" id="location-name" name="location-name">
-                    </div>
-
-                    <div class="photo-upload">
+                    </div>                    <div class="photo-upload">
                         <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
                         <input type="file" id="photo" name="photo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
+                        <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
                     <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>
@@ -338,23 +335,21 @@
                 </form>                <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">
                         <div class="flex items-center gap-2">
-                            <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>
-                              <!-- Tab buttons with responsive sizing -->
+                            <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>                              <!-- Tab buttons with improved sizing -->
                             <div class="flex bg-gray-100 rounded-md p-1">
-                                <button id="history-tab-btn" class="tab-button active px-2 md:px-3 py-1 text-xs md:text-sm font-medium rounded-md transition-colors">
+                                <button id="history-tab-btn" class="tab-button active px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     📋 <span class="hidden sm:inline">History</span>
                                 </button>
-                                <button id="records-tab-btn" class="tab-button px-2 md:px-3 py-1 text-xs md:text-sm font-medium rounded-md transition-colors">
+                                <button id="records-tab-btn" class="tab-button px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     🏆 <span class="hidden sm:inline">Records</span>
                                 </button>
-                                <button id="map-tab-btn" class="tab-button px-2 md:px-3 py-1 text-xs md:text-sm font-medium rounded-md transition-colors">
+                                <button id="map-tab-btn" class="tab-button px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     🗺️ <span class="hidden sm:inline">Map</span>
                                 </button>
                             </div>
-                        </div>
-                        <div class="dropdown relative">
+                        </div>                        <div class="dropdown relative">
                             <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
-                                <span class="lucide lucide-menu"></span> Options
+                                <span class="lucide lucide-menu"></span>
                             </button>
                             <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
                                 <button id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
@@ -381,7 +376,7 @@
         </div>
     </div>
 
-    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80] p-4" data-modal-background>
+    <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[90] p-4" data-modal-background>
         <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
@@ -449,17 +444,12 @@
                 </div>                <div>
                     <label for="edit-location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
                     <input type="text" id="edit-location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-
-                <!-- Add location editing section -->
+                </div>                <!-- Add location editing section -->
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-600">Location:</label>
                     <div class="flex gap-2">
-                        <button type="button" id="edit-location-btn" class="flex-1 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium rounded-md border border-blue-300 flex items-center justify-center gap-2">
+                        <button type="button" id="edit-location-btn" class="w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium rounded-md border border-blue-300 flex items-center justify-center gap-2">
                             <span class="lucide lucide-map-pin"></span> Edit Location
-                        </button>
-                        <button type="button" id="edit-get-location-btn" class="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-md border border-green-300 flex items-center justify-center gap-2">
-                            <span class="lucide lucide-navigation"></span>
                         </button>
                     </div>
                     <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
@@ -512,7 +502,7 @@
     </div>
 
     <!-- Update fullscreen image modal -->
-    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[60] flex items-center justify-center">
+    <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[100] flex items-center justify-center">
         <div class="max-w-full max-h-full p-4">
             <img id="fullscreen-image-content" class="max-h-[90vh] max-w-[90vw] object-contain" alt="Full size catch photo">
         </div>
