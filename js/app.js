@@ -20,35 +20,26 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('User Agent:', navigator.userAgent);
       try {
         // Initialize landing page functionality
-        initLandingPage();
-
-        // Setup fullscreen image handling        const fullscreenModal = document.getElementById('fullscreen-image');
+        initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
+        const fullscreenModal = document.getElementById('fullscreen-image');
+        const fullscreenImage = document.getElementById('fullscreen-image-content');
+        
         console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
         console.log('Fullscreen modal element:', fullscreenModal);
         console.log('Fullscreen modal classes:', fullscreenModal?.className);
         console.log('Fullscreen modal hidden status:', fullscreenModal?.classList.contains('hidden'));
-        
-        // Add mutation observer to track changes to the fullscreen modal
+          // CRITICAL: Ensure fullscreen modal is hidden and has no source on startup
         if (fullscreenModal) {
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        console.log('=== FULLSCREEN MODAL CLASS CHANGED ===');
-                        console.log('New classes:', fullscreenModal.className);
-                        console.log('Is hidden:', fullscreenModal.classList.contains('hidden'));
-                        if (!fullscreenModal.classList.contains('hidden')) {
-                            console.log('FULLSCREEN MODAL BECAME VISIBLE!');
-                            console.trace('Stack trace when modal became visible:');
-                        }
-                    }
-                });
-            });
-            
-            observer.observe(fullscreenModal, {
-                attributes: true,
-                attributeFilter: ['class']
-            });
+            fullscreenModal.classList.add('hidden');
+            console.log('Force-hid fullscreen modal on startup');
         }
+        if (fullscreenImage) {
+            fullscreenImage.src = '';
+            fullscreenImage.alt = '';
+            console.log('Cleared fullscreen image source on startup');
+        }
+          // Reset fullscreen modal to clean state
+        resetFullscreenModal();
         
         const closeBtn = document.getElementById('close-fullscreen-btn');
         const rotateBtn = document.getElementById('rotate-image-btn');
@@ -155,6 +146,9 @@ window.enterApp = function() {
     console.log('enterApp called');
     const landingPage = document.getElementById('landing-page');
     const appContent = document.getElementById('app-content');
+    
+    // Reset fullscreen modal when entering the app
+    resetFullscreenModal();
     
     if (landingPage && appContent) {
         landingPage.classList.add('fade-out');
@@ -630,13 +624,55 @@ function closeFullscreenImage() {
     removeImageTouchHandlers(fullscreenImage);
 }
 
+// Reset fullscreen modal to initial state
+function resetFullscreenModal() {
+    console.log('=== RESETTING FULLSCREEN MODAL ===');
+    const fullscreenModal = document.getElementById('fullscreen-image');
+    const fullscreenImage = document.getElementById('fullscreen-image-content');
+    
+    if (fullscreenModal) {
+        // Ensure modal is hidden
+        fullscreenModal.classList.add('hidden');
+        console.log('Fullscreen modal hidden');
+    }
+    
+    if (fullscreenImage) {
+        // Clear image source and reset all transform state
+        fullscreenImage.src = '';
+        fullscreenImage.alt = '';
+        fullscreenImage.style.transform = '';
+        fullscreenImage.style.maxWidth = '100vw';
+        fullscreenImage.style.maxHeight = '100vh';
+        fullscreenImage.style.width = 'auto';
+        fullscreenImage.style.height = 'auto';
+        console.log('Fullscreen image cleared and reset');
+    }
+    
+    // Reset rotation and zoom state
+    imageRotation = 0;
+    currentScale = 1;
+    currentTranslateX = 0;
+    currentTranslateY = 0;
+    isZoomed = false;
+    
+    console.log('Fullscreen modal state reset complete');
+}
+
 // Handle rotate button clicks with mobile touch support and debouncing
 function handleRotateClick(event) {
-    console.log('=== ROTATE CLICK DEBUG ===');
-    console.log('handleRotateClick called, Event type:', event?.type);
-    console.log('Event target:', event?.target);
-    console.log('Stack trace:');
-    console.trace();
+    // Check if fullscreen modal is actually visible before rotating
+    const fullscreenModal = document.getElementById('fullscreen-image');
+    const fullscreenImage = document.getElementById('fullscreen-image-content');
+    
+    if (!fullscreenModal || fullscreenModal.classList.contains('hidden')) {
+        console.log('Rotate button clicked but fullscreen modal is not visible - ignoring');
+        return;
+    }
+    
+    if (!fullscreenImage || !fullscreenImage.src || fullscreenImage.src.trim() === '') {
+        console.log('Rotate button clicked but no image is loaded - ignoring');
+        return;
+    }
     
     // Prevent default behavior and stop propagation
     if (event) {
@@ -650,7 +686,6 @@ function handleRotateClick(event) {
     }
     
     window.rotateClickTimeout = setTimeout(() => {
-        console.log('Executing rotateFullscreenImage');
         rotateFullscreenImage();
         window.rotateClickTimeout = null;
     }, 100); // 100ms debounce
@@ -1179,8 +1214,21 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
 }
 
 function showFullscreenImage(imageUrl) {
+    console.log('showFullscreenImage called with:', imageUrl);
+    
+    // Validate image URL
+    if (!imageUrl || imageUrl.trim() === '' || imageUrl === 'undefined' || imageUrl === 'null') {
+        console.warn('showFullscreenImage called with invalid image URL:', imageUrl);
+        return;
+    }
+    
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
+    
+    if (!fullscreenModal || !fullscreenImage) {
+        console.error('Fullscreen modal elements not found');
+        return;
+    }
     
     // Reset rotation, zoom, and sizing for new image
     imageRotation = 0;
@@ -1195,8 +1243,12 @@ function showFullscreenImage(imageUrl) {
     fullscreenImage.style.width = 'auto';
     fullscreenImage.style.height = 'auto';
     
+    // Set image source and show modal
     fullscreenImage.src = imageUrl;
+    fullscreenImage.alt = 'Full size catch photo';
     fullscreenModal.classList.remove('hidden');
+    
+    console.log('Fullscreen modal shown with image:', imageUrl);
     
     // Setup touch handlers for zoom and pan
     setupImageTouchHandlers(fullscreenImage);
