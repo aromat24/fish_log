@@ -1354,12 +1354,11 @@ function showCatchFromMap(catchId) {
     }
     
     console.log('Found catch data:', catchData);
-    
-    // Get tab elements
+      // Get tab elements
     const historyTab = document.getElementById('history-tab-btn');
     const catchLog = document.getElementById('catch-log');
     const mapTab = document.getElementById('map-tab-btn');
-    const mapContainer = document.getElementById('map-container');
+    const mapContainer = document.getElementById('map-view-container');
     const recordsTab = document.getElementById('records-tab-btn');
     const recordsContainer = document.getElementById('records-container');
     
