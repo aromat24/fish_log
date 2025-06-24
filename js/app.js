@@ -18,11 +18,38 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOM CONTENT LOADED ===');
     console.log('Current URL:', window.location.href);
     console.log('User Agent:', navigator.userAgent);
-    
-    try {
+      try {
         // Initialize landing page functionality
-        initLandingPage();        // Setup fullscreen image handling
-        const fullscreenModal = document.getElementById('fullscreen-image');
+        initLandingPage();
+
+        // Setup fullscreen image handling        const fullscreenModal = document.getElementById('fullscreen-image');
+        console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
+        console.log('Fullscreen modal element:', fullscreenModal);
+        console.log('Fullscreen modal classes:', fullscreenModal?.className);
+        console.log('Fullscreen modal hidden status:', fullscreenModal?.classList.contains('hidden'));
+        
+        // Add mutation observer to track changes to the fullscreen modal
+        if (fullscreenModal) {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        console.log('=== FULLSCREEN MODAL CLASS CHANGED ===');
+                        console.log('New classes:', fullscreenModal.className);
+                        console.log('Is hidden:', fullscreenModal.classList.contains('hidden'));
+                        if (!fullscreenModal.classList.contains('hidden')) {
+                            console.log('FULLSCREEN MODAL BECAME VISIBLE!');
+                            console.trace('Stack trace when modal became visible:');
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(fullscreenModal, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+        
         const closeBtn = document.getElementById('close-fullscreen-btn');
         const rotateBtn = document.getElementById('rotate-image-btn');
         
@@ -605,7 +632,11 @@ function closeFullscreenImage() {
 
 // Handle rotate button clicks with mobile touch support and debouncing
 function handleRotateClick(event) {
+    console.log('=== ROTATE CLICK DEBUG ===');
     console.log('handleRotateClick called, Event type:', event?.type);
+    console.log('Event target:', event?.target);
+    console.log('Stack trace:');
+    console.trace();
     
     // Prevent default behavior and stop propagation
     if (event) {
