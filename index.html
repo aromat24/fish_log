@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
     <title>Ghoti - Hooked | Fishing Log</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ghoti">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#3b82f6">
     
-    <script src="https://cdn.tailwindcss.com"></script><style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/beautiful-buttons.css">
+    <style>
       .lucide {
         font-size: 1.25rem; /* Adjust icon size */
         line-height: 1;
@@ -114,12 +116,7 @@
         pointer-events: none;
       }      #loading-indicator .text-white {
         padding: 1rem 2rem;
-        border-radius: 0.5rem;
-        background-color: rgba(0, 0, 0, 0.75);
-      }
-
-      /* Map modal styles */      #map-modal {
-        z-index: 80; /* Above edit modal but below catch details */
+        border-radius: 0.5rem;        background-color: rgba(0, 0, 0, 0.75);
       }
 
       #map-container {
@@ -127,11 +124,48 @@
         width: 100%;
         border-radius: 0.375rem;
         overflow: hidden;
-      }
-
-      /* Ensure Leaflet controls are properly styled */
+      }      /* Ensure Leaflet controls are properly styled and don't interfere with modals */
       .leaflet-container {
         font-family: inherit;
+      }
+
+      /* Keep Leaflet base elements at low z-index but allow popups to be higher */
+      .leaflet-control-container,
+      .leaflet-map-pane,
+      .leaflet-objects-pane,
+      .leaflet-shadow-pane {
+        z-index: 1 !important;
+      }      /* Allow popups to appear above the map */
+      .leaflet-popup,
+      .leaflet-popup-pane {
+        z-index: 1000 !important;
+      }
+
+      /* Ensure map popups appear above everything else */
+      #main-map .leaflet-popup,
+      #main-map .leaflet-popup-pane {
+        z-index: 1100 !important;
+      }
+
+      /* Specific override for popup content */
+      .leaflet-popup-content-wrapper {
+        z-index: 1100 !important;
+      }
+
+      .leaflet-popup-tip {
+        z-index: 1100 !important;
+      }
+
+      /* Ensure the main map container doesn't interfere with modals */
+      #main-map,
+      #map-container {
+        position: relative;
+        z-index: 1;
+      }
+
+      #main-map .leaflet-container,
+      #map-container .leaflet-container {
+        z-index: 1 !important;
       }
 
       /* Map tab styles */
@@ -149,7 +183,30 @@
         border-radius: 0.5rem;
         overflow: hidden;
         border: 1px solid #e5e7eb;
-      }      /* Mobile-specific improvements */
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Ensure main map has proper stacking context */
+      #main-map {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Fix leaflet popup z-index issues */
+      #main-map .leaflet-map-pane {
+        z-index: 1 !important;
+      }
+
+      #main-map .leaflet-popup-pane {
+        z-index: 1100 !important;
+      }
+
+      #main-map .leaflet-popup {
+        z-index: 1100 !important;
+      }/* Mobile-specific improvements */
       @media (max-width: 640px) {
         .species-option {
           padding: 12px 16px; /* Larger touch targets */
@@ -217,15 +274,40 @@
           padding-top: env(safe-area-inset-top);
           padding-bottom: env(safe-area-inset-bottom);
         }
-      }
-
-      /* Hide scrollbars in PWA mode for cleaner look */
+      }      /* Hide scrollbars in PWA mode for cleaner look */
       .pwa-mode::-webkit-scrollbar {
         display: none;
       }
       .pwa-mode {
         -ms-overflow-style: none;
         scrollbar-width: none;
+      }
+
+      /* Prevent zoom on the main app but allow it for fullscreen images */
+      body {
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      /* Allow zoom only on fullscreen images */
+      #fullscreen-image img {
+        touch-action: pinch-zoom !important;
+        user-select: none;
+      }
+
+      /* Ensure fullscreen image takes full space */
+      #fullscreen-image {
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+      }
+
+      #fullscreen-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
     </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
@@ -238,9 +320,9 @@
           crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-            crossorigin=""></script>
-    
+            crossorigin=""></script>    
     <script src="js/fishDatabase.js"></script>
+    <script src="js/beautiful-buttons.js"></script>
     <script src="js/app.js" defer></script>
 </head>
 <body class="bg-gradient-to-br from-sky-100 to-blue-200 font-sans min-h-screen flex items-center justify-center p-4">
@@ -250,9 +332,9 @@
             <div id="landing-header" class="relative z-10">
                 <h1 class="text-3xl md:text-5xl font-bold mb-2">Ghoti - Hooked</h1>
                 <p class="text-lg md:text-xl">Log your catches and track your fishing journey</p>
-            </div>
-            <div id="landing-footer" class="relative z-10">
-                <button id="enter-app-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors w-full md:w-auto">
+            </div>            <div id="landing-footer" class="relative z-10">                <button id="enter-app-btn" class="shimmer-button" 
+                        onclick="window.enterApp && window.enterApp()" 
+                        style="cursor: pointer; z-index: 100; position: relative;">
                     Enter Logbook
                 </button>
             </div>
@@ -313,8 +395,7 @@
 
                     <div class="border-t pt-4 space-y-2">
                         <label class="block text-sm font-medium text-gray-600">Location:</label>
-                        <div class="flex items-center gap-4 flex-wrap">
-                            <button type="button" id="get-location-btn" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm">
+                        <div class="flex items-center gap-4 flex-wrap">                            <button type="button" id="get-location-btn" class="shiny-button text-sm">
                                 <span class="lucide lucide-map-pin"></span> Get Current Location
                             </button>
                             <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
@@ -328,7 +409,7 @@
                         <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="w-full mt-4 flex justify-center items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg" style="touch-action: manipulation;">
+                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="rainbow-button w-full mt-4" style="touch-action: manipulation;">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>                <div>
@@ -397,17 +478,15 @@
                 </div>
                 
                 <p id="modal-notes" class="text-sm text-gray-600"></p>
-                
-                <div id="modal-photo-container" class="mb-4 hidden">
-                    <img id="modal-photo" class="w-full h-auto rounded-md cursor-pointer" alt="Catch Photo">
+                  <div id="modal-photo-container" class="mb-4 hidden">
+                    <img id="modal-photo" class="w-full h-48 object-cover rounded-md cursor-pointer" alt="Catch Photo">
                     <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
                 </div>
                 
-                <div class="flex gap-2 mt-4">
-                    <button id="edit-catch-btn" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
+                <div class="flex gap-2 mt-4">                    <button id="edit-catch-btn" class="interactive-hover-button flex-1">
                         <span class="lucide lucide-edit"></span> Edit
                     </button>
-                    <button id="delete-catch-btn" class="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
+                    <button id="delete-catch-btn" class="pulsating-button flex-1" style="--button-color: #ef4444;">
                         <span class="lucide lucide-trash"></span> Delete
                     </button>
                 </div>
@@ -498,15 +577,16 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    <!-- Update fullscreen image modal -->
+    </div>    <!-- Update fullscreen image modal -->
     <div id="fullscreen-image" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[100] flex items-center justify-center">
-        <div class="max-w-full max-h-full p-4">
-            <img id="fullscreen-image-content" class="max-h-[90vh] max-w-[90vw] object-contain" alt="Full size catch photo">
+        <div class="w-full h-full flex items-center justify-center p-2">
+            <img id="fullscreen-image-content" class="max-h-full max-w-full object-contain transition-transform duration-300" alt="Full size catch photo" style="touch-action: pinch-zoom;">
         </div>
-        <button class="absolute top-4 right-4 text-white text-xl" onclick="closeFullscreenImage()">✖</button>
-        <p class="text-white text-sm absolute bottom-4">Tap anywhere to close</p>
+        <!-- Move buttons to bottom right for thumb access -->
+        <div class="absolute bottom-4 right-4 flex flex-col gap-3">
+            <button id="rotate-image-btn" class="text-white text-xl bg-black bg-opacity-70 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-all" title="Rotate image">🔄</button>
+            <button id="close-fullscreen-btn" class="text-white text-xl bg-black bg-opacity-70 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-all" title="Close">✖</button>
+        </div>
     </div>
 
     <div id="loading-indicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -566,9 +646,7 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Map modal for location selection -->
+    </div>    <!-- Map modal for location selection -->
     <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
         <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
             <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
@@ -631,12 +709,13 @@
         }
 
         // Fullscreen handling for PWA
-        function initializeFullscreenMode() {
-            // Check if app is running in fullscreen mode (PWA from home screen)
+        function initializeFullscreenMode() {            // Check if app is running in fullscreen mode (PWA from home screen)
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                                 window.matchMedia('(display-mode: fullscreen)').matches ||
-                (navigator.standalone === true) || // iOS Safari
-                document.referrer.includes('android-app://'); // Android            if (isStandalone) {
+                                (navigator.standalone === true) || // iOS Safari
+                                document.referrer.includes('android-app://'); // Android
+            
+            if (isStandalone) {
                 console.log('App launched in PWA mode from home screen');
                 
                 // Add PWA class for any specific styling
@@ -648,8 +727,7 @@
                         console.log('Fullscreen request failed:', err);
                     });
                 }
-                
-                console.log('PWA fullscreen mode activated for native app experience');
+                  console.log('PWA fullscreen mode activated for native app experience');
             }
         }
 
@@ -715,21 +793,20 @@
                     }
                 }
             });
-            
-            // Prevent accidental page refresh/close
-            window.addEventListener('beforeunload', (event) => {
-                const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                             window.matchMedia('(display-mode: fullscreen)').matches ||
-                             (navigator.standalone === true);
-                
-                if (isPWA) {
-                    // Prevent the default behavior
-                    event.preventDefault();
-                    // Some browsers require returnValue to be set
-                    event.returnValue = '';
-                    return '';
-                }
-            });
+              // Prevent accidental page refresh/close - DISABLED to prevent reload warnings
+            // window.addEventListener('beforeunload', (event) => {
+            //     const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+            //              window.matchMedia('(display-mode: fullscreen)').matches ||
+            //              (navigator.standalone === true);
+            //     
+            //     if (isPWA) {
+            //         // Prevent the default behavior
+            //         event.preventDefault();
+            //         // Some browsers require returnValue to be set
+            //         event.returnValue = '';
+            //         return '';
+            //     }
+            // });
         }
 
         // Show custom exit confirmation for PWA

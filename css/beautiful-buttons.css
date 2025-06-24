@@ -1,0 +1,328 @@
+/* Beautiful Buttons for Fish Log App - Based on MagicUI Components */
+
+/* === RAINBOW BUTTON === */
+@keyframes rainbow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.rainbow-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0, #ff0080, #ff8c00);
+  background-size: 300% 300%;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: rainbow 3s ease-in-out infinite;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.rainbow-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.rainbow-button:active {
+  transform: translateY(0);
+}
+
+/* === SHIMMER BUTTON === */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.shimmer-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.shimmer-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* === PULSATING BUTTON === */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.pulsating-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
+}
+
+.pulsating-button:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+}
+
+/* === INTERACTIVE HOVER BUTTON === */
+.interactive-hover-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 2rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #3b82f6;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-text {
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-arrow {
+  position: absolute;
+  right: 1rem;
+  opacity: 0;
+  transform: translateX(1rem);
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.interactive-hover-button:hover .button-text {
+  transform: translateX(-1rem);
+  opacity: 0;
+}
+
+.interactive-hover-button:hover .button-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* === RIPPLE BUTTON === */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.ripple-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  border: 2px solid #3b82f6;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ripple-button:hover {
+  background: #f3f4f6;
+}
+
+.ripple-button .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  pointer-events: none;
+  animation: ripple 0.6s linear;
+}
+
+/* === FISHING THEMED VARIATIONS === */
+
+/* Save Catch Button - Ocean Theme */
+.ocean-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ocean-button::before {
+  content: '🌊';
+  position: absolute;
+  left: -2rem;
+  transition: all 0.3s ease;
+}
+
+.ocean-button:hover::before {
+  left: 0.5rem;
+}
+
+.ocean-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Location Button - Nature Theme */
+.nature-button {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.nature-button::before {
+  content: '📍';
+  position: absolute;
+  right: -2rem;
+  transition: all 0.3s ease;
+}
+
+.nature-button:hover::before {
+  right: 0.5rem;
+}
+
+.nature-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+}
+
+/* Delete Button - Warning Theme */
+.warning-button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.warning-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+/* === SUCCESS FEEDBACK === */
+.success-feedback {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .rainbow-button,
+  .shimmer-button,
+  .pulsating-button,
+  .interactive-hover-button,
+  .ripple-button,
+  .ocean-button,
+  .nature-button,
+  .warning-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* === ACCESSIBILITY === */
+.rainbow-button:focus,
+.shimmer-button:focus,
+.pulsating-button:focus,
+.interactive-hover-button:focus,
+.ripple-button:focus,
+.ocean-button:focus,
+.nature-button:focus,
+.warning-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-button,
+  .shimmer-button::before,
+  .pulsating-button {
+    animation: none;
+  }
+  
+  .interactive-hover-button .button-text,
+  .interactive-hover-button .button-arrow {
+    transition: none;
+  }
+}
