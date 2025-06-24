@@ -6,8 +6,12 @@ let selectedLongitude = null;
 let mainMap = null;
 let catchMarkers = [];
 
-// Fullscreen image rotation state
+// Fullscreen image rotation and zoom state
 let imageRotation = 0;
+let currentScale = 1;
+let currentTranslateX = 0;
+let currentTranslateY = 0;
+let isZoomed = false;
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -570,12 +574,23 @@ function displayRecords() {
 function closeFullscreenImage() {
     const fullscreenModal = document.getElementById('fullscreen-image');
     fullscreenModal.classList.add('hidden');
-    // Reset rotation and sizing when closing
+    
+    // Reset all image state when closing
     imageRotation = 0;
+    currentScale = 1;
+    currentTranslateX = 0;
+    currentTranslateY = 0;
+    isZoomed = false;
+    
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     fullscreenImage.style.transform = '';
     fullscreenImage.style.maxWidth = '100vw';
     fullscreenImage.style.maxHeight = '100vh';
+    fullscreenImage.style.width = 'auto';
+    fullscreenImage.style.height = 'auto';
+    
+    // Remove touch handlers
+    removeImageTouchHandlers(fullscreenImage);
 }
 
 // Handle rotate button clicks with mobile touch support and debouncing
@@ -604,19 +619,30 @@ function rotateFullscreenImage() {
     // Toggle between 0 and 90 degrees only (portrait and landscape)
     imageRotation = imageRotation === 0 ? 90 : 0;
     const fullscreenImage = document.getElementById('fullscreen-image-content');
-    fullscreenImage.style.transform = `rotate(${imageRotation}deg)`;
-    fullscreenImage.style.transition = 'transform 0.3s ease';
+    
+    // Reset any zoom/pan transformations when rotating
+    currentScale = 1;
+    currentTranslateX = 0;
+    currentTranslateY = 0;
+    isZoomed = false;
     
     // Optimize sizing for rotation
     if (imageRotation === 90) {
-        // When rotated 90 degrees, we need to adjust the sizing for landscape mode
+        // Landscape mode: swap dimensions for optimal screen usage
         fullscreenImage.style.maxWidth = '100vh';
         fullscreenImage.style.maxHeight = '100vw';
+        fullscreenImage.style.width = 'auto';
+        fullscreenImage.style.height = '100vh';
     } else {
-        // Normal portrait mode
+        // Portrait mode: normal dimensions
         fullscreenImage.style.maxWidth = '100vw';
         fullscreenImage.style.maxHeight = '100vh';
+        fullscreenImage.style.width = 'auto';
+        fullscreenImage.style.height = 'auto';
     }
+    
+    // Apply all transformations using the helper function
+    updateImageTransform();
 }
 
 // Helper function to clean up species names for display
@@ -1115,14 +1141,166 @@ function showFullscreenImage(imageUrl) {
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     
-    // Reset rotation and sizing for new image
+    // Reset rotation, zoom, and sizing for new image
     imageRotation = 0;
+    currentScale = 1;
+    currentTranslateX = 0;
+    currentTranslateY = 0;
+    isZoomed = false;
+    
     fullscreenImage.style.transform = '';
     fullscreenImage.style.maxWidth = '100vw';
     fullscreenImage.style.maxHeight = '100vh';
+    fullscreenImage.style.width = 'auto';
+    fullscreenImage.style.height = 'auto';
     
     fullscreenImage.src = imageUrl;
     fullscreenModal.classList.remove('hidden');
+    
+    // Setup touch handlers for zoom and pan
+    setupImageTouchHandlers(fullscreenImage);
+}
+
+// Touch handling for fullscreen image zoom and pan
+function setupImageTouchHandlers(imageElement) {
+    let initialDistance = 0;
+    let initialScale = 1;
+    let initialX = 0;
+    let initialY = 0;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let touchStartY = 0;
+    let touchCount = 0;
+    
+    // Prevent default touch behaviors
+    imageElement.style.touchAction = 'none';
+    
+    function handleTouchStart(e) {
+        e.preventDefault();
+        touchCount = e.touches.length;
+        
+        if (touchCount === 1) {
+            // Single touch - prepare for pan or swipe
+            const touch = e.touches[0];
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+            touchStartY = touch.clientY;
+        } else if (touchCount === 2) {
+            // Two fingers - prepare for pinch zoom
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            
+            initialDistance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+            initialScale = currentScale;
+            
+            // Get center point of pinch
+            initialX = (touch1.clientX + touch2.clientX) / 2;
+            initialY = (touch1.clientY + touch2.clientY) / 2;
+        }
+    }
+    
+    function handleTouchMove(e) {
+        e.preventDefault();
+        
+        if (touchCount === 1 && isZoomed) {
+            // Single touch pan when zoomed
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - lastTouchX;
+            const deltaY = touch.clientY - lastTouchY;
+            
+            currentTranslateX += deltaX;
+            currentTranslateY += deltaY;
+            
+            updateImageTransform();
+            
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+        } else if (touchCount === 2) {
+            // Two finger pinch zoom
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            
+            const currentDistance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+            
+            const scale = (currentDistance / initialDistance) * initialScale;
+            currentScale = Math.max(1, Math.min(scale, 4)); // Limit zoom between 1x and 4x
+            
+            // Update zoom state
+            isZoomed = currentScale > 1;
+            
+            updateImageTransform();
+        }
+    }
+    
+    function handleTouchEnd(e) {
+        e.preventDefault();
+        
+        // Check for swipe up to exit when not zoomed
+        if (touchCount === 1 && !isZoomed && e.changedTouches.length === 1) {
+            const touch = e.changedTouches[0];
+            const swipeDistance = touchStartY - touch.clientY;
+            const swipeThreshold = 100; // pixels
+            
+            if (swipeDistance > swipeThreshold) {
+                // Swipe up detected - exit fullscreen
+                closeFullscreenImage();
+                return;
+            }
+        }
+        
+        touchCount = Math.max(0, touchCount - e.changedTouches.length);
+        
+        // Reset to fit if zoomed out completely
+        if (currentScale <= 1) {
+            currentScale = 1;
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            isZoomed = false;
+            updateImageTransform();
+        }
+    }
+    
+    // Store handlers for removal later
+    imageElement._touchHandlers = {
+        touchstart: handleTouchStart,
+        touchmove: handleTouchMove,
+        touchend: handleTouchEnd
+    };
+    
+    // Add event listeners
+    imageElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+    imageElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+    imageElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+function removeImageTouchHandlers(imageElement) {
+    if (imageElement._touchHandlers) {
+        imageElement.removeEventListener('touchstart', imageElement._touchHandlers.touchstart);
+        imageElement.removeEventListener('touchmove', imageElement._touchHandlers.touchmove);
+        imageElement.removeEventListener('touchend', imageElement._touchHandlers.touchend);
+        delete imageElement._touchHandlers;
+    }
+    
+    // Reset touch action
+    imageElement.style.touchAction = 'pinch-zoom';
+}
+
+// Helper function to update image transform
+function updateImageTransform() {
+    const fullscreenImage = document.getElementById('fullscreen-image-content');
+    if (!fullscreenImage) return;
+    
+    const rotateTransform = `rotate(${imageRotation}deg)`;
+    const scaleTransform = `scale(${currentScale})`;
+    const translateTransform = `translate(${currentTranslateX}px, ${currentTranslateY}px)`;
+    
+    fullscreenImage.style.transform = `${rotateTransform} ${scaleTransform} ${translateTransform}`;
 }
 
 // Message handling function
@@ -1197,6 +1375,15 @@ function loadCatchHistory() {
                         <img src="${catch_.photo}" alt="Catch photo" class="w-32 h-32 object-cover rounded-md">
                     </div>
                 ` : ''}
+
+                <!-- New map icon for location -->
+                <div class="flex-shrink-0">
+                    <a href="https://www.google.com/maps?q=${catch_.latitude},${catch_.longitude}" target="_blank" class="text-gray-500 hover:text-gray-700 transition-colors" title="View on map">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M3 3h18M3 12h18M3 21h18" />
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
     `).join('');
@@ -1743,9 +1930,6 @@ function useCurrentLocationOnMap() {
             map.setView([lat, lng], 15);
             
             // Simulate click at current location
-            onMapClick({ latlng: { lat, lng } });
-        },
-        (error) => {
             console.error('Geolocation error:', error);
             let errorMessage = 'Could not get current location. ';
             
