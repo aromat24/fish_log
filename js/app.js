@@ -1317,6 +1317,7 @@ function showCatchModal(catchData) {
 
 // Function to show catch details from map popup
 function showCatchFromMap(catchId) {
+    console.log('=== showCatchFromMap START ===');
     console.log('Showing catch from map:', catchId);
     console.log('User agent:', navigator.userAgent);
     console.log('Is mobile:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent));
@@ -1357,6 +1358,7 @@ function showCatchFromMap(catchId) {
     // Stay on the Map tab - just show the modal directly
     console.log('Showing catch modal on Map tab');
     showCatchModal(catchData);
+    console.log('=== showCatchFromMap END ===');
 }
 
 function setupDataOptions() {
@@ -1963,8 +1965,7 @@ function setupMainMap() {
                     ${catch_.locationName ? `<div><span class="font-medium">Location:</span> ${catch_.locationName}</div>` : ''}
                     ${catch_.notes ? `<div class="mt-2 p-2 bg-gray-50 rounded text-xs">${catch_.notes}</div>` : ''}
                 </div>                <button class="mt-2 w-full px-4 py-3 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-600 active:bg-blue-700 transition-colors touch-manipulation" 
-                        onclick="showCatchFromMap('${catch_.id}')" 
-                        ontouchend="showCatchFromMap('${catch_.id}')"
+                        onclick="handleViewDetailsClick(event, '${catch_.id}')"
                         style="min-height: 44px; touch-action: manipulation;">
                     View Details
                 </button>
@@ -1983,6 +1984,29 @@ function setupMainMap() {
     
     console.log('Main map setup complete');
 }
+
+// Handle View Details button clicks with mobile touch support
+function handleViewDetailsClick(event, catchId) {
+    console.log('handleViewDetailsClick called with:', catchId, 'Event type:', event.type);
+    
+    // Prevent default behavior and stop propagation
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Debounce multiple rapid calls (common on mobile)
+    if (window.viewDetailsClickTimeout) {
+        clearTimeout(window.viewDetailsClickTimeout);
+    }
+    
+    window.viewDetailsClickTimeout = setTimeout(() => {
+        console.log('Executing showCatchFromMap for:', catchId);
+        showCatchFromMap(catchId);
+        window.viewDetailsClickTimeout = null;
+    }, 100); // 100ms debounce
+}
+
+// Make the function globally accessible for inline onclick handlers
+window.handleViewDetailsClick = handleViewDetailsClick;
 
 // Function to refresh the map when data changes
 function refreshMapIfVisible() {
