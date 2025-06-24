@@ -17,13 +17,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
         // Initialize landing page functionality
-        initLandingPage();
-          // Setup fullscreen image handling
+        initLandingPage();        // Setup fullscreen image handling
         const fullscreenModal = document.getElementById('fullscreen-image');
         const closeBtn = document.getElementById('close-fullscreen-btn');
         const rotateBtn = document.getElementById('rotate-image-btn');
+        
+        // Add touch-optimized event handling for close button
         closeBtn.addEventListener('click', closeFullscreenImage);
-        rotateBtn.addEventListener('click', rotateFullscreenImage);
+        closeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            closeFullscreenImage();
+        });
+        
+        // Add touch-optimized event handling for rotate button
+        rotateBtn.addEventListener('click', handleRotateClick);
+        rotateBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleRotateClick(e);
+        });
         
         fullscreenModal.addEventListener('click', (e) => {
             if (e.target === fullscreenModal) {
@@ -565,6 +576,28 @@ function closeFullscreenImage() {
     fullscreenImage.style.transform = '';
     fullscreenImage.style.maxWidth = '100vw';
     fullscreenImage.style.maxHeight = '100vh';
+}
+
+// Handle rotate button clicks with mobile touch support and debouncing
+function handleRotateClick(event) {
+    console.log('handleRotateClick called, Event type:', event?.type);
+    
+    // Prevent default behavior and stop propagation
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    // Debounce multiple rapid calls (common on mobile)
+    if (window.rotateClickTimeout) {
+        clearTimeout(window.rotateClickTimeout);
+    }
+    
+    window.rotateClickTimeout = setTimeout(() => {
+        console.log('Executing rotateFullscreenImage');
+        rotateFullscreenImage();
+        window.rotateClickTimeout = null;
+    }, 100); // 100ms debounce
 }
 
 function rotateFullscreenImage() {
@@ -2067,11 +2100,26 @@ window.addEventListener('error', function(e) {
 // Make showCatchFromMap globally accessible for debugging
 window.showCatchFromMap = showCatchFromMap;
 
+// Make handleRotateClick globally accessible for debugging
+window.handleRotateClick = handleRotateClick;
+
 // Add touch event debugging for mobile
 document.addEventListener('touchstart', function(e) {
     if (e.target.tagName === 'BUTTON' && e.target.textContent.includes('View Details')) {
         console.log('Touch detected on View Details button');
         console.log('Button onclick:', e.target.onclick);
         console.log('Button dataset:', e.target.dataset);
+    }
+    
+    if (e.target.id === 'rotate-image-btn') {
+        console.log('Touch detected on Rotate button');
+        console.log('Button id:', e.target.id);
+        console.log('Button title:', e.target.title);
+    }
+    
+    if (e.target.id === 'close-fullscreen-btn') {
+        console.log('Touch detected on Close fullscreen button');
+        console.log('Button id:', e.target.id);
+        console.log('Button title:', e.target.title);
     }
 }, { passive: true });
