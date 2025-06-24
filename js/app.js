@@ -1352,49 +1352,11 @@ function showCatchFromMap(catchId) {
         showMessage('Catch not found - please try again', 'error');
         return;
     }
+      console.log('Found catch data:', catchData);
     
-    console.log('Found catch data:', catchData);
-      // Get tab elements
-    const historyTab = document.getElementById('history-tab-btn');
-    const catchLog = document.getElementById('catch-log');
-    const mapTab = document.getElementById('map-tab-btn');
-    const mapContainer = document.getElementById('map-view-container');
-    const recordsTab = document.getElementById('records-tab-btn');
-    const recordsContainer = document.getElementById('records-container');
-    
-    // Switch to History tab
-    if (historyTab && catchLog) {
-        // Remove active class from all tabs
-        [historyTab, recordsTab, mapTab].forEach(tab => {
-            if (tab) {
-                tab.classList.remove('active');
-            }
-        });
-        
-        // Hide all content areas
-        [catchLog, recordsContainer, mapContainer].forEach(content => {
-            if (content) {
-                content.classList.add('hidden');
-            }
-        });
-        
-        // Activate history tab and content
-        historyTab.classList.add('active');
-        catchLog.classList.remove('hidden');
-        document.getElementById('view-heading').textContent = 'Catch History';
-        
-        console.log('Switched to History tab');
-        
-        // Small delay to ensure tab switch is complete, then show modal
-        setTimeout(() => {
-            showCatchModal(catchData);
-            console.log('Showing catch modal for:', catchData.species);
-        }, 100);
-    } else {
-        console.error('Could not find tab elements');
-        // Fallback: just show the modal
-        showCatchModal(catchData);
-    }
+    // Stay on the Map tab - just show the modal directly
+    console.log('Showing catch modal on Map tab');
+    showCatchModal(catchData);
 }
 
 function setupDataOptions() {
