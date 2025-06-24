@@ -1502,11 +1502,20 @@ function setupMapHandlers() {
     
     if (saveMapLocationBtn) {
         saveMapLocationBtn.addEventListener('click', saveSelectedLocation);
-    }
-      // Setup the location button to open map modal (don't replace, just add listener)
+    }      // Setup the location button to open map modal (don't replace, just add listener)
     const getLocationBtn = document.getElementById('get-location-btn');
     if (getLocationBtn) {
         getLocationBtn.addEventListener('click', openMapModal);
+    }
+    
+    // Setup the edit location button to open map modal in edit mode
+    const editLocationBtn = document.getElementById('edit-location-btn');
+    if (editLocationBtn) {
+        editLocationBtn.addEventListener('click', () => {
+            const mapModal = document.getElementById('map-modal');
+            mapModal.dataset.editMode = 'true';
+            openMapModal();
+        });
     }
 }
 
