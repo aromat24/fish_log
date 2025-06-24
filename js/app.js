@@ -6,6 +6,9 @@ let selectedLongitude = null;
 let mainMap = null;
 let catchMarkers = [];
 
+// Fullscreen image rotation state
+let imageRotation = 0;
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOM CONTENT LOADED ===');
@@ -15,11 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         // Initialize landing page functionality
         initLandingPage();
-        
-        // Setup fullscreen image handling
+          // Setup fullscreen image handling
         const fullscreenModal = document.getElementById('fullscreen-image');
-        const closeBtn = fullscreenModal.querySelector('button');
+        const closeBtn = document.getElementById('close-fullscreen-btn');
+        const rotateBtn = document.getElementById('rotate-image-btn');
         closeBtn.addEventListener('click', closeFullscreenImage);
+        rotateBtn.addEventListener('click', rotateFullscreenImage);
         
         fullscreenModal.addEventListener('click', (e) => {
             if (e.target === fullscreenModal) {
@@ -555,6 +559,31 @@ function displayRecords() {
 function closeFullscreenImage() {
     const fullscreenModal = document.getElementById('fullscreen-image');
     fullscreenModal.classList.add('hidden');
+    // Reset rotation and sizing when closing
+    imageRotation = 0;
+    const fullscreenImage = document.getElementById('fullscreen-image-content');
+    fullscreenImage.style.transform = '';
+    fullscreenImage.style.maxWidth = '100vw';
+    fullscreenImage.style.maxHeight = '100vh';
+}
+
+function rotateFullscreenImage() {
+    // Toggle between 0 and 90 degrees only (portrait and landscape)
+    imageRotation = imageRotation === 0 ? 90 : 0;
+    const fullscreenImage = document.getElementById('fullscreen-image-content');
+    fullscreenImage.style.transform = `rotate(${imageRotation}deg)`;
+    fullscreenImage.style.transition = 'transform 0.3s ease';
+    
+    // Optimize sizing for rotation
+    if (imageRotation === 90) {
+        // When rotated 90 degrees, we need to adjust the sizing for landscape mode
+        fullscreenImage.style.maxWidth = '100vh';
+        fullscreenImage.style.maxHeight = '100vw';
+    } else {
+        // Normal portrait mode
+        fullscreenImage.style.maxWidth = '100vw';
+        fullscreenImage.style.maxHeight = '100vh';
+    }
 }
 
 // Helper function to clean up species names for display
@@ -1052,6 +1081,12 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
 function showFullscreenImage(imageUrl) {
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
+    
+    // Reset rotation and sizing for new image
+    imageRotation = 0;
+    fullscreenImage.style.transform = '';
+    fullscreenImage.style.maxWidth = '100vw';
+    fullscreenImage.style.maxHeight = '100vh';
     
     fullscreenImage.src = imageUrl;
     fullscreenModal.classList.remove('hidden');
