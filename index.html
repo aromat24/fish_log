@@ -363,7 +363,7 @@
             <div id="landing-header" class="relative z-10">
                 <h1 class="text-3xl md:text-5xl font-bold mb-2">Ghoti - Hooked</h1>
                 <p class="text-lg md:text-xl">Log your catches and track your fishing journey</p>
-            </div>            <div id="landing-footer" class="relative z-10">                <button id="enter-app-btn" class="shimmer-button" 
+            </div>            <div id="landing-footer" class="relative z-10">                <button id="enter-app-btn" class="shimmer-button ripple-effect" 
                         onclick="window.enterApp && window.enterApp()" 
                         style="cursor: pointer; z-index: 100; position: relative;">
                     Enter Logbook
@@ -388,9 +388,8 @@
                                 autocomplete="off"
                                 placeholder="Search or enter species name">                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto" style="overscroll-behavior: contain;">
                                 <!-- Species suggestions will be populated here -->
-                            </div>
-                            <button type="button" id="manage-species-btn" 
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            </div>                            <button type="button" id="manage-species-btn" 
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 ripple-effect"
                                 title="Manage Species List">
                                 ⚙
                             </button>
@@ -426,7 +425,7 @@
 
                     <div class="border-t pt-4 space-y-2">
                         <label class="block text-sm font-medium text-gray-600">Location:</label>
-                        <div class="flex items-center gap-4 flex-wrap">                            <button type="button" id="get-location-btn" class="shiny-button text-sm">
+                        <div class="flex items-center gap-4 flex-wrap">                            <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
                                 <span class="lucide lucide-map-pin"></span> Get Current Location
                             </button>
                             <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
@@ -440,21 +439,20 @@
                         <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="rainbow-button w-full mt-4" style="touch-action: manipulation;">
+                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="shiny-button ripple-effect w-full mt-4" style="touch-action: manipulation;">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>                <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">
                         <div class="flex items-center gap-2">
                             <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>                              <!-- Tab buttons with improved sizing -->
-                            <div class="flex bg-gray-100 rounded-md p-1">
-                                <button id="history-tab-btn" class="tab-button active px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
+                            <div class="flex bg-gray-100 rounded-md p-1">                                <button id="history-tab-btn" class="tab-button ripple-effect active px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     📋 <span class="hidden sm:inline">History</span>
                                 </button>
-                                <button id="records-tab-btn" class="tab-button px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
+                                <button id="records-tab-btn" class="tab-button ripple-effect px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     🏆 <span class="hidden sm:inline">Records</span>
                                 </button>
-                                <button id="map-tab-btn" class="tab-button px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
+                                <button id="map-tab-btn" class="tab-button ripple-effect px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
                                     🗺️ <span class="hidden sm:inline">Map</span>
                                 </button>
                             </div>
@@ -514,10 +512,10 @@
                     <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
                 </div>
                 
-                <div class="flex gap-2 mt-4">                    <button id="edit-catch-btn" class="interactive-hover-button flex-1">
+                <div class="flex gap-2 mt-4">                    <button id="edit-catch-btn" class="interactive-hover-button ripple-effect flex-1">
                         <span class="lucide lucide-edit"></span> Edit
                     </button>
-                    <button id="delete-catch-btn" class="pulsating-button flex-1" style="--button-color: #ef4444;">
+                    <button id="delete-catch-btn" class="pulsating-button ripple-effect flex-1" style="--button-color: #ef4444;">
                         <span class="lucide lucide-trash"></span> Delete
                     </button>
                 </div>
@@ -920,10 +918,10 @@
                     `;
                 }
             });
-            
-            // Close modal when clicking outside
+              // Close modal when clicking outside
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {                    modal.remove();
+                if (e.target === modal) {
+                    modal.remove();
                 }
             });
         }

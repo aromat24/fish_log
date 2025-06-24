@@ -3,41 +3,89 @@
 
 // Initialize all beautiful button effects
 function initializeBeautifulButtons() {
-    initializeRippleButtons();
+    initializeRippleEffects();
     initializeInteractiveButtons();
+    initializeShinyButtons();
     console.log('Beautiful button effects initialized');
 }
 
-// Ripple effect for buttons
-function initializeRippleButtons() {
+// Universal ripple effect for all buttons
+function initializeRippleEffects() {
+    // Add ripple effect to all buttons
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('ripple-button')) {
-            createRipple(e);
+        const button = e.target.closest('button');
+        if (button && !button.disabled) {
+            createRippleEffect(e, button);
         }
     });
 }
 
-function createRipple(event) {
-    const button = event.currentTarget;
+function createRippleEffect(event, button) {
+    // Skip if button has its own custom ripple
+    if (button.classList.contains('no-ripple')) return;
+    
     const rect = button.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
     const x = event.clientX - rect.left - size / 2;
     const y = event.clientY - rect.top - size / 2;
 
+    // Create ripple element
     const ripple = document.createElement('span');
-    ripple.classList.add('ripple');
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = x + 'px';
-    ripple.style.top = y + 'px';
+    ripple.classList.add('ripple-span');
+    ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        pointer-events: none;
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        z-index: 1000;
+    `;
+
+    // Ensure button has relative positioning
+    const originalPosition = button.style.position;
+    if (!originalPosition || originalPosition === 'static') {
+        button.style.position = 'relative';
+    }
+    
+    // Add overflow hidden temporarily
+    const originalOverflow = button.style.overflow;
+    button.style.overflow = 'hidden';
 
     button.appendChild(ripple);
 
-    // Remove ripple after animation
+    // Clean up after animation
     setTimeout(() => {
         if (ripple.parentNode) {
             ripple.parentNode.removeChild(ripple);
+            // Restore original styles
+            if (!originalPosition || originalPosition === 'static') {
+                button.style.position = '';
+            }
+            if (!originalOverflow) {
+                button.style.overflow = '';
+            }
         }
     }, 600);
+}
+
+// Shiny button animation enhancements
+function initializeShinyButtons() {
+    const shinyButtons = document.querySelectorAll('.shiny-button');
+    shinyButtons.forEach(button => {
+        // Enhanced hover effects
+        button.addEventListener('mouseenter', function() {
+            this.style.setProperty('--x', '-100%');
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.setProperty('--x', '100%');
+        });
+    });
 }
 
 // Interactive hover buttons
@@ -61,44 +109,35 @@ function initializeInteractiveButtons() {
 
 // Apply beautiful button styles to existing buttons
 function applyBeautifulButtonStyles() {
-    // Save Catch button - make it rainbow
+    // Save Catch button - now using shiny button instead of rainbow
     const saveCatchBtn = document.querySelector('#catch-form button[type="submit"]');
     if (saveCatchBtn && !saveCatchBtn.classList.contains('beautiful-styled')) {
-        saveCatchBtn.classList.add('rainbow-button', 'beautiful-styled');
+        saveCatchBtn.classList.add('shiny-button', 'ripple-effect', 'beautiful-styled');
+        // Remove rainbow class if present
+        saveCatchBtn.classList.remove('rainbow-button');
     }
 
-    // Location buttons - make them nature themed
-    const locationBtns = document.querySelectorAll('#get-location-btn, #edit-location-btn');
+    // Location buttons - keep them shiny themed
+    const locationBtns = document.querySelectorAll('#get-location-btn');
     locationBtns.forEach(btn => {
         if (btn && !btn.classList.contains('beautiful-styled')) {
-            btn.classList.add('nature-button', 'beautiful-styled');
+            btn.classList.add('shiny-button', 'beautiful-styled');
         }
     });
 
-    // Map modal buttons
-    const useCurrentLocationBtn = document.querySelector('#use-current-location-btn');
-    if (useCurrentLocationBtn && !useCurrentLocationBtn.classList.contains('beautiful-styled')) {
-        useCurrentLocationBtn.classList.add('shimmer-button', 'beautiful-styled');
-    }
-
-    const saveMapLocationBtn = document.querySelector('#save-map-location-btn');
-    if (saveMapLocationBtn && !saveMapLocationBtn.classList.contains('beautiful-styled')) {
-        saveMapLocationBtn.classList.add('pulsating-button', 'beautiful-styled');
-    }
-
-    // Delete buttons - make them warning themed
-    const deleteBtns = document.querySelectorAll('.delete-btn, #confirm-action-btn');
-    deleteBtns.forEach(btn => {
+    // Tab buttons - add subtle ripple
+    const tabBtns = document.querySelectorAll('.tab-button');
+    tabBtns.forEach(btn => {
         if (btn && !btn.classList.contains('beautiful-styled')) {
-            btn.classList.add('warning-button', 'beautiful-styled');
+            btn.classList.add('ripple-effect', 'beautiful-styled');
         }
     });
 
-    // Other action buttons - make them interactive
-    const actionBtns = document.querySelectorAll('.edit-btn, .view-btn, #cancel-action-btn');
+    // Other action buttons - add ripple effects
+    const actionBtns = document.querySelectorAll('#edit-catch-btn, #delete-catch-btn, #manage-species-btn');
     actionBtns.forEach(btn => {
         if (btn && !btn.classList.contains('beautiful-styled')) {
-            btn.classList.add('interactive-hover-button', 'beautiful-styled');
+            btn.classList.add('ripple-effect', 'beautiful-styled');
         }
     });
 
@@ -109,7 +148,7 @@ function applyBeautifulButtonStyles() {
 function addButtonClickEffects() {
     document.addEventListener('click', function(e) {
         const button = e.target.closest('button');
-        if (!button) return;
+        if (!button || button.disabled) return;
 
         // Add click animation
         button.style.transform = 'scale(0.95)';
@@ -118,26 +157,26 @@ function addButtonClickEffects() {
         }, 150);
 
         // Add success feedback for save buttons
-        if (button.classList.contains('rainbow-button') || button.classList.contains('pulsating-button')) {
+        if (button.classList.contains('shiny-button') && button.textContent.includes('Save')) {
             addSuccessFeedback(button);
         }
     });
 }
 
 function addSuccessFeedback(button) {
-    const originalText = button.textContent;
+    const originalText = button.innerHTML;
     const originalClass = button.className;
     
     // Temporarily change button appearance
-    button.textContent = '✓ Saved!';
-    button.classList.add('success-feedback');
+    button.innerHTML = '<span class="lucide lucide-save"></span> ✓ Saved!';
     button.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+    button.style.transform = 'scale(1.05)';
     
     setTimeout(() => {
-        button.textContent = originalText;
-        button.className = originalClass;
+        button.innerHTML = originalText;
         button.style.background = '';
-    }, 2000);
+        button.style.transform = '';
+    }, 1500);
 }
 
 // Initialize when DOM is loaded
@@ -154,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function reapplyBeautifulStyles() {
     applyBeautifulButtonStyles();
     initializeInteractiveButtons();
+    initializeShinyButtons();
 }
 
 // Export for use in other scripts
@@ -161,5 +201,5 @@ window.beautifulButtons = {
     initialize: initializeBeautifulButtons,
     applyStyles: applyBeautifulButtonStyles,
     reapply: reapplyBeautifulStyles,
-    createRipple: createRipple
+    createRipple: createRippleEffect
 };

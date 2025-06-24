@@ -1,12 +1,12 @@
 /* Beautiful Buttons for Fish Log App - Based on MagicUI Components */
 
-/* === RAINBOW BUTTON === */
-@keyframes rainbow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+/* === SHINY BUTTON === */
+@keyframes shiny-slide {
+  0% { --x: 100%; }
+  100% { --x: -100%; }
 }
 
-.rainbow-button {
+.shiny-button {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -15,24 +15,67 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  background: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0, #ff0080, #ff8c00);
-  background-size: 300% 300%;
-  border: none;
-  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  animation: rainbow 3s ease-in-out infinite;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.rainbow-button:hover {
+.shiny-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-.rainbow-button:active {
-  transform: translateY(0);
+.shiny-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.shiny-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--x, 100%);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  animation: shiny-slide 2s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.shiny-button:hover::before {
+  animation-duration: 0.8s;
+}
+
+/* === RIPPLE EFFECT === */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
 }
 
 /* === SHIMMER BUTTON === */

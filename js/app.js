@@ -119,7 +119,17 @@ function initLandingPage() {
     const appContent = document.getElementById('app-content');
     const enterAppBtn = document.getElementById('enter-app-btn');
 
-    enterAppBtn.addEventListener('click', () => {
+    // No need for event listener here since HTML calls window.enterApp directly
+    console.log('Landing page initialized');
+}
+
+// Global function for landing page button
+window.enterApp = function() {
+    console.log('enterApp called');
+    const landingPage = document.getElementById('landing-page');
+    const appContent = document.getElementById('app-content');
+    
+    if (landingPage && appContent) {
         landingPage.classList.add('fade-out');
         appContent.classList.remove('hidden');
         setTimeout(() => {
@@ -127,8 +137,8 @@ function initLandingPage() {
             // Load catch history after app content is visible
             loadCatchHistory();
         }, 50);
-    });
-}
+    }
+};
 
 function setupFormHandlers() {
     console.log('=== SETTING UP FORM HANDLERS ===');
@@ -1922,7 +1932,7 @@ function useCurrentLocationOnMap() {
     navigator.geolocation.getCurrentPosition(
         (position) => {
             const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+                       const lng = position.coords.longitude;
             
             console.log('Current location obtained:', lat, lng);
             
@@ -1930,6 +1940,14 @@ function useCurrentLocationOnMap() {
             map.setView([lat, lng], 15);
             
             // Simulate click at current location
+            onMapClick({
+                latlng: {
+                    lat: lat,
+                    lng: lng
+                }
+            });
+        },
+        (error) => {
             console.error('Geolocation error:', error);
             let errorMessage = 'Could not get current location. ';
             
