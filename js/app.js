@@ -36,14 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initialize the main app functionality
         setupFormHandlers();
-        setupLocationHandling();
-        setupPhotoHandling();
+        setupLocationHandling();        setupPhotoHandling();
         setupModalHandlers();
         setupTabSystem(); // Updated from setupViewToggle
         setupDataOptions();
         setupSpeciesHandlers();
         setupMapHandlers(); // New map functionality
-        setupEditModalLocationHandlers(); // Add edit modal location functionality
         
         console.log('Main app functionality initialized');
         
@@ -402,9 +400,7 @@ function showEditModal(catchData) {
     editForm.onsubmit = (e) => {
         e.preventDefault();
         updateCatch();
-    };
-
-    // Setup close button
+    };    // Setup close button
     const closeBtn = document.getElementById('close-edit-modal-btn');
     closeBtn.onclick = () => editModal.classList.add('hidden');
 
@@ -414,9 +410,6 @@ function showEditModal(catchData) {
             editModal.classList.add('hidden');
         }
     });
-
-    // Setup edit modal location handlers
-    setupEditModalLocationHandlers(catchData);
 }
 
 function updateCatch() {
