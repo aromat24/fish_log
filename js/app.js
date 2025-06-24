@@ -1318,7 +1318,10 @@ function showCatchModal(catchData) {
 // Function to show catch details from map popup
 function showCatchFromMap(catchId) {
     console.log('Showing catch from map:', catchId);
-      // Get all catches from localStorage
+    console.log('User agent:', navigator.userAgent);
+    console.log('Is mobile:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent));
+    
+    // Get all catches from localStorage
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
     console.log('Total catches found:', catches.length);
     console.log('Available catch IDs:', catches.map(c => c.id));
@@ -1333,7 +1336,20 @@ function showCatchFromMap(catchId) {
     if (!catchData) {
         console.error('Catch not found:', catchId);
         console.error('Available catches:', catches);
-        showMessage('Catch not found', 'error');
+        
+        // Mobile fallback: Try to find by partial ID match
+        const partialMatch = catches.find(catch_ => 
+            catch_.id.toString().includes(catchId.toString()) || 
+            catchId.toString().includes(catch_.id.toString())
+        );
+        
+        if (partialMatch) {
+            console.log('Found partial match:', partialMatch);
+            showCatchModal(partialMatch);
+            return;
+        }
+        
+        showMessage('Catch not found - please try again', 'error');
         return;
     }
     
@@ -1985,9 +2001,10 @@ function setupMainMap() {
                     <div><span class="font-medium">Date:</span> ${new Date(catch_.datetime).toLocaleDateString('en-GB')}</div>
                     ${catch_.locationName ? `<div><span class="font-medium">Location:</span> ${catch_.locationName}</div>` : ''}
                     ${catch_.notes ? `<div class="mt-2 p-2 bg-gray-50 rounded text-xs">${catch_.notes}</div>` : ''}
-                </div>
-                <button class="mt-2 w-full px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600" 
-                        onclick="showCatchFromMap('${catch_.id}')">
+                </div>                <button class="mt-2 w-full px-4 py-3 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-600 active:bg-blue-700 transition-colors touch-manipulation" 
+                        onclick="showCatchFromMap('${catch_.id}')" 
+                        ontouchend="showCatchFromMap('${catch_.id}')"
+                        style="min-height: 44px; touch-action: manipulation;">
                     View Details
                 </button>
             </div>
@@ -2017,3 +2034,24 @@ function refreshMapIfVisible() {
         setupMainMap();
     }
 }
+
+// Global error handler for mobile debugging
+window.addEventListener('error', function(e) {
+    console.error('Global error caught:', e.error);
+    console.error('Error message:', e.message);
+    console.error('Error filename:', e.filename);
+    console.error('Error line:', e.lineno);
+    console.error('Error stack:', e.error?.stack);
+});
+
+// Make showCatchFromMap globally accessible for debugging
+window.showCatchFromMap = showCatchFromMap;
+
+// Add touch event debugging for mobile
+document.addEventListener('touchstart', function(e) {
+    if (e.target.tagName === 'BUTTON' && e.target.textContent.includes('View Details')) {
+        console.log('Touch detected on View Details button');
+        console.log('Button onclick:', e.target.onclick);
+        console.log('Button dataset:', e.target.dataset);
+    }
+}, { passive: true });
