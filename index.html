@@ -770,33 +770,39 @@
             
             // Add a fake history entry to prevent back navigation
             history.pushState(null, '', window.location.href);
-            console.log('Initial history state pushed');
-              // Listen for back button attempts
+            console.log('Initial history state pushed');            // Listen for back button attempts
             window.addEventListener('popstate', (event) => {
                 console.log('Back button pressed - popstate event triggered');
+                console.log('Current pathname:', window.location.pathname);
+                console.log('Event state:', event.state);
                 
-                // Push another state to prevent going back
-                history.pushState(null, '', window.location.href);
-                
-                // Show confirmation dialog for PWA mode
-                const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                             window.matchMedia('(display-mode: fullscreen)').matches ||
-                             (navigator.standalone === true);
-                
-                console.log('PWA mode detected:', isPWA);
-                
-                if (isPWA) {
-                    // In PWA mode, show a custom confirmation
-                    console.log('Showing PWA exit confirmation');
-                    showExitConfirmation();
-                } else {
-                    // In browser mode, allow standard browser behavior but warn
-                    console.log('Showing browser exit confirmation');
-                    const shouldExit = confirm('Are you sure you want to leave the Ghoti Fishing Log?');
-                    if (shouldExit) {
-                        // Allow navigation by going back in history
-                        history.go(-2);
+                // Only handle back navigation if we're on the main app page
+                if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+                    // Push another state to prevent going back
+                    history.pushState(null, '', window.location.href);
+                    
+                    // Show confirmation dialog for PWA mode
+                    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                                 window.matchMedia('(display-mode: fullscreen)').matches ||
+                                 (navigator.standalone === true);
+                    
+                    console.log('PWA mode detected:', isPWA);
+                    
+                    if (isPWA) {
+                        // In PWA mode, show a custom confirmation
+                        console.log('Showing PWA exit confirmation');
+                        showExitConfirmation();
+                    } else {
+                        // In browser mode, allow standard browser behavior but warn
+                        console.log('Showing browser exit confirmation');
+                        const shouldExit = confirm('Are you sure you want to leave the Ghoti Fishing Log?');
+                        if (shouldExit) {
+                            // Allow navigation by going back in history
+                            history.go(-2);
+                        }
                     }
+                } else {
+                    console.log('Not on main app page, allowing normal navigation');
                 }
             });
               // Prevent accidental page refresh/close - DISABLED to prevent reload warnings
@@ -850,19 +856,22 @@
             `;
             
             document.body.appendChild(modal);
-            
-            // Handle staying in app
+              // Handle staying in app
             modal.querySelector('#stay-in-app-btn').addEventListener('click', () => {
+                console.log('User chose to stay in app');
                 modal.remove();
             });
             
             // Handle exit
             modal.querySelector('#exit-app-btn').addEventListener('click', () => {
+                console.log('User chose to exit app');
                 // For PWA, we can't actually close the app, but we can navigate to a "goodbye" state
                 // or minimize it if possible
                 if (window.close) {
+                    console.log('Attempting to close window');
                     window.close();
                 } else {
+                    console.log('window.close not available, showing goodbye message');
                     // Fallback: navigate to a minimal page or show goodbye message
                     document.body.innerHTML = `
                         <div class="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center p-4">
@@ -881,14 +890,12 @@
             
             // Close modal when clicking outside
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
+                if (e.target === modal) {                    modal.remove();
                 }
             });
         }
 
-        // Prevent back navigation for PWA
-        preventBackNavigation();
+        // Note: preventBackNavigation() is already called in DOMContentLoaded event
     </script>
 </body>
 </html>
