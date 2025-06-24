@@ -1315,6 +1315,65 @@ function showCatchModal(catchData) {
     };
 }
 
+// Function to show catch details from map popup
+function showCatchFromMap(catchId) {
+    console.log('Showing catch from map:', catchId);
+    
+    // Get all catches from localStorage
+    const catches = JSON.parse(localStorage.getItem('fishCatches') || '[]');
+    
+    // Find the specific catch
+    const catchData = catches.find(catch_ => catch_.id === catchId);
+    
+    if (!catchData) {
+        console.error('Catch not found:', catchId);
+        showMessage('Catch not found', 'error');
+        return;
+    }
+    
+    // Get tab elements
+    const historyTab = document.getElementById('history-tab-btn');
+    const catchLog = document.getElementById('catch-log');
+    const mapTab = document.getElementById('map-tab-btn');
+    const mapContainer = document.getElementById('map-container');
+    const recordsTab = document.getElementById('records-tab-btn');
+    const recordsContainer = document.getElementById('records-container');
+    
+    // Switch to History tab
+    if (historyTab && catchLog) {
+        // Remove active class from all tabs
+        [historyTab, recordsTab, mapTab].forEach(tab => {
+            if (tab) {
+                tab.classList.remove('active');
+            }
+        });
+        
+        // Hide all content areas
+        [catchLog, recordsContainer, mapContainer].forEach(content => {
+            if (content) {
+                content.classList.add('hidden');
+            }
+        });
+        
+        // Activate history tab and content
+        historyTab.classList.add('active');
+        catchLog.classList.remove('hidden');
+        document.getElementById('view-heading').textContent = 'Catch History';
+        
+        console.log('Switched to History tab');
+        
+        // Small delay to ensure tab switch is complete, then show modal
+        setTimeout(() => {
+            showCatchModal(catchData);
+            console.log('Showing catch modal for:', catchData.species);
+        }, 100);
+    } else {
+        console.error('Could not find tab elements');
+        // Fallback: just show the modal
+        showCatchModal(catchData);
+    }
+}
+
 function setupDataOptions() {
     const dataOptionsBtn = document.getElementById('data-options-btn');
     const dataOptionsMenu = document.getElementById('data-options-menu');
