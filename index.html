@@ -764,15 +764,17 @@
                     },
                 }
             }
-        }
-
-        // Back navigation prevention for PWA
+        }        // Back navigation prevention for PWA
         function preventBackNavigation() {
+            console.log('preventBackNavigation function called');
+            
             // Add a fake history entry to prevent back navigation
             history.pushState(null, '', window.location.href);
-            
-            // Listen for back button attempts
+            console.log('Initial history state pushed');
+              // Listen for back button attempts
             window.addEventListener('popstate', (event) => {
+                console.log('Back button pressed - popstate event triggered');
+                
                 // Push another state to prevent going back
                 history.pushState(null, '', window.location.href);
                 
@@ -781,11 +783,15 @@
                              window.matchMedia('(display-mode: fullscreen)').matches ||
                              (navigator.standalone === true);
                 
+                console.log('PWA mode detected:', isPWA);
+                
                 if (isPWA) {
                     // In PWA mode, show a custom confirmation
+                    console.log('Showing PWA exit confirmation');
                     showExitConfirmation();
                 } else {
                     // In browser mode, allow standard browser behavior but warn
+                    console.log('Showing browser exit confirmation');
                     const shouldExit = confirm('Are you sure you want to leave the Ghoti Fishing Log?');
                     if (shouldExit) {
                         // Allow navigation by going back in history
@@ -809,13 +815,17 @@
             // });
         }
 
-        // Show custom exit confirmation for PWA
-        function showExitConfirmation() {
+        // Show custom exit confirmation for PWA        function showExitConfirmation() {
+            console.log('showExitConfirmation called');
+            
             const existingModal = document.getElementById('exit-confirmation-modal');
             if (existingModal) {
+                console.log('Modal already exists, showing it');
                 existingModal.classList.remove('hidden');
                 return;
             }
+            
+            console.log('Creating new exit confirmation modal');
             
             // Create exit confirmation modal
             const modal = document.createElement('div');
