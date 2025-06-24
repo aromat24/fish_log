@@ -1318,18 +1318,26 @@ function showCatchModal(catchData) {
 // Function to show catch details from map popup
 function showCatchFromMap(catchId) {
     console.log('Showing catch from map:', catchId);
+      // Get all catches from localStorage
+    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    console.log('Total catches found:', catches.length);
+    console.log('Available catch IDs:', catches.map(c => c.id));
+    console.log('Looking for ID:', catchId, 'Type:', typeof catchId);
     
-    // Get all catches from localStorage
-    const catches = JSON.parse(localStorage.getItem('fishCatches') || '[]');
-    
-    // Find the specific catch
-    const catchData = catches.find(catch_ => catch_.id === catchId);
+    // Find the specific catch - handle both string and number IDs
+    const catchData = catches.find(catch_ => {
+        console.log('Comparing:', catch_.id, 'with', catchId, 'Match:', catch_.id == catchId);
+        return catch_.id == catchId || catch_.id === catchId;
+    });
     
     if (!catchData) {
         console.error('Catch not found:', catchId);
+        console.error('Available catches:', catches);
         showMessage('Catch not found', 'error');
         return;
     }
+    
+    console.log('Found catch data:', catchData);
     
     // Get tab elements
     const historyTab = document.getElementById('history-tab-btn');
