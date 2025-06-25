@@ -1121,7 +1121,8 @@ function setupLocationHandling() {
             // Save location name to form
             document.getElementById('location-name').value = locationName;
             const locationStatus = document.getElementById('location-status');
-            locationStatus.textContent = `Location saved: ${locationName}`;
+            locationStatus.textContent = `Location name: ${locationName}`;
+            locationStatus.className = 'text-sm text-green-600';
             
             // Hide modal and reset
             locationNameModal.classList.add('hidden');
@@ -1534,11 +1535,16 @@ function showMessage(message, type = 'info') {
         
         slideNotification.style.position = 'absolute';
         slideNotification.style.top = (rect.top + scrollTop) + 'px';
-        slideNotification.style.left = '-300px'; // Start off-screen to the left
-        slideNotification.style.width = '280px';
+        slideNotification.style.left = '-' + (rect.width + 20) + 'px'; // Start off-screen to the left
+        slideNotification.style.width = rect.width + 'px'; // Match location status width
+        slideNotification.style.height = rect.height + 'px'; // Match location status height
         slideNotification.style.zIndex = '1000';
         slideNotification.style.transition = 'left 0.4s ease-in-out';
-        slideNotification.style.boxShadow = '2px 2px 8px rgba(0,0,0,0.2)';
+        slideNotification.style.boxShadow = '2px 2px 8px rgba(0,0,0,0.1)';
+        slideNotification.style.opacity = '0.92'; // Slightly see-through
+        slideNotification.style.backdropFilter = 'blur(8px)';
+        slideNotification.style.display = 'flex';
+        slideNotification.style.alignItems = 'center';
     }
     
     // Show notification with slide animation
@@ -1549,11 +1555,11 @@ function showMessage(message, type = 'info') {
         slideNotification.style.left = '10px'; // Slide in from left
     }, 50);
     
-    // Auto-hide after duration with slide-out animation
-    const duration = type === 'success' ? 4000 : 3000;
+    // Auto-hide after duration with slide-out animation (half duration)
+    const duration = type === 'success' ? 2000 : 1500; // Reduced from 4000/3000 to 2000/1500
     setTimeout(() => {
         // Slide out to the left
-        slideNotification.style.left = '-300px';
+        slideNotification.style.left = '-' + (locationStatus ? locationStatus.getBoundingClientRect().width + 20 : 300) + 'px';
         
         // Hide completely after animation
         setTimeout(() => {
@@ -2288,9 +2294,9 @@ function saveSelectedLocation() {
         // Update edit location status
         const editLocationStatus = document.getElementById('edit-location-status');
         if (locationName) {
-            editLocationStatus.textContent = `Location set: ${locationName}`;
+            editLocationStatus.textContent = `Location name: ${locationName}`;
         } else {
-            editLocationStatus.textContent = `Location set: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
+            editLocationStatus.textContent = `Location: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
         }
         editLocationStatus.className = 'text-sm text-green-600';
         
@@ -2319,9 +2325,9 @@ function saveSelectedLocation() {
         // Update location status
         const locationStatus = document.getElementById('location-status');
         if (locationName) {
-            locationStatus.textContent = `Location saved: ${locationName}`;
+            locationStatus.textContent = `Location name: ${locationName}`;
         } else {
-            locationStatus.textContent = `Location saved: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
+            locationStatus.textContent = `Location: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
         }
         locationStatus.className = 'text-sm text-green-600';
     }
