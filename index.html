@@ -640,19 +640,23 @@
                         <!-- Move notification pop-up here, above location status -->
                         <div id="message-box" class="hidden p-3 rounded-md text-sm mb-2"></div>
                         
-                        <div class="flex items-center gap-2 flex-wrap location-buttons-container">
-                            <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
-                                <span class="lucide lucide-map-pin"></span> Get Current Location
-                            </button>
-                            <div class="location-button-group">
-                                <button id="theme-toggle-btn" class="shiny-button ripple-effect text-sm" title="Toggle Day/Night Mode">
-                                    🌙
-                                </button>
-                                <button id="data-options-btn" class="shiny-button ripple-effect text-sm">
-                                    <span class="lucide lucide-menu"></span>
+                        <div class="location-buttons-container">
+                            <div class="location-main-button">
+                                <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
+                                    <span class="lucide lucide-map-pin"></span> Get Current Location
                                 </button>
                             </div>
-                            <span id="location-status" class="text-sm text-gray-500 flex-grow">Location not saved.</span>
+                            <div class="location-status-and-controls">
+                                <div class="location-button-group">
+                                    <button id="theme-toggle-btn" class="shiny-button ripple-effect text-sm" title="Toggle Day/Night Mode">
+                                        🌙
+                                    </button>
+                                    <button id="data-options-btn" class="shiny-button ripple-effect text-sm">
+                                        <span class="lucide lucide-menu"></span>
+                                    </button>
+                                </div>
+                                <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
+                            </div>
                         </div>
                         <input type="hidden" id="latitude" name="latitude">
                         <input type="hidden" id="longitude" name="longitude">
@@ -684,13 +688,14 @@
                     </button>
                 </form>                <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">                        <div class="flex items-center gap-4 flex-1">
-                            <!-- Tab buttons with new styling and behavior -->
+                            <!-- Tab buttons with dynamic positioning -->
                             <div class="tab-container">
                                 <div class="tab-left-group">
                                     <button id="history-tab-btn" class="tab-button shiny-button ripple-effect active px-3 py-2 text-sm font-medium" data-label="Catch History">
                                         📋
                                     </button>
                                     <span id="active-tab-label" class="text-lg font-medium text-gray-700 active-tab-label">Catch History</span>
+                                    <!-- Active tab will be inserted here dynamically -->
                                 </div>
                                 <div class="tab-right-group">
                                     <button id="records-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Personal Records">

@@ -473,8 +473,19 @@
 /* === LOCATION BUTTONS CONTAINER === */
 .location-buttons-container {
   display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.location-main-button {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.location-status-and-controls {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
@@ -487,20 +498,72 @@
 /* Mobile responsive location button layout */
 @media (max-width: 640px) {
   .location-buttons-container {
+    gap: 0.5rem;
+  }
+  
+  .location-status-and-controls {
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 0.5rem;
   }
   
   .location-button-group {
     align-items: center;
     gap: 0.25rem;
+    flex-shrink: 0;
   }
   
-  /* Ensure buttons stay properly aligned vertically */
-  .location-buttons-container > * {
-    flex-shrink: 0;
+  #location-status {
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Ensure perfect vertical alignment */
+  .location-status-and-controls > * {
     align-self: center;
+  }
+}
+
+/* === LOCATION STATUS MOBILE IMPROVEMENTS === */
+@media (max-width: 480px) {
+  .location-status-and-controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .location-button-group {
+    order: 1;
+  }
+  
+  #location-status {
+    order: 2;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Alternative layout for very small screens */
+@media (max-width: 380px) {
+  .location-buttons-container {
+    gap: 0.5rem;
+  }
+  
+  .location-status-and-controls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .location-button-group {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  #location-status {
+    flex: 1;
+    text-align: center;
+    padding: 0 0.5rem;
   }
 }
 
@@ -599,6 +662,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .tab-right-group {
@@ -606,6 +670,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* Ensure proper spacing on different screen sizes */
@@ -616,10 +681,19 @@
   
   .tab-left-group {
     gap: 0.25rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
   }
   
   .tab-right-group {
     gap: 0.25rem;
+  }
+  
+  #active-tab-label {
+    font-size: 0.875rem;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   /* Make sure inactive tabs stick to right on mobile */

@@ -1939,8 +1939,14 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });    // Function to switch tabs and reposition label
+    });    // Function to switch tabs and reposition them dynamically
     function switchTab(activeTab, activeContent) {
+        // Get container elements
+        const leftGroup = document.querySelector('.tab-left-group');
+        const rightGroup = document.querySelector('.tab-right-group');
+        const historyTab = document.getElementById('history-tab-btn');
+        const labelElement = document.getElementById('active-tab-label');
+        
         // Remove active class from all tab buttons
         [historyTab, recordsTab, mapTab].forEach(tab => {
             if (tab) {
@@ -1955,24 +1961,49 @@ function setupTabSystem() {
             }
         });
         
-        // Activate the selected tab and content
-        if (activeTab) {
+        // If clicking history tab, keep it in original position
+        if (activeTab === historyTab) {
             activeTab.classList.add('active');
             
-            // Update the label text and position it next to the active tab
-            const label = activeTab.getAttribute('data-label');
-            const labelElement = document.getElementById('active-tab-label');
-            if (labelElement && label) {
-                labelElement.textContent = label;
+            // Move other tabs back to right group
+            if (recordsTab && !rightGroup.contains(recordsTab)) {
+                rightGroup.appendChild(recordsTab);
+            }
+            if (mapTab && !rightGroup.contains(mapTab)) {
+                rightGroup.appendChild(mapTab);
+            }
+        } else {
+            // For records or map tab, move it to left group (next to history)
+            if (activeTab && leftGroup) {
+                // Remove the tab from its current position
+                activeTab.remove();
                 
-                // Remove the label from its current position
-                labelElement.remove();
+                // Insert it after the history tab but before the label
+                if (labelElement) {
+                    leftGroup.insertBefore(activeTab, labelElement);
+                } else {
+                    leftGroup.appendChild(activeTab);
+                }
                 
-                // Insert the label after the active tab
-                activeTab.insertAdjacentElement('afterend', labelElement);
+                // Activate the tab
+                activeTab.classList.add('active');
             }
         }
         
+        // Update the label text and ensure it's positioned correctly
+        if (activeTab && labelElement) {
+            const label = activeTab.getAttribute('data-label');
+            if (label) {
+                labelElement.textContent = label;
+                
+                // Ensure label is in the left group after the active tab
+                if (leftGroup && !leftGroup.contains(labelElement)) {
+                    leftGroup.appendChild(labelElement);
+                }
+            }
+        }
+        
+        // Show the active content
         if (activeContent) {
             activeContent.classList.remove('hidden');
         }
