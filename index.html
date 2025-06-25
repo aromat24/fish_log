@@ -318,6 +318,9 @@
       body {
         touch-action: manipulation;
         user-select: none;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
         -webkit-user-select: none;
         -webkit-touch-callout: none;
       }
@@ -617,7 +620,11 @@
                                     🗺️
                                 </button>
                             </div>
-                        </div><div class="dropdown relative">                            <button id="data-options-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1">
+                        </div>                        <div class="dropdown relative">
+                            <button id="theme-toggle-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1 mr-2" title="Toggle Day/Night Mode">
+                                🌙
+                            </button>
+                            <button id="data-options-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1">
                                 <span class="lucide lucide-menu"></span>
                             </button>
                             <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
@@ -975,6 +982,66 @@
                     },
                 }
             }
+        }
+        
+        // Theme switching functionality
+        function initThemeSystem() {
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // Get saved theme or use system preference
+            let currentTheme = localStorage.getItem('theme') || 
+                              (prefersDark.matches ? 'night' : 'day');
+            
+            function updateTheme(theme) {
+                const root = document.documentElement;
+                const body = document.body;
+                
+                if (theme === 'night') {
+                    root.setAttribute('data-theme', 'night');
+                    body.classList.remove('bg-gradient-to-br', 'from-gray-50', 'to-gray-100');
+                    if (themeToggleBtn) {
+                        themeToggleBtn.textContent = '☀️';
+                        themeToggleBtn.title = 'Switch to Day Mode';
+                    }
+                } else {
+                    root.removeAttribute('data-theme');
+                    body.classList.add('bg-gradient-to-br', 'from-gray-50', 'to-gray-100');
+                    if (themeToggleBtn) {
+                        themeToggleBtn.textContent = '🌙';
+                        themeToggleBtn.title = 'Switch to Night Mode';
+                    }
+                }
+                
+                localStorage.setItem('theme', theme);
+                currentTheme = theme;
+            }
+            
+            function toggleTheme() {
+                updateTheme(currentTheme === 'night' ? 'day' : 'night');
+            }
+            
+            // Initialize theme
+            updateTheme(currentTheme);
+            
+            // Add click handler
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', toggleTheme);
+            }
+            
+            // Listen for system theme changes
+            prefersDark.addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    updateTheme(e.matches ? 'night' : 'day');
+                }
+            });
+        }
+        
+        // Initialize theme system when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initThemeSystem);
+        } else {
+            initThemeSystem();
         }
     </script>
 </body>

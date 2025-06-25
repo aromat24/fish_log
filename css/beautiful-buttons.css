@@ -1,5 +1,84 @@
 /* Beautiful Buttons for Fish Log App - Based on MagicUI Components */
 
+/* === DAY/NIGHT MODE THEME SYSTEM === */
+:root {
+  /* Day Mode Colors */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e2e8f0;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  
+  /* Button Colors - Day Mode */
+  --btn-primary-start: #3182ce;
+  --btn-primary-mid: #2b77cb;
+  --btn-primary-end: #2c5aa0;
+  --btn-secondary-start: #e2e8f0;
+  --btn-secondary-mid: #cbd5e0;
+  --btn-secondary-end: #a0aec0;
+  --btn-text-primary: #ffffff;
+  --btn-text-secondary: #4a5568;
+  
+  /* Border and Shadow Colors */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e0;
+  --shadow-light: rgba(74, 85, 104, 0.1);
+  --shadow-medium: rgba(74, 85, 104, 0.25);
+}
+
+/* Night Mode Colors */
+[data-theme="night"] {
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4a5568;
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a0aec0;
+  
+  /* Button Colors - Night Mode (Warmer, easier on eyes) */
+  --btn-primary-start: #4a5568;
+  --btn-primary-mid: #718096;
+  --btn-primary-end: #a0aec0;
+  --btn-secondary-start: #2d3748;
+  --btn-secondary-mid: #4a5568;
+  --btn-secondary-end: #718096;
+  --btn-text-primary: #f7fafc;
+  --btn-text-secondary: #e2e8f0;
+  
+  /* Softer shadows for night mode */
+  --border-light: #4a5568;
+  --border-medium: #718096;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+}
+
+/* Auto Night Mode (based on system preference) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #4a5568;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+    
+    --btn-primary-start: #4a5568;
+    --btn-primary-mid: #718096;
+    --btn-primary-end: #a0aec0;
+    --btn-secondary-start: #2d3748;
+    --btn-secondary-mid: #4a5568;
+    --btn-secondary-end: #718096;
+    --btn-text-primary: #f7fafc;
+    --btn-text-secondary: #e2e8f0;
+    
+    --border-light: #4a5568;
+    --border-medium: #718096;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+    --shadow-medium: rgba(0, 0, 0, 0.5);
+  }
+}
+
 /* === SHINY BUTTON === */
 @keyframes shiny-slide {
   0% { --x: 100%; }
@@ -15,15 +94,15 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #718096 0%, #4a5568 50%, #2d3748 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%);
+  color: var(--btn-text-primary);
   border: 2px solid transparent;
   border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(113, 128, 150, 0.25);
+  box-shadow: 0 4px 15px var(--shadow-medium);
 }
 
 .shiny-button:active {
@@ -87,8 +166,8 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: var(--btn-text-primary);
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -125,8 +204,8 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
+  color: var(--btn-text-primary);
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -383,17 +462,17 @@
 
 /* === TAB BUTTONS === */
 .tab-button.active {
-  background: linear-gradient(135deg, #718096 0%, #4a5568 50%, #2d3748 100%) !important;
-  color: white !important;
-  border: 2px solid #4a5568 !important;
-  box-shadow: 0 4px 15px rgba(113, 128, 150, 0.25) !important;
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%) !important;
+  color: var(--btn-text-primary) !important;
+  border: 2px solid var(--border-medium) !important;
+  box-shadow: 0 4px 15px var(--shadow-medium) !important;
 }
 
 .tab-button:not(.active) {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 50%, #a0aec0 100%) !important;
-  color: #4a5568 !important;
-  border: 2px solid #cbd5e0 !important;
-  box-shadow: 0 2px 8px rgba(160, 174, 192, 0.15) !important;
+  background: linear-gradient(135deg, var(--btn-secondary-start) 0%, var(--btn-secondary-mid) 50%, var(--btn-secondary-end) 100%) !important;
+  color: var(--btn-text-secondary) !important;
+  border: 2px solid var(--border-light) !important;
+  box-shadow: 0 2px 8px var(--shadow-light) !important;
 }
 
 /* === TAB BUTTON STYLING === */
