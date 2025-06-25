@@ -358,7 +358,20 @@
       #fullscreen-image .absolute.bottom-4.right-4 {
         pointer-events: auto;
         z-index: 10;
+      }      /* Tab label styling - only show next to active tab */
+      .active-tab-label {
+        transition: opacity 0.2s ease-in-out;
+        white-space: nowrap;
       }
+      
+      /* Hide label when not positioned next to active tab */
+      .active-tab-label.hidden {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+      }
+
+      /* --- End of Tab label styling --- */
     </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -463,24 +476,20 @@
                 </form>                <div>
                     <div class="flex justify-between items-center border-b pb-2 mb-4">                        <div class="flex items-center gap-4">
                             <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>
-                            
-                            <!-- Tab buttons with new styling and behavior -->
+                              <!-- Tab buttons with new styling and behavior -->
                             <div class="flex items-center gap-2">
-                                <div class="flex gap-1">
-                                    <button id="history-tab-btn" class="tab-button shiny-button ripple-effect active px-3 py-2 text-sm font-medium" data-label="History">
-                                        📋
-                                    </button>
-                                    <button id="records-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Records">
-                                        🏆
-                                    </button>
-                                    <button id="map-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Map">
-                                        🗺️
-                                    </button>
-                                </div>
-                                <span id="active-tab-label" class="text-lg font-medium text-gray-700">History</span>
+                                <button id="history-tab-btn" class="tab-button shiny-button ripple-effect active px-3 py-2 text-sm font-medium" data-label="Catch History">
+                                    📋
+                                </button>
+                                <span id="active-tab-label" class="text-lg font-medium text-gray-700 active-tab-label">Catch History</span>
+                                <button id="records-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Personal Records">
+                                    🏆
+                                </button>
+                                <button id="map-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Catch Map">
+                                    🗺️
+                                </button>
                             </div>
-                        </div><div class="dropdown relative">
-                            <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
+                        </div><div class="dropdown relative">                            <button id="data-options-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1">
                                 <span class="lucide lucide-menu"></span>
                             </button>
                             <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
@@ -581,12 +590,10 @@
                         </button>
                     </div>
                     <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
-                </div>
-
-                <div>
+                </div>                <div>
                     <label for="edit-notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                    <textarea id="edit-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
-                </div>                <div class="space-y-2">
+                    <input type="text" id="edit-notes" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div><div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-600">Photo:</label>
                     <button type="button" id="edit-photo-btn" class="shiny-button ripple-effect w-full">
                         <span class="lucide lucide-camera"></span> <span id="edit-photo-text">Edit Photo</span>

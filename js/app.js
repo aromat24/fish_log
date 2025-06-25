@@ -468,7 +468,16 @@ function showEditModal(catchData) {
     editForm.onsubmit = (e) => {
         e.preventDefault();
         updateCatch();
-    };    // Setup close button
+    };    // Prevent Enter key from auto-advancing from location name to notes field
+    const locationNameInput = document.getElementById('edit-location-name');
+    locationNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            locationNameInput.blur(); // Remove focus instead of advancing
+        }
+    });
+    
+    // Setup close button
     const closeBtn = document.getElementById('close-edit-modal-btn');
     closeBtn.onclick = () => editModal.classList.add('hidden');
 
@@ -1843,7 +1852,7 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });    // Function to switch tabs
+    });    // Function to switch tabs and reposition label
     function switchTab(activeTab, activeContent) {
         // Remove active class from all tab buttons
         [historyTab, recordsTab, mapTab].forEach(tab => {
@@ -1863,11 +1872,17 @@ function setupTabSystem() {
         if (activeTab) {
             activeTab.classList.add('active');
             
-            // Update the label text
+            // Update the label text and position it next to the active tab
             const label = activeTab.getAttribute('data-label');
             const labelElement = document.getElementById('active-tab-label');
             if (labelElement && label) {
                 labelElement.textContent = label;
+                
+                // Remove the label from its current position
+                labelElement.remove();
+                
+                // Insert the label after the active tab
+                activeTab.insertAdjacentElement('afterend', labelElement);
             }
         }
         
@@ -1875,8 +1890,7 @@ function setupTabSystem() {
             activeContent.classList.remove('hidden');
         }
     }
-    
-    // History tab click handler
+      // History tab click handler
     if (historyTab) {
         historyTab.addEventListener('click', () => {
             console.log('History tab clicked');
