@@ -1939,7 +1939,7 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });    // Function to switch tabs with proper sequential sliding
+    });    // Function to switch tabs with proper sliding to right positions
     function switchTab(activeTab, activeContent) {
         // Get container elements
         const leftGroup = document.querySelector('.tab-left-group');
@@ -1965,48 +1965,31 @@ function setupTabSystem() {
         
         // Reset all tabs to their original positions first
         if (leftGroup && rightGroup) {
+            // Clear both groups
+            [recordsTab, mapTab].forEach(tab => {
+                if (tab && tab.parentElement) {
+                    tab.remove();
+                }
+            });
+            
             // History always stays in left group
             if (historyTab && !leftGroup.contains(historyTab)) {
                 leftGroup.appendChild(historyTab);
             }
             
-            // Move records and map to right group initially
-            if (recordsTab && !rightGroup.contains(recordsTab)) {
-                rightGroup.appendChild(recordsTab);
-            }
-            if (mapTab && !rightGroup.contains(mapTab)) {
-                rightGroup.appendChild(mapTab);
-            }
-            
-            // Now handle the active tab positioning
+            // Handle the active tab positioning
             if (activeTab === historyTab) {
-                // History stays where it is (left group)
-                // Others stay in right group
+                // History active: Records and Map go to right group in original order
+                rightGroup.appendChild(recordsTab);
+                rightGroup.appendChild(mapTab);
             } else if (activeTab === recordsTab) {
-                // Records moves to left group (next to history)
-                recordsTab.remove();
-                if (labelElement) {
-                    leftGroup.insertBefore(recordsTab, labelElement);
-                } else {
-                    leftGroup.appendChild(recordsTab);
-                }
+                // Records active: Records slides to right (next to Map), Map stays at far right
+                rightGroup.appendChild(recordsTab);
+                rightGroup.appendChild(mapTab);
             } else if (activeTab === mapTab) {
-                // Map moves to left group, but records should also be there
-                // Order should be: History, Records, Map, Label
-                if (!leftGroup.contains(recordsTab)) {
-                    recordsTab.remove();
-                    if (labelElement) {
-                        leftGroup.insertBefore(recordsTab, labelElement);
-                    } else {
-                        leftGroup.appendChild(recordsTab);
-                    }
-                }
-                mapTab.remove();
-                if (labelElement) {
-                    leftGroup.insertBefore(mapTab, labelElement);
-                } else {
-                    leftGroup.appendChild(mapTab);
-                }
+                // Map active: Records goes to right, Map slides to far right edge
+                rightGroup.appendChild(recordsTab);
+                rightGroup.appendChild(mapTab);
             }
         }
         
@@ -2014,14 +1997,21 @@ function setupTabSystem() {
         if (activeTab) {
             activeTab.classList.add('active');
             
-            // Update the label text and ensure it's positioned correctly
+            // Update the label text and position it next to the active tab
             const label = activeTab.getAttribute('data-label');
             if (labelElement && label) {
                 labelElement.textContent = label;
                 
-                // Ensure label is in the left group at the end
-                if (leftGroup && !leftGroup.contains(labelElement)) {
-                    leftGroup.appendChild(labelElement);
+                // Position label next to the active tab
+                if (activeTab === historyTab) {
+                    // Label stays in left group for history
+                    if (leftGroup && !leftGroup.contains(labelElement)) {
+                        leftGroup.appendChild(labelElement);
+                    }
+                } else {
+                    // For records/map, label goes to right group after the active tab
+                    labelElement.remove();
+                    activeTab.insertAdjacentElement('afterend', labelElement);
                 }
             }
         }
