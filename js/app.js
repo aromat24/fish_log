@@ -1,6 +1,7 @@
 // Map functionality variables
 let map = null;
 let currentMarker = null;
+let currentLocationMarker = null; // Separate marker for user's current location
 let selectedLatitude = null;
 let selectedLongitude = null;
 let mainMap = null;
@@ -2011,9 +2012,15 @@ function closeMapModal() {
     document.getElementById('coord-display').textContent = 'No location selected';
     document.getElementById('save-map-location-btn').disabled = true;
     
+    // Clean up markers
     if (currentMarker && map) {
         map.removeLayer(currentMarker);
         currentMarker = null;
+    }
+    
+    if (currentLocationMarker && map) {
+        map.removeLayer(currentLocationMarker);
+        currentLocationMarker = null;
     }
 }
 
@@ -2043,7 +2050,7 @@ function initializeMap() {
                     map.on('click', onMapClick);
                     
                     // Add a marker showing user's current location
-                    L.marker([userLat, userLng])
+                    currentLocationMarker = L.marker([userLat, userLng])
                         .addTo(map)
                         .bindPopup('📍 Your current location')
                         .openPopup();
@@ -2103,12 +2110,18 @@ function onMapClick(e) {
     selectedLatitude = e.latlng.lat;
     selectedLongitude = e.latlng.lng;
     
-    // Remove existing marker
+    // Remove existing selected marker
     if (currentMarker) {
         map.removeLayer(currentMarker);
     }
     
-    // Add new marker
+    // Remove current location marker when user selects a different location
+    if (currentLocationMarker) {
+        map.removeLayer(currentLocationMarker);
+        currentLocationMarker = null;
+    }
+    
+    // Add new selected marker
     currentMarker = L.marker([selectedLatitude, selectedLongitude]).addTo(map);
     
     // Update display
@@ -2140,20 +2153,38 @@ function useCurrentLocationOnMap() {
     navigator.geolocation.getCurrentPosition(
         (position) => {
             const lat = position.coords.latitude;
-                       const lng = position.coords.longitude;
+            const lng = position.coords.longitude;
             
             console.log('Current location obtained:', lat, lng);
             
             // Center map on current location
             map.setView([lat, lng], 15);
             
-            // Simulate click at current location
-            onMapClick({
-                latlng: {
-                    lat: lat,
-                    lng: lng
-                }
-            });
+            // Remove existing current location marker
+            if (currentLocationMarker) {
+                map.removeLayer(currentLocationMarker);
+            }
+            
+            // Remove any selected marker (user will need to click again to select a different location)
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+            
+            // Add current location marker
+            currentLocationMarker = L.marker([lat, lng])
+                .addTo(map)
+                .bindPopup('📍 Your current location')
+                .openPopup();
+            
+            // Set the current location as selected
+            selectedLatitude = lat;
+            selectedLongitude = lng;
+            
+            // Update display
+            document.getElementById('coord-display').textContent = 
+                `${lat.toFixed(6)}, ${lng.toFixed(6)} (Current Location)`;
+            document.getElementById('save-map-location-btn').disabled = false;
         },
         (error) => {
             console.error('Geolocation error:', error);
