@@ -1545,6 +1545,11 @@ function showMessage(message, type = 'info') {
         slideNotification.style.backdropFilter = 'blur(8px)';
         slideNotification.style.display = 'flex';
         slideNotification.style.alignItems = 'center';
+        slideNotification.style.justifyContent = 'flex-start';
+        slideNotification.style.paddingLeft = '0px';
+        slideNotification.style.paddingRight = '0px';
+        slideNotification.style.lineHeight = getComputedStyle(locationStatus).lineHeight;
+        slideNotification.style.fontSize = getComputedStyle(locationStatus).fontSize;
     }
     
     // Show notification with slide animation
