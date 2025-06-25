@@ -15,7 +15,7 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  background: linear-gradient(135deg, #718096 0%, #4a5568 50%, #2d3748 100%);
   color: white;
   border: 2px solid transparent;
   border-radius: 0.75rem;
@@ -23,7 +23,7 @@
   transition: all 0.3s ease;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
+  box-shadow: 0 4px 15px rgba(113, 128, 150, 0.25);
 }
 
 .shiny-button:active {
@@ -383,46 +383,44 @@
 
 /* === TAB BUTTONS === */
 .tab-button.active {
-  --button-bg: #dbeafe;
-  --button-text: #1e40af;
-  border: 2px solid #3b82f6;
+  background: linear-gradient(135deg, #718096 0%, #4a5568 50%, #2d3748 100%) !important;
+  color: white !important;
+  border: 2px solid #4a5568 !important;
+  box-shadow: 0 4px 15px rgba(113, 128, 150, 0.25) !important;
 }
 
 .tab-button:not(.active) {
-  --button-bg: #f8fafc;
-  --button-text: #64748b;
-  border: 2px solid #e2e8f0;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 50%, #a0aec0 100%) !important;
+  color: #4a5568 !important;
+  border: 2px solid #cbd5e0 !important;
+  box-shadow: 0 2px 8px rgba(160, 174, 192, 0.15) !important;
 }
 
 /* === TAB BUTTON STYLING === */
 .tab-button {
-  border: 2px solid rgba(102, 126, 234, 0.3);
   border-radius: 0.75rem;
   transition: all 0.3s ease;
   min-width: 48px;
   min-height: 48px;
-  background: rgba(248, 250, 252, 0.8);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
 }
 
 .tab-button.active {
-  border-color: #667eea;
-  background: rgba(219, 234, 254, 0.9);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
   transform: translateY(-2px);
 }
 
 .tab-button:not(.active) {
-  border-color: rgba(148, 163, 184, 0.4);
-  background: rgba(248, 250, 252, 0.6);
+  transform: translateY(0);
 }
 
 .tab-button:active:not(.active) {
-  border-color: #667eea;
   transform: translateY(0) scale(0.98);
 }
 
