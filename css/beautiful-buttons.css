@@ -597,16 +597,22 @@
 @media (max-width: 768px) {
   .tab-container {
     gap: 0.25rem;
+    overflow-x: visible;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
   
   .tab-left-group {
     gap: 0.25rem;
     flex-wrap: nowrap;
-    overflow-x: auto;
+    flex: 1;
+    min-width: 0;
   }
   
   .tab-right-group {
     gap: 0.25rem;
+    flex-shrink: 0;
+    max-width: 60%;
   }
   
   #active-tab-label {
@@ -620,5 +626,25 @@
   .tab-right-group {
     margin-left: auto;
     flex-shrink: 0;
+  }
+}
+
+/* Mobile specific improvements for label visibility */
+@media (max-width: 640px) {
+  #active-tab-label {
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  
+  /* Ensure Records label is fully visible when active */
+  .tab-right-group #active-tab-label {
+    max-width: none;
+    width: auto;
+    flex-shrink: 0;
+  }
+  
+  /* Adjust spacing for better label visibility */
+  .tab-right-group {
+    gap: 0.15rem;
   }
 }

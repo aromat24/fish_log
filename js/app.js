@@ -2029,24 +2029,35 @@ function setupTabSystem() {
         });
     }
     
-    // Records tab click handler
+    // Records tab click handler with toggle behavior
     if (recordsTab) {
         recordsTab.addEventListener('click', () => {
             console.log('Records tab clicked');
-            switchTab(recordsTab, recordsContainer);
-            displayRecords(); // Load records when tab is clicked
+            // If records tab is already active, switch to history
+            if (recordsTab.classList.contains('active')) {
+                switchTab(historyTab, catchLog);
+            } else {
+                switchTab(recordsTab, recordsContainer);
+                displayRecords(); // Load records when tab is clicked
+            }
         });
     }
-      // Map tab click handler
+      // Map tab click handler with toggle behavior
     if (mapTab) {
         mapTab.addEventListener('click', () => {
             console.log('Map tab clicked');
-            switchTab(mapTab, mapContainer);
-            
-            // Initialize or refresh map view
-            setTimeout(() => {
-                setupMainMap();
-            }, 100);
+            // If map tab is already active, switch to records
+            if (mapTab.classList.contains('active')) {
+                switchTab(recordsTab, recordsContainer);
+                displayRecords(); // Load records when switching to records
+            } else {
+                switchTab(mapTab, mapContainer);
+                
+                // Initialize or refresh map view
+                setTimeout(() => {
+                    setupMainMap();
+                }, 100);
+            }
         });
     }
     
