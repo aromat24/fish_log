@@ -1126,7 +1126,7 @@ function setupLocationHandling() {
             
             // Hide modal and reset
             locationNameModal.classList.add('hidden');
-            showMessage('Location saved successfully');
+            showMessage('Location: Success', 'success');
         });
     }
 
@@ -1541,7 +1541,7 @@ function showMessage(message, type = 'info') {
         slideNotification.style.zIndex = '1000';
         slideNotification.style.transition = 'left 0.4s ease-in-out';
         slideNotification.style.boxShadow = '2px 2px 8px rgba(0,0,0,0.1)';
-        slideNotification.style.opacity = '0.92'; // Slightly see-through
+        slideNotification.style.opacity = '1'; // Solid, not see-through
         slideNotification.style.backdropFilter = 'blur(8px)';
         slideNotification.style.display = 'flex';
         slideNotification.style.alignItems = 'center';
@@ -2333,7 +2333,7 @@ function saveSelectedLocation() {
     }
     
     closeMapModal();
-    showMessage('Location saved successfully!', 'success');
+    showMessage('Location: Success', 'success');
 }
 
 // Backup function to save catch data (can be called directly)
