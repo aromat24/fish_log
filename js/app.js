@@ -22,9 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize landing page functionality
         initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
         console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
-        
-        // Reset fullscreen modal to clean state first
+          // Reset fullscreen modal to clean state first
         resetFullscreenModal();
+        
+        // Add fallback resets to ensure modal stays hidden
+        setTimeout(() => {
+            resetFullscreenModal();
+        }, 100);
+        
+        setTimeout(() => {
+            resetFullscreenModal();
+        }, 500);
         
         const fullscreenModal = document.getElementById('fullscreen-image');
         const fullscreenImage = document.getElementById('fullscreen-image-content');
@@ -609,7 +617,13 @@ function displayRecords() {
 
 function closeFullscreenImage() {
     const fullscreenModal = document.getElementById('fullscreen-image');
+    
+    // Aggressively hide modal using multiple methods
     fullscreenModal.classList.add('hidden');
+    fullscreenModal.style.display = 'none';
+    fullscreenModal.style.visibility = 'hidden';
+    fullscreenModal.style.opacity = '0';
+    fullscreenModal.style.zIndex = '-1';
     
     // Reset all image state when closing
     imageRotation = 0;
@@ -624,6 +638,8 @@ function closeFullscreenImage() {
     fullscreenImage.style.maxHeight = '100vh';
     fullscreenImage.style.width = 'auto';
     fullscreenImage.style.height = 'auto';
+    fullscreenImage.src = '';
+    fullscreenImage.alt = '';
     
     // Remove touch handlers
     removeImageTouchHandlers(fullscreenImage);
@@ -636,9 +652,13 @@ function resetFullscreenModal() {
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     
     if (fullscreenModal) {
-        // Ensure modal is hidden
+        // Aggressively hide modal using multiple methods
         fullscreenModal.classList.add('hidden');
-        console.log('Fullscreen modal hidden');
+        fullscreenModal.style.display = 'none';
+        fullscreenModal.style.visibility = 'hidden';
+        fullscreenModal.style.opacity = '0';
+        fullscreenModal.style.zIndex = '-1';
+        console.log('Fullscreen modal aggressively hidden');
     }
     
     if (fullscreenImage) {
@@ -1247,11 +1267,16 @@ function showFullscreenImage(imageUrl) {
     fullscreenImage.style.maxHeight = '100vh';
     fullscreenImage.style.width = 'auto';
     fullscreenImage.style.height = 'auto';
-    
-    // Set image source and show modal
+      // Set image source and show modal
     fullscreenImage.src = imageUrl;
     fullscreenImage.alt = 'Full size catch photo';
+    
+    // Restore modal visibility using multiple methods
     fullscreenModal.classList.remove('hidden');
+    fullscreenModal.style.display = 'flex';
+    fullscreenModal.style.visibility = 'visible';
+    fullscreenModal.style.opacity = '1';
+    fullscreenModal.style.zIndex = '1300';
     
     console.log('Fullscreen modal shown with image:', imageUrl);
     
@@ -1955,7 +1980,60 @@ function initializeMap() {
     console.log('Initializing map...');
     
     try {
-        // Default to Cape Town, South Africa
+        // Try to get user's current location first
+        if (navigator.geolocation) {
+            console.log('Getting user location for map...');
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    console.log('User location obtained:', userLat, userLng);
+                    
+                    // Initialize map with user's location
+                    map = L.map('map-container').setView([userLat, userLng], 13);
+                    
+                    // Add OpenStreetMap tiles
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+                    
+                    // Add click handler
+                    map.on('click', onMapClick);
+                    
+                    // Add a marker showing user's current location
+                    L.marker([userLat, userLng])
+                        .addTo(map)
+                        .bindPopup('📍 Your current location')
+                        .openPopup();
+                    
+                    console.log('Map initialized successfully with user location');
+                },
+                (error) => {
+                    console.warn('Failed to get user location:', error.message);
+                    initializeMapWithDefault();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000 // 5 minutes
+                }
+            );
+        } else {
+            console.warn('Geolocation not supported');
+            initializeMapWithDefault();
+        }
+    } catch (error) {
+        console.error('Error initializing map:', error);
+        initializeMapWithDefault();
+    }
+}
+
+function initializeMapWithDefault() {
+    console.log('Initializing map with default location (Cape Town)...');
+    
+    try {
+        // Fallback to Cape Town, South Africa
         const defaultLat = -33.9249;
         const defaultLng = 18.4241;
         
@@ -1970,9 +2048,10 @@ function initializeMap() {
         // Add click handler
         map.on('click', onMapClick);
         
-        console.log('Map initialized successfully');
+        console.log('Map initialized successfully with default location');
+        showMessage('Map loaded with default location. Allow location access for better experience.', 'info');
     } catch (error) {
-        console.error('Error initializing map:', error);
+        console.error('Error initializing map with default location:', error);
         showMessage('Failed to initialize map. Please try again.', 'error');
     }
 }
@@ -2413,3 +2492,18 @@ document.addEventListener('touchstart', function(e) {
         console.log('Button title:', e.target.title);
     }
 }, { passive: true });
+
+// Additional fallback to ensure fullscreen modal is hidden on window load
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const fullscreenModal = document.getElementById('fullscreen-image');
+        if (fullscreenModal) {
+            fullscreenModal.classList.add('hidden');
+            fullscreenModal.style.display = 'none';
+            fullscreenModal.style.visibility = 'hidden';
+            fullscreenModal.style.opacity = '0';
+            fullscreenModal.style.zIndex = '-1';
+            console.log('Window load: Force-hidden fullscreen modal');
+        }
+    }, 100);
+});

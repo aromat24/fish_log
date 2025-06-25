@@ -35,10 +35,20 @@
       .btn-disabled {
         opacity: 0.5;
         cursor: not-allowed;
-      }
-      /* Hide elements by default */
+      }      /* Hide elements by default */
       .hidden {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+
+      /* Ensure fullscreen modal is completely hidden when hidden class is applied */
+      #fullscreen-image.hidden {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        z-index: -1 !important;
+        pointer-events: none !important;
       }
 
       /* --- Landing Page Background --- */
@@ -686,9 +696,9 @@
             
             <div class="space-y-4">
                 <h3 class="text-xl font-bold text-blue-700 pr-8">Select Location</h3>
-                
-                <div class="text-sm text-gray-600 mb-2">
-                    <p>🗺️ Click on the map to select a location, or use your current position</p>
+                  <div class="text-sm text-gray-600 mb-2">
+                    <p>🗺️ Click on the map to select a location, or use the current location button</p>
+                    <p class="text-xs text-gray-500">The map will automatically center on your location if available</p>
                 </div>
                 
                 <!-- Map container -->
@@ -709,10 +719,9 @@
                 </div>
                 
                 <!-- Action buttons -->
-                <div class="flex gap-3 pt-4 border-t">
-                    <button id="use-current-location-btn" 
+                <div class="flex gap-3 pt-4 border-t">                    <button id="use-current-location-btn" 
                             class="px-4 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        📍 Use Current Location
+                        📍 Use My Location
                     </button>
                     <button id="save-map-location-btn" 
                             class="flex-1 px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
