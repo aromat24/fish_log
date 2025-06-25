@@ -90,10 +90,19 @@
         height: 100%;
         overflow-y: auto;
         position: relative;
+      }      .form-section {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
       }
 
-      .form-section {
-        padding: 1.5rem;
+      /* Mobile optimization */
+      @media (max-width: 768px) {
+        .form-section {
+          padding: 0.75rem 1rem 1rem 1rem;
+        }
+        
+        .app-container {
+          padding-top: 0;
+        }
       }
 
       /* Semi-transparent overlay for text readability */
@@ -379,14 +388,8 @@
                     Enter Logbook
                 </button>
             </div>
-        </div>
-
-        <div id="app-content" class="hidden app-container">
+        </div>        <div id="app-content" class="hidden app-container">
             <div class="form-section">
-                <h1 class="text-3xl font-bold text-center text-blue-800 mb-4 flex items-center justify-center gap-2">
-                    <span class="lucide"></span> Ghoti - Hooked Logbook
-                </h1>
-
                 <form id="catch-form" class="mb-8 space-y-4" novalidate>
                     <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
 
@@ -454,24 +457,29 @@
                         <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="shiny-button ripple-effect w-full mt-4" style="touch-action: manipulation;">
+                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="shiny-button shimmer-border ripple-effect w-full mt-4" style="touch-action: manipulation;">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>                <div>
-                    <div class="flex justify-between items-center border-b pb-2 mb-4">
-                        <div class="flex items-center gap-2">
-                            <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>                              <!-- Tab buttons with improved sizing -->
-                            <div class="flex bg-gray-100 rounded-md p-1">                                <button id="history-tab-btn" class="tab-button ripple-effect active px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
-                                    📋 <span class="hidden sm:inline">History</span>
-                                </button>
-                                <button id="records-tab-btn" class="tab-button ripple-effect px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
-                                    🏆 <span class="hidden sm:inline">Records</span>
-                                </button>
-                                <button id="map-tab-btn" class="tab-button ripple-effect px-3 md:px-4 py-1.5 text-sm md:text-base font-medium rounded-md transition-colors">
-                                    🗺️ <span class="hidden sm:inline">Map</span>
-                                </button>
+                    <div class="flex justify-between items-center border-b pb-2 mb-4">                        <div class="flex items-center gap-4">
+                            <h2 id="view-heading" class="text-xl font-semibold text-gray-700">Catch History</h2>
+                            
+                            <!-- Tab buttons with new styling and behavior -->
+                            <div class="flex items-center gap-2">
+                                <div class="flex gap-1">
+                                    <button id="history-tab-btn" class="tab-button shiny-button ripple-effect active px-3 py-2 text-sm font-medium" data-label="History">
+                                        📋
+                                    </button>
+                                    <button id="records-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Records">
+                                        🏆
+                                    </button>
+                                    <button id="map-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium" data-label="Map">
+                                        🗺️
+                                    </button>
+                                </div>
+                                <span id="active-tab-label" class="text-lg font-medium text-gray-700">History</span>
                             </div>
-                        </div>                        <div class="dropdown relative">
+                        </div><div class="dropdown relative">
                             <button id="data-options-btn" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium flex items-center gap-1">
                                 <span class="lucide lucide-menu"></span>
                             </button>

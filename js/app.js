@@ -404,9 +404,8 @@ function showEditModal(catchData) {
     const editPhotoText = document.getElementById('edit-photo-text');
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
-    
-    // Reset button styling to default
-    editPhotoBtn.className = 'w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md border border-gray-300 flex items-center justify-center gap-2';
+      // Reset button styling to default
+    editPhotoBtn.className = 'shiny-button ripple-effect w-full';
 
     // Setup photo editing
     const editPhotoInput = document.getElementById('edit-photo-input');
@@ -432,17 +431,23 @@ function showEditModal(catchData) {
         }        try {
             // Show processing message and change button appearance
             editPhotoText.textContent = 'Processing...';
-            editPhotoBtn.className = 'w-full px-4 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium rounded-md border border-yellow-300 flex items-center justify-center gap-2';
+            editPhotoBtn.className = 'shiny-button ripple-effect w-full';
+            editPhotoBtn.style.setProperty('--button-bg', '#fef3c7');
+            editPhotoBtn.style.setProperty('--button-text', '#b45309');
             
             // Compress the image
             const compressedDataUrl = await compressImage(file);
             
             // Store the compressed image
             document.getElementById('edit-photo').value = compressedDataUrl;
-            editPhotoText.textContent = 'Photo Updated';
+            editPhotoText.textContent = 'Photo Updated ✓';
             
             // Change button to green to indicate success
-            editPhotoBtn.className = 'w-full px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-md border border-green-300 flex items-center justify-center gap-2';
+            editPhotoBtn.className = 'shiny-button ripple-effect w-full';
+            editPhotoBtn.style.setProperty('--button-bg', '#dcfce7');
+            editPhotoBtn.style.setProperty('--button-text', '#166534');
+            
+            showMessage('Upload Successful', 'success');
             
         } catch (error) {
             console.error('Image compression failed:', error);
@@ -1178,15 +1183,14 @@ async function handlePhotoUpload(event) {
         
         // Calculate compressed size for user feedback
         const compressedSizeKB = Math.round((compressedDataUrl.length * 0.75) / 1024); // Approximate size in KB
-        
-        // Show success state
+          // Show success state
         photoUploadBtn.className = 'shiny-button ripple-effect w-full';
         photoUploadBtn.style.setProperty('--button-bg', '#dcfce7');
         photoUploadBtn.style.setProperty('--button-text', '#166534');
         photoBtnText.textContent = 'Photo Added ✓';
-        helperText.textContent = `Image processed successfully! (${compressedSizeKB}KB)`;
+        helperText.textContent = 'Upload Successful';
         helperText.className = 'text-xs text-green-600 mt-1';
-        showMessage(`Image processed successfully! Compressed to ${compressedSizeKB}KB.`, 'success');
+        showMessage('Upload Successful', 'success');
         
     } catch (error) {
         console.error('Image compression failed:', error);
@@ -1839,8 +1843,7 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });
-      // Function to switch tabs
+    });    // Function to switch tabs
     function switchTab(activeTab, activeContent) {
         // Remove active class from all tab buttons
         [historyTab, recordsTab, mapTab].forEach(tab => {
@@ -1859,6 +1862,13 @@ function setupTabSystem() {
         // Activate the selected tab and content
         if (activeTab) {
             activeTab.classList.add('active');
+            
+            // Update the label text
+            const label = activeTab.getAttribute('data-label');
+            const labelElement = document.getElementById('active-tab-label');
+            if (labelElement && label) {
+                labelElement.textContent = label;
+            }
         }
         
         if (activeContent) {

@@ -3,19 +3,39 @@
 
 // Initialize all beautiful button effects
 function initializeBeautifulButtons() {
+    trackScrollState();
     initializeRippleEffects();
     initializeInteractiveButtons();
     initializeShinyButtons();
-    console.log('Beautiful button effects initialized');
+    console.log('Beautiful button effects initialized with scroll protection');
 }
 
 // Universal ripple effect for all buttons
 function initializeRippleEffects() {
     // Add ripple effect to all buttons
     document.addEventListener('click', function(e) {
+        // Skip if currently scrolling
+        if (isScrolling) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
         const button = e.target.closest('button');
         if (button && !button.disabled) {
             createRippleEffect(e, button);
+        }
+    });
+    
+    // Also prevent touch events during scrolling
+    document.addEventListener('touchend', function(e) {
+        if (isScrolling) {
+            const button = e.target.closest('button');
+            if (button) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
         }
     });
 }
@@ -179,6 +199,32 @@ function addSuccessFeedback(button) {
     }, 1500);
 }
 
+// Scroll detection to prevent accidental button clicks
+let isScrolling = false;
+let scrollTimeout;
+
+// Track scroll state
+function trackScrollState() {
+    window.addEventListener('scroll', function() {
+        isScrolling = true;
+        clearTimeout(scrollTimeout);
+        
+        scrollTimeout = setTimeout(function() {
+            isScrolling = false;
+        }, 150); // 150ms delay after scroll ends
+    }, { passive: true });
+    
+    // Also track touch scroll events
+    document.addEventListener('touchmove', function() {
+        isScrolling = true;
+        clearTimeout(scrollTimeout);
+        
+        scrollTimeout = setTimeout(function() {
+            isScrolling = false;
+        }, 150);
+    }, { passive: true });
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Small delay to ensure all elements are rendered
@@ -186,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeBeautifulButtons();
         applyBeautifulButtonStyles();
         addButtonClickEffects();
+        trackScrollState();
     }, 100);
 });
 

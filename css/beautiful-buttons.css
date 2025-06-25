@@ -242,6 +242,24 @@
   animation: ripple 0.6s linear;
 }
 
+/* === SHIMMER BORDER === */
+@keyframes shimmer-border {
+  0% { border-color: #667eea; }
+  25% { border-color: #764ba2; }
+  50% { border-color: #f093fb; }
+  75% { border-color: #f5576c; }
+  100% { border-color: #667eea; }
+}
+
+.shimmer-border {
+  border: 2px solid #667eea;
+  animation: shimmer-border 3s ease-in-out infinite;
+}
+
+.shimmer-border:hover {
+  animation-duration: 1.5s;
+}
+
 /* === FISHING THEMED VARIATIONS === */
 
 /* Save Catch Button - Ocean Theme */
@@ -368,4 +386,62 @@
   .interactive-hover-button .button-arrow {
     transition: none;
   }
+}
+
+/* === TAB BUTTONS === */
+.tab-button.active {
+  --button-bg: #dbeafe;
+  --button-text: #1e40af;
+  border: 2px solid #3b82f6;
+}
+
+.tab-button:not(.active) {
+  --button-bg: #f8fafc;
+  --button-text: #64748b;
+  border: 2px solid #e2e8f0;
+}
+
+/* === TAB BUTTON STYLING === */
+.tab-button {
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  min-width: 48px;
+  min-height: 48px;
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.tab-button.active {
+  border-color: #667eea;
+  background: rgba(219, 234, 254, 0.9);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+  transform: translateY(-2px);
+}
+
+.tab-button:not(.active) {
+  border-color: rgba(148, 163, 184, 0.4);
+  background: rgba(248, 250, 252, 0.6);
+}
+
+.tab-button:hover {
+  border-color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+/* Hide text label initially, only show when active */
+#active-tab-label {
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+#active-tab-label.hidden {
+  opacity: 0;
+  transform: translateX(-10px);
 }
