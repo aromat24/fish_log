@@ -15,7 +15,7 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
   color: white;
   border: 2px solid transparent;
   border-radius: 0.75rem;
@@ -23,12 +23,7 @@
   transition: all 0.3s ease;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.shiny-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
 }
 
 .shiny-button:active {
@@ -93,7 +88,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -112,9 +107,8 @@
   animation: shimmer 2s infinite;
 }
 
-.shimmer-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+.shimmer-button:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* === PULSATING BUTTON === */
@@ -132,7 +126,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -140,10 +134,9 @@
   transition: all 0.3s ease;
 }
 
-.pulsating-button:hover {
+.pulsating-button:active {
   animation-play-state: paused;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+  transform: translateY(0) scale(0.98);
 }
 
 /* === INTERACTIVE HOVER BUTTON === */
@@ -174,7 +167,7 @@
 .interactive-hover-button .button-dot {
   width: 0.5rem;
   height: 0.5rem;
-  background: #3b82f6;
+  background: #4a5568;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -191,18 +184,19 @@
   transition: all 0.3s ease;
 }
 
-.interactive-hover-button:hover {
-  background: #3b82f6;
+.interactive-hover-button:active {
+  background: #4a5568;
   color: white;
-  border-color: #3b82f6;
+  border-color: #4a5568;
+  transform: scale(0.98);
 }
 
-.interactive-hover-button:hover .button-text {
+.interactive-hover-button:active .button-text {
   transform: translateX(-1rem);
   opacity: 0;
 }
 
-.interactive-hover-button:hover .button-arrow {
+.interactive-hover-button:active .button-arrow {
   opacity: 1;
   transform: translateX(0);
 }
@@ -223,48 +217,50 @@
   font-weight: 600;
   color: #1f2937;
   background: white;
-  border: 2px solid #3b82f6;
+  border: 2px solid #4a5568;
   border-radius: 0.5rem;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
-.ripple-button:hover {
-  background: #f3f4f6;
+.ripple-button:active {
+  background: #f7fafc;
+  transform: scale(0.98);
 }
 
 .ripple-button .ripple {
   position: absolute;
   border-radius: 50%;
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(74, 85, 104, 0.3);
   pointer-events: none;
   animation: ripple 0.6s linear;
 }
 
 /* === SHIMMER BORDER === */
 @keyframes shimmer-border {
-  0% { border-color: #667eea; }
-  25% { border-color: #764ba2; }
-  50% { border-color: #f093fb; }
-  75% { border-color: #f5576c; }
-  100% { border-color: #667eea; }
+  0% { border-color: #4a5568; }
+  25% { border-color: #2d3748; }
+  50% { border-color: #718096; }
+  75% { border-color: #4a5568; }
+  100% { border-color: #4a5568; }
 }
 
 .shimmer-border {
-  border: 2px solid #667eea;
+  border: 2px solid #4a5568;
   animation: shimmer-border 3s ease-in-out infinite;
 }
 
-.shimmer-border:hover {
+.shimmer-border:active {
   animation-duration: 1.5s;
+  transform: scale(0.98);
 }
 
 /* === FISHING THEMED VARIATIONS === */
 
-/* Save Catch Button - Ocean Theme */
+/* Save Catch Button - Gunmetal Theme */
 .ocean-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -283,18 +279,17 @@
   transition: all 0.3s ease;
 }
 
-.ocean-button:hover::before {
+.ocean-button:active::before {
   left: 0.5rem;
 }
 
-.ocean-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+.ocean-button:active {
+  transform: translateY(0) scale(0.98);
 }
 
-/* Location Button - Nature Theme */
+/* Location Button - Gunmetal Theme */
 .nature-button {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -313,13 +308,12 @@
   transition: all 0.3s ease;
 }
 
-.nature-button:hover::before {
+.nature-button:active::before {
   right: 0.5rem;
 }
 
-.nature-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+.nature-button:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* Delete Button - Warning Theme */
@@ -334,9 +328,8 @@
   transition: all 0.3s ease;
 }
 
-.warning-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+.warning-button:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* === SUCCESS FEEDBACK === */
@@ -428,10 +421,9 @@
   background: rgba(248, 250, 252, 0.6);
 }
 
-.tab-button:hover {
+.tab-button:active:not(.active) {
   border-color: #667eea;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  transform: translateY(0) scale(0.98);
 }
 
 /* Hide text label initially, only show when active */
