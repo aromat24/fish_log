@@ -470,12 +470,22 @@ function showEditModal(catchData) {
         updateCatch();
     };    // Prevent Enter key from auto-advancing from location name to notes field
     const locationNameInput = document.getElementById('edit-location-name');
-    locationNameInput.addEventListener('keydown', (e) => {
+    
+    // Remove any existing event listeners to prevent duplicates
+    locationNameInput.removeEventListener('keydown', locationNameInput._enterHandler);
+    
+    // Create the handler function
+    locationNameInput._enterHandler = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault();
-            locationNameInput.blur(); // Remove focus instead of advancing
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event bubbling
+            locationNameInput.blur(); // Remove focus and dismiss keyboard on mobile
+            return false; // Extra prevention
         }
-    });
+    };
+    
+    // Add the handler
+    locationNameInput.addEventListener('keydown', locationNameInput._enterHandler);
     
     // Setup close button
     const closeBtn = document.getElementById('close-edit-modal-btn');
@@ -1168,7 +1178,7 @@ async function handlePhotoUpload(event) {
         photoUploadBtn.style.setProperty('--button-text', '#b91c1c');
         photoBtnText.textContent = 'File too large';
         helperText.textContent = 'Image file too large (max 50MB)';
-        helperText.className = 'text-xs text-red-500 mt-1';
+        helperText.className
         showMessage('Image file is too large. Please choose a smaller image (max 50MB).', 'error');
         event.target.value = '';
         return;
@@ -1895,7 +1905,6 @@ function setupTabSystem() {
         historyTab.addEventListener('click', () => {
             console.log('History tab clicked');
             switchTab(historyTab, catchLog);
-            document.getElementById('view-heading').textContent = 'Catch History';
         });
     }
     
@@ -1904,7 +1913,6 @@ function setupTabSystem() {
         recordsTab.addEventListener('click', () => {
             console.log('Records tab clicked');
             switchTab(recordsTab, recordsContainer);
-            document.getElementById('view-heading').textContent = 'Personal Records';
             displayRecords(); // Load records when tab is clicked
         });
     }
@@ -1913,7 +1921,6 @@ function setupTabSystem() {
         mapTab.addEventListener('click', () => {
             console.log('Map tab clicked');
             switchTab(mapTab, mapContainer);
-            document.getElementById('view-heading').textContent = 'Catch Map';
             
             // Initialize or refresh map view
             setTimeout(() => {
@@ -2541,3 +2548,28 @@ window.addEventListener('load', () => {
         }
     }, 100);
 });
+
+// Prevent location name input from auto-advancing to notes field on Enter (main form)
+const mainLocationNameInput = document.getElementById('location-name');
+if (mainLocationNameInput) {
+    // Remove any existing handler to prevent duplicates
+    mainLocationNameInput.removeEventListener('keydown', mainLocationNameInput._enterHandler);
+    
+    // Create the handler function
+    mainLocationNameInput._enterHandler = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event bubbling
+            mainLocationNameInput.blur(); // Remove focus and dismiss keyboard on mobile
+            return false; // Extra prevention
+        }
+    };
+    
+    // Add the handler
+    mainLocationNameInput.addEventListener('keydown', mainLocationNameInput._enterHandler);
+}
+
+// Calculate weight when length or species changes
+lengthInput.addEventListener('input', autoCalculateWeight);
+speciesInput.addEventListener('input', autoCalculateWeight);
+speciesInput.addEventListener('change', autoCalculateWeight);
