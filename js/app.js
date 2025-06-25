@@ -967,6 +967,11 @@ function setupSpeciesHandlers() {
 
     // Setup manage species modal
     manageSpeciesBtn.addEventListener('click', () => {
+        // Disable the button to prevent double-clicking
+        manageSpeciesBtn.disabled = true;
+        manageSpeciesBtn.style.pointerEvents = 'none';
+        manageSpeciesBtn.style.opacity = '0.5';
+        
         document.getElementById('manage-species-modal').classList.remove('hidden');
         displayCustomSpeciesList();
     });
@@ -1014,6 +1019,11 @@ function setupSpeciesHandlers() {
     // Handle modal close buttons
     document.getElementById('close-manage-species-btn').addEventListener('click', () => {
         document.getElementById('manage-species-modal').classList.add('hidden');
+        
+        // Re-enable the manage species button
+        manageSpeciesBtn.disabled = false;
+        manageSpeciesBtn.style.pointerEvents = 'auto';
+        manageSpeciesBtn.style.opacity = '1';
     });
 
     document.getElementById('cancel-species-btn').addEventListener('click', () => {
@@ -1025,6 +1035,13 @@ function setupSpeciesHandlers() {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
+                
+                // If it's the manage species modal, re-enable the button
+                if (modal.id === 'manage-species-modal') {
+                    manageSpeciesBtn.disabled = false;
+                    manageSpeciesBtn.style.pointerEvents = 'auto';
+                    manageSpeciesBtn.style.opacity = '1';
+                }
             }
         });
     });

@@ -35,6 +35,18 @@
       .btn-disabled {
         opacity: 0.5;
         cursor: not-allowed;
+      }
+      
+      /* Prevent any movement or transitions on manage species button */
+      #manage-species-btn {
+        transition: none !important;
+        transform-origin: center;
+      }
+      
+      #manage-species-btn:disabled {
+        opacity: 0.5 !important;
+        pointer-events: none !important;
+        transform: translateY(-50%) !important;
       }      /* Hide elements by default */
       .hidden {
         display: none !important;
@@ -506,7 +518,7 @@
                                 placeholder="Search or enter species name">                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto" style="overscroll-behavior: contain;">
                                 <!-- Species suggestions will be populated here -->
                             </div>                            <button type="button" id="manage-species-btn" 
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 w-6 h-6 flex items-center justify-center"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 active:text-gray-600 w-6 h-6 flex items-center justify-center transition-none"
                                 title="Manage Species List">
                                 ⚙
                             </button>
@@ -542,6 +554,10 @@
 
                     <div class="border-t pt-4 space-y-2">
                         <label class="block text-sm font-medium text-gray-600">Location:</label>
+                        
+                        <!-- Move notification pop-up here, above location status -->
+                        <div id="message-box" class="hidden p-3 rounded-md text-sm mb-2"></div>
+                        
                         <div class="flex items-center gap-4 flex-wrap">                            <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
                                 <span class="lucide lucide-map-pin"></span> Get Current Location
                             </button>
@@ -561,7 +577,7 @@
                         <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
-                    <div id="message-box" class="hidden p-3 rounded-md text-sm"></div>                    <button type="submit" class="shiny-button shimmer-border ripple-effect w-full mt-4" style="touch-action: manipulation;">
+                    <button type="submit" class="shiny-button shimmer-border ripple-effect w-full mt-4" style="touch-action: manipulation;">
                         <span class="lucide lucide-save"></span> Save Catch
                     </button>
                 </form>                <div>
