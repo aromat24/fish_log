@@ -433,6 +433,77 @@
   }
 }
 
+/* === MOBILE RESPONSIVE IMPROVEMENTS === */
+@media (max-width: 640px) {
+  /* Tab layout for mobile - ensure proper spacing */
+  .tab-button {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.1rem;
+  }
+  
+  /* Active tab label responsive behavior */
+  #active-tab-label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Location area button grouping */
+  .location-button-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* Ensure proper button alignment in location area */
+  .flex.items-center.gap-2.flex-wrap {
+    align-items: center;
+  }
+  
+  .flex.items-center.gap-2.flex-wrap > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+/* === LOCATION BUTTONS CONTAINER === */
+.location-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.location-button-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Mobile responsive location button layout */
+@media (max-width: 640px) {
+  .location-buttons-container {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .location-button-group {
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  /* Ensure buttons stay properly aligned vertically */
+  .location-buttons-container > * {
+    flex-shrink: 0;
+    align-self: center;
+  }
+}
+
 /* === ACCESSIBILITY === */
 .rainbow-button:focus,
 .shimmer-button:focus,
@@ -513,4 +584,47 @@
 #active-tab-label.hidden {
   opacity: 0;
   transform: translateX(-10px);
+}
+
+/* === TAB LAYOUT IMPROVEMENTS === */
+.tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.tab-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab-right-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Ensure proper spacing on different screen sizes */
+@media (max-width: 768px) {
+  .tab-container {
+    gap: 0.25rem;
+  }
+  
+  .tab-left-group {
+    gap: 0.25rem;
+  }
+  
+  .tab-right-group {
+    gap: 0.25rem;
+  }
+  
+  /* Make sure inactive tabs stick to right on mobile */
+  .tab-right-group {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
