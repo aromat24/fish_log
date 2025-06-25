@@ -1126,7 +1126,7 @@ function setupLocationHandling() {
             
             // Hide modal and reset
             locationNameModal.classList.add('hidden');
-            showMessage('Location: Success', 'success');
+            showMessage('Location:       Success!', 'success');
         });
     }
 
@@ -2347,7 +2347,7 @@ function saveSelectedLocation() {
     }
     
     closeMapModal();
-    showMessage('Location: Success', 'success');
+    showMessage('Location:       Success!', 'success');
 }
 
 // Backup function to save catch data (can be called directly)
