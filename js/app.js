@@ -1939,12 +1939,14 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });    // Function to switch tabs and reposition them dynamically
+    });    // Function to switch tabs with proper sequential sliding
     function switchTab(activeTab, activeContent) {
         // Get container elements
         const leftGroup = document.querySelector('.tab-left-group');
         const rightGroup = document.querySelector('.tab-right-group');
         const historyTab = document.getElementById('history-tab-btn');
+        const recordsTab = document.getElementById('records-tab-btn');
+        const mapTab = document.getElementById('map-tab-btn');
         const labelElement = document.getElementById('active-tab-label');
         
         // Remove active class from all tab buttons
@@ -1961,42 +1963,63 @@ function setupTabSystem() {
             }
         });
         
-        // If clicking history tab, keep it in original position
-        if (activeTab === historyTab) {
-            activeTab.classList.add('active');
+        // Reset all tabs to their original positions first
+        if (leftGroup && rightGroup) {
+            // History always stays in left group
+            if (historyTab && !leftGroup.contains(historyTab)) {
+                leftGroup.appendChild(historyTab);
+            }
             
-            // Move other tabs back to right group
+            // Move records and map to right group initially
             if (recordsTab && !rightGroup.contains(recordsTab)) {
                 rightGroup.appendChild(recordsTab);
             }
             if (mapTab && !rightGroup.contains(mapTab)) {
                 rightGroup.appendChild(mapTab);
             }
-        } else {
-            // For records or map tab, move it to left group (next to history)
-            if (activeTab && leftGroup) {
-                // Remove the tab from its current position
-                activeTab.remove();
-                
-                // Insert it after the history tab but before the label
+            
+            // Now handle the active tab positioning
+            if (activeTab === historyTab) {
+                // History stays where it is (left group)
+                // Others stay in right group
+            } else if (activeTab === recordsTab) {
+                // Records moves to left group (next to history)
+                recordsTab.remove();
                 if (labelElement) {
-                    leftGroup.insertBefore(activeTab, labelElement);
+                    leftGroup.insertBefore(recordsTab, labelElement);
                 } else {
-                    leftGroup.appendChild(activeTab);
+                    leftGroup.appendChild(recordsTab);
                 }
-                
-                // Activate the tab
-                activeTab.classList.add('active');
+            } else if (activeTab === mapTab) {
+                // Map moves to left group, but records should also be there
+                // Order should be: History, Records, Map, Label
+                if (!leftGroup.contains(recordsTab)) {
+                    recordsTab.remove();
+                    if (labelElement) {
+                        leftGroup.insertBefore(recordsTab, labelElement);
+                    } else {
+                        leftGroup.appendChild(recordsTab);
+                    }
+                }
+                mapTab.remove();
+                if (labelElement) {
+                    leftGroup.insertBefore(mapTab, labelElement);
+                } else {
+                    leftGroup.appendChild(mapTab);
+                }
             }
         }
         
-        // Update the label text and ensure it's positioned correctly
-        if (activeTab && labelElement) {
+        // Activate the selected tab
+        if (activeTab) {
+            activeTab.classList.add('active');
+            
+            // Update the label text and ensure it's positioned correctly
             const label = activeTab.getAttribute('data-label');
-            if (label) {
+            if (labelElement && label) {
                 labelElement.textContent = label;
                 
-                // Ensure label is in the left group after the active tab
+                // Ensure label is in the left group at the end
                 if (leftGroup && !leftGroup.contains(labelElement)) {
                     leftGroup.appendChild(labelElement);
                 }

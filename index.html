@@ -641,20 +641,18 @@
                         <div id="message-box" class="hidden p-3 rounded-md text-sm mb-2"></div>
                         
                         <div class="location-buttons-container">
-                            <div class="location-main-button">
+                            <div class="location-buttons-row">
                                 <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
                                     <span class="lucide lucide-map-pin"></span> Get Current Location
                                 </button>
+                                <button id="theme-toggle-btn" class="shiny-button ripple-effect text-sm" title="Toggle Day/Night Mode">
+                                    🌙
+                                </button>
+                                <button id="data-options-btn" class="shiny-button ripple-effect text-sm">
+                                    <span class="lucide lucide-menu"></span>
+                                </button>
                             </div>
-                            <div class="location-status-and-controls">
-                                <div class="location-button-group">
-                                    <button id="theme-toggle-btn" class="shiny-button ripple-effect text-sm" title="Toggle Day/Night Mode">
-                                        🌙
-                                    </button>
-                                    <button id="data-options-btn" class="shiny-button ripple-effect text-sm">
-                                        <span class="lucide lucide-menu"></span>
-                                    </button>
-                                </div>
+                            <div class="location-status-row">
                                 <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
                             </div>
                         </div>
