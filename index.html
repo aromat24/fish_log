@@ -375,72 +375,77 @@
       
       /* MagicUI Effects CSS */
       
-      /* Border Beam Animation - Simple and effective */
-      @keyframes border-beam {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(200%); }
-      }
-      
+      /* Border Beam Animation - Moving gradient around border */
       .border-beam-container {
         position: relative;
         border-radius: inherit;
-        overflow: hidden;
       }
       
       .border-beam {
+        pointer-events: none;
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         border-radius: inherit;
-        padding: 2px;
-        background: linear-gradient(90deg, transparent, #ffaa40, #9c40ff, transparent);
+        border: 1px solid transparent;
+        background-image: linear-gradient(#fff 0 0), linear-gradient(#ffaa40, #9c40ff);
+        background-clip: padding-box, border-box;
+        background-origin: border-box;
         mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         mask-composite: xor;
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
-        pointer-events: none;
-        animation: border-beam 3s linear infinite;
       }
       
-      /* Shine Border Animation - Simple sliding effect */
-      @keyframes shine-border {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+      .border-beam::before {
+        content: "";
+        position: absolute;
+        aspect-ratio: 1;
+        width: 50px;
+        background: linear-gradient(to left, #ffaa40, #9c40ff, transparent);
+        offset-path: rect(0 auto auto 0 round 50px);
+        animation: border-beam-spin 6s linear infinite;
+      }
+      
+      @keyframes border-beam-spin {
+        to {
+          offset-distance: 100%;
+        }
+      }
+      
+      /* Shine Border Animation - MagicUI Style */
+      @keyframes shine {
+        0% {
+          background-position: 0% 0%;
+        }
+        50% {
+          background-position: 100% 100%;
+        }
+        100% {
+          background-position: 0% 0%;
+        }
       }
       
       .shine-border {
         position: relative;
         border-radius: inherit;
         overflow: hidden;
+        padding: 1px;
+        background-image: radial-gradient(transparent, transparent, #A07CFE, #FE8FB5, #FFBE7B, transparent, transparent);
+        background-size: 300% 300%;
+        animation: shine 14s linear infinite;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
       }
       
-      .shine-border::before {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -100%;
-        width: 100%;
-        height: calc(100% + 4px);
-        background: linear-gradient(90deg, 
-          transparent,
-          rgba(160, 124, 254, 0.3),
-          rgba(254, 143, 181, 0.3),
-          rgba(255, 190, 123, 0.3),
-          transparent
-        );
-        animation: shine-border 2s ease-in-out infinite;
-        pointer-events: none;
-        z-index: 0;
+      .shine-border > .modal-content {
+        background: white;
         border-radius: inherit;
-      }
-      
-      /* Ensure modal content appears above the effects */
-      .border-beam-container > *:not(.border-beam),
-      .shine-border > * {
         position: relative;
         z-index: 1;
+        width: 100%;
+        height: 100%;
       }
     </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
@@ -587,36 +592,38 @@
     </div>
 
     <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1200] p-4" data-modal-background>
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative shine-border">
-            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
-                ✖
-            </button>
-            <div class="space-y-3">
-                <h3 id="modal-species" class="text-xl font-bold text-blue-700 pr-8"></h3>
-                <p id="modal-date" class="text-sm text-gray-500"></p>
-                
-                <div class="flex flex-wrap gap-2">
-                    <p id="modal-length" class="text-sm text-gray-600"></p>
-                    <p id="modal-weight" class="text-sm text-gray-600"></p>
-                </div>
-                  <div id="modal-location-container" class="text-sm text-gray-600">
-                    <p class="flex flex-wrap items-center gap-1">
-                        <span>Location:</span>
-                        <span id="modal-location-name" class="text-blue-600"></span>
-                    </p>
-                </div>
-                
-                <p id="modal-notes" class="text-sm text-gray-600"></p>
-                  <div id="modal-photo-container" class="mb-4 hidden">
-                    <img id="modal-photo" class="w-full h-48 object-cover rounded-md cursor-pointer" alt="Catch Photo">
-                    <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
-                </div>
-                  <div class="flex gap-2 mt-4">                    <button id="edit-catch-btn" class="shiny-button ripple-effect flex-1">
-                        <span class="lucide lucide-edit"></span> Edit
-                    </button>
-                    <button id="delete-catch-btn" class="shiny-button ripple-effect flex-1" style="--button-color: #ef4444; --button-bg: #fee2e2; --button-text: #b91c1c;">
-                        <span class="lucide lucide-trash"></span> Delete
-                    </button>
+        <div class="shine-border rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+            <div class="modal-content p-4">
+                <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+                    ✖
+                </button>
+                <div class="space-y-3">
+                    <h3 id="modal-species" class="text-xl font-bold text-blue-700 pr-8"></h3>
+                    <p id="modal-date" class="text-sm text-gray-500"></p>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <p id="modal-length" class="text-sm text-gray-600"></p>
+                        <p id="modal-weight" class="text-sm text-gray-600"></p>
+                    </div>
+                      <div id="modal-location-container" class="text-sm text-gray-600">
+                        <p class="flex flex-wrap items-center gap-1">
+                            <span>Location:</span>
+                            <span id="modal-location-name" class="text-blue-600"></span>
+                        </p>
+                    </div>
+                    
+                    <p id="modal-notes" class="text-sm text-gray-600"></p>
+                      <div id="modal-photo-container" class="mb-4 hidden">
+                        <img id="modal-photo" class="w-full h-48 object-cover rounded-md cursor-pointer" alt="Catch Photo">
+                        <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
+                    </div>
+                      <div class="flex gap-2 mt-4">                        <button id="edit-catch-btn" class="shiny-button ripple-effect flex-1">
+                            <span class="lucide lucide-edit"></span> Edit
+                        </button>
+                        <button id="delete-catch-btn" class="shiny-button ripple-effect flex-1" style="--button-color: #ef4444; --button-bg: #fee2e2; --button-text: #b91c1c;">
+                            <span class="lucide lucide-trash"></span> Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -624,60 +631,71 @@
 
     <!-- Edit modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative border-beam-container">
-            <div class="border-beam-alt"></div>
-            <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
-                ✖
-            </button>
-            <form id="edit-catch-form" class="space-y-4">
-                <div>
-                    <label for="edit-species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
-                    <input type="text" id="edit-species" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit-length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
-                        <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>                    <div>
-                        <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
-                        <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
-                    <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>                <div>
-                    <label for="edit-location-name" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                    <input type="text" id="edit-location-name" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>                <!-- Add location editing section -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-600">Location:</label>
-                    <div class="flex gap-2">
-                        <button type="button" id="edit-location-btn" class="shiny-button ripple-effect w-full">
-                            <span class="lucide lucide-map-pin"></span> <span id="edit-location-text">Edit Location</span>
-                        </button>
-                    </div>
-                    <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
-                </div>                <div>
-                    <label for="edit-notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                    <input type="text" id="edit-notes" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div><div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-600">Photo:</label>
-                    <button type="button" id="edit-photo-btn" class="shiny-button ripple-effect w-full">
-                        <span class="lucide lucide-camera"></span> <span id="edit-photo-text">Edit Photo</span>
-                    </button>
-                    <input type="file" id="edit-photo-input" accept="image/*" class="hidden">
-                </div>
-
-                <input type="hidden" id="edit-catch-id">
-                <input type="hidden" id="edit-latitude">
-                <input type="hidden" id="edit-longitude">
-                <input type="hidden" id="edit-photo">                <button type="submit" class="shiny-button ripple-effect w-full">
-                    <span class="lucide lucide-save"></span> Save Changes
+        <div class="border-beam-container rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+            <div class="border-beam"></div>
+            <div class="modal-content bg-white p-4 rounded-lg">
+                <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+                    ✖
                 </button>
-            </form>
+                <form id="edit-catch-form" class="space-y-4">
+                    <div>
+                        <label for="edit-species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
+                        <input type="text" id="edit-species" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="edit-length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
+                            <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>                        <div>
+                            <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
+                            <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
+                        <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <!-- Location editing section with pin icon -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-600">Location:</label>
+                        <div class="flex gap-2">
+                            <button type="button" id="edit-location-btn" class="shiny-button ripple-effect w-full flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                <span id="edit-location-text">Edit Location</span>
+                            </button>
+                        </div>
+                        <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
+                    </div>
+
+                    <div>
+                        <label for="edit-notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
+                        <input type="text" id="edit-notes" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-600">Photo:</label>
+                        <button type="button" id="edit-photo-btn" class="shiny-button ripple-effect w-full">
+                            <span class="lucide lucide-camera"></span> <span id="edit-photo-text">Edit Photo</span>
+                        </button>
+                        <input type="file" id="edit-photo-input" accept="image/*" class="hidden">
+                    </div>
+
+                    <input type="hidden" id="edit-catch-id">
+                    <input type="hidden" id="edit-latitude">
+                    <input type="hidden" id="edit-longitude">
+                    <input type="hidden" id="edit-photo">
+
+                    <button type="submit" class="shiny-button ripple-effect w-full">
+                        <span class="lucide lucide-save"></span> Save Changes
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -773,49 +791,51 @@
         </div>
     </div>    <!-- Map modal for location selection -->
     <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border-beam-container">
+        <div class="border-beam-container rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
             <div class="border-beam"></div>
-            <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
-                ✖
-            </button>
-            
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-blue-700 pr-8">Select Location</h3>
-                  <div class="text-sm text-gray-600 mb-2">
-                    <p>🗺️ Click on the map to select a location, or use the current location button</p>
-                </div>
+            <div class="modal-content bg-white p-4 rounded-lg">
+                <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+                    ✖
+                </button>
                 
-                <!-- Map container -->
-                <div id="map-container"></div>
-                
-                <!-- Location details -->
-                <div class="space-y-3">
-                    <div id="selected-coordinates" class="text-sm text-gray-600">
-                        <span class="font-medium">Selected:</span> <span id="coord-display">No location selected</span>
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-blue-700 pr-8">Select Location</h3>
+                      <div class="text-sm text-gray-600 mb-2">
+                        <p>🗺️ Click on the map to select a location, or use the current location button</p>
                     </div>
                     
-                    <div>
-                        <label for="location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                        <input type="text" id="location-name-input" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="Enter a name for this location">
+                    <!-- Map container -->
+                    <div id="map-container"></div>
+                    
+                    <!-- Location details -->
+                    <div class="space-y-3">
+                        <div id="selected-coordinates" class="text-sm text-gray-600">
+                            <span class="font-medium">Selected:</span> <span id="coord-display">No location selected</span>
+                        </div>
+                        
+                        <div>
+                            <label for="location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                            <input type="text" id="location-name-input" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Enter a name for this location">
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Action buttons -->
-                <div class="flex gap-3 pt-4 border-t">                    <button id="use-current-location-btn" 
-                            class="px-4 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        📍 Use My Location
-                    </button>
-                    <button id="save-map-location-btn" 
-                            class="flex-1 px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                            disabled>
-                        Save Location
-                    </button>
-                    <button id="cancel-map-modal-btn" 
-                            class="px-4 py-2 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        Cancel
-                    </button>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex gap-3 pt-4 border-t">                        <button id="use-current-location-btn" 
+                                class="px-4 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            📍 Use My Location
+                        </button>
+                        <button id="save-map-location-btn" 
+                                class="flex-1 px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                                disabled>
+                            Save Location
+                        </button>
+                        <button id="cancel-map-modal-btn" 
+                                class="px-4 py-2 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
