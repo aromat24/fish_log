@@ -2207,6 +2207,18 @@ function saveSelectedLocation() {
         }
         editLocationStatus.className = 'text-sm text-green-600';
         
+        // Update edit location button with feedback
+        const editLocationBtn = document.getElementById('edit-location-btn');
+        if (editLocationBtn) {
+            const originalText = editLocationBtn.textContent;
+            editLocationBtn.textContent = 'Location Saved ✓';
+            editLocationBtn.classList.add('!bg-green-500');
+            setTimeout(() => {
+                editLocationBtn.textContent = originalText;
+                editLocationBtn.classList.remove('!bg-green-500');
+            }, 2000);
+        }
+        
         // Clear edit mode flag
         delete mapModal.dataset.editMode;
     } else {

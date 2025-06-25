@@ -372,6 +372,102 @@
       }
 
       /* --- End of Tab label styling --- */
+      
+      /* MagicUI Effects CSS */
+      
+      /* Border Beam Animation */
+      @keyframes border-beam {
+        0% {
+          offset-distance: 0%;
+        }
+        100% {
+          offset-distance: 100%;
+        }
+      }
+      
+      /* Fallback keyframes for browsers that don't support offset-distance */
+      @keyframes border-beam-fallback {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      .border-beam-container {
+        position: relative;
+        border-radius: inherit;
+        overflow: hidden;
+      }
+      
+      .border-beam {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      
+      .border-beam::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #ffaa40, #9c40ff, transparent);
+        border-radius: 50%;
+        animation: border-beam-fallback 6s linear infinite;
+        z-index: 1;
+      }
+      
+      /* Support for modern browsers with offset-path */
+      @supports (offset-path: rect(0 auto auto 0)) {
+        .border-beam::before {
+          offset-path: rect(0 auto auto 0 round 25px);
+          animation: border-beam 6s linear infinite;
+          transform: none;
+        }
+      }
+      
+      /* Shine Border Animation */
+      @keyframes shine {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 300% 300%;
+        }
+      }
+      
+      .shine-border {
+        position: relative;
+        border-radius: inherit;
+        overflow: hidden;
+      }
+      
+      .shine-border::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg, 
+          transparent, transparent,
+          #A07CFE, #FE8FB5, #FFBE7B,
+          transparent, transparent
+        );
+        background-size: 300% 300%;
+        border-radius: inherit;
+        animation: shine 14s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+      }
+      
+      /* Ensure modal content appears above the shine effect */
+      .shine-border > * {
+        position: relative;
+        z-index: 1;
+      }
     </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -517,7 +613,7 @@
     </div>
 
     <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1200] p-4" data-modal-background>
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative shine-border">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
             </button>
@@ -554,7 +650,8 @@
 
     <!-- Edit modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative border-beam-container">
+            <div class="border-beam"></div>
             <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
             </button>
@@ -584,8 +681,8 @@
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-600">Location:</label>
                     <div class="flex gap-2">
-                        <button type="button" id="edit-location-btn" class="w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium rounded-md border border-blue-300 flex items-center justify-center gap-2">
-                            <span class="lucide lucide-map-pin"></span> Edit Location
+                        <button type="button" id="edit-location-btn" class="shiny-button ripple-effect w-full">
+                            <span class="lucide lucide-map-pin"></span> <span id="edit-location-text">Edit Location</span>
                         </button>
                     </div>
                     <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
@@ -702,7 +799,9 @@
         </div>
     </div>    <!-- Map modal for location selection -->
     <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border-beam-container">
+            <!-- Border beam effect -->
+            <div class="border-beam"></div>
             <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
             </button>
@@ -711,7 +810,6 @@
                 <h3 class="text-xl font-bold text-blue-700 pr-8">Select Location</h3>
                   <div class="text-sm text-gray-600 mb-2">
                     <p>🗺️ Click on the map to select a location, or use the current location button</p>
-                    <p class="text-xs text-gray-500">The map will automatically center on your location if available</p>
                 </div>
                 
                 <!-- Map container -->
