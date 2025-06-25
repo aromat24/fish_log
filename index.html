@@ -379,7 +379,8 @@
       .border-beam-container {
         position: relative;
         border-radius: inherit;
-        padding: 2px;
+        padding: 3px;
+        overflow: hidden;
       }
       
       .border-beam {
@@ -387,7 +388,7 @@
         position: absolute;
         inset: 0;
         border-radius: inherit;
-        border: 2px solid transparent;
+        border: 3px solid transparent;
         background-image: linear-gradient(#fff 0 0), linear-gradient(#ffaa40, #9c40ff);
         background-clip: padding-box, border-box;
         background-origin: border-box;
@@ -395,6 +396,7 @@
         mask-composite: xor;
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
+        will-change: transform;
       }
       
       .border-beam::before {
@@ -405,12 +407,19 @@
         background: linear-gradient(to left, #ffaa40, #9c40ff, transparent);
         offset-path: rect(0 auto auto 0 round 50px);
         animation: border-beam-spin 6s linear infinite;
+        will-change: transform;
       }
       
       @keyframes border-beam-spin {
         to {
           offset-distance: 100%;
         }
+      }
+      
+      /* Fix for modal scrolling issues - ensure content doesn't shift */
+      .modal-content {
+        contain: layout style paint;
+        transform: translateZ(0);
       }
       
       /* Shine Border Animation - MagicUI Style */
@@ -430,16 +439,17 @@
         position: relative;
         border-radius: inherit;
         overflow: hidden;
-        padding: 1px;
+        padding: 3px;
         background: linear-gradient(transparent, transparent, #A07CFE, #FE8FB5, #FFBE7B, transparent, transparent);
         background-size: 300% 300%;
         animation: shine 14s linear infinite;
+        will-change: transform;
       }
       
       .shine-border::before {
         content: '';
         position: absolute;
-        inset: 1px;
+        inset: 3px;
         border-radius: inherit;
         background: white;
         z-index: -1;
@@ -496,7 +506,7 @@
                                 placeholder="Search or enter species name">                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto" style="overscroll-behavior: contain;">
                                 <!-- Species suggestions will be populated here -->
                             </div>                            <button type="button" id="manage-species-btn" 
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 ripple-effect"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 w-6 h-6 flex items-center justify-center"
                                 title="Manage Species List">
                                 ⚙
                             </button>
