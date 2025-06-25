@@ -500,6 +500,63 @@
       .slide-notification.bg-blue-100 {
         border-left-color: #2563eb;
       }
+      
+      /* === INPUT FIELD THEMING === */
+      input[type="text"],
+      input[type="number"], 
+      input[type="datetime-local"],
+      textarea {
+        background: var(--btn-secondary-start) !important;
+        color: var(--text-primary) !important;
+        border: 2px solid var(--border-light) !important;
+        transition: all 0.3s ease !important;
+      }
+      
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      input[type="datetime-local"]:focus,
+      textarea:focus {
+        background: var(--btn-secondary-mid) !important;
+        border-color: var(--border-medium) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 3px var(--shadow-light) !important;
+      }
+      
+      /* Specific styling for datetime input text color */
+      input[type="datetime-local"]::-webkit-datetime-edit {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-text {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-month-field {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-day-field {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-year-field {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-hour-field {
+        color: var(--text-primary);
+      }
+      
+      input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+        color: var(--text-primary);
+      }
+      
+      /* Placeholder text styling */
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 0.7;
+      }
     </style>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -583,14 +640,32 @@
                         <!-- Move notification pop-up here, above location status -->
                         <div id="message-box" class="hidden p-3 rounded-md text-sm mb-2"></div>
                         
-                        <div class="flex items-center gap-4 flex-wrap">                            <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button type="button" id="get-location-btn" class="shiny-button ripple-effect text-sm">
                                 <span class="lucide lucide-map-pin"></span> Get Current Location
                             </button>
-                            <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
+                            <button id="theme-toggle-btn" class="shiny-button ripple-effect text-sm" title="Toggle Day/Night Mode">
+                                🌙
+                            </button>
+                            <button id="data-options-btn" class="shiny-button ripple-effect text-sm">
+                                <span class="lucide lucide-menu"></span>
+                            </button>
+                            <span id="location-status" class="text-sm text-gray-500 flex-grow">Location not saved.</span>
                         </div>
                         <input type="hidden" id="latitude" name="latitude">
                         <input type="hidden" id="longitude" name="longitude">
                         <input type="hidden" id="location-name" name="location-name">
+                        
+                        <!-- Data options dropdown menu -->
+                        <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+                            <button id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
+                                <span class="lucide lucide-export"></span> Export Data
+                            </button>
+                            <label for="import-data-input" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
+                                <span class="lucide lucide-import"></span> Import Data
+                            </label>
+                            <input type="file" id="import-data-input" accept=".json" class="hidden">
+                        </div>
                     </div>                    <div class="photo-upload">
                         <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
                         <div class="relative">
@@ -620,23 +695,8 @@
                                     🗺️
                                 </button>
                             </div>
-                        </div>                        <div class="dropdown relative">
-                            <button id="theme-toggle-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1 mr-2" title="Toggle Day/Night Mode">
-                                🌙
-                            </button>
-                            <button id="data-options-btn" class="shiny-button ripple-effect px-3 py-1.5 text-sm font-medium flex items-center gap-1">
-                                <span class="lucide lucide-menu"></span>
-                            </button>
-                            <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
-                                <button id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
-                                    <span class="lucide lucide-export"></span> Export Data
-                                </button>
-                                <label for="import-data-input" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
-                                    <span class="lucide lucide-import"></span> Import Data
-                                </label>
-                                <input type="file" id="import-data-input" accept=".json" class="hidden">
-                            </div>
                         </div>
+                        <!-- Buttons moved to location section -->
                     </div>                    <div id="catch-log" class="space-y-4">
                         <p class="text-gray-500 italic">No catches logged yet.</p>
                     </div>
