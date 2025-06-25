@@ -1546,10 +1546,19 @@ function showMessage(message, type = 'info') {
         slideNotification.style.display = 'flex';
         slideNotification.style.alignItems = 'center';
         slideNotification.style.justifyContent = 'flex-start';
-        slideNotification.style.paddingLeft = '0px';
-        slideNotification.style.paddingRight = '0px';
+        slideNotification.style.padding = '0';
+        slideNotification.style.margin = '0';
+        slideNotification.style.textAlign = 'left';
+        slideNotification.style.verticalAlign = 'middle';
         slideNotification.style.lineHeight = getComputedStyle(locationStatus).lineHeight;
         slideNotification.style.fontSize = getComputedStyle(locationStatus).fontSize;
+        
+        // Copy padding from location status for exact alignment
+        const locationStatusStyles = getComputedStyle(locationStatus);
+        slideNotification.style.paddingLeft = locationStatusStyles.paddingLeft;
+        slideNotification.style.paddingRight = locationStatusStyles.paddingRight;
+        slideNotification.style.paddingTop = locationStatusStyles.paddingTop;
+        slideNotification.style.paddingBottom = locationStatusStyles.paddingBottom;
     }
     
     // Show notification with slide animation
