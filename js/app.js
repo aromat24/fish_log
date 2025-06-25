@@ -1495,9 +1495,19 @@ function updateImageTransform() {
 
 // Message handling function
 function showMessage(message, type = 'info') {
-    const messageBox = document.getElementById('message-box');
-    messageBox.textContent = message;
+    // Create or get the sliding notification container
+    let slideNotification = document.getElementById('slide-notification');
+    if (!slideNotification) {
+        slideNotification = document.createElement('div');
+        slideNotification.id = 'slide-notification';
+        slideNotification.className = 'slide-notification';
+        document.body.appendChild(slideNotification);
+    }
     
+    // Set message content
+    slideNotification.textContent = message;
+    
+    // Set colors based on type
     let bgColor, textColor;
     switch(type) {
         case 'error':
@@ -1513,13 +1523,42 @@ function showMessage(message, type = 'info') {
             textColor = 'text-blue-700';
     }
     
-    messageBox.className = `p-3 rounded-md text-sm ${bgColor} ${textColor}`;
-    messageBox.classList.remove('hidden');
+    // Apply styling
+    slideNotification.className = `slide-notification p-3 rounded-md text-sm font-medium ${bgColor} ${textColor}`;
     
-    // Auto-hide after different durations based on type
+    // Position the notification to cover the location status area
+    const locationStatus = document.getElementById('location-status');
+    if (locationStatus) {
+        const rect = locationStatus.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        slideNotification.style.position = 'absolute';
+        slideNotification.style.top = (rect.top + scrollTop) + 'px';
+        slideNotification.style.left = '-300px'; // Start off-screen to the left
+        slideNotification.style.width = '280px';
+        slideNotification.style.zIndex = '1000';
+        slideNotification.style.transition = 'left 0.4s ease-in-out';
+        slideNotification.style.boxShadow = '2px 2px 8px rgba(0,0,0,0.2)';
+    }
+    
+    // Show notification with slide animation
+    slideNotification.style.display = 'block';
+    
+    // Trigger slide-in animation
+    setTimeout(() => {
+        slideNotification.style.left = '10px'; // Slide in from left
+    }, 50);
+    
+    // Auto-hide after duration with slide-out animation
     const duration = type === 'success' ? 4000 : 3000;
     setTimeout(() => {
-        messageBox.classList.add('hidden');
+        // Slide out to the left
+        slideNotification.style.left = '-300px';
+        
+        // Hide completely after animation
+        setTimeout(() => {
+            slideNotification.style.display = 'none';
+        }, 400);
     }, duration);
 }
 
