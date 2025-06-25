@@ -21,14 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         // Initialize landing page functionality
         initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
+        console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
+        
+        // Reset fullscreen modal to clean state first
+        resetFullscreenModal();
+        
         const fullscreenModal = document.getElementById('fullscreen-image');
         const fullscreenImage = document.getElementById('fullscreen-image-content');
         
-        console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
         console.log('Fullscreen modal element:', fullscreenModal);
-        console.log('Fullscreen modal classes:', fullscreenModal?.className);
-        console.log('Fullscreen modal hidden status:', fullscreenModal?.classList.contains('hidden'));
-          // CRITICAL: Ensure fullscreen modal is hidden and has no source on startup
+        
+        // Double-check that fullscreen modal is hidden
         if (fullscreenModal) {
             fullscreenModal.classList.add('hidden');
             console.log('Force-hid fullscreen modal on startup');
@@ -38,25 +41,26 @@ document.addEventListener('DOMContentLoaded', () => {
             fullscreenImage.alt = '';
             console.log('Cleared fullscreen image source on startup');
         }
-          // Reset fullscreen modal to clean state
-        resetFullscreenModal();
         
         const closeBtn = document.getElementById('close-fullscreen-btn');
         const rotateBtn = document.getElementById('rotate-image-btn');
         
-        // Add touch-optimized event handling for close button
-        closeBtn.addEventListener('click', closeFullscreenImage);
-        closeBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            closeFullscreenImage();
-        });
+        // Only add event listeners if buttons exist and are not disabled
+        if (closeBtn && fullscreenModal) {
+            closeBtn.addEventListener('click', closeFullscreenImage);
+            closeBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                closeFullscreenImage();
+            });
+        }
         
-        // Add touch-optimized event handling for rotate button
-        rotateBtn.addEventListener('click', handleRotateClick);
-        rotateBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleRotateClick(e);
-        });
+        if (rotateBtn && fullscreenModal) {
+            rotateBtn.addEventListener('click', handleRotateClick);
+            rotateBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleRotateClick(e);
+            });
+        }
         
         fullscreenModal.addEventListener('click', (e) => {
             if (e.target === fullscreenModal) {
@@ -144,11 +148,12 @@ function initLandingPage() {
 // Global function for landing page button
 window.enterApp = function() {
     console.log('enterApp called');
+    
+    // CRITICAL: Reset fullscreen modal when entering the app
+    resetFullscreenModal();
+    
     const landingPage = document.getElementById('landing-page');
     const appContent = document.getElementById('app-content');
-    
-    // Reset fullscreen modal when entering the app
-    resetFullscreenModal();
     
     if (landingPage && appContent) {
         landingPage.classList.add('fade-out');
