@@ -375,24 +375,10 @@
       
       /* MagicUI Effects CSS */
       
-      /* Border Beam Animation */
+      /* Border Beam Animation - Simple and effective */
       @keyframes border-beam {
-        0% {
-          offset-distance: 0%;
-        }
-        100% {
-          offset-distance: 100%;
-        }
-      }
-      
-      /* Fallback keyframes for browsers that don't support offset-distance */
-      @keyframes border-beam-fallback {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
       }
       
       .border-beam-container {
@@ -403,42 +389,25 @@
       
       .border-beam {
         position: absolute;
-        inset: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         border-radius: inherit;
+        padding: 2px;
+        background: linear-gradient(90deg, transparent, #ffaa40, #9c40ff, transparent);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
         pointer-events: none;
-        overflow: hidden;
+        animation: border-beam 3s linear infinite;
       }
       
-      .border-beam::before {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(45deg, #ffaa40, #9c40ff, transparent);
-        border-radius: 50%;
-        animation: border-beam-fallback 6s linear infinite;
-        z-index: 1;
-      }
-      
-      /* Support for modern browsers with offset-path */
-      @supports (offset-path: rect(0 auto auto 0)) {
-        .border-beam::before {
-          offset-path: rect(0 auto auto 0 round 25px);
-          animation: border-beam 6s linear infinite;
-          transform: none;
-        }
-      }
-      
-      /* Shine Border Animation */
-      @keyframes shine {
-        0% {
-          background-position: 0% 0%;
-        }
-        100% {
-          background-position: 300% 300%;
-        }
+      /* Shine Border Animation - Simple sliding effect */
+      @keyframes shine-border {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
       }
       
       .shine-border {
@@ -450,20 +419,25 @@
       .shine-border::before {
         content: '';
         position: absolute;
-        inset: -2px;
-        background: linear-gradient(45deg, 
-          transparent, transparent,
-          #A07CFE, #FE8FB5, #FFBE7B,
-          transparent, transparent
+        top: -2px;
+        left: -100%;
+        width: 100%;
+        height: calc(100% + 4px);
+        background: linear-gradient(90deg, 
+          transparent,
+          rgba(160, 124, 254, 0.3),
+          rgba(254, 143, 181, 0.3),
+          rgba(255, 190, 123, 0.3),
+          transparent
         );
-        background-size: 300% 300%;
-        border-radius: inherit;
-        animation: shine 14s linear infinite;
+        animation: shine-border 2s ease-in-out infinite;
         pointer-events: none;
-        z-index: -1;
+        z-index: 0;
+        border-radius: inherit;
       }
       
-      /* Ensure modal content appears above the shine effect */
+      /* Ensure modal content appears above the effects */
+      .border-beam-container > *:not(.border-beam),
       .shine-border > * {
         position: relative;
         z-index: 1;
@@ -651,7 +625,7 @@
     <!-- Edit modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto relative border-beam-container">
-            <div class="border-beam"></div>
+            <div class="border-beam-alt"></div>
             <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖
             </button>
@@ -800,7 +774,6 @@
     </div>    <!-- Map modal for location selection -->
     <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
         <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border-beam-container">
-            <!-- Border beam effect -->
             <div class="border-beam"></div>
             <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
                 ✖

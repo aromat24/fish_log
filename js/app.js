@@ -2211,11 +2211,13 @@ function saveSelectedLocation() {
         const editLocationBtn = document.getElementById('edit-location-btn');
         if (editLocationBtn) {
             const originalText = editLocationBtn.textContent;
+            const originalStyle = editLocationBtn.style.cssText;
             editLocationBtn.textContent = 'Location Saved ✓';
-            editLocationBtn.classList.add('!bg-green-500');
+            editLocationBtn.style.setProperty('--button-bg', '#22c55e');
+            editLocationBtn.style.setProperty('--button-text', '#ffffff');
             setTimeout(() => {
                 editLocationBtn.textContent = originalText;
-                editLocationBtn.classList.remove('!bg-green-500');
+                editLocationBtn.style.cssText = originalStyle;
             }, 2000);
         }
         
