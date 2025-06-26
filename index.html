@@ -1013,16 +1013,19 @@
                               (prefersDark.matches ? 'night' : 'day');
             
             function updateTheme(theme) {
+                console.log('updateTheme called with:', theme);
                 const root = document.documentElement;
                 
                 if (theme === 'night') {
                     root.setAttribute('data-theme', 'night');
+                    console.log('Applied night theme');
                     if (themeToggleBtn) {
                         themeToggleBtn.textContent = '☀️';
                         themeToggleBtn.title = 'Switch to Day Mode';
                     }
                 } else {
                     root.removeAttribute('data-theme');
+                    console.log('Applied day theme');
                     if (themeToggleBtn) {
                         themeToggleBtn.textContent = '🌙';
                         themeToggleBtn.title = 'Switch to Night Mode';
@@ -1031,18 +1034,29 @@
                 
                 localStorage.setItem('theme', theme);
                 currentTheme = theme;
+                console.log('Theme updated to:', currentTheme);
             }
             
             function toggleTheme() {
+                console.log('toggleTheme called, current theme:', currentTheme);
                 updateTheme(currentTheme === 'night' ? 'day' : 'night');
+                console.log('Theme switched to:', currentTheme);
             }
             
             // Initialize theme
             updateTheme(currentTheme);
             
-            // Add click handler
+            // Add click handler with debugging
             if (themeToggleBtn) {
-                themeToggleBtn.addEventListener('click', toggleTheme);
+                console.log('Adding click handler to theme toggle button');
+                themeToggleBtn.addEventListener('click', function(e) {
+                    console.log('Theme toggle button clicked');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleTheme();
+                });
+            } else {
+                console.error('Theme toggle button not found!');
             }
             
             // Listen for system theme changes
