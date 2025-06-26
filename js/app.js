@@ -411,7 +411,20 @@ function showEditModal(catchData) {
     document.getElementById('edit-notes').value = catchData.notes || '';
     document.getElementById('edit-latitude').value = catchData.latitude || '';
     document.getElementById('edit-longitude').value = catchData.longitude || '';
-    document.getElementById('edit-photo').value = catchData.photo || '';    // Update photo button text and reset styling
+    document.getElementById('edit-photo').value = catchData.photo || '';
+
+    // Update location status display
+    const editLocationStatus = document.getElementById('edit-location-status');
+    if (catchData.locationName) {
+        editLocationStatus.textContent = `Location: ${catchData.locationName}`;
+        editLocationStatus.className = 'text-sm text-green-600';
+    } else if (catchData.latitude && catchData.longitude) {
+        editLocationStatus.textContent = `Location: ${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
+        editLocationStatus.className = 'text-sm text-green-600';
+    } else {
+        editLocationStatus.textContent = 'No location set';
+        editLocationStatus.className = 'text-sm';
+    }    // Update photo button text and reset styling
     const editPhotoText = document.getElementById('edit-photo-text');
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
@@ -2423,8 +2436,8 @@ function saveSelectedLocation() {
         
         // Update edit location button with feedback
         const editLocationBtn = document.getElementById('edit-location-btn');
-        if (editLocationBtn && window.addSuccessFeedback) {
-            window.addSuccessFeedback(editLocationBtn);
+        if (editLocationBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
+            window.beautifulButtons.addSuccessFeedback(editLocationBtn);
         }
         
         // Clear edit mode flag

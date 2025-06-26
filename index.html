@@ -1014,18 +1014,15 @@
             
             function updateTheme(theme) {
                 const root = document.documentElement;
-                const body = document.body;
                 
                 if (theme === 'night') {
                     root.setAttribute('data-theme', 'night');
-                    body.classList.remove('bg-gradient-to-br', 'from-gray-50', 'to-gray-100');
                     if (themeToggleBtn) {
                         themeToggleBtn.textContent = '☀️';
                         themeToggleBtn.title = 'Switch to Day Mode';
                     }
                 } else {
                     root.removeAttribute('data-theme');
-                    body.classList.add('bg-gradient-to-br', 'from-gray-50', 'to-gray-100');
                     if (themeToggleBtn) {
                         themeToggleBtn.textContent = '🌙';
                         themeToggleBtn.title = 'Switch to Night Mode';
