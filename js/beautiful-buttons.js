@@ -319,5 +319,6 @@ window.beautifulButtons = {
     applyStyles: applyBeautifulButtonStyles,
     reapply: reapplyBeautifulStyles,
     createRipple: createRippleEffect,
-    isScrolling: isCurrentlyScrolling
+    isScrolling: isCurrentlyScrolling,
+    addSuccessFeedback: addSuccessFeedback
 };

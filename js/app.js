@@ -453,10 +453,26 @@ function showEditModal(catchData) {
             document.getElementById('edit-photo').value = compressedDataUrl;
             editPhotoText.textContent = 'Photo Updated ✓';
             
-            // Change button to green to indicate success
-            editPhotoBtn.className = 'shiny-button ripple-effect w-full';
-            editPhotoBtn.style.setProperty('--button-bg', '#dcfce7');
-            editPhotoBtn.style.setProperty('--button-text', '#166534');
+            // Add success feedback animation
+            if (window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
+                // Temporarily change text for success feedback
+                const originalText = editPhotoBtn.innerHTML;
+                editPhotoBtn.innerHTML = '<span class="lucide lucide-camera"></span> ✓ Photo Updated!';
+                editPhotoBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+                editPhotoBtn.style.transform = 'scale(1.05)';
+                
+                setTimeout(() => {
+                    editPhotoBtn.innerHTML = originalText;
+                    editPhotoBtn.style.background = '';
+                    editPhotoBtn.style.transform = '';
+                    editPhotoText.textContent = 'Change Photo';
+                }, 1500);
+            } else {
+                // Fallback to old styling
+                editPhotoBtn.className = 'shiny-button ripple-effect w-full';
+                editPhotoBtn.style.setProperty('--button-bg', '#dcfce7');
+                editPhotoBtn.style.setProperty('--button-text', '#166534');
+            }
             
             showMessage('Upload Successful', 'success');
             
@@ -525,14 +541,18 @@ function updateCatch() {
         return;
     }
 
-    // Validate length and weight if provided (must be positive numbers)
-    if (document.getElementById('edit-length').value && (isNaN(length) || length <= 0)) {
-        showMessage('Length must be a positive number', 'error');
+    // Handle weight input - default to 0.000 if blank
+    let finalWeight = weight;
+    if (!document.getElementById('edit-weight').value.trim()) {
+        finalWeight = 0.000;
+    } else if (isNaN(weight) || weight < 0) {
+        showMessage('Weight must be a positive number', 'error');
         return;
     }
 
-    if (document.getElementById('edit-weight').value && (isNaN(weight) || weight <= 0)) {
-        showMessage('Weight must be a positive number', 'error');
+    // Validate length if provided (must be positive numbers)
+    if (document.getElementById('edit-length').value && (isNaN(length) || length <= 0)) {
+        showMessage('Length must be a positive number', 'error');
         return;
     }
 
@@ -545,7 +565,7 @@ function updateCatch() {
             ...catches[catchIndex],
             species,
             length: isNaN(length) || !document.getElementById('edit-length').value ? null : length,
-            weight: isNaN(weight) || !document.getElementById('edit-weight').value ? null : weight,
+            weight: finalWeight,
             datetime,
             locationName: locationName || null,
             notes: notes || null,
@@ -568,8 +588,16 @@ function updateCatch() {
                 return;
             }
         }        
-        // Hide edit modal
-        document.getElementById('edit-modal').classList.add('hidden');
+        // Add success feedback to the submit button
+        const editSubmitBtn = document.querySelector('#edit-catch-form button[type="submit"]');
+        if (editSubmitBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
+            window.beautifulButtons.addSuccessFeedback(editSubmitBtn);
+        }
+        
+        // Hide edit modal after a brief delay to show the success feedback
+        setTimeout(() => {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }, 500);
           // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
@@ -2143,9 +2171,19 @@ function closeMapModal() {
     // Reset modal state
     selectedLatitude = null;
     selectedLongitude = null;
+    
+    // Reset form elements
     document.getElementById('location-name-input').value = '';
+    document.getElementById('location-name-input').placeholder = 'Enter a name for this location (optional)';
     document.getElementById('coord-display').textContent = 'No location selected';
-    document.getElementById('save-map-location-btn').disabled = true;
+    
+    // Reset save button
+    const saveBtn = document.getElementById('save-map-location-btn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Save Location';
+    
+    // Clear edit mode flag if present
+    delete mapModal.dataset.editMode;
     
     // Clean up markers
     if (currentMarker && map) {
@@ -2262,7 +2300,15 @@ function onMapClick(e) {
     // Update display
     document.getElementById('coord-display').textContent = 
         `${selectedLatitude.toFixed(6)}, ${selectedLongitude.toFixed(6)}`;
-    document.getElementById('save-map-location-btn').disabled = false;
+    
+    // Enable save button and update its text
+    const saveBtn = document.getElementById('save-map-location-btn');
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save Location';
+    
+    // Update the location name input placeholder to show it's selected
+    const locationNameInput = document.getElementById('location-name-input');
+    locationNameInput.placeholder = 'Enter a name (or leave blank to use coordinates)';
 }
 
 function useCurrentLocationOnMap() {
@@ -2367,7 +2413,7 @@ function saveSelectedLocation() {
         // Update edit location status
         const editLocationStatus = document.getElementById('edit-location-status');
         if (locationName) {
-            editLocationStatus.textContent = `Location name: ${locationName}`;
+            editLocationStatus.textContent = `Location: ${locationName}`;
         } else {
             editLocationStatus.textContent = `Location: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
         }
@@ -2376,15 +2422,18 @@ function saveSelectedLocation() {
         // Update edit location button with feedback
         const editLocationBtn = document.getElementById('edit-location-btn');
         if (editLocationBtn) {
-            const originalText = editLocationBtn.textContent;
-            const originalStyle = editLocationBtn.style.cssText;
-            editLocationBtn.textContent = 'Location Saved ✓';
-            editLocationBtn.style.setProperty('--button-bg', '#22c55e');
-            editLocationBtn.style.setProperty('--button-text', '#ffffff');
-            setTimeout(() => {
-                editLocationBtn.textContent = originalText;
-                editLocationBtn.style.cssText = originalStyle;
-            }, 2000);
+            const editLocationText = document.getElementById('edit-location-text');
+            if (editLocationText) {
+                const originalText = editLocationText.textContent;
+                editLocationText.textContent = 'Location Saved ✓';
+                editLocationBtn.style.setProperty('--button-bg', '#22c55e');
+                editLocationBtn.style.setProperty('--button-text', '#ffffff');
+                setTimeout(() => {
+                    editLocationText.textContent = originalText;
+                    editLocationBtn.style.removeProperty('--button-bg');
+                    editLocationBtn.style.removeProperty('--button-text');
+                }, 2000);
+            }
         }
         
         // Clear edit mode flag
@@ -2405,8 +2454,19 @@ function saveSelectedLocation() {
         locationStatus.className = 'text-sm text-green-600';
     }
     
+    // Add success feedback to save button
+    const saveMapLocationBtn = document.getElementById('save-map-location-btn');
+    if (saveMapLocationBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
+        window.beautifulButtons.addSuccessFeedback(saveMapLocationBtn);
+    }
+    
     closeMapModal();
-    showMessage('Location:       Success!', 'success');
+    
+    if (locationName) {
+        showMessage(`Location "${locationName}" saved successfully!`, 'success');
+    } else {
+        showMessage('Location coordinates saved successfully!', 'success');
+    }
 }
 
 // Backup function to save catch data (can be called directly)

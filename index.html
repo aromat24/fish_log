@@ -783,7 +783,7 @@
                             <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                         </div>                        <div>
                             <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
-                            <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter weight (leave blank for 0.000)">
                         </div>
                     </div>
 
@@ -949,10 +949,11 @@
                         </div>
                         
                         <div>
-                            <label for="location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
+                            <label for="location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name (optional):</label>
                             <input type="text" id="location-name-input" 
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="Enter a name for this location">
+                                   placeholder="Enter a name for this location (optional)">
+                            <p class="text-xs text-gray-500 mt-1">Leave blank to use coordinates as location</p>
                         </div>
                     </div>
                     
