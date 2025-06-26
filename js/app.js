@@ -16,13 +16,11 @@ let isZoomed = false;
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('=== DOM CONTENT LOADED ===');
-    console.log('Current URL:', window.location.href);
-    console.log('User Agent:', navigator.userAgent);
-      try {
+    try {
         // Initialize landing page functionality
-        initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
-        console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
+        initLandingPage();
+        
+        // Setup fullscreen image handling and ensure it's hidden on startup
           // Reset fullscreen modal to clean state first
         resetFullscreenModal();
         
@@ -38,17 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullscreenModal = document.getElementById('fullscreen-image');
         const fullscreenImage = document.getElementById('fullscreen-image-content');
         
-        console.log('Fullscreen modal element:', fullscreenModal);
         
         // Double-check that fullscreen modal is hidden
         if (fullscreenModal) {
             fullscreenModal.classList.add('hidden');
-            console.log('Force-hid fullscreen modal on startup');
         }
         if (fullscreenImage) {
             fullscreenImage.src = '';
             fullscreenImage.alt = '';
-            console.log('Cleared fullscreen image source on startup');
         }
         
         const closeBtn = document.getElementById('close-fullscreen-btn');
@@ -82,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
         });
 
-        console.log('About to initialize main app functionality...');
 
         // Initialize the main app functionality
         setupFormHandlers();
@@ -93,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSpeciesHandlers();
         setupMapHandlers(); // New map functionality
         
-        console.log('Main app functionality initialized');
         
         // Initialize fish database and update species list
         initializeFishDatabase();
@@ -104,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Load initial catch history
         loadCatchHistory();
         
-        console.log('=== INITIALIZATION COMPLETE ===');
         
     } catch (error) {
         console.error('Error during app initialization:', error);
@@ -121,17 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initializeFishDatabase() {
-    console.log('=== FISH DATABASE INITIALIZATION START ===');
     try {
         if (window.fishDB) {
             const isReady = await window.fishDB.isReady();
-            console.log('Fish database ready:', isReady);
             
             if (isReady) {
                 // Refresh species list to include database species
                 if (typeof window.refreshSpeciesList === 'function') {
                     await window.refreshSpeciesList();
-                    console.log('Species list refreshed with database species');
                 }
             } else {
                 console.warn('Fish database failed to initialize properly');
@@ -142,7 +131,6 @@ async function initializeFishDatabase() {
     } catch (error) {
         console.error('Error initializing fish database:', error);
     }
-    console.log('=== FISH DATABASE INITIALIZATION END ===');
 }
 
 function initLandingPage() {
@@ -151,12 +139,10 @@ function initLandingPage() {
     const enterAppBtn = document.getElementById('enter-app-btn');
 
     // No need for event listener here since HTML calls window.enterApp directly
-    console.log('Landing page initialized');
 }
 
 // Global function for landing page button
 window.enterApp = function() {
-    console.log('enterApp called');
     
     // CRITICAL: Reset fullscreen modal when entering the app
     resetFullscreenModal();
@@ -176,7 +162,6 @@ window.enterApp = function() {
 };
 
 function setupFormHandlers() {
-    console.log('=== SETTING UP FORM HANDLERS ===');
     
     // Try to get form elements
     const catchForm = document.getElementById('catch-form');
@@ -185,11 +170,6 @@ function setupFormHandlers() {
     const weightInput = document.getElementById('weight');
 
     // Add debug logging to check if elements exist
-    console.log('Form elements found:');
-    console.log('catchForm:', !!catchForm);
-    console.log('lengthInput:', !!lengthInput);
-    console.log('speciesInput:', !!speciesInput);
-    console.log('weightInput:', !!weightInput);
 
     if (!catchForm) {
         console.error('catch-form element not found! Retrying in 1 second...');
@@ -204,7 +184,6 @@ function setupFormHandlers() {
         return;
     }
 
-    console.log('All form elements found, setting up handlers...');
 
     // Make sure the form doesn't have any conflicting attributes
     catchForm.removeAttribute('onsubmit');
@@ -222,35 +201,26 @@ function setupFormHandlers() {
     speciesInput.addEventListener('input', autoCalculateWeight);
     speciesInput.addEventListener('change', autoCalculateWeight);
       // Handle catch form submission with comprehensive debugging
-    console.log('Setting up form submit handler...');
     catchForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('=== FORM SUBMISSION STARTED ===');
-        console.log('Event:', e);
-        console.log('Form element:', catchForm);
           // Call the unified save function instead of duplicating logic
         saveCatchData();
     });      // Also add a direct click handler to the submit button as a fallback
     const submitButton = document.querySelector('#catch-form button[type="submit"]');
-    console.log('Submit button found:', submitButton);
     if (submitButton) {
-        console.log('Adding mobile-friendly touch and click handlers to submit button');
         
         // Use a less aggressive approach that works better with local testing
         let touchTimeout = null;
         let hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         
         if (hasTouchSupport) {
-            console.log('Touch support detected, adding touch handlers');
             
             // Enhanced touch handler with improved scroll detection
             submitButton.addEventListener('touchend', (e) => {
-                console.log('=== SUBMIT BUTTON TOUCHEND (ENHANCED) ===');
                 
                 // Check if we're currently scrolling using the enhanced detection
                 if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
                     if (window.beautifulButtons.isScrolling()) {
-                        console.log('Touch blocked - user is scrolling');
                         e.preventDefault();
                         e.stopPropagation();
                         return false;
@@ -264,7 +234,6 @@ function setupFormHandlers() {
                 
                 // Add a small delay to ensure the touch event completes
                 touchTimeout = setTimeout(() => {
-                    console.log('Touch timeout triggered, calling saveCatchData...');
                     
                     // Check if this is a valid touch (not part of a scroll or drag)
                     const rect = submitButton.getBoundingClientRect();
@@ -276,24 +245,17 @@ function setupFormHandlers() {
                         touch.clientY >= rect.top && 
                         touch.clientY <= rect.bottom) {
                         
-                        console.log('Valid touch detected, saving catch...');
                         saveCatchData();
                     } else {
-                        console.log('Touch outside button bounds, ignoring');
                     }
                 }, 100); // Increased delay slightly
                 
             }, { passive: false }); // Changed to passive: false to allow preventDefault
             
         } else {
-            console.log('No touch support detected, relying on click events');
         }
           // Add a more robust click handler for all devices
         submitButton.addEventListener('click', (e) => {
-            console.log('=== SUBMIT BUTTON CLICK (IMPROVED) ===');
-            console.log('Event type:', e.type);
-            console.log('Event target:', e.target);
-            console.log('Button element:', submitButton);
             
             // Add visual feedback
             submitButton.style.backgroundColor = '#1e40af';
@@ -311,7 +273,6 @@ function setupFormHandlers() {
             e.preventDefault();
             e.stopPropagation();
             
-            console.log('Click handler calling saveCatchData...');
             saveCatchData();
         });
         
@@ -323,31 +284,16 @@ function setupFormHandlers() {
             submitButton.style.webkitTouchCallout = 'none';
         }
         
-        console.log('=== MOBILE ENVIRONMENT DETECTION ===');
-        console.log('User Agent:', navigator.userAgent);
-        console.log('Touch Support:', hasTouchSupport);
-        console.log('Max Touch Points:', navigator.maxTouchPoints);
-        console.log('Protocol:', location.protocol);
-        console.log('Is Local File:', location.protocol === 'file:');
-        console.log('Is HTTPS:', location.protocol === 'https:');
-        console.log('Viewport Width:', window.innerWidth);
-        console.log('Screen Width:', screen.width);
         
     } else {
         console.error('Submit button not found!');
     }
     
-    console.log('Form handlers setup complete');
     
     // Add a simple test to verify the button works
     setTimeout(() => {
         const testBtn = document.querySelector('#catch-form button[type="submit"]');
         if (testBtn) {
-            console.log('=== BUTTON TEST ===');
-            console.log('Button text:', testBtn.textContent);
-            console.log('Button disabled:', testBtn.disabled);
-            console.log('Button type:', testBtn.type);
-            console.log('Button form:', testBtn.form);
         }
     }, 2000);
 }
@@ -575,10 +521,6 @@ function updateCatch() {
     // Find and update the catch
     const catchIndex = catches.findIndex(c => c.id === catchId);
     if (catchIndex !== -1) {
-        console.log('Before update:', catches[catchIndex]);
-        console.log('Updating with location name:', locationName);
-        console.log('Updating with latitude:', latitude);
-        console.log('Updating with longitude:', longitude);
         
         catches[catchIndex] = {
             ...catches[catchIndex],
@@ -594,8 +536,6 @@ function updateCatch() {
             lastModified: Date.now()
         };
         
-        console.log('After update:', catches[catchIndex]);
-        console.log('Updated catch with location:', catches[catchIndex].locationName);
         
         // Save back to localStorage with error handling
         try {
@@ -739,7 +679,6 @@ function closeFullscreenImage() {
 
 // Reset fullscreen modal to initial state
 function resetFullscreenModal() {
-    console.log('=== RESETTING FULLSCREEN MODAL ===');
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     
@@ -750,7 +689,6 @@ function resetFullscreenModal() {
         fullscreenModal.style.visibility = 'hidden';
         fullscreenModal.style.opacity = '0';
         fullscreenModal.style.zIndex = '-1';
-        console.log('Fullscreen modal aggressively hidden');
     }
     
     if (fullscreenImage) {
@@ -762,7 +700,6 @@ function resetFullscreenModal() {
         fullscreenImage.style.maxHeight = '100vh';
         fullscreenImage.style.width = 'auto';
         fullscreenImage.style.height = 'auto';
-        console.log('Fullscreen image cleared and reset');
     }
     
     // Reset rotation and zoom state
@@ -772,7 +709,6 @@ function resetFullscreenModal() {
     currentTranslateY = 0;
     isZoomed = false;
     
-    console.log('Fullscreen modal state reset complete');
 }
 
 // Handle rotate button clicks with mobile touch support and debouncing
@@ -782,12 +718,10 @@ function handleRotateClick(event) {
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     
     if (!fullscreenModal || fullscreenModal.classList.contains('hidden')) {
-        console.log('Rotate button clicked but fullscreen modal is not visible - ignoring');
         return;
     }
     
     if (!fullscreenImage || !fullscreenImage.src || fullscreenImage.src.trim() === '') {
-        console.log('Rotate button clicked but no image is loaded - ignoring');
         return;
     }
     
@@ -846,12 +780,10 @@ function cleanSpeciesName(name) {
 
 // Species Management Functions
 function setupSpeciesHandlers() {
-    console.log('=== SETTING UP SPECIES HANDLERS ===');
     const speciesInput = document.getElementById('species');
     const speciesDropdown = document.getElementById('species-dropdown');
     const manageSpeciesBtn = document.getElementById('manage-species-btn');
     
-    console.log('Species DOM elements:', {
         speciesInput: !!speciesInput,
         speciesDropdown: !!speciesDropdown,
         manageSpeciesBtn: !!manageSpeciesBtn
@@ -871,15 +803,11 @@ function setupSpeciesHandlers() {
     }
 
     async function refreshSpeciesList() {
-        console.log('=== REFRESH SPECIES LIST START ===');
         let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
-        console.log('Current species list:', speciesList);
         
         // Add species from fish database if available
         if (window.fishDB && await window.fishDB.isReady()) {
-            console.log('Fish database is ready, getting species names...');
             const dbSpecies = window.fishDB.getSpeciesNames();
-            console.log('Database species:', dbSpecies);
             
             // Add database species that aren't already in the list
             let addedCount = 0;
@@ -894,20 +822,15 @@ function setupSpeciesHandlers() {
                         isFromDatabase: true 
                     });
                     addedCount++;
-                    console.log('Added database species:', dbSpeciesName);
                 }
             });
             
-            console.log(`Added ${addedCount} species from database`);
             
             // Update localStorage with combined list
             localStorage.setItem('species', JSON.stringify(speciesList));
-            console.log('Updated species list saved to localStorage');
         } else {
-            console.log('Fish database not ready or not available');
         }
         
-        console.log('Final species list:', speciesList);
         
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
@@ -923,7 +846,6 @@ function setupSpeciesHandlers() {
             displayCustomSpeciesList();
         }
         
-        console.log('=== REFRESH SPECIES LIST END ===');
     }
 
     // Make refreshSpeciesList globally accessible for database initialization
@@ -1115,9 +1037,7 @@ function setupSpeciesHandlers() {
 
     // Initial refresh to include any already-loaded database species
     setTimeout(async () => {
-        console.log('Running initial species list refresh...');
         await refreshSpeciesList();
-        console.log('Initial species list refresh completed');
     }, 50);
 }
 
@@ -1344,19 +1264,16 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
                 // Check if still too large for localStorage (aim for <2MB base64)
                 const maxBase64Size = 2 * 1024 * 1024; // 2MB
                 if (compressedDataUrl.length > maxBase64Size) {
-                    console.log('Image still too large, reducing quality further...');
                     
                     // Try with lower quality
                     compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
                     
                     // If still too large, reduce dimensions further
                     if (compressedDataUrl.length > maxBase64Size) {
-                        console.log('Reducing dimensions further...');
                         return compressImage(file, 800, 800, 0.5).then(resolve).catch(reject);
                     }
                 }
                 
-                console.log(`Image compressed: ${Math.round(file.size/1024)}KB → ${Math.round(compressedDataUrl.length*0.75/1024)}KB`);
                 resolve(compressedDataUrl);
                 
             } catch (error) {
@@ -1374,7 +1291,6 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
 }
 
 function showFullscreenImage(imageUrl) {
-    console.log('showFullscreenImage called with:', imageUrl);
     
     // Validate image URL
     if (!imageUrl || imageUrl.trim() === '' || imageUrl === 'undefined' || imageUrl === 'null') {
@@ -1413,7 +1329,6 @@ function showFullscreenImage(imageUrl) {
     fullscreenModal.style.opacity = '1';
     fullscreenModal.style.zIndex = '1300';
     
-    console.log('Fullscreen modal shown with image:', imageUrl);
     
     // Setup touch handlers for zoom and pan
     setupImageTouchHandlers(fullscreenImage);
@@ -1872,20 +1787,12 @@ function showCatchModal(catchData) {
 
 // Function to show catch details from map popup
 function showCatchFromMap(catchId) {
-    console.log('=== showCatchFromMap START ===');
-    console.log('Showing catch from map:', catchId);
-    console.log('User agent:', navigator.userAgent);
-    console.log('Is mobile:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent));
     
     // Get all catches from localStorage
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
-    console.log('Total catches found:', catches.length);
-    console.log('Available catch IDs:', catches.map(c => c.id));
-    console.log('Looking for ID:', catchId, 'Type:', typeof catchId);
     
     // Find the specific catch - handle both string and number IDs
     const catchData = catches.find(catch_ => {
-        console.log('Comparing:', catch_.id, 'with', catchId, 'Match:', catch_.id == catchId);
         return catch_.id == catchId || catch_.id === catchId;
     });
     
@@ -1900,7 +1807,6 @@ function showCatchFromMap(catchId) {
         );
         
         if (partialMatch) {
-            console.log('Found partial match:', partialMatch);
             showCatchModal(partialMatch);
             return;
         }
@@ -1908,12 +1814,9 @@ function showCatchFromMap(catchId) {
         showMessage('Catch not found - please try again', 'error');
         return;
     }
-      console.log('Found catch data:', catchData);
     
     // Stay on the Map tab - just show the modal directly
-    console.log('Showing catch modal on Map tab');
     showCatchModal(catchData);
-    console.log('=== showCatchFromMap END ===');
 }
 
 function setupDataOptions() {
@@ -1989,7 +1892,6 @@ function setupDataOptions() {
 }
 
 function setupTabSystem() {
-    console.log('=== SETTING UP TAB SYSTEM ===');
     
     // Get tab buttons and content areas
     const historyTab = document.getElementById('history-tab-btn');
@@ -1999,7 +1901,6 @@ function setupTabSystem() {
     const recordsContainer = document.getElementById('records-container');
     const mapContainer = document.getElementById('map-view-container');
     
-    console.log('Tab elements found:', {
         historyTab: !!historyTab,
         recordsTab: !!recordsTab,
         mapTab: !!mapTab,
@@ -2085,7 +1986,6 @@ function setupTabSystem() {
       // History tab click handler
     if (historyTab) {
         historyTab.addEventListener('click', () => {
-            console.log('History tab clicked');
             switchTab(historyTab, catchLog);
         });
     }
@@ -2093,7 +1993,6 @@ function setupTabSystem() {
     // Records tab click handler with toggle behavior
     if (recordsTab) {
         recordsTab.addEventListener('click', () => {
-            console.log('Records tab clicked');
             // If records tab is already active, switch to history
             if (recordsTab.classList.contains('active')) {
                 switchTab(historyTab, catchLog);
@@ -2106,7 +2005,6 @@ function setupTabSystem() {
       // Map tab click handler with toggle behavior
     if (mapTab) {
         mapTab.addEventListener('click', () => {
-            console.log('Map tab clicked');
             // If map tab is already active, switch to records
             if (mapTab.classList.contains('active')) {
                 switchTab(recordsTab, recordsContainer);
@@ -2127,7 +2025,6 @@ function setupTabSystem() {
         switchTab(historyTab, catchLog);
     }
     
-    console.log('Tab system setup complete');
 }
 
 // Compatibility function for any legacy references
@@ -2138,7 +2035,6 @@ function setupViewToggle() {
 
 // Map functionality
 function setupMapHandlers() {
-    console.log('Setting up map handlers...');
     
     // Map modal buttons
     const closeMapModalBtn = document.getElementById('close-map-modal-btn');
@@ -2178,7 +2074,6 @@ function setupMapHandlers() {
 }
 
 function openMapModal() {
-    console.log('Opening map modal...');
     const mapModal = document.getElementById('map-modal');
     mapModal.classList.remove('hidden');
     
@@ -2193,7 +2088,6 @@ function openMapModal() {
 }
 
 function closeMapModal() {
-    console.log('Closing map modal...');
     const mapModal = document.getElementById('map-modal');
     mapModal.classList.add('hidden');
     
@@ -2227,17 +2121,14 @@ function closeMapModal() {
 }
 
 function initializeMap() {
-    console.log('Initializing map...');
     
     try {
         // Try to get user's current location first
         if (navigator.geolocation) {
-            console.log('Getting user location for map...');
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
-                    console.log('User location obtained:', userLat, userLng);
                     
                     // Initialize map with user's location
                     map = L.map('map-container').setView([userLat, userLng], 13);
@@ -2257,7 +2148,6 @@ function initializeMap() {
                         .bindPopup('📍 Your current location')
                         .openPopup();
                     
-                    console.log('Map initialized successfully with user location');
                 },
                 (error) => {
                     console.warn('Failed to get user location:', error.message);
@@ -2280,7 +2170,6 @@ function initializeMap() {
 }
 
 function initializeMapWithDefault() {
-    console.log('Initializing map with default location (Cape Town)...');
     
     try {
         // Fallback to Cape Town, South Africa
@@ -2298,7 +2187,6 @@ function initializeMapWithDefault() {
         // Add click handler
         map.on('click', onMapClick);
         
-        console.log('Map initialized successfully with default location');
         showMessage('Map loaded with default location. Allow location access for better experience.', 'info');
     } catch (error) {
         console.error('Error initializing map with default location:', error);
@@ -2307,7 +2195,6 @@ function initializeMapWithDefault() {
 }
 
 function onMapClick(e) {
-    console.log('Map clicked at:', e.latlng);
     
     selectedLatitude = e.latlng.lat;
     selectedLongitude = e.latlng.lng;
@@ -2341,7 +2228,6 @@ function onMapClick(e) {
 }
 
 function useCurrentLocationOnMap() {
-    console.log('Getting current location for map...');
     
     if (!navigator.geolocation) {
         showMessage('Geolocation is not supported by your browser', 'error');
@@ -2365,7 +2251,6 @@ function useCurrentLocationOnMap() {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             
-            console.log('Current location obtained:', lat, lng);
             
             // Center map on current location
             map.setView([lat, lng], 15);
@@ -2422,7 +2307,6 @@ function useCurrentLocationOnMap() {
 }
 
 function saveSelectedLocation() {
-    console.log('Saving selected location...');
     
     if (!selectedLatitude || !selectedLongitude) {
         showMessage('Please select a location on the map first.', 'error');
@@ -2489,60 +2373,39 @@ function saveSelectedLocation() {
 
 // Backup function to save catch data (can be called directly)
 function saveCatchData() {
-    console.log('=== SAVE CATCH DATA CALLED DIRECTLY ===');
-    console.log('Function called at:', new Date().toISOString());
-    console.log('Call stack:', new Error().stack);
     
     // Check if we're currently scrolling
     if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
         if (window.beautifulButtons.isScrolling()) {
-            console.log('WARNING: saveCatchData called during scrolling - blocking execution');
             return;
         }
     }
     
     try {
-        console.log('Step 1: Getting form elements');
         const speciesInput = document.getElementById('species');
         const lengthInput = document.getElementById('length');
         const weightInput = document.getElementById('weight');
         const datetimeInput = document.getElementById('datetime');
         
-        console.log('Form inputs found:');
-        console.log('- speciesInput:', !!speciesInput, speciesInput?.value);
-        console.log('- lengthInput:', !!lengthInput, lengthInput?.value);
-        console.log('- weightInput:', !!weightInput, weightInput?.value);
-        console.log('- datetimeInput:', !!datetimeInput, datetimeInput?.value);
         
-        console.log('Step 2: Getting datetime and species values');
         // Get datetime - the only required field
         const datetime = datetimeInput ? datetimeInput.value : '';
         const species = speciesInput ? speciesInput.value.trim() : '';
         
-        console.log('Direct save - Datetime:', datetime);
-        console.log('Direct save - Species:', species);
         
-        console.log('Step 3: Validating required fields');
         // Validate required fields
         if (!datetime) {
-            console.log('Direct save validation failed: Missing datetime');
             showMessage('Please enter the date and time', 'error');
             return;
         }
         
         if (!species) {
-            console.log('Direct save validation failed: Missing species');
             showMessage('Please enter the species', 'error');
             return;
-        }        console.log('Step 4: Validation passed, processing catch data...');
         
         // Get length value - we'll treat it as the optional main field
         const length = lengthInput ? (lengthInput.value ? parseFloat(lengthInput.value) : null) : null;
         
-        console.log('Step 5: Creating catch data object');
-        console.log('Length:', length);
-        console.log('Weight:', weightInput?.value);
-        console.log('Photo data:', document.getElementById('photo')?.dataset?.imageData ? 'Present' : 'None');
         
         // Create catch object - making sure to only include non-empty fields
         const catchData = {
@@ -2560,27 +2423,20 @@ function saveCatchData() {
             timestamp: Date.now()
         };
         
-        console.log('Step 6: Catch data created:', catchData);
         
-        console.log('Step 7: Getting existing catches from localStorage');
         // Get existing catches from localStorage
         const catches = JSON.parse(localStorage.getItem('catches') || '[]');
         
-        console.log('Existing catches:', catches.length);
         
-        console.log('Step 8: Adding new catch to array');
         // Add new catch
         catches.push(catchData);
         
-        console.log('Step 9: Saving to localStorage');
         // Save updated catches array with better error handling
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
-            console.log('Step 10: localStorage save successful');
         } catch (storageError) {
             console.error('localStorage error:', storageError);
             if (storageError.name === 'QuotaExceededError') {
-                console.log('Step 10a: Quota exceeded, removing photo and retrying');
                 // Remove the photo data and try again
                 catchData.photo = null;
                 catches[catches.length - 1] = catchData;
@@ -2589,13 +2445,10 @@ function saveCatchData() {
             } else {
                 throw storageError;
             }
-        }        console.log('Step 11: Checking for success message');
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
-            console.log('Step 11a: Showing success message');
             showMessage('Catch saved successfully!');
         }
 
-        console.log('Step 12: Resetting form');
         // Reset form and clear data
         const catchForm = document.getElementById('catch-form');
         if (catchForm) {
@@ -2621,20 +2474,16 @@ function saveCatchData() {
         if (lngInput) lngInput.value = '';
         if (locNameInput) locNameInput.value = '';
 
-        console.log('Step 13: Reinitializing datetime');
         // Reset datetime to current time
-        initializeDatetime();        console.log('Step 14: Updating displays');
         // Update displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
         
-        console.log('Step 15: Refreshing map if visible');
         // Refresh map if the map tab is currently active
         refreshMapIfVisible();
         
-        console.log('=== SAVE CATCH DATA COMPLETED SUCCESSFULLY ===');
         
     } catch (error) {
         console.error('Error saving catch:', error);
@@ -2645,7 +2494,6 @@ function saveCatchData() {
 
 // Main map functionality for the Map tab
 function setupMainMap() {
-    console.log('=== SETTING UP MAIN MAP ===');
     
     const mapContainer = document.getElementById('map-view-container');
     const mapElement = document.getElementById('main-map');
@@ -2659,7 +2507,6 @@ function setupMainMap() {
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
     const catchesWithLocation = catches.filter(c => c.latitude && c.longitude);
     
-    console.log('Catches with location:', catchesWithLocation.length);
     
     if (catchesWithLocation.length === 0) {
         mapContainer.innerHTML = `
@@ -2675,7 +2522,6 @@ function setupMainMap() {
     
     // Initialize map if not already done
     if (!mainMap) {
-        console.log('Initializing main map...');
         
         // Calculate center point from all catches
         const avgLat = catchesWithLocation.reduce((sum, c) => sum + c.latitude, 0) / catchesWithLocation.length;
@@ -2727,12 +2573,10 @@ function setupMainMap() {
         mainMap.fitBounds(group.getBounds().pad(0.1));
     }
     
-    console.log('Main map setup complete');
 }
 
 // Handle View Details button clicks with mobile touch support
 function handleViewDetailsClick(event, catchId) {
-    console.log('handleViewDetailsClick called with:', catchId, 'Event type:', event.type);
     
     // Prevent default behavior and stop propagation
     event.preventDefault();
@@ -2744,7 +2588,6 @@ function handleViewDetailsClick(event, catchId) {
     }
     
     window.viewDetailsClickTimeout = setTimeout(() => {
-        console.log('Executing showCatchFromMap for:', catchId);
         showCatchFromMap(catchId);
         window.viewDetailsClickTimeout = null;
     }, 100); // 100ms debounce
@@ -2760,7 +2603,6 @@ function refreshMapIfVisible() {
     const mapTab = document.getElementById('map-tab-btn');
     
     if (mapContainer && !mapContainer.classList.contains('hidden') && mapTab && mapTab.classList.contains('active')) {
-        console.log('Map tab is active, refreshing map...');
         setupMainMap();
     }
 }
@@ -2783,21 +2625,12 @@ window.handleRotateClick = handleRotateClick;
 // Add touch event debugging for mobile
 document.addEventListener('touchstart', function(e) {
     if (e.target.tagName === 'BUTTON' && e.target.textContent.includes('View Details')) {
-        console.log('Touch detected on View Details button');
-        console.log('Button onclick:', e.target.onclick);
-        console.log('Button dataset:', e.target.dataset);
     }
     
     if (e.target.id === 'rotate-image-btn') {
-        console.log('Touch detected on Rotate button');
-        console.log('Button id:', e.target.id);
-        console.log('Button title:', e.target.title);
     }
     
     if (e.target.id === 'close-fullscreen-btn') {
-        console.log('Touch detected on Close fullscreen button');
-        console.log('Button id:', e.target.id);
-        console.log('Button title:', e.target.title);
     }
 }, { passive: true });
 
@@ -2811,7 +2644,6 @@ window.addEventListener('load', () => {
             fullscreenModal.style.visibility = 'hidden';
             fullscreenModal.style.opacity = '0';
             fullscreenModal.style.zIndex = '-1';
-            console.log('Window load: Force-hidden fullscreen modal');
         }
     }, 100);
 });
