@@ -1939,7 +1939,7 @@ function setupTabSystem() {
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
         mapContainer: !!mapContainer
-    });    // Function to switch tabs with proper sliding to right positions
+    });    // Function to switch tabs with proper sliding and label behavior
     function switchTab(activeTab, activeContent) {
         // Get container elements
         const leftGroup = document.querySelector('.tab-left-group');
@@ -1963,56 +1963,50 @@ function setupTabSystem() {
             }
         });
         
-        // Reset all tabs to their original positions first
+        // Clear both groups and rebuild layout
         if (leftGroup && rightGroup) {
-            // Clear both groups
-            [recordsTab, mapTab].forEach(tab => {
+            // Remove all tabs from their current positions
+            [historyTab, recordsTab, mapTab].forEach(tab => {
                 if (tab && tab.parentElement) {
                     tab.remove();
                 }
             });
             
-            // History always stays in left group
-            if (historyTab && !leftGroup.contains(historyTab)) {
-                leftGroup.appendChild(historyTab);
+            // Remove label from current position
+            if (labelElement && labelElement.parentElement) {
+                labelElement.remove();
             }
             
-            // Handle the active tab positioning
+            // Always start with History in left group
+            leftGroup.appendChild(historyTab);
+            
             if (activeTab === historyTab) {
-                // History active: Records and Map go to right group in original order
-                rightGroup.appendChild(recordsTab);
-                rightGroup.appendChild(mapTab);
-            } else if (activeTab === recordsTab) {
-                // Records active: Records slides to right (next to Map), Map stays at far right
-                rightGroup.appendChild(recordsTab);
-                rightGroup.appendChild(mapTab);
-            } else if (activeTab === mapTab) {
-                // Map active: Records goes to right, Map slides to far right edge
-                rightGroup.appendChild(recordsTab);
-                rightGroup.appendChild(mapTab);
-            }
-        }
-        
-        // Activate the selected tab
-        if (activeTab) {
-            activeTab.classList.add('active');
-            
-            // Update the label text and position it next to the active tab
-            const label = activeTab.getAttribute('data-label');
-            if (labelElement && label) {
-                labelElement.textContent = label;
+                // History active: History left with label, Records and Map slide to right (no labels)
+                historyTab.classList.add('active');
+                labelElement.textContent = historyTab.getAttribute('data-label');
+                leftGroup.appendChild(labelElement);
                 
-                // Position label next to the active tab
-                if (activeTab === historyTab) {
-                    // Label stays in left group for history
-                    if (leftGroup && !leftGroup.contains(labelElement)) {
-                        leftGroup.appendChild(labelElement);
-                    }
-                } else {
-                    // For records/map, label goes to right group after the active tab
-                    labelElement.remove();
-                    activeTab.insertAdjacentElement('afterend', labelElement);
-                }
+                // Add Records and Map to right group in sequence
+                rightGroup.appendChild(recordsTab);
+                rightGroup.appendChild(mapTab);
+                
+            } else if (activeTab === recordsTab) {
+                // Records active: Records slides next to History with label, Map stays right
+                recordsTab.classList.add('active');
+                leftGroup.appendChild(recordsTab);
+                labelElement.textContent = recordsTab.getAttribute('data-label');
+                leftGroup.appendChild(labelElement);
+                
+                // Map stays on right
+                rightGroup.appendChild(mapTab);
+                
+            } else if (activeTab === mapTab) {
+                // Map active: Records slides next to History, Map slides next to Records with label
+                mapTab.classList.add('active');
+                leftGroup.appendChild(recordsTab);
+                leftGroup.appendChild(mapTab);
+                labelElement.textContent = mapTab.getAttribute('data-label');
+                leftGroup.appendChild(labelElement);
             }
         }
         
