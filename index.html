@@ -870,53 +870,54 @@
                 </button>
             </div>
         </div>
-    </div>    <!-- Map modal for location selection -->
-    <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
-        <div class="border-beam-container rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+    </div>    <!-- Map modal for location selection - optimized for no scrolling -->
+    <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-2 sm:p-4">
+        <div class="border-beam-container rounded-lg shadow-lg w-full max-w-3xl h-[95vh] sm:h-[90vh] flex flex-col relative">
             <div class="border-beam"></div>
-            <div class="modal-content p-4 rounded-lg">
-                <button id="close-map-modal-btn" class="absolute top-2 right-2 p-2 z-10">
+            <div class="modal-content p-3 sm:p-4 rounded-lg flex-1 flex flex-col min-h-0">
+                <button id="close-map-modal-btn" class="absolute top-1 right-1 sm:top-2 sm:right-2 p-2 z-10 text-lg">
                     ✖
                 </button>
                 
-                <div class="space-y-4">
-                    <h3 class="text-xl font-bold pr-8">Select Location</h3>
-                      <div class="text-sm mb-2">
-                        <p>🗺️ Click on the map to select a location, or use the current location button</p>
+                <!-- Header - compact -->
+                <div class="flex-shrink-0 pb-2">
+                    <h3 class="text-lg sm:text-xl font-bold pr-8">Select Location</h3>
+                    <p class="text-xs sm:text-sm">🗺️ Click on the map to select a location, or use the current location button</p>
+                </div>
+                
+                <!-- Map container - takes remaining space -->
+                <div id="map-container" class="flex-1 min-h-0 rounded-md overflow-hidden"></div>
+                
+                <!-- Location details - compact -->
+                <div class="flex-shrink-0 space-y-2 py-2">
+                    <div id="selected-coordinates" class="text-xs sm:text-sm">
+                        <span class="font-medium">Selected:</span> <span id="coord-display">No location selected</span>
                     </div>
                     
-                    <!-- Map container -->
-                    <div id="map-container"></div>
-                    
-                    <!-- Location details -->
-                    <div class="space-y-3">
-                        <div id="selected-coordinates" class="text-sm">
-                            <span class="font-medium">Selected:</span> <span id="coord-display">No location selected</span>
-                        </div>
-                        
-                        <div>
-                            <label for="location-name-input" class="block text-sm font-medium mb-1">Location Name (optional):</label>
-                            <input type="text" id="location-name-input" 
-                                   class="w-full px-3 py-2 rounded-md shadow-sm"
-                                   placeholder="Enter a name for this location (optional)">
-                        </div>
+                    <div>
+                        <label for="location-name-input" class="block text-xs sm:text-sm font-medium mb-1">Location Name:</label>
+                        <input type="text" id="location-name-input" 
+                               class="w-full px-2 py-1 sm:px-3 sm:py-2 rounded-md shadow-sm text-sm"
+                               placeholder="Enter a name for this location (optional)">
                     </div>
+                </div>
                     
-                    <!-- Action buttons -->
-                    <div class="flex gap-3 pt-4 border-t">                        <button id="use-current-location-btn" 
-                                class="shiny-button ripple-effect" style="--button-color: #22c55e; --button-bg: #dcfce7; --button-text: #15803d;">
-                            📍 Use My Location
-                        </button>
-                        <button id="save-map-location-btn" 
-                                class="shiny-button ripple-effect flex-1 disabled:opacity-50"
-                                disabled>
-                            Save Location
-                        </button>
-                        <button id="cancel-map-modal-btn" 
-                                class="shiny-button ripple-effect">
-                            Cancel
-                        </button>
-                    </div>
+                <!-- Action buttons with optimized sizing -->
+                <div class="flex-shrink-0 flex gap-2 sm:gap-3 pt-2 border-t">
+                    <button id="use-current-location-btn" 
+                            class="shiny-button ripple-effect flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2" style="--button-color: #22c55e; --button-bg: #dcfce7; --button-text: #15803d;">
+                        📍 My Location
+                    </button>
+                    <button id="save-map-location-btn" 
+                            class="shiny-button ripple-effect flex-1 disabled:opacity-50 font-semibold text-sm sm:text-base"
+                            disabled>
+                        Save Location
+                    </button>
+                    <button id="cancel-map-modal-btn" 
+                            class="shiny-button ripple-effect flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">
+                        Cancel
+                    </button>
+                </div>
                 </div>
             </div>
         </div>

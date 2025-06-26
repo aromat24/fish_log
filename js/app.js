@@ -574,7 +574,13 @@ function updateCatch() {
     
     // Find and update the catch
     const catchIndex = catches.findIndex(c => c.id === catchId);
-    if (catchIndex !== -1) {        catches[catchIndex] = {
+    if (catchIndex !== -1) {
+        console.log('Before update:', catches[catchIndex]);
+        console.log('Updating with location name:', locationName);
+        console.log('Updating with latitude:', latitude);
+        console.log('Updating with longitude:', longitude);
+        
+        catches[catchIndex] = {
             ...catches[catchIndex],
             species,
             length: isNaN(length) || !document.getElementById('edit-length').value ? null : length,
@@ -588,7 +594,10 @@ function updateCatch() {
             lastModified: Date.now()
         };
         
-        console.log('Updated catch with location:', catches[catchIndex].locationName);        // Save back to localStorage with error handling
+        console.log('After update:', catches[catchIndex]);
+        console.log('Updated catch with location:', catches[catchIndex].locationName);
+        
+        // Save back to localStorage with error handling
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
         } catch (storageError) {

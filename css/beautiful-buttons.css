@@ -1206,3 +1206,31 @@ body {
 .mx-auto {
   background-color: var(--bg-primary) !important;
 }
+
+/* === MAP MODAL OPTIMIZATION === */
+#map-modal #map-container {
+  min-height: 300px;
+  height: 100%;
+}
+
+/* Ensure map modal is properly sized without scrolling */
+#map-modal .modal-content {
+  height: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+#map-modal .border-beam-container {
+  overflow: hidden;
+}
+
+/* Responsive map modal adjustments */
+@media (max-width: 640px) {
+  #map-modal #map-container {
+    min-height: 250px;
+  }
+  
+  #map-modal .modal-content {
+    padding: 0.75rem;
+  }
+}
