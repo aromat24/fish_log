@@ -573,7 +573,9 @@ function updateCatch() {
             longitude: longitude ? parseFloat(longitude) : null,
             photo: photo || null,
             lastModified: Date.now()
-        };        // Save back to localStorage with error handling
+        };
+        
+        console.log('Updated catch with location:', catches[catchIndex].locationName);        // Save back to localStorage with error handling
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
         } catch (storageError) {
@@ -2421,19 +2423,8 @@ function saveSelectedLocation() {
         
         // Update edit location button with feedback
         const editLocationBtn = document.getElementById('edit-location-btn');
-        if (editLocationBtn) {
-            const editLocationText = document.getElementById('edit-location-text');
-            if (editLocationText) {
-                const originalText = editLocationText.textContent;
-                editLocationText.textContent = 'Location Saved ✓';
-                editLocationBtn.style.setProperty('--button-bg', '#22c55e');
-                editLocationBtn.style.setProperty('--button-text', '#ffffff');
-                setTimeout(() => {
-                    editLocationText.textContent = originalText;
-                    editLocationBtn.style.removeProperty('--button-bg');
-                    editLocationBtn.style.removeProperty('--button-text');
-                }, 2000);
-            }
+        if (editLocationBtn && window.addSuccessFeedback) {
+            window.addSuccessFeedback(editLocationBtn);
         }
         
         // Clear edit mode flag

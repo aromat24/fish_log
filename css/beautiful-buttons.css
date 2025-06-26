@@ -41,7 +41,7 @@
   --bg-tertiary: #4a5568;
   --bg-form: #2d3748; /* Consistent with secondary for forms */
   --bg-input: #374151; /* Darker input backgrounds for night mode */
-  --bg-modal: #2d3748; /* Darker modal background for night mode */
+  --bg-modal: #374151; /* Lighter than form for better contrast in night mode */
   --text-primary: #f7fafc;
   --text-secondary: #e2e8f0;
   --text-muted: #a0aec0;
@@ -75,7 +75,7 @@
     --bg-tertiary: #4a5568;
     --bg-form: #2d3748;
     --bg-input: #374151;
-    --bg-modal: #2d3748;
+    --bg-modal: #374151; /* Lighter than form for better contrast in night mode */
     --text-primary: #f7fafc;
     --text-secondary: #e2e8f0;
     --text-muted: #a0aec0;
@@ -1020,13 +1020,67 @@ label {
   color: var(--text-secondary) !important;
 }
 
-/* === RESPONSIVE IMPROVEMENTS === */
-@media (max-width: 768px) {
-  .form-section {
-    background-color: var(--bg-form);
-  }
-  
-  .modal-content {
-    background-color: var(--bg-modal);
-  }
+/* === CATCH HISTORY AND RECORDS TILES === */
+.catch-entry,
+.record-entry,
+.species-item,
+#custom-species-list .flex {
+  background-color: var(--bg-modal) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.3s ease;
+}
+
+.catch-entry:hover,
+.record-entry:hover,
+.species-item:hover,
+#custom-species-list .flex:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Catch entry text elements */
+.catch-entry h4,
+.catch-entry .text-lg {
+  color: var(--btn-primary-start) !important;
+}
+
+.catch-entry p,
+.catch-entry .text-sm,
+.catch-entry .text-xs {
+  color: var(--text-secondary) !important;
+}
+
+.catch-entry .text-gray-500,
+.catch-entry .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+/* Record entry text elements */
+.record-entry h4,
+.record-entry .text-lg {
+  color: var(--btn-primary-start) !important;
+}
+
+.record-entry p,
+.record-entry .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+/* Species list items */
+#custom-species-list .flex {
+  background-color: var(--bg-modal) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#custom-species-list .flex span {
+  color: var(--text-primary) !important;
+}
+
+#custom-species-list .flex button {
+  color: var(--text-muted) !important;
+  transition: color 0.2s ease;
+}
+
+#custom-species-list .flex button:hover {
+  color: var(--text-primary) !important;
 }
