@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
     '/js/fishDatabase.js',
     '/js/beautiful-buttons.js',
     '/css/beautiful-buttons.css',
-    '/IMG-20160902-WA0002.jpg'
+    '/Splashscreen.jpg'
 ];
 
 self.addEventListener('install', (event) => {
