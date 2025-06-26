@@ -6,9 +6,13 @@
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e2e8f0;
+  --bg-form: #f1f5f9; /* Slightly darker than primary for form contrast */
+  --bg-input: #ffffff; /* Lighter input backgrounds for day mode */
+  --bg-modal: #ffffff;
   --text-primary: #1a202c;
   --text-secondary: #4a5568;
   --text-muted: #718096;
+  --text-label: #374151;
   
   /* Button Colors - Day Mode */
   --btn-primary-start: #3182ce;
@@ -23,8 +27,11 @@
   /* Border and Shadow Colors */
   --border-light: #e2e8f0;
   --border-medium: #cbd5e0;
+  --border-input: #d1d5db;
+  --border-input-focus: #3b82f6;
   --shadow-light: rgba(74, 85, 104, 0.1);
   --shadow-medium: rgba(74, 85, 104, 0.25);
+  --shadow-input: rgba(59, 130, 246, 0.1);
 }
 
 /* Night Mode Colors */
@@ -32,9 +39,13 @@
   --bg-primary: #1a202c;
   --bg-secondary: #2d3748;
   --bg-tertiary: #4a5568;
+  --bg-form: #2d3748; /* Consistent with secondary for forms */
+  --bg-input: #374151; /* Darker input backgrounds for night mode */
+  --bg-modal: #2d3748; /* Darker modal background for night mode */
   --text-primary: #f7fafc;
   --text-secondary: #e2e8f0;
   --text-muted: #a0aec0;
+  --text-label: #e2e8f0;
   
   /* Button Colors - Night Mode (Warmer, easier on eyes) */
   --btn-primary-start: #4a5568;
@@ -49,8 +60,11 @@
   /* Softer shadows for night mode */
   --border-light: #4a5568;
   --border-medium: #718096;
+  --border-input: #4a5568;
+  --border-input-focus: #60a5fa;
   --shadow-light: rgba(0, 0, 0, 0.3);
   --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-input: rgba(96, 165, 250, 0.2);
 }
 
 /* Auto Night Mode (based on system preference) */
@@ -59,9 +73,13 @@
     --bg-primary: #1a202c;
     --bg-secondary: #2d3748;
     --bg-tertiary: #4a5568;
+    --bg-form: #2d3748;
+    --bg-input: #374151;
+    --bg-modal: #2d3748;
     --text-primary: #f7fafc;
     --text-secondary: #e2e8f0;
     --text-muted: #a0aec0;
+    --text-label: #e2e8f0;
     
     --btn-primary-start: #4a5568;
     --btn-primary-mid: #718096;
@@ -74,8 +92,11 @@
     
     --border-light: #4a5568;
     --border-medium: #718096;
+    --border-input: #4a5568;
+    --border-input-focus: #60a5fa;
     --shadow-light: rgba(0, 0, 0, 0.3);
     --shadow-medium: rgba(0, 0, 0, 0.5);
+    --shadow-input: rgba(96, 165, 250, 0.2);
   }
 }
 
@@ -742,3 +763,31 @@
     overflow: visible;
   }
 }
+
+/* === MAIN CONTAINER THEMING === */
+.app-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Landing page adjustments for theming */
+#landing-page {
+  color: var(--text-primary);
+}
+
+#landing-header h1,
+#landing-header p {
+  color: white; /* Keep white for landing page contrast */
+}
+
+/* === TAB CONTENT THEMING === */
+.tab-container .text-lg {
+  color: var(--text-primary) !important;
+}
+
+.active-tab-label {
+  color: var(--text-primary) !important;
+}
+
+/* === ADDITIONAL RESPONSIVE IMPROVEMENTS === */
