@@ -14,30 +14,45 @@ function initializeBeautifulButtons() {
 function initializeRippleEffects() {
     // Add ripple effect to all buttons
     document.addEventListener('click', function(e) {
-        // Skip if currently scrolling
-        if (isScrolling) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-        
         const button = e.target.closest('button');
         if (button && !button.disabled) {
-            createRippleEffect(e, button);
+            // Only create ripple effect if not scrolling, but don't block the actual click
+            if (!isCurrentlyScrolling()) {
+                createRippleEffect(e, button);
+            }
         }
     });
     
-    // Also prevent touch events during scrolling
+    // Enhanced touch event protection
     document.addEventListener('touchend', function(e) {
-        if (isScrolling) {
-            const button = e.target.closest('button');
-            if (button) {
+        const button = e.target.closest('button');
+        if (button && button.type === 'submit') {
+            // Prevent submit buttons during any form of scrolling
+            if (isCurrentlyScrolling()) {
+                console.log('Blocking submit button during scroll:', {
+                    isScrolling,
+                    isTouchScrolling,
+                    timeSinceScroll: Date.now() - lastScrollTime,
+                    timeSinceTouchMove: Date.now() - lastTouchMoveTime,
+                    scrollVelocity
+                });
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
         }
     });
+    
+    // Additional protection for click events during scrolling
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button');
+        if (button && button.type === 'submit' && isCurrentlyScrolling()) {
+            console.log('Blocking submit button click during scroll');
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }, true); // Use capture phase to catch early
 }
 
 function createRippleEffect(event, button) {
@@ -199,30 +214,85 @@ function addSuccessFeedback(button) {
     }, 1500);
 }
 
-// Scroll detection to prevent accidental button clicks
+// Enhanced scroll detection to prevent accidental button clicks
 let isScrolling = false;
+let isTouchScrolling = false;
 let scrollTimeout;
+let touchScrollTimeout;
+let lastScrollTime = 0;
+let lastTouchMoveTime = 0;
+let scrollVelocity = 0;
+let lastScrollY = 0;
 
-// Track scroll state
+// Track scroll state with improved detection
 function trackScrollState() {
+    // Track regular scroll events
     window.addEventListener('scroll', function() {
+        const currentScrollY = window.scrollY;
+        const currentTime = Date.now();
+        
+        // Calculate scroll velocity
+        if (lastScrollTime > 0) {
+            const deltaY = Math.abs(currentScrollY - lastScrollY);
+            const deltaTime = currentTime - lastScrollTime;
+            scrollVelocity = deltaTime > 0 ? deltaY / deltaTime : 0;
+        }
+        
+        lastScrollY = currentScrollY;
+        lastScrollTime = currentTime;
         isScrolling = true;
+        
         clearTimeout(scrollTimeout);
+        
+        // Use dynamic timeout based on scroll velocity
+        const timeoutDelay = Math.max(50, Math.min(200, 100 + (scrollVelocity * 10)));
         
         scrollTimeout = setTimeout(function() {
             isScrolling = false;
-        }, 150); // 150ms delay after scroll ends
+            scrollVelocity = 0;
+        }, timeoutDelay);
     }, { passive: true });
     
-    // Also track touch scroll events
-    document.addEventListener('touchmove', function() {
-        isScrolling = true;
-        clearTimeout(scrollTimeout);
-        
-        scrollTimeout = setTimeout(function() {
-            isScrolling = false;
-        }, 150);
+    // Track touch-based scrolling with enhanced detection
+    document.addEventListener('touchstart', function() {
+        // Reset touch scrolling state on new touch
+        isTouchScrolling = false;
     }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        isTouchScrolling = true;
+        lastTouchMoveTime = Date.now();
+        
+        clearTimeout(touchScrollTimeout);
+        
+        touchScrollTimeout = setTimeout(function() {
+            isTouchScrolling = false;
+        }, 150); // Slightly longer timeout for touch
+    }, { passive: true });
+    
+    // Additional protection for momentum scrolling on iOS
+    document.addEventListener('touchend', function() {
+        if (isTouchScrolling) {
+            // Extend the protection period for momentum scrolling
+            clearTimeout(touchScrollTimeout);
+            touchScrollTimeout = setTimeout(function() {
+                isTouchScrolling = false;
+            }, 300); // Longer timeout to account for iOS momentum scrolling
+        }
+    }, { passive: true });
+}
+
+// Helper function to check if user is currently scrolling
+function isCurrentlyScrolling() {
+    const now = Date.now();
+    const timeSinceScroll = now - lastScrollTime;
+    const timeSinceTouchMove = now - lastTouchMoveTime;
+    
+    return isScrolling || 
+           isTouchScrolling || 
+           timeSinceScroll < 100 || 
+           timeSinceTouchMove < 150 ||
+           scrollVelocity > 0.5; // High velocity indicates recent scrolling
 }
 
 // Initialize when DOM is loaded
@@ -248,5 +318,6 @@ window.beautifulButtons = {
     initialize: initializeBeautifulButtons,
     applyStyles: applyBeautifulButtonStyles,
     reapply: reapplyBeautifulStyles,
-    createRipple: createRippleEffect
+    createRipple: createRippleEffect,
+    isScrolling: isCurrentlyScrolling
 };

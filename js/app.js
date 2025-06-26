@@ -243,9 +243,19 @@ function setupFormHandlers() {
         if (hasTouchSupport) {
             console.log('Touch support detected, adding touch handlers');
             
-            // Use a simpler approach - just add a touchend handler without preventing default
+            // Enhanced touch handler with improved scroll detection
             submitButton.addEventListener('touchend', (e) => {
-                console.log('=== SUBMIT BUTTON TOUCHEND (IMPROVED) ===');
+                console.log('=== SUBMIT BUTTON TOUCHEND (ENHANCED) ===');
+                
+                // Check if we're currently scrolling using the enhanced detection
+                if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
+                    if (window.beautifulButtons.isScrolling()) {
+                        console.log('Touch blocked - user is scrolling');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                }
                 
                 // Clear any existing timeout to prevent double submission
                 if (touchTimeout) {
@@ -271,9 +281,9 @@ function setupFormHandlers() {
                     } else {
                         console.log('Touch outside button bounds, ignoring');
                     }
-                }, 50);
+                }, 100); // Increased delay slightly
                 
-            }, { passive: true }); // Use passive: true for better performance
+            }, { passive: false }); // Changed to passive: false to allow preventDefault
             
         } else {
             console.log('No touch support detected, relying on click events');
@@ -2403,6 +2413,15 @@ function saveSelectedLocation() {
 function saveCatchData() {
     console.log('=== SAVE CATCH DATA CALLED DIRECTLY ===');
     console.log('Function called at:', new Date().toISOString());
+    console.log('Call stack:', new Error().stack);
+    
+    // Check if we're currently scrolling
+    if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
+        if (window.beautifulButtons.isScrolling()) {
+            console.log('WARNING: saveCatchData called during scrolling - blocking execution');
+            return;
+        }
+    }
     
     try {
         console.log('Step 1: Getting form elements');
