@@ -1177,6 +1177,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 
+/* Override Tailwind body gradient specifically */
+body.bg-gradient-to-br {
+  background: var(--bg-primary) !important;
+}
+
 .min-h-screen {
   background-color: var(--bg-primary) !important;
 }
@@ -1221,8 +1226,8 @@ body {
 .container, .max-w-3xl {
   background-color: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
-  border: 2px solid var(--border-light) !important;
   transition: all 0.3s ease;
+  /* Remove problematic border */
 }
 
 /* Override any Tailwind background gradients */
@@ -1248,6 +1253,24 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--btn-primary-start) !important;
   box-shadow: 0 0 0 2px var(--shadow-light) !important;
   outline: none !important;
+}
+
+/* Specific input type styling */
+input[type="text"], input[type="number"], input[type="datetime-local"], input[type="email"], input[type="password"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+  border-color: var(--btn-primary-start) !important;
+  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+}
+
+/* Placeholder text styling */
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
 }
 
 /* Label theming */
@@ -1358,13 +1381,25 @@ div[data-catch-id] p, div[data-species] p,
   background-color: var(--bg-secondary) !important;
 }
 
+/* Additional container border fixes */
+.max-w-3xl.rounded-xl {
+  border: none !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Ensure the main container has proper theming */
+.app-container {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
 /* Ensure landing page doesn't interfere with main app */
 #landing-page {
   background-color: transparent;
 }
 
 #app-content {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--bg-primary) !important;
   color: var(--text-primary) !important;
 }
 
@@ -1372,3 +1407,41 @@ div[data-catch-id] p, div[data-species] p,
 .bg-gray-50, .bg-gray-100, .from-gray-50, .to-gray-100 {
   background: var(--bg-primary) !important;
 }
+
+/* Override Tailwind input styles specifically */
+.bg-white input, .bg-white textarea, .bg-white select,
+input.bg-white, textarea.bg-white, select.bg-white {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* Override Tailwind text colors */
+.text-gray-900, .text-gray-800, .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-600, .text-gray-500 {
+  color: var(--text-secondary) !important;
+}
+
+/* === THEME TOGGLE BUTTON SPECIFIC STYLING === */
+#theme-toggle-btn {
+  background: linear-gradient(135deg, var(--btn-secondary-start) 0%, var(--btn-secondary-mid) 50%, var(--btn-secondary-end) 100%) !important;
+  color: var(--btn-text-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  transition: all 0.3s ease !important;
+}
+
+#theme-toggle-btn:hover {
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%) !important;
+  color: var(--btn-text-primary) !important;
+  transform: translateY(-1px) !important;
+}
+
+#theme-toggle-btn:active {
+  transform: translateY(0) !important;
+  background: linear-gradient(135deg, var(--btn-primary-end) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-start) 100%) !important;
+}
+
+/* === THEME TOGGLE BUTTON SPECIFIC STYLING === */
