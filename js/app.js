@@ -2836,8 +2836,3 @@ if (mainLocationNameInput) {
     // Add the handler
     mainLocationNameInput.addEventListener('keydown', mainLocationNameInput._enterHandler);
 }
-
-// Calculate weight when length or species changes
-lengthInput.addEventListener('input', autoCalculateWeight);
-speciesInput.addEventListener('input', autoCalculateWeight);
-speciesInput.addEventListener('change', autoCalculateWeight);
