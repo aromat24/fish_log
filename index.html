@@ -575,7 +575,7 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
 
-    <div class="container mx-auto max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="container mx-auto max-w-3xl rounded-xl shadow-lg overflow-hidden">
         <div id="landing-page" class="p-4 md:p-8 text-center" style="background-image: url('IMG-20160902-WA0002.jpg');">
             <div id="landing-header" class="relative z-10">
                 <h1 class="text-3xl md:text-5xl font-bold mb-2">Ghoti - Hooked</h1>
@@ -589,18 +589,18 @@
         </div>        <div id="app-content" class="hidden app-container">
             <div class="form-section">
                 <form id="catch-form" class="mb-8 space-y-4" novalidate>
-                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Log a New Catch</h2>
+                    <h2 class="text-xl font-semibold border-b pb-2 mb-4">Log a New Catch</h2>
 
                     <div>
-                        <label for="species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
+                        <label for="species" class="block text-sm font-medium mb-1">Species:</label>
                         <div class="relative">
                             <input type="text" id="species" name="species" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3 py-2 rounded-md shadow-sm"
                                 autocomplete="off"
-                                placeholder="Search or enter species name">                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto" style="overscroll-behavior: contain;">
+                                placeholder="Search or enter species name">                            <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 rounded-md shadow-lg max-h-60 overflow-auto" style="overscroll-behavior: contain;">
                                 <!-- Species suggestions will be populated here -->
                             </div>                            <button type="button" id="manage-species-btn" 
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 active:text-gray-600 w-6 h-6 flex items-center justify-center transition-none"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center transition-none"
                                 title="Manage Species List">
                                 ⚙
                             </button>
@@ -609,33 +609,33 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
+                            <label for="length" class="block text-sm font-medium mb-1">Length (cm):</label>
                             <input type="number" id="length" name="length" step="0.1" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3 py-2 rounded-md shadow-sm"
                                 placeholder="Enter fish length">
                         </div>
                         <div>
-                            <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
+                            <label for="weight" class="block text-sm font-medium mb-1">Weight (kg):</label>
                             <input type="number" id="weight" name="weight" step="0.01" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3 py-2 rounded-md shadow-sm"
                                 placeholder="Will auto-calculate from length">
                         </div>
                     </div>
 
                     <div>
-                        <label for="datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
-                        <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <label for="datetime" class="block text-sm font-medium mb-1">Date & Time:</label>
+                        <input type="datetime-local" id="datetime" name="datetime" required class="w-full px-3 py-2 rounded-md shadow-sm">
                     </div>
 
                     <div>
-                        <label for="notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
+                        <label for="notes" class="block text-sm font-medium mb-1">Notes:</label>
                         <textarea id="notes" name="notes" rows="2" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-3 py-2 rounded-md shadow-sm"
                             placeholder="Bait used: Sardine, Hook size: 2/0, Location details, Weather conditions, etc."></textarea>
                     </div>
 
                     <div class="border-t pt-4 space-y-2">
-                        <label class="block text-sm font-medium text-gray-600">Location:</label>
+                        <label class="block text-sm font-medium">Location:</label>
                         
                         <!-- Move notification pop-up here, above location status -->
                         <div id="message-box" class="hidden p-3 rounded-md text-sm mb-2"></div>
@@ -657,7 +657,7 @@
                                 </div>
                             </div>
                             <div class="location-status-row">
-                                <span id="location-status" class="text-sm text-gray-500">Location not saved.</span>
+                                <span id="location-status" class="text-sm">Location not saved.</span>
                             </div>
                         </div>
                         <input type="hidden" id="latitude" name="latitude">
@@ -665,24 +665,24 @@
                         <input type="hidden" id="location-name" name="location-name">
                         
                         <!-- Data options dropdown menu -->
-                        <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200">
-                            <button type="button" id="export-data-btn" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2">
+                        <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 rounded-md shadow-lg z-50">
+                            <button type="button" id="export-data-btn" class="w-full px-4 py-2 text-left text-sm flex items-center gap-2">
                                 <span class="lucide lucide-export"></span> Export Data
                             </button>
-                            <label for="import-data-input" class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
+                            <label for="import-data-input" class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 cursor-pointer">
                                 <span class="lucide lucide-import"></span> Import Data
                             </label>
                             <input type="file" id="import-data-input" accept=".json" class="hidden">
                         </div>
                     </div>                    <div class="photo-upload">
-                        <label for="photo" class="block text-sm font-medium text-gray-600 mb-2">Photo:</label>
+                        <label for="photo" class="block text-sm font-medium mb-2">Photo:</label>
                         <div class="relative">
                             <input type="file" id="photo" name="photo" accept="image/*" class="hidden">
                             <button type="button" id="photo-upload-btn" class="shiny-button ripple-effect w-full">
                                 <span class="lucide lucide-camera"></span> <span id="photo-btn-text">Add Photo</span>
                             </button>
                         </div>
-                        <p id="photo-helper-text" class="text-xs text-gray-500 mt-1">Upload a photo of your catch (optional)</p>
+                        <p id="photo-helper-text" class="text-xs mt-1">Upload a photo of your catch (optional)</p>
                     </div>
 
                     <button type="submit" class="shiny-button shimmer-border ripple-effect w-full mt-4" style="touch-action: manipulation;">
@@ -696,7 +696,7 @@
                                     <button id="history-tab-btn" class="tab-button shiny-button ripple-effect active px-3 py-2 text-sm font-medium" data-label="Catch History">
                                         📋
                                     </button>
-                                    <span id="active-tab-label" class="text-lg font-medium text-gray-700 active-tab-label">Catch History</span>
+                                    <span id="active-tab-label" class="text-lg font-medium active-tab-label">Catch History</span>
                                     <!-- Active tab will be inserted here dynamically -->
                                 </div>
                                 <div class="tab-right-group">
@@ -711,7 +711,7 @@
                         </div>
                         <!-- Buttons moved to location section -->
                     </div>                    <div id="catch-log" class="space-y-4">
-                        <p class="text-gray-500 italic">No catches logged yet.</p>
+                        <p class="italic">No catches logged yet.</p>
                     </div>
                     <div id="records-container" class="hidden space-y-4"></div>
                     <div id="map-view-container" class="hidden">
@@ -727,26 +727,26 @@
 
     <div id="catch-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1200] p-4" data-modal-background>
         <div class="shine-border rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
-            <div class="modal-content bg-white p-4 rounded-lg">
-                <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+            <div class="modal-content p-4 rounded-lg">
+                <button id="close-modal-btn" class="absolute top-2 right-2 p-2 z-10">
                     ✖
                 </button>
                 <div class="space-y-3">
-                    <h3 id="modal-species" class="text-xl font-bold text-blue-700 pr-8"></h3>
-                    <p id="modal-date" class="text-sm text-gray-500"></p>
+                    <h3 id="modal-species" class="text-xl font-bold pr-8"></h3>
+                    <p id="modal-date" class="text-sm"></p>
                     
                     <div class="flex flex-wrap gap-2">
-                        <p id="modal-length" class="text-sm text-gray-600"></p>
-                        <p id="modal-weight" class="text-sm text-gray-600"></p>
+                        <p id="modal-length" class="text-sm"></p>
+                        <p id="modal-weight" class="text-sm"></p>
                     </div>
-                      <div id="modal-location-container" class="text-sm text-gray-600">
+                      <div id="modal-location-container" class="text-sm">
                         <p class="flex flex-wrap items-center gap-1">
                             <span>Location:</span>
-                            <span id="modal-location-name" class="text-blue-600"></span>
+                            <span id="modal-location-name"></span>
                         </p>
                     </div>
                     
-                    <p id="modal-notes" class="text-sm text-gray-600"></p>
+                    <p id="modal-notes" class="text-sm"></p>
                       <div id="modal-photo-container" class="mb-4 hidden">
                         <img id="modal-photo" class="w-full h-48 object-cover rounded-md cursor-pointer" alt="Catch Photo">
                         <p class="text-xs text-gray-500 mt-1">Tap image to view full size</p>
@@ -767,34 +767,34 @@
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="border-beam-container rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
             <div class="border-beam"></div>
-            <div class="modal-content bg-white p-4 rounded-lg">
-                <button id="close-edit-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+            <div class="modal-content p-4 rounded-lg">
+                <button id="close-edit-modal-btn" class="absolute top-2 right-2 p-2 z-10">
                     ✖
                 </button>
                 <form id="edit-catch-form" class="space-y-4">
                     <div>
-                        <label for="edit-species" class="block text-sm font-medium text-gray-600 mb-1">Species:</label>
-                        <input type="text" id="edit-species" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <label for="edit-species" class="block text-sm font-medium mb-1">Species:</label>
+                        <input type="text" id="edit-species" required class="w-full px-3 py-2 rounded-md">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="edit-length" class="block text-sm font-medium text-gray-600 mb-1">Length (cm):</label>
-                            <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <label for="edit-length" class="block text-sm font-medium mb-1">Length (cm):</label>
+                            <input type="number" id="edit-length" step="0.1" class="w-full px-3 py-2 rounded-md">
                         </div>                        <div>
-                            <label for="edit-weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (kg):</label>
-                            <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter weight (leave blank for 0.000)">
+                            <label for="edit-weight" class="block text-sm font-medium mb-1">Weight (kg):</label>
+                            <input type="number" id="edit-weight" step="0.001" class="w-full px-3 py-2 rounded-md" placeholder="Enter weight (leave blank for 0.000)">
                         </div>
                     </div>
 
                     <div>
-                        <label for="edit-datetime" class="block text-sm font-medium text-gray-600 mb-1">Date & Time:</label>
-                        <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <label for="edit-datetime" class="block text-sm font-medium mb-1">Date & Time:</label>
+                        <input type="datetime-local" id="edit-datetime" required class="w-full px-3 py-2 rounded-md">
                     </div>
 
                     <!-- Location editing section with pin icon -->
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-600">Location:</label>
+                        <label class="block text-sm font-medium">Location:</label>
                         <div class="flex gap-2">
                             <button type="button" id="edit-location-btn" class="shiny-button ripple-effect w-full flex items-center justify-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -804,16 +804,16 @@
                                 <span id="edit-location-text">Edit Location</span>
                             </button>
                         </div>
-                        <div id="edit-location-status" class="text-sm text-gray-500">No location set</div>
+                        <div id="edit-location-status" class="text-sm">No location set</div>
                     </div>
 
                     <div>
-                        <label for="edit-notes" class="block text-sm font-medium text-gray-600 mb-1">Notes:</label>
-                        <input type="text" id="edit-notes" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <label for="edit-notes" class="block text-sm font-medium mb-1">Notes:</label>
+                        <input type="text" id="edit-notes" class="w-full px-3 py-2 rounded-md">
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-600">Photo:</label>
+                        <label class="block text-sm font-medium">Photo:</label>
                         <button type="button" id="edit-photo-btn" class="shiny-button ripple-effect w-full">
                             <span class="lucide lucide-camera"></span> <span id="edit-photo-text">Edit Photo</span>
                         </button>
@@ -836,12 +836,12 @@
 
     <!-- Add location name modal -->
     <div id="location-name-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
-            <h3 class="text-xl font-bold text-blue-700 mb-4">Save Location</h3>
+        <div class="rounded-lg shadow-lg p-4 w-full max-w-md modal-content">
+            <h3 class="text-xl font-bold mb-4">Save Location</h3>
             <form id="location-name-form" class="space-y-4">
                 <div>
-                    <label for="modal-location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name:</label>
-                    <input type="text" id="modal-location-name-input" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <label for="modal-location-name-input" class="block text-sm font-medium mb-1">Location Name:</label>
+                    <input type="text" id="modal-location-name-input" required class="w-full px-3 py-2 rounded-md">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
@@ -873,16 +873,16 @@
 
     <!-- Species manager modal -->
     <div id="manage-species-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-blue-700">Manage Species</h3>
+                <h3 class="text-xl font-bold">Manage Species</h3>
                 <button class="text-gray-500 hover:text-gray-700" id="close-manage-species-btn">✖</button>
             </div>
             <div class="space-y-4">
                 <div id="custom-species-list" class="space-y-2">
                     <!-- Custom species will be listed here -->
                 </div>
-                <button id="add-species-btn" class="w-full px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600">
+                <button id="add-species-btn" class="shiny-button ripple-effect w-full">
                     Add New Species
                 </button>
             </div>
@@ -891,12 +891,12 @@
 
     <!-- New species modal -->
     <div id="species-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[51] p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
-            <h3 class="text-xl font-bold text-blue-700 mb-4">Add New Species</h3>
+        <div class="rounded-lg shadow-lg p-4 w-full max-w-md modal-content">
+            <h3 class="text-xl font-bold mb-4">Add New Species</h3>
             <form id="species-form" class="space-y-4">
                 <div>
-                    <label for="new-species-name" class="block text-sm font-medium text-gray-600 mb-1">Species Name:</label>
-                    <input type="text" id="new-species-name" required class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter species name">
+                    <label for="new-species-name" class="block text-sm font-medium mb-1">Species Name:</label>
+                    <input type="text" id="new-species-name" required class="w-full px-3 py-2 rounded-md" placeholder="Enter species name">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600">
@@ -912,9 +912,9 @@
 
     <!-- Add confirmation modal -->
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-sm">
-            <h3 class="text-xl font-bold text-gray-800 mb-4" id="confirmation-title"></h3>
-            <p class="text-gray-600 mb-6" id="confirmation-message"></p>
+        <div class="rounded-lg shadow-lg p-4 w-full max-w-sm modal-content">
+            <h3 class="text-xl font-bold mb-4" id="confirmation-title"></h3>
+            <p class="mb-6" id="confirmation-message"></p>
             <div class="flex gap-3">
                 <button id="confirm-action-btn" class="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600">
                     Delete
@@ -928,14 +928,14 @@
     <div id="map-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
         <div class="border-beam-container rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
             <div class="border-beam"></div>
-            <div class="modal-content bg-white p-4 rounded-lg">
-                <button id="close-map-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 z-10">
+            <div class="modal-content p-4 rounded-lg">
+                <button id="close-map-modal-btn" class="absolute top-2 right-2 p-2 z-10">
                     ✖
                 </button>
                 
                 <div class="space-y-4">
-                    <h3 class="text-xl font-bold text-blue-700 pr-8">Select Location</h3>
-                      <div class="text-sm text-gray-600 mb-2">
+                    <h3 class="text-xl font-bold pr-8">Select Location</h3>
+                      <div class="text-sm mb-2">
                         <p>🗺️ Click on the map to select a location, or use the current location button</p>
                     </div>
                     
@@ -944,16 +944,16 @@
                     
                     <!-- Location details -->
                     <div class="space-y-3">
-                        <div id="selected-coordinates" class="text-sm text-gray-600">
+                        <div id="selected-coordinates" class="text-sm">
                             <span class="font-medium">Selected:</span> <span id="coord-display">No location selected</span>
                         </div>
                         
                         <div>
-                            <label for="location-name-input" class="block text-sm font-medium text-gray-600 mb-1">Location Name (optional):</label>
+                            <label for="location-name-input" class="block text-sm font-medium mb-1">Location Name (optional):</label>
                             <input type="text" id="location-name-input" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   class="w-full px-3 py-2 rounded-md shadow-sm"
                                    placeholder="Enter a name for this location (optional)">
-                            <p class="text-xs text-gray-500 mt-1">Leave blank to use coordinates as location</p>
+                            <p class="text-xs mt-1">Leave blank to use coordinates as location</p>
                         </div>
                     </div>
                     
