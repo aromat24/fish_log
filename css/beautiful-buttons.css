@@ -36,16 +36,16 @@
 
 /* Night Mode Colors */
 [data-theme="night"] {
-  --bg-primary: #1a202c;
-  --bg-secondary: #2d3748;
-  --bg-tertiary: #4a5568;
-  --bg-form: #2d3748; /* Consistent with secondary for forms */
-  --bg-input: #374151; /* Darker input backgrounds for night mode */
-  --bg-modal: #374151; /* Lighter than form for better contrast in night mode */
-  --text-primary: #f7fafc;
-  --text-secondary: #e2e8f0;
-  --text-muted: #a0aec0;
-  --text-label: #e2e8f0;
+  --bg-primary: #0d1117; /* Much darker for clear contrast */
+  --bg-secondary: #161b22; /* Dark secondary */
+  --bg-tertiary: #21262d; /* Dark tertiary */
+  --bg-form: #161b22; /* Consistent with secondary for forms */
+  --bg-input: #21262d; /* Darker input backgrounds for night mode */
+  --bg-modal: #21262d; /* Lighter than form for better contrast in night mode */
+  --text-primary: #f0f6fc; /* Very light text */
+  --text-secondary: #c9d1d9; /* Light secondary text */
+  --text-muted: #8b949e; /* Muted text */
+  --text-label: #c9d1d9;
   
   /* Button Colors - Night Mode (Warmer, easier on eyes) */
   --btn-primary-start: #4a5568;
@@ -1083,4 +1083,126 @@ label {
 
 #custom-species-list .flex button:hover {
   color: var(--text-primary) !important;
+}
+
+/* === COMPREHENSIVE TILE THEMING === */
+/* Catch History Tiles */
+#catch-log [data-catch-id] {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#catch-log [data-catch-id] .text-lg,
+#catch-log [data-catch-id] h3 {
+  color: var(--text-primary) !important;
+}
+
+#catch-log [data-catch-id] .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+#catch-log [data-catch-id] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+#catch-log [data-catch-id] .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+#catch-log [data-catch-id] .font-medium {
+  color: var(--text-primary) !important;
+}
+
+/* Records Container Tiles */
+#records-container [data-catch-id] {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#records-container [data-catch-id] .text-lg,
+#records-container [data-catch-id] h3 {
+  color: var(--text-primary) !important;
+}
+
+#records-container [data-catch-id] .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+#records-container [data-catch-id] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+#records-container [data-catch-id] .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+#records-container [data-catch-id] .font-medium {
+  color: var(--text-primary) !important;
+}
+
+/* Species List Tiles */
+.species-tile {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.species-tile .text-lg,
+.species-tile .text-sm,
+.species-tile h3,
+.species-tile p {
+  color: var(--text-primary) !important;
+}
+
+/* General tile overrides for any missed elements */
+.bg-white {
+  background-color: var(--bg-modal) !important;
+}
+
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.text-blue-700 {
+  color: #3182ce !important;
+}
+
+/* Ensure consistent text readability */
+[data-theme="night"] .text-blue-700 {
+  color: #63b3ed !important; /* Lighter blue for night mode */
+}
+
+/* No catches message */
+#catch-log .italic {
+  color: var(--text-muted) !important;
+}
+
+#records-container .italic {
+  color: var(--text-muted) !important;
+}
+
+/* === BODY AND MAIN BACKGROUND THEMING === */
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.min-h-screen {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Main container backgrounds */
+.container,
+.mx-auto {
+  background-color: var(--bg-primary) !important;
 }
