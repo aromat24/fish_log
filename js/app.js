@@ -1,3 +1,4 @@
+// Force refresh to fix potential caching issues
 // Map functionality variables
 let map = null;
 let currentMarker = null;
