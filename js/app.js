@@ -613,8 +613,12 @@ function updateCatch() {
         if (editSubmitBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
             window.beautifulButtons.addSuccessFeedback(editSubmitBtn);
             
-            // Hide edit modal after the feedback effect completes (1500ms + small buffer)
+            // Hide edit modal after the feedback effect completes and ensure button is reset
             setTimeout(() => {
+                // Ensure button is properly reset before modal closes
+                editSubmitBtn.style.background = '';
+                editSubmitBtn.style.transform = '';
+                editSubmitBtn.innerHTML = '<span class="lucide lucide-save"></span> Save Changes';
                 document.getElementById('edit-modal').classList.add('hidden');
             }, 1600);
         } else {
@@ -1816,6 +1820,9 @@ function showCatchModal(catchData) {
       if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
+    } else if (catchData.latitude && catchData.longitude) {
+        locationContainer.classList.remove('hidden');
+        locationName.textContent = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
     } else {
         locationContainer.classList.add('hidden');
     }

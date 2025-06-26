@@ -6,14 +6,10 @@
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e2e8f0;
-  --bg-form: #f1f5f9; /* Slightly darker than primary for form contrast */
-  --bg-input: #ffffff; /* Lighter input backgrounds for day mode */
-  --bg-modal: #ffffff;
   --text-primary: #1a202c;
   --text-secondary: #4a5568;
   --text-muted: #718096;
-  --text-label: #374151;
-  
+
   /* Button Colors - Day Mode */
   --btn-primary-start: #3182ce;
   --btn-primary-mid: #2b77cb;
@@ -23,30 +19,23 @@
   --btn-secondary-end: #a0aec0;
   --btn-text-primary: #ffffff;
   --btn-text-secondary: #4a5568;
-  
+
   /* Border and Shadow Colors */
   --border-light: #e2e8f0;
   --border-medium: #cbd5e0;
-  --border-input: #d1d5db;
-  --border-input-focus: #3b82f6;
   --shadow-light: rgba(74, 85, 104, 0.1);
   --shadow-medium: rgba(74, 85, 104, 0.25);
-  --shadow-input: rgba(59, 130, 246, 0.1);
 }
 
 /* Night Mode Colors */
 [data-theme="night"] {
-  --bg-primary: #0d1117; /* Much darker for clear contrast */
-  --bg-secondary: #161b22; /* Dark secondary */
-  --bg-tertiary: #21262d; /* Dark tertiary */
-  --bg-form: #161b22; /* Consistent with secondary for forms */
-  --bg-input: #21262d; /* Darker input backgrounds for night mode */
-  --bg-modal: #21262d; /* Lighter than form for better contrast in night mode */
-  --text-primary: #f0f6fc; /* Very light text */
-  --text-secondary: #c9d1d9; /* Light secondary text */
-  --text-muted: #8b949e; /* Muted text */
-  --text-label: #c9d1d9;
-  
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4a5568;
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a0aec0;
+
   /* Button Colors - Night Mode (Warmer, easier on eyes) */
   --btn-primary-start: #4a5568;
   --btn-primary-mid: #718096;
@@ -56,15 +45,12 @@
   --btn-secondary-end: #718096;
   --btn-text-primary: #f7fafc;
   --btn-text-secondary: #e2e8f0;
-  
+
   /* Softer shadows for night mode */
   --border-light: #4a5568;
   --border-medium: #718096;
-  --border-input: #4a5568;
-  --border-input-focus: #60a5fa;
   --shadow-light: rgba(0, 0, 0, 0.3);
   --shadow-medium: rgba(0, 0, 0, 0.5);
-  --shadow-input: rgba(96, 165, 250, 0.2);
 }
 
 /* Auto Night Mode (based on system preference) */
@@ -73,14 +59,10 @@
     --bg-primary: #1a202c;
     --bg-secondary: #2d3748;
     --bg-tertiary: #4a5568;
-    --bg-form: #2d3748;
-    --bg-input: #374151;
-    --bg-modal: #374151; /* Lighter than form for better contrast in night mode */
     --text-primary: #f7fafc;
     --text-secondary: #e2e8f0;
     --text-muted: #a0aec0;
-    --text-label: #e2e8f0;
-    
+
     --btn-primary-start: #4a5568;
     --btn-primary-mid: #718096;
     --btn-primary-end: #a0aec0;
@@ -89,14 +71,11 @@
     --btn-secondary-end: #718096;
     --btn-text-primary: #f7fafc;
     --btn-text-secondary: #e2e8f0;
-    
+
     --border-light: #4a5568;
     --border-medium: #718096;
-    --border-input: #4a5568;
-    --border-input-focus: #60a5fa;
     --shadow-light: rgba(0, 0, 0, 0.3);
     --shadow-medium: rgba(0, 0, 0, 0.5);
-    --shadow-input: rgba(96, 165, 250, 0.2);
   }
 }
 
@@ -1232,5 +1211,142 @@ body {
   
   #map-modal .modal-content {
     padding: 0.75rem;
+  }
+}
+
+/* === COMPREHENSIVE THEMING FOR FORMS, INPUTS, AND MODALS === */
+
+/* Body and container theming */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modal backgrounds */
+.modal-content {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-light) !important;
+}
+
+/* Form container theming */
+form {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Input field theming */
+input, textarea, select {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--btn-primary-start) !important;
+  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+  outline: none !important;
+}
+
+/* Label theming */
+label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+/* Helper text and status text */
+.text-sm {
+  color: var(--text-muted) !important;
+}
+
+/* Tile theming for catch history, records, and species list */
+.catch-tile, .record-tile, .species-tile,
+div[data-catch-id], div[data-species], 
+.bg-white {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.catch-tile h3, .record-tile h3, .species-tile h3,
+div[data-catch-id] h3, div[data-species] h3,
+.text-blue-700 {
+  color: var(--btn-primary-start) !important;
+}
+
+.catch-tile p, .record-tile p, .species-tile p,
+div[data-catch-id] p, div[data-species] p,
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+/* Override any remaining Tailwind gray classes */
+.text-gray-400, .text-gray-700, .text-gray-800 {
+  color: var(--text-muted) !important;
+}
+
+/* Container backgrounds */
+.container, .max-w-4xl {
+  background-color: var(--bg-primary);
+}
+
+/* Dropdown menu theming */
+.dropdown-content {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+}
+
+.dropdown-content button {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-content button:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Status text theming */
+.text-green-600 {
+  color: #059669 !important;
+}
+
+.text-red-600 {
+  color: #dc2626 !important;
+}
+
+.text-yellow-600 {
+  color: #d97706 !important;
+}
+
+/* Message box theming */
+#message-box {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Loading and disabled states */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments for theming */
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1rem;
+  }
+  
+  input, textarea, select {
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }
