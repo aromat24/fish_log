@@ -377,11 +377,6 @@ async function calculateEstimatedWeight(species, length) {
             
             weightInput.title = calculationInfo;
             
-            // Show brief message about the calculation
-            if (result.isSpeciesSpecific) {
-                showMessage(`Weight calculated using ${result.species} specific data!`, 'info');
-            }
-            
             return result.weight;
         }
     }
