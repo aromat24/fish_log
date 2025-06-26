@@ -94,6 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSpeciesHandlers();
         setupMapHandlers(); // New map functionality
         
+        // Ensure theme system is initialized
+        if (typeof initThemeSystem === 'function') {
+            initThemeSystem();
+        }
+        
         console.log('Main app functionality initialized');
         
         // Initialize fish database and update species list

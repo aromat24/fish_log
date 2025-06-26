@@ -842,9 +842,9 @@ label {
 
 /* === MODAL THEMING === */
 .modal-content {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 2px solid var(--border-light) !important;
 }
 
 /* Modal text elements */
@@ -1174,6 +1174,7 @@ label {
 body {
   background-color: var(--bg-primary) !important;
   color: var(--text-primary) !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 
 .min-h-screen {
@@ -1216,18 +1217,17 @@ body {
 
 /* === COMPREHENSIVE THEMING FOR FORMS, INPUTS, AND MODALS === */
 
-/* Body and container theming */
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Modal backgrounds */
-.modal-content {
+/* Container and main app theming */
+.container, .max-w-3xl {
   background-color: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
   border: 2px solid var(--border-light) !important;
+  transition: all 0.3s ease;
+}
+
+/* Override any Tailwind background gradients */
+.bg-gradient-to-br {
+  background: var(--bg-primary) !important;
 }
 
 /* Form container theming */
@@ -1349,4 +1349,26 @@ div[data-catch-id] p, div[data-species] p,
   input, textarea, select {
     font-size: 16px; /* Prevent zoom on iOS */
   }
+}
+
+/* Fix container border and layout issues */
+.container.mx-auto.max-w-3xl {
+  border: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Ensure landing page doesn't interfere with main app */
+#landing-page {
+  background-color: transparent;
+}
+
+#app-content {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Force override any conflicting Tailwind classes */
+.bg-gray-50, .bg-gray-100, .from-gray-50, .to-gray-100 {
+  background: var(--bg-primary) !important;
 }
