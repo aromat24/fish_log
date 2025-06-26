@@ -607,12 +607,17 @@ function updateCatch() {
         const editSubmitBtn = document.querySelector('#edit-catch-form button[type="submit"]');
         if (editSubmitBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
             window.beautifulButtons.addSuccessFeedback(editSubmitBtn);
+            
+            // Hide edit modal after the feedback effect completes (1500ms + small buffer)
+            setTimeout(() => {
+                document.getElementById('edit-modal').classList.add('hidden');
+            }, 1600);
+        } else {
+            // If no feedback function available, close immediately
+            setTimeout(() => {
+                document.getElementById('edit-modal').classList.add('hidden');
+            }, 500);
         }
-        
-        // Hide edit modal after a brief delay to show the success feedback
-        setTimeout(() => {
-            document.getElementById('edit-modal').classList.add('hidden');
-        }, 500);
           // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
