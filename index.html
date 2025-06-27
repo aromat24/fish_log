@@ -288,8 +288,17 @@
         padding-right: env(safe-area-inset-right);
       }
 
+      /* === Ensure notification/status bar is visible in PWA fullscreen === */
+      html, body, .app-container {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        background-color: var(--bg-primary);
+        box-sizing: border-box;
+      }
+      /* On iOS, also ensure .ios-pwa-mode fills available height */
       .ios-pwa-mode {
-        /* iOS specific PWA adjustments */
         height: 100vh;
         height: -webkit-fill-available;
       }
