@@ -1509,3 +1509,18 @@ input.bg-white, textarea.bg-white, select.bg-white {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
+
+/* === ENSURE HTML AND BODY FILL SCREEN === */
+html, body {
+  background-color: var(--bg-primary) !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.app-container, .container, .mx-auto {
+  min-height: 100vh !important;
+  height: 100% !important;
+}
