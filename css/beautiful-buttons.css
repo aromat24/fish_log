@@ -1518,6 +1518,11 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
+  /* Fill safe area for iOS/Android status bar */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .app-container, .container, .mx-auto {
