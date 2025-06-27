@@ -519,7 +519,7 @@
     <script src="js/beautiful-buttons.js"></script>
     <script src="js/app.js" defer></script>
 </head>
-<body class="font-sans min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
 
     <div class="container mx-auto max-w-3xl rounded-xl shadow-lg overflow-hidden">
         <div id="landing-page" class="p-4 md:p-8 text-center" style="background-image: url('Splashscreen.jpg');">
@@ -1074,6 +1074,43 @@
         } else {
             initThemeSystem();
         }
+        
+        // Additional debugging for theme toggle button
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const themeBtn = document.getElementById('theme-toggle-btn');
+                console.log('=== THEME BUTTON DEBUG ===');
+                console.log('Theme button element:', themeBtn);
+                console.log('Theme button disabled:', themeBtn ? themeBtn.disabled : 'N/A');
+                console.log('Theme button style.pointerEvents:', themeBtn ? themeBtn.style.pointerEvents : 'N/A');
+                console.log('Theme button onclick:', themeBtn ? themeBtn.onclick : 'N/A');
+                
+                if (themeBtn) {
+                    // Add a direct onclick handler as backup
+                    themeBtn.onclick = function(e) {
+                        console.log('Direct onclick handler triggered');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const currentTheme = localStorage.getItem('theme') || 'day';
+                        const newTheme = currentTheme === 'night' ? 'day' : 'night';
+                        console.log('Switching from', currentTheme, 'to', newTheme);
+                        
+                        const root = document.documentElement;
+                        if (newTheme === 'night') {
+                            root.setAttribute('data-theme', 'night');
+                            themeBtn.textContent = '☀️';
+                            themeBtn.title = 'Switch to Day Mode';
+                        } else {
+                            root.removeAttribute('data-theme');
+                            themeBtn.textContent = '🌙';
+                            themeBtn.title = 'Switch to Night Mode';
+                        }
+                        localStorage.setItem('theme', newTheme);
+                        console.log('Theme switched successfully');
+                    };
+                }
+            }, 2000);
+        });
     </script>
 </body>
 </html>

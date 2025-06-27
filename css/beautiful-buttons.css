@@ -1182,8 +1182,23 @@ body.bg-gradient-to-br {
   background: var(--bg-primary) !important;
 }
 
+/* Remove body padding and center positioning that creates the "card" effect */
+body.min-h-screen.flex.items-center.justify-center {
+  padding: 0 !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+}
+
 .min-h-screen {
   background-color: var(--bg-primary) !important;
+}
+
+/* Make the main container fill the entire screen */
+.container.mx-auto {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
 }
 
 /* Main container backgrounds */
@@ -1224,7 +1239,7 @@ body.bg-gradient-to-br {
 
 /* Container and main app theming */
 .container, .max-w-3xl {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--bg-primary) !important;
   color: var(--text-primary) !important;
   transition: all 0.3s ease;
   /* Remove problematic border */
@@ -1235,10 +1250,15 @@ body.bg-gradient-to-br {
   background: var(--bg-primary) !important;
 }
 
-/* Form container theming */
+/* Form container theming - ensure forms blend with background */
 form {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+/* Form sections should match main background */
+.form-section {
+  background-color: var(--bg-primary) !important;
 }
 
 /* Input field theming */
@@ -1377,20 +1397,32 @@ div[data-catch-id] p, div[data-species] p,
 /* Fix container border and layout issues */
 .container.mx-auto.max-w-3xl {
   border: none !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: none !important;
   background-color: var(--bg-secondary) !important;
+  border-radius: 0 !important;
 }
 
 /* Additional container border fixes */
 .max-w-3xl.rounded-xl {
   border: none !important;
   background-color: var(--bg-secondary) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Ensure the main container has proper theming */
 .app-container {
   background-color: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
+}
+
+/* Remove Tailwind rounded and shadow classes */
+.rounded-xl {
+  border-radius: 0 !important;
+}
+
+.shadow-lg {
+  box-shadow: none !important;
 }
 
 /* Ensure landing page doesn't interfere with main app */
@@ -1431,6 +1463,8 @@ input.bg-white, textarea.bg-white, select.bg-white {
   color: var(--btn-text-secondary) !important;
   border: 1px solid var(--border-light) !important;
   transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 #theme-toggle-btn:hover {
@@ -1444,4 +1478,8 @@ input.bg-white, textarea.bg-white, select.bg-white {
   background: linear-gradient(135deg, var(--btn-primary-end) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-start) 100%) !important;
 }
 
-/* === THEME TOGGLE BUTTON SPECIFIC STYLING === */
+/* Ensure theme toggle button is not disabled by any other styles */
+#theme-toggle-btn:not(:disabled) {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
