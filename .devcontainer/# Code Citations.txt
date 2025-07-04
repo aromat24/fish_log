@@ -1,0 +1,1531 @@
+# Code Citations
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+   
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <poly
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+   
+```
+
+
+## License: unknown
+https://github.com/constructor-wars/web-app/blob/06a262ed3ccdfb6ad4df8da7823ff616a1afc130/src/components/Header/__snapshots__/NavLinks.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/PoloPCD/BlindageWeb2/blob/8c17180d8032786d676e68a5b44468225ebe4432/tutoriel%20-%20Qwant%20Junior.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+
+
+## License: AGPL-3.0
+https://github.com/userstyles-world/userstyles.world/blob/6011def9e30e8ae11d614270dd83df8ccae110e4/web/views/icons/log-out.tmpl
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+
+
+## License: MIT
+https://github.com/mindgulp/muncher-component/blob/195cfc722594d0cbe4516a7de432dafcdefdc8b0/src/__snapshots__/storybook.test.js.snap
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/TheoKnoep/read-books/blob/be93cfc8b656e9e137309d40ec02dc64c469ef5c/classes/View.js
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+
+
+## License: unknown
+https://github.com/i-am-sky/quipography/blob/578b831753e4599e730abf9258c5d8dc89f4c4a2/main/templates/main/base.html
+
+```
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <
+```
+

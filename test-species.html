@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Species Dropdown</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4">
+    <h1 class="text-2xl font-bold mb-4">Test Species Dropdown</h1>
+    
+    <div class="relative">
+        <input type="text" id="species" placeholder="Type a species name..." class="w-full p-2 border rounded">
+        <div id="species-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-auto">
+            <!-- Dropdown content -->
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <button onclick="testSpecies()" class="bg-blue-500 text-white px-4 py-2 rounded">Test Species List</button>
+        <button onclick="clearSpecies()" class="bg-red-500 text-white px-4 py-2 rounded">Clear localStorage</button>
+    </div>
+    
+    <div id="output" class="mt-4 p-4 bg-gray-100 rounded"></div>
+    
+    <script>
+        // Test species data
+        const testSpecies = [
+            { name: 'Bass', isCustom: false },
+            { name: 'Trout', isCustom: false },
+            { name: 'Salmon', isCustom: false },
+            { name: 'Pike', isCustom: false },
+            { name: 'Catfish', isCustom: false }
+        ];
+        
+        function testSpecies() {
+            const output = document.getElementById('output');
+            
+            // Set test species data
+            localStorage.setItem('species', JSON.stringify(testSpecies));
+            
+            // Test retrieval
+            const retrieved = JSON.parse(localStorage.getItem('species') || '[]');
+            output.innerHTML = `<h3>Test Species Data:</h3><pre>${JSON.stringify(retrieved, null, 2)}</pre>`;
+            
+            // Set up species input handler
+            setupSpeciesInput();
+            
+            output.innerHTML += '<p class="mt-2 text-green-600">Species input handler set up. Try typing in the input field above.</p>';
+        }
+        
+        function clearSpecies() {
+            localStorage.removeItem('species');
+            document.getElementById('output').innerHTML = '<p class="text-red-600">Species localStorage cleared.</p>';
+        }
+        
+        function setupSpeciesInput() {
+            const speciesInput = document.getElementById('species');
+            const speciesDropdown = document.getElementById('species-dropdown');
+            
+            if (!speciesInput || !speciesDropdown) {
+                console.error('Species input or dropdown not found');
+                return;
+            }
+            
+            // Remove existing event listeners
+            speciesInput.removeEventListener('input', handleSpeciesInput);
+            
+            // Add new event listener
+            speciesInput.addEventListener('input', handleSpeciesInput);
+            
+            function handleSpeciesInput() {
+                const searchTerm = speciesInput.value.toLowerCase();
+                console.log('Species input event triggered, search term:', searchTerm);
+                
+                if (searchTerm.length === 0) {
+                    speciesDropdown.classList.add('hidden');
+                    return;
+                }
+                
+                const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+                console.log('Species list from localStorage:', speciesList);
+                
+                const matches = speciesList.filter(species => 
+                    species.name.toLowerCase().startsWith(searchTerm)
+                );
+                console.log('Filtered matches:', matches);
+                
+                updateSpeciesDropdown(matches);
+            }
+            
+            function updateSpeciesDropdown(matches) {
+                console.log('Updating species dropdown with matches:', matches);
+                
+                if (matches.length > 0) {
+                    const dropdownHTML = matches.map(species => `
+                        <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-original-name="${species.name}">
+                            ${species.name}
+                        </div>
+                    `).join('');
+                    
+                    speciesDropdown.innerHTML = dropdownHTML;
+                } else {
+                    speciesDropdown.innerHTML = `
+                        <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            Add "${speciesInput.value}" as new species
+                        </div>
+                    `;
+                }
+                
+                // Add click handlers
+                speciesDropdown.querySelectorAll('.species-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (option.textContent.includes('Add "')) {
+                            alert('Would add new species: ' + speciesInput.value);
+                        } else {
+                            const originalName = option.dataset.originalName;
+                            speciesInput.value = originalName || option.textContent.trim();
+                        }
+                        speciesDropdown.classList.add('hidden');
+                    });
+                });
+                
+                speciesDropdown.classList.remove('hidden');
+                console.log('Dropdown shown');
+            }
+        }
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const speciesInput = document.getElementById('species');
+            const speciesDropdown = document.getElementById('species-dropdown');
+            
+            if (speciesInput && speciesDropdown && 
+                !speciesInput.contains(e.target) && !speciesDropdown.contains(e.target)) {
+                speciesDropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

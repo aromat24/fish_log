@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug localStorage</title>
+</head>
+<body>
+    <h1>Debug localStorage</h1>
+    <button onclick="debugLocalStorage()">Debug localStorage</button>
+    <button onclick="clearLocalStorage()">Clear localStorage</button>
+    <div id="output"></div>
+    
+    <script>
+        function debugLocalStorage() {
+            const output = document.getElementById('output');
+            let html = '<h2>localStorage Contents:</h2>';
+            
+            try {
+                // Check all localStorage keys
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    html += `<h3>${key}:</h3><pre>${value}</pre><br>`;
+                }
+                
+                // Specifically check catches
+                const catches = localStorage.getItem('catches');
+                html += '<h2>Catches Data:</h2>';
+                if (catches) {
+                    html += `<pre>${catches}</pre><br>`;
+                    try {
+                        const parsedCatches = JSON.parse(catches);
+                        html += `<h3>Parsed successfully: ${parsedCatches.length} catches</h3>`;
+                    } catch (e) {
+                        html += `<h3 style="color: red;">JSON Parse Error: ${e.message}</h3>`;
+                    }
+                } else {
+                    html += '<p>No catches data found</p>';
+                }
+                
+                output.innerHTML = html;
+            } catch (error) {
+                output.innerHTML = `<h3 style="color: red;">Error: ${error.message}</h3>`;
+            }
+        }
+        
+        function clearLocalStorage() {
+            localStorage.clear();
+            alert('localStorage cleared');
+        }
+    </script>
+</body>
+</html>
