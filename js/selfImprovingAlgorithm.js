@@ -1,10 +1,426 @@
 // Self-improving Algorithm for Fish Weight Estimation
-// JavaScript implementation of the Python self-improving algorithm
+// JavaScript implementation with advanced pattern learning and error recovery
 
 class SelfImprovingAlgorithm {
     constructor() {
         this.dataPointsKey = 'fish_data_points';
         this.algorithmsKey = 'fish_algorithms_improved';
+        this.metricsKey = 'fish_algorithm_metrics';
+        this.performanceKey = 'fish_algorithm_performance';
+        this.patternKey = 'fish_pattern_recognition';
+        
+        // Algorithm performance tracking
+        this.performanceCache = new Map();
+        this.patternWeights = new Map();
+        this.learningRate = 0.1;
+        this.confidenceThreshold = 0.75;
+        
+        // Initialize pattern learning system
+        this.initializePatternLearning();
+    }
+
+    initializePatternLearning() {
+        try {
+            // Load existing patterns from storage
+            const storedPatterns = this.getStoredPatterns();
+            if (storedPatterns) {
+                for (const [pattern, weight] of Object.entries(storedPatterns)) {
+                    this.patternWeights.set(pattern, weight);
+                }
+            }
+            
+            // Load performance metrics
+            const storedPerformance = this.getStoredPerformance();
+            if (storedPerformance) {
+                for (const [key, metrics] of Object.entries(storedPerformance)) {
+                    this.performanceCache.set(key, metrics);
+                }
+            }
+            
+            console.log('Pattern learning system initialized');
+        } catch (error) {
+            if (window.errorHandler) {
+                window.errorHandler.logError(new window.FishLogError('Pattern learning initialization failed', error), 'SelfImprovingAlgorithm.init');
+            }
+            console.error('Failed to initialize pattern learning:', error);
+        }
+    }
+
+    // Enhanced pattern recognition for algorithm selection
+    analyzeSpeciesPattern(speciesName, length, historicalData = null) {
+        try {
+            const patterns = {
+                species_type: this.classifySpeciesType(speciesName),
+                length_category: this.categorizeLengthRange(length),
+                body_shape: this.inferBodyShape(speciesName),
+                habitat: this.inferHabitat(speciesName),
+                family: this.inferFamily(speciesName)
+            };
+
+            // Calculate pattern confidence based on historical performance
+            let totalConfidence = 0;
+            let weightSum = 0;
+
+            for (const [patternType, patternValue] of Object.entries(patterns)) {
+                const patternKey = `${patternType}:${patternValue}`;
+                const weight = this.patternWeights.get(patternKey) || 0.5;
+                const confidence = this.calculatePatternConfidence(patternKey, historicalData);
+                
+                totalConfidence += confidence * weight;
+                weightSum += weight;
+            }
+
+            const overallConfidence = weightSum > 0 ? totalConfidence / weightSum : 0.5;
+
+            return {
+                patterns,
+                confidence: overallConfidence,
+                recommendedAlgorithm: this.selectAlgorithmByPattern(patterns, overallConfidence)
+            };
+        } catch (error) {
+            if (window.errorHandler) {
+                window.errorHandler.logError(new window.CalculationError('Pattern analysis failed', error, speciesName), 'PatternAnalysis');
+            }
+            return {
+                patterns: {},
+                confidence: 0.3,
+                recommendedAlgorithm: 'default'
+            };
+        }
+    }
+
+    classifySpeciesType(speciesName) {
+        const name = speciesName.toLowerCase();
+        
+        // Marine fish patterns
+        if (name.includes('tuna') || name.includes('marlin') || name.includes('shark')) {
+            return 'pelagic_marine';
+        }
+        if (name.includes('cod') || name.includes('haddock') || name.includes('halibut')) {
+            return 'demersal_marine';
+        }
+        if (name.includes('snapper') || name.includes('grouper') || name.includes('parrotfish')) {
+            return 'reef_marine';
+        }
+        
+        // Freshwater patterns
+        if (name.includes('bass') || name.includes('pike') || name.includes('walleye')) {
+            return 'predator_freshwater';
+        }
+        if (name.includes('carp') || name.includes('catfish') || name.includes('sucker')) {
+            return 'bottom_freshwater';
+        }
+        if (name.includes('trout') || name.includes('salmon') || name.includes('char')) {
+            return 'salmonid';
+        }
+        
+        return 'general';
+    }
+
+    categorizeLengthRange(length) {
+        if (length < 15) return 'small';
+        if (length < 50) return 'medium';
+        if (length < 100) return 'large';
+        return 'extra_large';
+    }
+
+    inferBodyShape(speciesName) {
+        const name = speciesName.toLowerCase();
+        
+        if (name.includes('eel') || name.includes('snake')) return 'elongated';
+        if (name.includes('flounder') || name.includes('sole') || name.includes('ray')) return 'flattened';
+        if (name.includes('puffer') || name.includes('boxfish')) return 'rounded';
+        if (name.includes('tuna') || name.includes('mackerel')) return 'fusiform';
+        if (name.includes('angelfish') || name.includes('butterflyfish')) return 'compressed';
+        
+        return 'typical';
+    }
+
+    inferHabitat(speciesName) {
+        const name = speciesName.toLowerCase();
+        
+        if (name.includes('reef') || name.includes('coral')) return 'coral_reef';
+        if (name.includes('deep') || name.includes('abyssal')) return 'deep_sea';
+        if (name.includes('freshwater') || name.includes('lake') || name.includes('river')) return 'freshwater';
+        if (name.includes('estuary') || name.includes('brackish')) return 'estuarine';
+        
+        return 'marine';
+    }
+
+    inferFamily(speciesName) {
+        const name = speciesName.toLowerCase();
+        
+        // Common fish families
+        if (name.includes('bass')) return 'serranidae';
+        if (name.includes('cod')) return 'gadidae';
+        if (name.includes('tuna')) return 'scombridae';
+        if (name.includes('salmon') || name.includes('trout')) return 'salmonidae';
+        if (name.includes('shark')) return 'chondrichthyes';
+        if (name.includes('flounder') || name.includes('sole')) return 'pleuronectidae';
+        
+        return 'unknown';
+    }
+
+    calculatePatternConfidence(patternKey, historicalData) {
+        // Get historical performance for this pattern
+        const performance = this.performanceCache.get(patternKey);
+        if (!performance) return 0.5; // Default confidence
+        
+        const successRate = performance.successes / (performance.successes + performance.failures);
+        const totalSamples = performance.successes + performance.failures;
+        
+        // Apply confidence interval adjustment
+        const confidenceInterval = 1.96 * Math.sqrt((successRate * (1 - successRate)) / totalSamples);
+        const adjustedConfidence = Math.max(0, successRate - confidenceInterval);
+        
+        return Math.min(1, adjustedConfidence);
+    }
+
+    selectAlgorithmByPattern(patterns, confidence) {
+        // Advanced algorithm selection based on patterns and confidence
+        if (confidence > 0.8) {
+            return 'improved';
+        } else if (confidence > 0.6) {
+            return 'adaptive';
+        } else if (confidence > 0.4) {
+            return 'default';
+        }
+        return 'generic';
+    }
+
+    // Enhanced algorithm performance tracking
+    recordAlgorithmPerformance(speciesName, algorithmType, actualWeight, predictedWeight, patterns = null) {
+        try {
+            const accuracy = this.calculatePredictionAccuracy(actualWeight, predictedWeight);
+            const timestamp = new Date().toISOString();
+            
+            // Record overall performance
+            const performanceKey = `${speciesName}:${algorithmType}`;
+            const currentPerformance = this.performanceCache.get(performanceKey) || {
+                successes: 0,
+                failures: 0,
+                totalAccuracy: 0,
+                samples: 0,
+                lastUpdated: timestamp
+            };
+            
+            if (accuracy > this.confidenceThreshold) {
+                currentPerformance.successes++;
+            } else {
+                currentPerformance.failures++;
+            }
+            
+            currentPerformance.totalAccuracy += accuracy;
+            currentPerformance.samples++;
+            currentPerformance.lastUpdated = timestamp;
+            
+            this.performanceCache.set(performanceKey, currentPerformance);
+            
+            // Update pattern weights using machine learning approach
+            if (patterns) {
+                this.updatePatternWeights(patterns, accuracy);
+            }
+            
+            // Persist performance data
+            this.savePerformanceData();
+            
+            console.log(`Algorithm performance recorded: ${algorithmType} for ${speciesName}, accuracy: ${accuracy.toFixed(3)}`);
+            
+        } catch (error) {
+            if (window.errorHandler) {
+                window.errorHandler.logError(new window.CalculationError('Performance recording failed', error, speciesName), 'PerformanceTracking');
+            }
+        }
+    }
+
+    calculatePredictionAccuracy(actual, predicted) {
+        if (actual <= 0 || predicted <= 0) return 0;
+        
+        const relativeError = Math.abs(actual - predicted) / actual;
+        return Math.max(0, 1 - relativeError);
+    }
+
+    updatePatternWeights(patterns, accuracy) {
+        // Use gradient descent-like approach to update pattern weights
+        for (const [patternType, patternValue] of Object.entries(patterns)) {
+            const patternKey = `${patternType}:${patternValue}`;
+            const currentWeight = this.patternWeights.get(patternKey) || 0.5;
+            
+            // Calculate weight adjustment based on prediction accuracy
+            const error = accuracy - this.confidenceThreshold;
+            const adjustment = this.learningRate * error;
+            const newWeight = Math.max(0.1, Math.min(1.0, currentWeight + adjustment));
+            
+            this.patternWeights.set(patternKey, newWeight);
+        }
+        
+        // Persist pattern weights
+        this.savePatternWeights();
+    }
+
+    // Advanced algorithm selection with dynamic weighting
+    async getOptimalAlgorithm(speciesName, length, context = {}) {
+        if (window.errorHandler) {
+            return await window.errorHandler.withErrorBoundary(async () => {
+                return await this.getOptimalAlgorithmInternal(speciesName, length, context);
+            }, 'OptimalAlgorithmSelection', {
+                showUserError: false
+            });
+        } else {
+            return await this.getOptimalAlgorithmInternal(speciesName, length, context);
+        }
+    }
+
+    async getOptimalAlgorithmInternal(speciesName, length, context) {
+        // Analyze patterns for this species and length
+        const patternAnalysis = this.analyzeSpeciesPattern(speciesName, length, context.historicalData);
+        
+        // Get available algorithms
+        const algorithms = await this.getAvailableAlgorithms(speciesName);
+        
+        // Score each algorithm based on patterns and performance
+        const scoredAlgorithms = algorithms.map(algorithm => ({
+            ...algorithm,
+            score: this.scoreAlgorithm(algorithm, patternAnalysis, speciesName, length)
+        }));
+        
+        // Sort by score (highest first)
+        scoredAlgorithms.sort((a, b) => b.score - a.score);
+        
+        const selectedAlgorithm = scoredAlgorithms[0];
+        
+        console.log(`Selected algorithm: ${selectedAlgorithm.type} for ${speciesName} (score: ${selectedAlgorithm.score.toFixed(3)})`);
+        
+        return selectedAlgorithm;
+    }
+
+    async getAvailableAlgorithms(speciesName) {
+        const algorithms = [];
+        
+        // Check for improved algorithm
+        const improvedAlg = this.getImprovedAlgorithm(speciesName);
+        if (improvedAlg) {
+            algorithms.push({
+                type: 'improved',
+                ...improvedAlg,
+                priority: 1
+            });
+        }
+        
+        // Check for default algorithm
+        const defaultAlg = await this.getDefaultAlgorithm(speciesName);
+        if (defaultAlg) {
+            algorithms.push({
+                type: 'default',
+                ...defaultAlg,
+                priority: 2
+            });
+        }
+        
+        // Always include generic algorithm as fallback
+        algorithms.push({
+            type: 'generic',
+            a: 0.000013,
+            b: 3.0,
+            r_squared: 0.5,
+            priority: 3
+        });
+        
+        return algorithms;
+    }
+
+    scoreAlgorithm(algorithm, patternAnalysis, speciesName, length) {
+        let score = 0;
+        
+        // Base score from R-squared
+        score += (algorithm.r_squared || 0.5) * 0.4;
+        
+        // Pattern confidence contribution
+        score += patternAnalysis.confidence * 0.3;
+        
+        // Historical performance contribution
+        const performanceKey = `${speciesName}:${algorithm.type}`;
+        const performance = this.performanceCache.get(performanceKey);
+        if (performance && performance.samples > 0) {
+            const successRate = performance.successes / (performance.successes + performance.failures);
+            score += successRate * 0.2;
+        }
+        
+        // Algorithm priority (lower number = higher priority)
+        score += (4 - algorithm.priority) * 0.1;
+        
+        return Math.max(0, Math.min(1, score));
+    }
+
+    // Enhanced storage operations with error handling
+    getStoredPatterns() {
+        if (window.errorHandler) {
+            const result = window.errorHandler.withSyncErrorBoundary(() => {
+                return JSON.parse(localStorage.getItem(this.patternKey) || '{}');
+            }, 'GetStoredPatterns', { showUserError: false });
+            return result.success ? result.result : {};
+        } else {
+            try {
+                return JSON.parse(localStorage.getItem(this.patternKey) || '{}');
+            } catch (error) {
+                console.error('Error getting stored patterns:', error);
+                return {};
+            }
+        }
+    }
+
+    savePatternWeights() {
+        if (window.errorHandler) {
+            return window.errorHandler.withSyncErrorBoundary(() => {
+                const patterns = Object.fromEntries(this.patternWeights);
+                localStorage.setItem(this.patternKey, JSON.stringify(patterns));
+                return true;
+            }, 'SavePatternWeights', { showUserError: false });
+        } else {
+            try {
+                const patterns = Object.fromEntries(this.patternWeights);
+                localStorage.setItem(this.patternKey, JSON.stringify(patterns));
+                return true;
+            } catch (error) {
+                console.error('Error saving pattern weights:', error);
+                return false;
+            }
+        }
+    }
+
+    getStoredPerformance() {
+        if (window.errorHandler) {
+            const result = window.errorHandler.withSyncErrorBoundary(() => {
+                return JSON.parse(localStorage.getItem(this.performanceKey) || '{}');
+            }, 'GetStoredPerformance', { showUserError: false });
+            return result.success ? result.result : {};
+        } else {
+            try {
+                return JSON.parse(localStorage.getItem(this.performanceKey) || '{}');
+            } catch (error) {
+                console.error('Error getting stored performance:', error);
+                return {};
+            }
+        }
+    }
+
+    savePerformanceData() {
+        if (window.errorHandler) {
+            return window.errorHandler.withSyncErrorBoundary(() => {
+                const performance = Object.fromEntries(this.performanceCache);
+                localStorage.setItem(this.performanceKey, JSON.stringify(performance));
+                return true;
+            }, 'SavePerformanceData', { showUserError: false });
+        } else {
+            try {
+                const performance = Object.fromEntries(this.performanceCache);
+                localStorage.setItem(this.performanceKey, JSON.stringify(performance));
+                return true;
+            } catch (error) {
+                console.error('Error saving performance data:', error);
+                return false;
+            }
+        }
     }
 
     // Power law function: W = a * L^b
@@ -17,7 +433,7 @@ class SelfImprovingAlgorithm {
         const meanActual = actualWeights.reduce((sum, w) => sum + w, 0) / actualWeights.length;
         const totalSumSquares = actualWeights.reduce((sum, w) => sum + Math.pow(w - meanActual, 2), 0);
         const residualSumSquares = actualWeights.reduce((sum, w, i) => sum + Math.pow(w - predictedWeights[i], 2), 0);
-        
+
         return totalSumSquares > 0 ? 1 - (residualSumSquares / totalSumSquares) : 0;
     }
 
@@ -49,7 +465,7 @@ class SelfImprovingAlgorithm {
 
             // Constrain b to realistic range (2.5 - 3.5 for fish)
             const constrainedB = Math.max(2.5, Math.min(3.5, b));
-            
+
             // Calculate R-squared
             const predictedWeights = validData.map(d => this.powerLaw(d.length, a, constrainedB));
             const actualWeights = validData.map(d => d.weight);
@@ -116,7 +532,7 @@ class SelfImprovingAlgorithm {
     updateSpeciesAlgorithm(speciesName, newLength, newWeight) {
         console.log('=== UPDATE SPECIES ALGORITHM START ===');
         console.log('Species:', speciesName, 'Length:', newLength, 'Weight:', newWeight);
-        
+
         try {
             // Input validation
             if (!speciesName || typeof speciesName !== 'string' || speciesName.trim() === '') {
@@ -152,7 +568,7 @@ class SelfImprovingAlgorithm {
                     message: "Invalid data points structure"
                 };
             }
-            
+
             // Add new data point
             dataPoints.lengths.push(newLength);
             dataPoints.weights.push(newWeight);
@@ -172,7 +588,7 @@ class SelfImprovingAlgorithm {
             // Calculate new algorithm parameters if we have enough data
             if (dataPoints.lengths.length >= 2) {
                 const result = this.calculateLWRParameters(dataPoints.lengths, dataPoints.weights);
-                
+
                 if (result.success) {
                     // Update stored algorithms
                     const algorithms = this.getStoredAlgorithms();
@@ -192,7 +608,7 @@ class SelfImprovingAlgorithm {
                         last_updated: new Date().toISOString(),
                         formula: "W = a * L^b"
                     };
-                    
+
                     const algorithmsSaved = this.saveAlgorithms(algorithms);
                     if (!algorithmsSaved) {
                         console.error('Failed to save algorithms');
@@ -201,7 +617,7 @@ class SelfImprovingAlgorithm {
                             message: "Failed to save algorithms"
                         };
                     }
-                    
+
                     console.log('Algorithm updated successfully:', algorithms[speciesName]);
                     return {
                         status: "success",
@@ -271,7 +687,7 @@ class SelfImprovingAlgorithm {
     calculateWeight(speciesName, length) {
         console.log('=== SELF-IMPROVING CALCULATE WEIGHT START ===');
         console.log('Species:', speciesName, 'Length:', length);
-        
+
         try {
             // Input validation
             if (!speciesName || typeof speciesName !== 'string' || speciesName.trim() === '') {
@@ -291,14 +707,14 @@ class SelfImprovingAlgorithm {
             }
 
             // Validate algorithm parameters
-            if (typeof algorithm.a !== 'number' || typeof algorithm.b !== 'number' || 
+            if (typeof algorithm.a !== 'number' || typeof algorithm.b !== 'number' ||
                 algorithm.a <= 0 || algorithm.b <= 0) {
                 console.error('Invalid algorithm parameters:', algorithm);
                 return null;
             }
 
             const weight = this.powerLaw(length, algorithm.a, algorithm.b);
-            
+
             // Validate result
             if (isNaN(weight) || weight <= 0) {
                 console.error('Invalid weight calculation result:', weight);
@@ -325,7 +741,7 @@ class SelfImprovingAlgorithm {
         try {
             const algorithms = this.getStoredAlgorithms();
             const dataPoints = JSON.parse(localStorage.getItem(this.dataPointsKey) || '{}');
-            
+
             const stats = {
                 total_species: Object.keys(algorithms).length,
                 total_data_points: 0,

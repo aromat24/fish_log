@@ -7,6 +7,8 @@ class FishDatabase {
         this.dbName = 'FishSpeciesDB';
         this.version = 1;
         this.algorithms = null;
+        this.connectionPool = new Map();
+        this.maxConnections = 3;
         this.initPromise = this.init();
     }
 
@@ -17,6 +19,9 @@ class FishDatabase {
             return true;
         } catch (error) {
             console.error('Failed to initialize fish database:', error);
+            if (window.errorHandler) {
+                window.errorHandler.logError(new window.DatabaseError('Database initialization failed', error), 'FishDatabase.init');
+            }
             return false;
         }
     }
@@ -27,77 +32,426 @@ class FishDatabase {
                 const request = indexedDB.open(this.dbName, this.version);
 
                 request.onerror = () => {
+                    const error = new window.DatabaseError('IndexedDB open failed', request.error);
                     console.error('IndexedDB open error:', request.error);
-                    reject(request.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.openDatabase');
+                    }
+                    reject(error);
                 };
-                request.onsuccess = () => resolve(request.result);
+
+                request.onsuccess = () => {
+                    const db = request.result;
+                    
+                    // Set up multi-tab synchronization
+                    db.onversionchange = () => {
+                        console.warn('Database version changed in another tab');
+                        db.close();
+                        if (window.errorHandler) {
+                            window.errorHandler.showUserError('Database was updated in another tab. Please refresh the page.');
+                        }
+                    };
+
+                    // Set up global error handler for this database
+                    db.onerror = (event) => {
+                        const error = new window.DatabaseError('Database operation failed', event.target.error);
+                        console.error('Database error:', event.target.error);
+                        if (window.errorHandler) {
+                            window.errorHandler.logError(error, 'FishDatabase.globalError');
+                        }
+                    };
+
+                    resolve(db);
+                };
+
+                request.onblocked = () => {
+                    console.warn('Database blocked - another connection is preventing upgrade');
+                    if (window.errorHandler) {
+                        window.errorHandler.showUserError('Database is busy. Please close other tabs and try again.');
+                    }
+                };
 
                 request.onupgradeneeded = (event) => {
                     try {
                         const db = event.target.result;
+                        const transaction = event.target.transaction;
+
+                        // Set up transaction error handling
+                        transaction.onerror = (txError) => {
+                            console.error('Transaction error during upgrade:', txError);
+                            if (window.errorHandler) {
+                                window.errorHandler.logError(new window.DatabaseError('Upgrade transaction failed', txError), 'FishDatabase.upgrade');
+                            }
+                        };
 
                         // Create object store for species algorithms
                         if (!db.objectStoreNames.contains('algorithms')) {
                             const algoStore = db.createObjectStore('algorithms', { keyPath: 'species_id' });
                             algoStore.createIndex('species_name', 'species_name', { unique: false });
+                            algoStore.createIndex('edible', 'edible', { unique: false });
                         }
 
-                        // Create object store for length-weight data (for future use)
+                        // Create object store for length-weight data
                         if (!db.objectStoreNames.contains('lengthWeightData')) {
                             const dataStore = db.createObjectStore('lengthWeightData', { keyPath: 'id', autoIncrement: true });
                             dataStore.createIndex('species_id', 'Species_ID', { unique: false });
                             dataStore.createIndex('species', 'Species', { unique: false });
+                            dataStore.createIndex('timestamp', 'timestamp', { unique: false });
                         }
+
+                        // Create object store for algorithm performance metrics
+                        if (!db.objectStoreNames.contains('algorithmMetrics')) {
+                            const metricsStore = db.createObjectStore('algorithmMetrics', { keyPath: 'id', autoIncrement: true });
+                            metricsStore.createIndex('species_id', 'species_id', { unique: false });
+                            metricsStore.createIndex('algorithm_type', 'algorithm_type', { unique: false });
+                            metricsStore.createIndex('timestamp', 'timestamp', { unique: false });
+                        }
+
                     } catch (upgradeError) {
                         console.error('Error during IndexedDB upgrade:', upgradeError);
+                        if (window.errorHandler) {
+                            window.errorHandler.logError(new window.DatabaseError('Database upgrade failed', upgradeError), 'FishDatabase.upgrade');
+                        }
                         reject(upgradeError);
                     }
                 };
             } catch (outerError) {
                 console.error('Exception in openDatabase:', outerError);
+                if (window.errorHandler) {
+                    window.errorHandler.logError(new window.DatabaseError('Database open exception', outerError), 'FishDatabase.openDatabase');
+                }
                 reject(outerError);
             }
         });
-    }    async loadAlgorithms() {
+    }
+
+    // Advanced transaction wrapper with comprehensive error handling
+    async executeTransaction(storeNames, mode, operation) {
+        if (!this.db) {
+            throw new window.DatabaseError('Database not initialized');
+        }
+
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction(storeNames, mode);
+                
+                transaction.oncomplete = () => {
+                    console.log('Transaction completed successfully');
+                    resolve();
+                };
+
+                transaction.onerror = (event) => {
+                    const error = new window.DatabaseError('Transaction failed', event.target.error);
+                    console.error('Transaction error:', event.target.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.executeTransaction');
+                    }
+                    reject(error);
+                };
+
+                transaction.onabort = (event) => {
+                    const error = new window.DatabaseError('Transaction aborted', event.target.error);
+                    console.error('Transaction aborted:', event.target.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.executeTransaction');
+                    }
+                    reject(error);
+                };
+
+                // Execute the operation
+                operation(transaction);
+
+            } catch (error) {
+                const dbError = new window.DatabaseError('Transaction setup failed', error);
+                if (window.errorHandler) {
+                    window.errorHandler.logError(dbError, 'FishDatabase.executeTransaction');
+                }
+                reject(dbError);
+            }
+        });
+    }
+
+    // Cursor-based batch operations for efficient data processing
+    async processAlgorithmsBatch(batchSize = 50, processor) {
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction(['algorithms'], 'readonly');
+                const store = transaction.objectStore('algorithms');
+                const request = store.openCursor();
+                
+                let batch = [];
+                let processed = 0;
+
+                request.onsuccess = async (event) => {
+                    const cursor = event.target.result;
+                    
+                    if (cursor) {
+                        batch.push({
+                            key: cursor.primaryKey,
+                            value: cursor.value
+                        });
+
+                        if (batch.length >= batchSize) {
+                            try {
+                                await processor(batch);
+                                processed += batch.length;
+                                batch = [];
+                            } catch (processingError) {
+                                if (window.errorHandler) {
+                                    window.errorHandler.logError(new window.DatabaseError('Batch processing failed', processingError), 'FishDatabase.processAlgorithmsBatch');
+                                }
+                                reject(processingError);
+                                return;
+                            }
+                        }
+
+                        cursor.continue();
+                    } else {
+                        // Process remaining items
+                        if (batch.length > 0) {
+                            try {
+                                await processor(batch);
+                                processed += batch.length;
+                            } catch (processingError) {
+                                if (window.errorHandler) {
+                                    window.errorHandler.logError(new window.DatabaseError('Final batch processing failed', processingError), 'FishDatabase.processAlgorithmsBatch');
+                                }
+                                reject(processingError);
+                                return;
+                            }
+                        }
+                        resolve(processed);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    const error = new window.DatabaseError('Cursor operation failed', event.target.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.processAlgorithmsBatch');
+                    }
+                    reject(error);
+                };
+
+            } catch (error) {
+                const dbError = new window.DatabaseError('Batch processing setup failed', error);
+                if (window.errorHandler) {
+                    window.errorHandler.logError(dbError, 'FishDatabase.processAlgorithmsBatch');
+                }
+                reject(dbError);
+            }
+        });
+    }
+
+    // Advanced search with cursor and filtering
+    async searchSpecies(query, options = {}) {
+        const { limit = 10, offset = 0, filterEdible = null } = options;
+        
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction(['algorithms'], 'readonly');
+                const store = transaction.objectStore('algorithms');
+                const index = store.index('species_name');
+                
+                const results = [];
+                let skipped = 0;
+                let found = 0;
+
+                const normalizedQuery = query.toLowerCase();
+                const request = index.openCursor();
+
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    
+                    if (cursor && found < limit) {
+                        const species = cursor.value;
+                        const speciesName = species.species_name.toLowerCase();
+                        
+                        // Apply filters
+                        let matches = speciesName.includes(normalizedQuery);
+                        if (filterEdible !== null) {
+                            matches = matches && species.edible === filterEdible;
+                        }
+                        
+                        if (matches) {
+                            if (skipped < offset) {
+                                skipped++;
+                            } else {
+                                results.push(species);
+                                found++;
+                            }
+                        }
+                        
+                        cursor.continue();
+                    } else {
+                        resolve(results);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    const error = new window.DatabaseError('Species search failed', event.target.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.searchSpecies');
+                    }
+                    reject(error);
+                };
+
+            } catch (error) {
+                const dbError = new window.DatabaseError('Search setup failed', error);
+                if (window.errorHandler) {
+                    window.errorHandler.logError(dbError, 'FishDatabase.searchSpecies');
+                }
+                reject(dbError);
+            }
+        });
+    }
+
+    async loadAlgorithms() {
+        if (window.errorHandler) {
+            return await window.errorHandler.withErrorBoundary(async () => {
+                return await this._loadAlgorithmsInternal();
+            }, 'FishDatabase.loadAlgorithms', {
+                userMessage: 'Failed to load fish species data. Please check your connection and try again.'
+            });
+        } else {
+            return await this._loadAlgorithmsInternal();
+        }
+    }
+
+    async _loadAlgorithmsInternal() {
         try {
             console.log('Loading fish algorithms from: ./fish_algorithms.json');
-            // Load algorithms from the JSON file
-            const response = await fetch('./fish_algorithms.json');
             
+            // Try network first with timeout
+            const response = await Promise.race([
+                fetch('./fish_algorithms.json'),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Network timeout')), 10000)
+                )
+            ]);
+
             if (!response.ok) {
-                console.error('Failed to fetch fish algorithms:', response.status, response.statusText);
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new window.NetworkError(
+                    `Failed to fetch algorithms: ${response.status} ${response.statusText}`, 
+                    null, 
+                    './fish_algorithms.json', 
+                    response.status
+                );
             }
-            
+
             const data = await response.json();
             console.log('Fish algorithms loaded successfully:', data);
             console.log('Number of species in database:', Object.keys(data).length);
+            
+            // Validate data structure
+            this._validateAlgorithmData(data);
+            
             this.algorithms = data;
 
-            // Store in IndexedDB for offline access
-            await this.storeAlgorithms(data);
-            
+            // Store in IndexedDB for offline access with batching
+            await this.storeAlgorithmsBatch(data);
+
             // Initialize self-improving algorithm
             if (window.SelfImprovingAlgorithm) {
                 this.selfImprovingAlgorithm = new window.SelfImprovingAlgorithm();
                 console.log('Self-improving algorithm initialized');
             }
-            
-            return data;
+
+            return { success: true, result: data };
         } catch (error) {
             console.error('Failed to load algorithms from network:', error);
             console.log('Attempting to load from IndexedDB...');
+            
             // Try to load from IndexedDB as fallback
-            const storedData = await this.getStoredAlgorithms();
-            if (storedData && Object.keys(storedData).length > 0) {
-                console.log('Loaded algorithms from IndexedDB:', storedData);
-                this.algorithms = storedData;
-                return storedData;
+            const fallbackResult = await this.getStoredAlgorithms();
+            if (fallbackResult.success && fallbackResult.result && Object.keys(fallbackResult.result).length > 0) {
+                console.log('Loaded algorithms from IndexedDB:', fallbackResult.result);
+                this.algorithms = fallbackResult.result;
+                return fallbackResult;
             } else {
-                console.error('No algorithms available from IndexedDB either');
-                return null;
+                throw new window.DatabaseError('No algorithms available from any source', error);
             }
         }
+    }
+
+    _validateAlgorithmData(data) {
+        if (!data || typeof data !== 'object') {
+            throw new window.ValidationError('Algorithm data must be an object');
+        }
+
+        const entries = Object.entries(data);
+        if (entries.length === 0) {
+            throw new window.ValidationError('Algorithm data cannot be empty');
+        }
+
+        // Validate a few random entries
+        const sampleSize = Math.min(5, entries.length);
+        const samples = entries.slice(0, sampleSize);
+        
+        for (const [speciesId, speciesData] of samples) {
+            if (!speciesData.species_name) {
+                throw new window.ValidationError(`Missing species_name for ${speciesId}`);
+            }
+            if (!speciesData.algorithm) {
+                throw new window.ValidationError(`Missing algorithm for ${speciesId}`);
+            }
+        }
+    }
+
+    async storeAlgorithmsBatch(algorithms) {
+        const batchSize = 50;
+        const entries = Object.entries(algorithms);
+        
+        return await this.executeTransaction(['algorithms'], 'readwrite', async (transaction) => {
+            const store = transaction.objectStore('algorithms');
+            
+            // Clear existing data first
+            await new Promise((resolve, reject) => {
+                const clearRequest = store.clear();
+                clearRequest.onsuccess = () => resolve();
+                clearRequest.onerror = (event) => {
+                    if (event.target.error.name === 'ConstraintError') {
+                        event.preventDefault(); // Don't abort transaction
+                        console.warn('Clear operation constraint error, continuing...');
+                        resolve();
+                    } else {
+                        reject(new window.DatabaseError('Failed to clear algorithms store', event.target.error));
+                    }
+                };
+            });
+
+            // Store in batches
+            for (let i = 0; i < entries.length; i += batchSize) {
+                const batch = entries.slice(i, i + batchSize);
+                const promises = batch.map(([speciesId, data]) => {
+                    return new Promise((resolve, reject) => {
+                        try {
+                            const record = {
+                                species_id: speciesId,
+                                species_name: data.species_name,
+                                edible: data.edible,
+                                algorithm: data.algorithm
+                            };
+                            
+                            const request = store.put(record);
+                            request.onsuccess = () => resolve();
+                            request.onerror = (event) => {
+                                if (event.target.error.name === 'ConstraintError') {
+                                    event.preventDefault();
+                                    console.warn(`Constraint error for ${speciesId}, skipping...`);
+                                    resolve(); // Continue with other records
+                                } else {
+                                    reject(new window.DatabaseError(`Failed to store ${speciesId}`, event.target.error));
+                                }
+                            };
+                        } catch (error) {
+                            reject(new window.DatabaseError(`Error preparing record ${speciesId}`, error));
+                        }
+                    });
+                });
+
+                await Promise.allSettled(promises);
+            }
+        });
     }
 
     async storeAlgorithms(algorithms) {
@@ -107,12 +461,16 @@ class FishDatabase {
                 const store = transaction.objectStore('algorithms');
 
                 transaction.oncomplete = () => resolve();
-                transaction.onerror = () => {
-                    console.error('IndexedDB transaction error (storeAlgorithms):', transaction.error);
-                    reject(transaction.error);
+                transaction.onerror = (event) => {
+                    const error = new window.DatabaseError('Store algorithms transaction failed', event.target.error);
+                    console.error('IndexedDB transaction error (storeAlgorithms):', event.target.error);
+                    if (window.errorHandler) {
+                        window.errorHandler.logError(error, 'FishDatabase.storeAlgorithms');
+                    }
+                    reject(error);
                 };
 
-                // Store each algorithm
+                // Store each algorithm with individual error handling
                 Object.entries(algorithms).forEach(([speciesId, data]) => {
                     try {
                         const record = {
@@ -121,19 +479,45 @@ class FishDatabase {
                             edible: data.edible,
                             algorithm: data.algorithm
                         };
-                        store.put(record);
+                        
+                        const request = store.put(record);
+                        request.onerror = (event) => {
+                            if (event.target.error.name === 'ConstraintError') {
+                                console.warn(`Duplicate key for ${speciesId}, skipping...`);
+                                event.preventDefault(); // Don't abort transaction
+                            } else {
+                                console.error(`Error storing algorithm record for ${speciesId}:`, event.target.error);
+                                // Let transaction continue for other records
+                            }
+                        };
                     } catch (putError) {
-                        console.error('Error storing algorithm record:', putError, record);
+                        console.error('Error storing algorithm record:', putError, speciesId);
                     }
                 });
             } catch (err) {
+                const error = new window.DatabaseError('Store algorithms setup failed', err);
                 console.error('Exception in storeAlgorithms:', err);
-                reject(err);
+                if (window.errorHandler) {
+                    window.errorHandler.logError(error, 'FishDatabase.storeAlgorithms');
+                }
+                reject(error);
             }
         });
     }
 
     async getStoredAlgorithms() {
+        if (window.errorHandler) {
+            return await window.errorHandler.withErrorBoundary(async () => {
+                return await this._getStoredAlgorithmsInternal();
+            }, 'FishDatabase.getStoredAlgorithms', {
+                showUserError: false // Don't show user error for fallback operation
+            });
+        } else {
+            return await this._getStoredAlgorithmsInternal();
+        }
+    }
+
+    async _getStoredAlgorithmsInternal() {
         return new Promise((resolve, reject) => {
             try {
                 const transaction = this.db.transaction(['algorithms'], 'readonly');
@@ -144,27 +528,34 @@ class FishDatabase {
                     try {
                         const records = request.result;
                         const algorithms = {};
+                        
                         records.forEach(record => {
-                            algorithms[record.species_id] = {
-                                species_name: record.species_name,
-                                edible: record.edible,
-                                algorithm: record.algorithm
-                            };
+                            if (record.species_id && record.species_name && record.algorithm) {
+                                algorithms[record.species_id] = {
+                                    species_name: record.species_name,
+                                    edible: record.edible,
+                                    algorithm: record.algorithm
+                                };
+                            }
                         });
-                        resolve(algorithms);
+                        
+                        resolve({ success: true, result: algorithms });
                     } catch (parseError) {
+                        const error = new window.DatabaseError('Error parsing stored algorithms', parseError);
                         console.error('Error parsing stored algorithms:', parseError);
-                        reject(parseError);
+                        reject(error);
                     }
                 };
 
                 request.onerror = () => {
+                    const error = new window.DatabaseError('Failed to retrieve stored algorithms', request.error);
                     console.error('IndexedDB getAll error (getStoredAlgorithms):', request.error);
-                    reject(request.error);
+                    reject(error);
                 };
             } catch (err) {
+                const error = new window.DatabaseError('Get stored algorithms setup failed', err);
                 console.error('Exception in getStoredAlgorithms:', err);
-                reject(err);
+                reject(error);
             }
         });
     }    // Get list of all species names for autocomplete
@@ -174,7 +565,7 @@ class FishDatabase {
             console.log('No algorithms available, returning empty array');
             return [];
         }
-        
+
         const speciesNames = Object.values(this.algorithms).map(species => species.species_name);
         console.log('Returning species names:', speciesNames);
         return speciesNames;
@@ -185,7 +576,7 @@ class FishDatabase {
         if (!this.algorithms || !name) return null;
 
         const normalizedName = name.toLowerCase().trim();
-        
+
         // First try exact match
         for (const [id, species] of Object.entries(this.algorithms)) {
             if (species.species_name.toLowerCase() === normalizedName) {
@@ -216,7 +607,7 @@ class FishDatabase {
 
         const { a, b } = species.algorithm;
         const weight = a * Math.pow(length, b);
-        
+
         return {
             weight: parseFloat(weight.toFixed(3)),
             species: species.species_name,
@@ -232,7 +623,7 @@ class FishDatabase {
         const a = 0.000013;
         const b = 3.0;
         const weight = a * Math.pow(length, b);
-        
+
         return {
             weight: parseFloat(weight.toFixed(3)),
             species: 'Generic estimate',
@@ -262,12 +653,12 @@ class FishDatabase {
     }
 
     // Self-Improving Algorithm Integration Methods
-    
+
     // Update species algorithm with new catch data
     async updateSpeciesWithCatchData(speciesName, length, weight) {
         console.log('=== UPDATE SPECIES WITH CATCH DATA ===');
         console.log('Species:', speciesName, 'Length:', length, 'Weight:', weight);
-        
+
         try {
             // Input validation
             if (!speciesName || typeof speciesName !== 'string' || speciesName.trim() === '') {
@@ -308,10 +699,10 @@ class FishDatabase {
 
             // Update the algorithm with new data
             const result = this.selfImprovingAlgorithm.updateSpeciesAlgorithm(speciesName, length, weight);
-            
+
             if (result.status === 'success') {
                 console.log('Algorithm updated successfully:', result.algorithm);
-                
+
                 // Optionally store the updated algorithm in IndexedDB as well
                 try {
                     await this.storeImprovedAlgorithm(speciesName, result.algorithm);
@@ -340,7 +731,7 @@ class FishDatabase {
 
             const transaction = this.db.transaction(['algorithms'], 'readwrite');
             const store = transaction.objectStore('algorithms');
-            
+
             const improvedAlgorithmData = {
                 species_id: `improved_${speciesName}`,
                 species_name: speciesName,
