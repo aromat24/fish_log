@@ -1650,8 +1650,19 @@ function showMessage(message, type = 'info') {
 }
 
 function loadCatchHistory() {
-    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    let catches = [];
+    try {
+        catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    } catch (err) {
+        console.error('Error reading catches from localStorage:', err);
+        showMessage('Error loading catch history. Data may be corrupted.', 'error');
+        catches = [];
+    }
     const catchLog = document.getElementById('catch-log');
+    if (!catchLog) {
+        console.error('catch-log element not found!');
+        return;
+    }
 
     if (catches.length === 0) {
         catchLog.innerHTML = '<p class="text-gray-500 italic">No catches logged yet.</p>';
@@ -1984,7 +1995,16 @@ function setupDataOptions() {
                     showMessage('Error importing data. Please check the file format.', 'error');
                 }
             };
-            reader.readAsText(file);
+            reader.onerror = (e) => {
+                console.error('FileReader error:', e);
+                showMessage('Error reading import file.', 'error');
+            };
+            try {
+                reader.readAsText(file);
+            } catch (err) {
+                console.error('Error starting FileReader:', err);
+                showMessage('Error reading import file.', 'error');
+            }
         }
         dataOptionsMenu.classList.add('hidden');
         importDataInput.value = ''; // Reset input
@@ -2347,7 +2367,7 @@ function useCurrentLocationOnMap() {
     console.log('Getting current location for map...');
     
     if (!navigator.geolocation) {
-        showMessage('Geolocation is not supported by your browser', 'error');
+        showMessage('Geolocation is not supported by your browser.', 'error');
         return;
     }
 
@@ -2401,24 +2421,7 @@ function useCurrentLocationOnMap() {
         },
         (error) => {
             console.error('Geolocation error:', error);
-            let errorMessage = 'Could not get current location. ';
-            
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage += 'Location access denied. Please enable location permissions.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage += 'Location unavailable. Please select manually on the map.';
-                    break;
-                case error.TIMEOUT:
-                    errorMessage += 'Location request timed out. Please select manually on the map.';
-                    break;
-                default:
-                    errorMessage += 'Please select manually on the map.';
-                    break;
-            }
-            
-            showMessage(errorMessage, 'error');
+            showMessage('Unable to retrieve your location.', 'error');
         },
         options
     );

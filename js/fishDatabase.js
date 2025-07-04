@@ -23,27 +23,40 @@ class FishDatabase {
 
     openDatabase() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, this.version);
+            try {
+                const request = indexedDB.open(this.dbName, this.version);
 
-            request.onerror = () => reject(request.error);
-            request.onsuccess = () => resolve(request.result);
+                request.onerror = () => {
+                    console.error('IndexedDB open error:', request.error);
+                    reject(request.error);
+                };
+                request.onsuccess = () => resolve(request.result);
 
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
+                request.onupgradeneeded = (event) => {
+                    try {
+                        const db = event.target.result;
 
-                // Create object store for species algorithms
-                if (!db.objectStoreNames.contains('algorithms')) {
-                    const algoStore = db.createObjectStore('algorithms', { keyPath: 'species_id' });
-                    algoStore.createIndex('species_name', 'species_name', { unique: false });
-                }
+                        // Create object store for species algorithms
+                        if (!db.objectStoreNames.contains('algorithms')) {
+                            const algoStore = db.createObjectStore('algorithms', { keyPath: 'species_id' });
+                            algoStore.createIndex('species_name', 'species_name', { unique: false });
+                        }
 
-                // Create object store for length-weight data (for future use)
-                if (!db.objectStoreNames.contains('lengthWeightData')) {
-                    const dataStore = db.createObjectStore('lengthWeightData', { keyPath: 'id', autoIncrement: true });
-                    dataStore.createIndex('species_id', 'Species_ID', { unique: false });
-                    dataStore.createIndex('species', 'Species', { unique: false });
-                }
-            };
+                        // Create object store for length-weight data (for future use)
+                        if (!db.objectStoreNames.contains('lengthWeightData')) {
+                            const dataStore = db.createObjectStore('lengthWeightData', { keyPath: 'id', autoIncrement: true });
+                            dataStore.createIndex('species_id', 'Species_ID', { unique: false });
+                            dataStore.createIndex('species', 'Species', { unique: false });
+                        }
+                    } catch (upgradeError) {
+                        console.error('Error during IndexedDB upgrade:', upgradeError);
+                        reject(upgradeError);
+                    }
+                };
+            } catch (outerError) {
+                console.error('Exception in openDatabase:', outerError);
+                reject(outerError);
+            }
         });
     }    async loadAlgorithms() {
         try {
@@ -83,45 +96,70 @@ class FishDatabase {
 
     async storeAlgorithms(algorithms) {
         return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction(['algorithms'], 'readwrite');
-            const store = transaction.objectStore('algorithms');
+            try {
+                const transaction = this.db.transaction(['algorithms'], 'readwrite');
+                const store = transaction.objectStore('algorithms');
 
-            transaction.oncomplete = () => resolve();
-            transaction.onerror = () => reject(transaction.error);
-
-            // Store each algorithm
-            Object.entries(algorithms).forEach(([speciesId, data]) => {
-                const record = {
-                    species_id: speciesId,
-                    species_name: data.species_name,
-                    edible: data.edible,
-                    algorithm: data.algorithm
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => {
+                    console.error('IndexedDB transaction error (storeAlgorithms):', transaction.error);
+                    reject(transaction.error);
                 };
-                store.put(record);
-            });
+
+                // Store each algorithm
+                Object.entries(algorithms).forEach(([speciesId, data]) => {
+                    try {
+                        const record = {
+                            species_id: speciesId,
+                            species_name: data.species_name,
+                            edible: data.edible,
+                            algorithm: data.algorithm
+                        };
+                        store.put(record);
+                    } catch (putError) {
+                        console.error('Error storing algorithm record:', putError, record);
+                    }
+                });
+            } catch (err) {
+                console.error('Exception in storeAlgorithms:', err);
+                reject(err);
+            }
         });
     }
 
     async getStoredAlgorithms() {
         return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction(['algorithms'], 'readonly');
-            const store = transaction.objectStore('algorithms');
-            const request = store.getAll();
+            try {
+                const transaction = this.db.transaction(['algorithms'], 'readonly');
+                const store = transaction.objectStore('algorithms');
+                const request = store.getAll();
 
-            request.onsuccess = () => {
-                const records = request.result;
-                const algorithms = {};
-                records.forEach(record => {
-                    algorithms[record.species_id] = {
-                        species_name: record.species_name,
-                        edible: record.edible,
-                        algorithm: record.algorithm
-                    };
-                });
-                resolve(algorithms);
-            };
+                request.onsuccess = () => {
+                    try {
+                        const records = request.result;
+                        const algorithms = {};
+                        records.forEach(record => {
+                            algorithms[record.species_id] = {
+                                species_name: record.species_name,
+                                edible: record.edible,
+                                algorithm: record.algorithm
+                            };
+                        });
+                        resolve(algorithms);
+                    } catch (parseError) {
+                        console.error('Error parsing stored algorithms:', parseError);
+                        reject(parseError);
+                    }
+                };
 
-            request.onerror = () => reject(request.error);
+                request.onerror = () => {
+                    console.error('IndexedDB getAll error (getStoredAlgorithms):', request.error);
+                    reject(request.error);
+                };
+            } catch (err) {
+                console.error('Exception in getStoredAlgorithms:', err);
+                reject(err);
+            }
         });
     }    // Get list of all species names for autocomplete
     getSpeciesNames() {

@@ -18,6 +18,9 @@ self.addEventListener('install', (event) => {
                 return cache.addAll(ASSETS_TO_CACHE);
             })
             .then(() => self.skipWaiting())
+            .catch((err) => {
+                console.error('Service Worker install error:', err);
+            })
     );
 });
 
@@ -32,6 +35,9 @@ self.addEventListener('activate', (event) => {
                 })
             );
         }).then(() => self.clients.claim())
+        .catch((err) => {
+            console.error('Service Worker activate error:', err);
+        })
     );
 });
 
@@ -53,9 +59,20 @@ self.addEventListener('fetch', (event) => {
                         caches.open(CACHE_NAME)
                             .then((cache) => {
                                 cache.put(event.request, responseToCache);
+                            })
+                            .catch((err) => {
+                                console.error('Service Worker cache put error:', err);
                             });
                         return response;
+                    })
+                    .catch((err) => {
+                        console.error('Service Worker fetch error:', err);
+                        throw err;
                     });
+            })
+            .catch((err) => {
+                console.error('Service Worker cache match error:', err);
+                return fetch(event.request);
             })
     );
 });

@@ -297,20 +297,27 @@ function isCurrentlyScrolling() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure all elements are rendered
     setTimeout(() => {
-        initializeBeautifulButtons();
-        applyBeautifulButtonStyles();
-        addButtonClickEffects();
-        trackScrollState();
+        try {
+            initializeBeautifulButtons();
+            applyBeautifulButtonStyles();
+            addButtonClickEffects();
+            trackScrollState();
+        } catch (err) {
+            console.error('Error initializing beautiful buttons:', err);
+        }
     }, 100);
 });
 
 // Re-apply styles when new elements are added (for dynamic content)
 function reapplyBeautifulStyles() {
-    applyBeautifulButtonStyles();
-    initializeInteractiveButtons();
-    initializeShinyButtons();
+    try {
+        applyBeautifulButtonStyles();
+        initializeInteractiveButtons();
+        initializeShinyButtons();
+    } catch (err) {
+        console.error('Error reapplying beautiful button styles:', err);
+    }
 }
 
 // Export for use in other scripts
