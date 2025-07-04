@@ -1,81 +1,326 @@
 # Code Citations
 
-## License: MIT
-https://github.com/tkssharma/tkssharma.github.io/tree/53b556fac2d12eee1fb2c412c33ab6bd70632cad/_posts/blog/2020-01-29-write-pwa-application-using-pwa.md
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
 
 ```
-",
-  "icons": [
-    {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes"
-```
-
-
-## License: MIT
-https://github.com/ragingwind/pwa-manifest/tree/15a07296af8eccd34a5371fdcbb3194b5382c9a6/readme.md
-
-```
-"icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/
+);
+                const year = now.getFullYear
 ```
 
 
 ## License: unknown
-https://github.com/ra-md/simple-pwa/tree/c1c81450cd23e8553a254906be0546e6921454f3/service-worker.js
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
 
 ```
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
-        })
-    );
-});
-
-self.addEventListener('fetch', event =>
-```
-
-
-## License: MIT
-https://github.com/irfanfadilah/xpense/tree/e4ab2776c4c55f9cb200f833402e4f575ee05b39/service-worker.js
-
-```
-.open(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
-        })
-    );
-});
-
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request).then(response
+);
+                const year = now.getFullYear();
+                const month = String
 ```
 
 
 ## License: unknown
-https://github.com/renyamizuno/pwa_test/tree/1e1769f56bff787ff1d7bb7fec19160f79df80ce/sw.js
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
 
 ```
-(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
-        })
-    );
-});
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 
+```
 
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request).then(response =>
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.get
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.get
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.get
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.get
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2,
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2,
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const form
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const form
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year}-${month}-${day}T
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year}-${month}-${day}T
+```
+
+
+## License: unknown
+https://github.com/elastic/kibana/blob/597ab88d9ee5e66e44d459a32bb5a3f7461646a5/src/cli/profiler/profiler.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year}-${month}-${day}T${hours}:
+```
+
+
+## License: unknown
+https://github.com/SSI-Site/CO-Dashboard-SSI/blob/1abf8e3cf2ad9bda2208f67933bde6aa108c6d0c/pages/token.js
+
+```
+);
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const formattedDateTime = `${year}-${month}-${day}T${hours}:
 ```
 

@@ -20,27 +20,27 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOM CONTENT LOADED ===');
     console.log('Current URL:', window.location.href);
     console.log('User Agent:', navigator.userAgent);
-      try {
+    try {
         // Initialize landing page functionality
         initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
         console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
-          // Reset fullscreen modal to clean state first
+        // Reset fullscreen modal to clean state first
         resetFullscreenModal();
-        
+
         // Add fallback resets to ensure modal stays hidden
         setTimeout(() => {
             resetFullscreenModal();
         }, 100);
-        
+
         setTimeout(() => {
             resetFullscreenModal();
         }, 500);
-        
+
         const fullscreenModal = document.getElementById('fullscreen-image');
         const fullscreenImage = document.getElementById('fullscreen-image-content');
-        
+
         console.log('Fullscreen modal element:', fullscreenModal);
-        
+
         // Double-check that fullscreen modal is hidden
         if (fullscreenModal) {
             fullscreenModal.classList.add('hidden');
@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             fullscreenImage.alt = '';
             console.log('Cleared fullscreen image source on startup');
         }
-        
+
         const closeBtn = document.getElementById('close-fullscreen-btn');
         const rotateBtn = document.getElementById('rotate-image-btn');
-        
+
         // Only add event listeners if buttons exist and are not disabled
         if (closeBtn && fullscreenModal) {
             closeBtn.addEventListener('click', closeFullscreenImage);
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeFullscreenImage();
             });
         }
-        
+
         if (rotateBtn && fullscreenModal) {
             rotateBtn.addEventListener('click', handleRotateClick);
             rotateBtn.addEventListener('touchend', (e) => {
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleRotateClick(e);
             });
         }
-        
+
         fullscreenModal.addEventListener('click', (e) => {
             if (e.target === fullscreenModal) {
                 closeFullscreenImage();
@@ -87,30 +87,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initialize the main app functionality
         setupFormHandlers();
-        setupLocationHandling();        setupPhotoHandling();
+        setupLocationHandling(); setupPhotoHandling();
         setupModalHandlers();
         setupTabSystem(); // Updated from setupViewToggle
         setupDataOptions();
         setupSpeciesHandlers();
         setupMapHandlers(); // New map functionality
-        
+
         console.log('Main app functionality initialized');
-        
+
         // Initialize fish database and update species list
         initializeFishDatabase();
-        
+
         // Initialize datetime input with current time
         initializeDatetime();
 
         // Load initial catch history
         loadCatchHistory();
-        
+
         console.log('=== INITIALIZATION COMPLETE ===');
-        
+
     } catch (error) {
         console.error('Error during app initialization:', error);
         console.error('Error stack:', error.stack);
-        
+
         // Show user-friendly error message
         const messageBox = document.getElementById('message-box');
         if (messageBox) {
@@ -127,7 +127,7 @@ async function initializeFishDatabase() {
         if (window.fishDB) {
             const isReady = await window.fishDB.isReady();
             console.log('Fish database ready:', isReady);
-            
+
             if (isReady) {
                 // Refresh species list to include database species
                 if (typeof window.refreshSpeciesList === 'function') {
@@ -156,15 +156,15 @@ function initLandingPage() {
 }
 
 // Global function for landing page button
-window.enterApp = function() {
+window.enterApp = function () {
     console.log('enterApp called');
-    
+
     // CRITICAL: Reset fullscreen modal when entering the app
     resetFullscreenModal();
-    
+
     const landingPage = document.getElementById('landing-page');
     const appContent = document.getElementById('app-content');
-    
+
     if (landingPage && appContent) {
         landingPage.classList.add('fade-out');
         appContent.classList.remove('hidden');
@@ -178,7 +178,7 @@ window.enterApp = function() {
 
 function setupFormHandlers() {
     console.log('=== SETTING UP FORM HANDLERS ===');
-    
+
     // Try to get form elements
     const catchForm = document.getElementById('catch-form');
     const lengthInput = document.getElementById('length');
@@ -209,12 +209,12 @@ function setupFormHandlers() {
 
     // Make sure the form doesn't have any conflicting attributes
     catchForm.removeAttribute('onsubmit');
-    
+
     // Setup automatic weight calculation
     const autoCalculateWeight = async () => {
         const species = speciesInput.value.trim();
         const length = parseFloat(lengthInput.value);
-        
+
         if (species && length && length > 0) {
             await calculateEstimatedWeight(species, length);
         }
@@ -222,32 +222,32 @@ function setupFormHandlers() {
     lengthInput.addEventListener('input', autoCalculateWeight);
     speciesInput.addEventListener('input', autoCalculateWeight);
     speciesInput.addEventListener('change', autoCalculateWeight);
-      // Handle catch form submission with comprehensive debugging
+    // Handle catch form submission with comprehensive debugging
     console.log('Setting up form submit handler...');
     catchForm.addEventListener('submit', (e) => {
         e.preventDefault();
         console.log('=== FORM SUBMISSION STARTED ===');
         console.log('Event:', e);
         console.log('Form element:', catchForm);
-          // Call the unified save function instead of duplicating logic
+        // Call the unified save function instead of duplicating logic
         saveCatchData();
     });      // Also add a direct click handler to the submit button as a fallback
     const submitButton = document.querySelector('#catch-form button[type="submit"]');
     console.log('Submit button found:', submitButton);
     if (submitButton) {
         console.log('Adding mobile-friendly touch and click handlers to submit button');
-        
+
         // Use a less aggressive approach that works better with local testing
         let touchTimeout = null;
         let hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        
+
         if (hasTouchSupport) {
             console.log('Touch support detected, adding touch handlers');
-            
+
             // Enhanced touch handler with improved scroll detection
             submitButton.addEventListener('touchend', (e) => {
                 console.log('=== SUBMIT BUTTON TOUCHEND (ENHANCED) ===');
-                
+
                 // Check if we're currently scrolling using the enhanced detection
                 if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
                     if (window.beautifulButtons.isScrolling()) {
@@ -257,65 +257,65 @@ function setupFormHandlers() {
                         return false;
                     }
                 }
-                
+
                 // Clear any existing timeout to prevent double submission
                 if (touchTimeout) {
                     clearTimeout(touchTimeout);
                 }
-                
+
                 // Add a small delay to ensure the touch event completes
                 touchTimeout = setTimeout(() => {
                     console.log('Touch timeout triggered, calling saveCatchData...');
-                    
+
                     // Check if this is a valid touch (not part of a scroll or drag)
                     const rect = submitButton.getBoundingClientRect();
                     const touch = e.changedTouches[0];
-                    
-                    if (touch && 
-                        touch.clientX >= rect.left && 
-                        touch.clientX <= rect.right && 
-                        touch.clientY >= rect.top && 
+
+                    if (touch &&
+                        touch.clientX >= rect.left &&
+                        touch.clientX <= rect.right &&
+                        touch.clientY >= rect.top &&
                         touch.clientY <= rect.bottom) {
-                        
+
                         console.log('Valid touch detected, saving catch...');
                         saveCatchData();
                     } else {
                         console.log('Touch outside button bounds, ignoring');
                     }
                 }, 100); // Increased delay slightly
-                
+
             }, { passive: false }); // Changed to passive: false to allow preventDefault
-            
+
         } else {
             console.log('No touch support detected, relying on click events');
         }
-          // Add a more robust click handler for all devices
+        // Add a more robust click handler for all devices
         submitButton.addEventListener('click', (e) => {
             console.log('=== SUBMIT BUTTON CLICK (IMPROVED) ===');
             console.log('Event type:', e.type);
             console.log('Event target:', e.target);
             console.log('Button element:', submitButton);
-            
+
             // Add visual feedback
             submitButton.style.backgroundColor = '#1e40af';
             setTimeout(() => {
                 submitButton.style.backgroundColor = '';
             }, 200);
-            
+
             // Clear any touch timeout to prevent double submission
             if (touchTimeout) {
                 clearTimeout(touchTimeout);
                 touchTimeout = null;
             }
-            
+
             // Always prevent default to avoid form submission conflicts
             e.preventDefault();
             e.stopPropagation();
-            
+
             console.log('Click handler calling saveCatchData...');
             saveCatchData();
         });
-        
+
         // Add visual feedback for mobile users
         if (hasTouchSupport) {
             submitButton.style.cursor = 'pointer';
@@ -323,7 +323,7 @@ function setupFormHandlers() {
             submitButton.style.webkitUserSelect = 'none';
             submitButton.style.webkitTouchCallout = 'none';
         }
-        
+
         console.log('=== MOBILE ENVIRONMENT DETECTION ===');
         console.log('User Agent:', navigator.userAgent);
         console.log('Touch Support:', hasTouchSupport);
@@ -333,13 +333,13 @@ function setupFormHandlers() {
         console.log('Is HTTPS:', location.protocol === 'https:');
         console.log('Viewport Width:', window.innerWidth);
         console.log('Screen Width:', screen.width);
-        
+
     } else {
         console.error('Submit button not found!');
     }
-    
+
     console.log('Form handlers setup complete');
-    
+
     // Add a simple test to verify the button works
     setTimeout(() => {
         const testBtn = document.querySelector('#catch-form button[type="submit"]');
@@ -355,48 +355,48 @@ function setupFormHandlers() {
 
 async function calculateEstimatedWeight(species, length) {
     if (!length || length <= 0) return null;
-    
+
     // Wait for fish database to be ready
     if (window.fishDB && await window.fishDB.isReady()) {
         const result = window.fishDB.calculateWeight(species, length);
-        
+
         if (result) {
             // Update weight input with calculated value
             const weightInput = document.getElementById('weight');
             weightInput.value = result.weight.toFixed(3);
-            
+
             // Mark the weight as calculated and show info about the calculation
             weightInput.dataset.calculated = 'true';
             weightInput.dataset.species = result.species;
             weightInput.dataset.accuracy = result.accuracy;
-            
+
             // Show calculation info as a tooltip or note
-            const calculationInfo = result.isSpeciesSpecific 
+            const calculationInfo = result.isSpeciesSpecific
                 ? `Calculated using ${result.species} data (${(result.accuracy * 100).toFixed(1)}% accuracy, ${result.measureType})`
                 : `Estimated using generic fish formula (${(result.accuracy * 100).toFixed(1)}% accuracy)`;
-            
+
             weightInput.title = calculationInfo;
-            
+
             return result.weight;
         }
     }
-    
+
     // Fallback to original generic calculation if database not available
     const a = 0.000013;
     const b = 3.0;
     const estimatedWeight = a * Math.pow(length, b);
-    
+
     const weightInput = document.getElementById('weight');
     weightInput.value = estimatedWeight.toFixed(3);
     weightInput.dataset.calculated = 'true';
     weightInput.title = 'Generic estimate (80% accuracy)';
-    
+
     return estimatedWeight;
 }
 
 function showEditModal(catchData) {
     const editModal = document.getElementById('edit-modal');
-    
+
     // Fill in form fields
     document.getElementById('edit-catch-id').value = catchData.id;
     document.getElementById('edit-species').value = cleanSpeciesName(catchData.species);
@@ -424,13 +424,13 @@ function showEditModal(catchData) {
     const editPhotoText = document.getElementById('edit-photo-text');
     const editPhotoBtn = document.getElementById('edit-photo-btn');
     editPhotoText.textContent = catchData.photo ? 'Change Photo' : 'Add Photo';
-      // Reset button styling to default
+    // Reset button styling to default
     editPhotoBtn.className = 'shiny-button ripple-effect w-full';
 
     // Setup photo editing
     const editPhotoInput = document.getElementById('edit-photo-input');
-      editPhotoBtn.onclick = () => editPhotoInput.click();
-    
+    editPhotoBtn.onclick = () => editPhotoInput.click();
+
     editPhotoInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -448,20 +448,20 @@ function showEditModal(catchData) {
             showMessage('Image file is too large. Please choose a smaller image (max 50MB).', 'error');
             e.target.value = '';
             return;
-        }        try {
+        } try {
             // Show processing message and change button appearance
             editPhotoText.textContent = 'Processing...';
             editPhotoBtn.className = 'shiny-button ripple-effect w-full';
             editPhotoBtn.style.setProperty('--button-bg', '#fef3c7');
             editPhotoBtn.style.setProperty('--button-text', '#b45309');
-            
+
             // Compress the image
             const compressedDataUrl = await compressImage(file);
-            
+
             // Store the compressed image
             document.getElementById('edit-photo').value = compressedDataUrl;
             editPhotoText.textContent = 'Photo Updated ✓';
-            
+
             // Add success feedback animation
             if (window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
                 // Temporarily change text for success feedback
@@ -469,7 +469,7 @@ function showEditModal(catchData) {
                 editPhotoBtn.innerHTML = '<span class="lucide lucide-camera"></span> ✓ Photo Updated!';
                 editPhotoBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
                 editPhotoBtn.style.transform = 'scale(1.05)';
-                
+
                 setTimeout(() => {
                     editPhotoBtn.innerHTML = originalText;
                     editPhotoBtn.style.background = '';
@@ -482,15 +482,15 @@ function showEditModal(catchData) {
                 editPhotoBtn.style.setProperty('--button-bg', '#dcfce7');
                 editPhotoBtn.style.setProperty('--button-text', '#166534');
             }
-            
+
             showMessage('Upload Successful', 'success');
-            
+
         } catch (error) {
             console.error('Image compression failed:', error);
             showMessage('Failed to process image. Please try a different image.', 'error');
             e.target.value = '';
             editPhotoText.textContent = 'Photo Upload Failed';
-            
+
             // Change button to red to indicate error
             editPhotoBtn.className = 'w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-md border border-red-300 flex items-center justify-center gap-2';
         }
@@ -506,10 +506,10 @@ function showEditModal(catchData) {
         updateCatch();
     };    // Prevent Enter key from auto-advancing from location name to notes field
     const locationNameInput = document.getElementById('edit-location-name');
-    
+
     // Remove any existing event listeners to prevent duplicates
     locationNameInput.removeEventListener('keydown', locationNameInput._enterHandler);
-    
+
     // Create the handler function
     locationNameInput._enterHandler = (e) => {
         if (e.key === 'Enter') {
@@ -519,10 +519,10 @@ function showEditModal(catchData) {
             return false; // Extra prevention
         }
     };
-    
+
     // Add the handler
     locationNameInput.addEventListener('keydown', locationNameInput._enterHandler);
-    
+
     // Setup close button
     const closeBtn = document.getElementById('close-edit-modal-btn');
     closeBtn.onclick = () => editModal.classList.add('hidden');
@@ -540,7 +540,7 @@ function updateCatch() {
     const species = document.getElementById('edit-species').value.trim();
     const length = parseFloat(document.getElementById('edit-length').value);
     const weight = parseFloat(document.getElementById('edit-weight').value);
-    const datetime = document.getElementById('edit-datetime').value;    const locationName = document.getElementById('edit-location-name').value.trim();
+    const datetime = document.getElementById('edit-datetime').value; const locationName = document.getElementById('edit-location-name').value.trim();
     const notes = document.getElementById('edit-notes').value.trim();
     const latitude = document.getElementById('edit-latitude').value;
     const longitude = document.getElementById('edit-longitude').value;
@@ -567,7 +567,7 @@ function updateCatch() {
 
     // Get existing catches
     let catches = JSON.parse(localStorage.getItem('catches') || '[]');
-    
+
     // Find and update the catch
     const catchIndex = catches.findIndex(c => c.id === catchId);
     if (catchIndex !== -1) {
@@ -575,7 +575,7 @@ function updateCatch() {
         console.log('Updating with location name:', locationName);
         console.log('Updating with latitude:', latitude);
         console.log('Updating with longitude:', longitude);
-        
+
         catches[catchIndex] = {
             ...catches[catchIndex],
             species,
@@ -589,10 +589,10 @@ function updateCatch() {
             photo: photo || null,
             lastModified: Date.now()
         };
-        
+
         console.log('After update:', catches[catchIndex]);
         console.log('Updated catch with location:', catches[catchIndex].locationName);
-        
+
         // Save back to localStorage with error handling
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
@@ -607,12 +607,12 @@ function updateCatch() {
                 showMessage('Error updating catch. Please try again.', 'error');
                 return;
             }
-        }        
+        }
         // Add success feedback to the submit button
         const editSubmitBtn = document.querySelector('#edit-catch-form button[type="submit"]');
         if (editSubmitBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
             window.beautifulButtons.addSuccessFeedback(editSubmitBtn);
-            
+
             // Hide edit modal after the feedback effect completes and ensure button is reset
             setTimeout(() => {
                 // Ensure button is properly reset before modal closes
@@ -627,15 +627,15 @@ function updateCatch() {
                 document.getElementById('edit-modal').classList.add('hidden');
             }, 500);
         }
-          // Refresh displays
+        // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
-        
+
         // Refresh map if the map tab is currently active
         refreshMapIfVisible();
-        
+
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
             showMessage('Catch updated successfully');
         }
@@ -647,7 +647,7 @@ function updateCatch() {
 function displayRecords() {
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
     const recordsContainer = document.getElementById('records-container');
-    
+
     if (catches.length === 0) {
         recordsContainer.innerHTML = '<p class="text-gray-500 italic">No records yet.</p>';
         return;
@@ -658,7 +658,7 @@ function displayRecords() {
     const speciesRecords = {};
     catches.forEach(catch_ => {
         if (!catch_.length || catch_.length <= 0) return; // Skip catches without valid length
-        
+
         if (!speciesRecords[catch_.species] || catch_.length > speciesRecords[catch_.species].length) {
             speciesRecords[catch_.species] = catch_;
         }
@@ -666,7 +666,7 @@ function displayRecords() {
 
     // Display consolidated records with click handlers
     recordsContainer.innerHTML = Object.entries(speciesRecords)
-        .sort(([,a], [,b]) => b.length - a.length) // Sort by length descending
+        .sort(([, a], [, b]) => b.length - a.length) // Sort by length descending
         .map(([species, record]) => `
             <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${record.id}">
                 <div class="flex items-start gap-4">
@@ -679,10 +679,10 @@ function displayRecords() {
                             </p>
                             <p class="text-xs text-gray-500">
                                 ${new Date(record.datetime).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                })}
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })}
                                 ${record.locationName ? ` • ${record.locationName}` : ''}
                             </p>
                         </div>
@@ -709,21 +709,21 @@ function displayRecords() {
 
 function closeFullscreenImage() {
     const fullscreenModal = document.getElementById('fullscreen-image');
-    
+
     // Aggressively hide modal using multiple methods
     fullscreenModal.classList.add('hidden');
     fullscreenModal.style.display = 'none';
     fullscreenModal.style.visibility = 'hidden';
     fullscreenModal.style.opacity = '0';
     fullscreenModal.style.zIndex = '-1';
-    
+
     // Reset all image state when closing
     imageRotation = 0;
     currentScale = 1;
     currentTranslateX = 0;
     currentTranslateY = 0;
     isZoomed = false;
-    
+
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     fullscreenImage.style.transform = '';
     fullscreenImage.style.maxWidth = '100vw';
@@ -732,7 +732,7 @@ function closeFullscreenImage() {
     fullscreenImage.style.height = 'auto';
     fullscreenImage.src = '';
     fullscreenImage.alt = '';
-    
+
     // Remove touch handlers
     removeImageTouchHandlers(fullscreenImage);
 }
@@ -742,7 +742,7 @@ function resetFullscreenModal() {
     console.log('=== RESETTING FULLSCREEN MODAL ===');
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
-    
+
     if (fullscreenModal) {
         // Aggressively hide modal using multiple methods
         fullscreenModal.classList.add('hidden');
@@ -752,7 +752,7 @@ function resetFullscreenModal() {
         fullscreenModal.style.zIndex = '-1';
         console.log('Fullscreen modal aggressively hidden');
     }
-    
+
     if (fullscreenImage) {
         // Clear image source and reset all transform state
         fullscreenImage.src = '';
@@ -764,14 +764,14 @@ function resetFullscreenModal() {
         fullscreenImage.style.height = 'auto';
         console.log('Fullscreen image cleared and reset');
     }
-    
+
     // Reset rotation and zoom state
     imageRotation = 0;
     currentScale = 1;
     currentTranslateX = 0;
     currentTranslateY = 0;
     isZoomed = false;
-    
+
     console.log('Fullscreen modal state reset complete');
 }
 
@@ -780,28 +780,28 @@ function handleRotateClick(event) {
     // Check if fullscreen modal is actually visible before rotating
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
-    
+
     if (!fullscreenModal || fullscreenModal.classList.contains('hidden')) {
         console.log('Rotate button clicked but fullscreen modal is not visible - ignoring');
         return;
     }
-    
+
     if (!fullscreenImage || !fullscreenImage.src || fullscreenImage.src.trim() === '') {
         console.log('Rotate button clicked but no image is loaded - ignoring');
         return;
     }
-    
+
     // Prevent default behavior and stop propagation
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
-    
+
     // Debounce multiple rapid calls (common on mobile)
     if (window.rotateClickTimeout) {
         clearTimeout(window.rotateClickTimeout);
     }
-    
+
     window.rotateClickTimeout = setTimeout(() => {
         rotateFullscreenImage();
         window.rotateClickTimeout = null;
@@ -812,13 +812,13 @@ function rotateFullscreenImage() {
     // Toggle between 0 and 90 degrees only (portrait and landscape)
     imageRotation = imageRotation === 0 ? 90 : 0;
     const fullscreenImage = document.getElementById('fullscreen-image-content');
-    
+
     // Reset any zoom/pan transformations when rotating
     currentScale = 1;
     currentTranslateX = 0;
     currentTranslateY = 0;
     isZoomed = false;
-    
+
     // Optimize sizing for rotation
     if (imageRotation === 90) {
         // Landscape mode: swap dimensions for optimal screen usage
@@ -833,7 +833,7 @@ function rotateFullscreenImage() {
         fullscreenImage.style.width = 'auto';
         fullscreenImage.style.height = 'auto';
     }
-    
+
     // Apply all transformations using the helper function
     updateImageTransform();
 }
@@ -850,18 +850,18 @@ function setupSpeciesHandlers() {
     const speciesInput = document.getElementById('species');
     const speciesDropdown = document.getElementById('species-dropdown');
     const manageSpeciesBtn = document.getElementById('manage-species-btn');
-    
+
     console.log('Species DOM elements:', {
         speciesInput: !!speciesInput,
         speciesDropdown: !!speciesDropdown,
         manageSpeciesBtn: !!manageSpeciesBtn
     });
-    
+
     if (!speciesInput || !speciesDropdown) {
         console.error('Critical species DOM elements not found!');
         return;
     }
-    
+
     // Initialize species list if empty
     if (!localStorage.getItem('species')) {
         const defaultSpecies = [
@@ -874,63 +874,68 @@ function setupSpeciesHandlers() {
         console.log('=== REFRESH SPECIES LIST START ===');
         let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         console.log('Current species list:', speciesList);
-        
+
         // Add species from fish database if available
         if (window.fishDB && await window.fishDB.isReady()) {
             console.log('Fish database is ready, getting species names...');
             const dbSpecies = window.fishDB.getSpeciesNames();
             console.log('Database species:', dbSpecies);
-            
+
             // Add database species that aren't already in the list
             let addedCount = 0;
             dbSpecies.forEach(dbSpeciesName => {
-                const exists = speciesList.some(species => 
+                const exists = speciesList.some(species =>
                     species.name.toLowerCase() === dbSpeciesName.toLowerCase()
                 );
                 if (!exists) {
-                    speciesList.push({ 
-                        name: dbSpeciesName, 
-                        isCustom: false, 
-                        isFromDatabase: true 
+                    speciesList.push({
+                        name: dbSpeciesName,
+                        isCustom: false,
+                        isFromDatabase: true
                     });
                     addedCount++;
                     console.log('Added database species:', dbSpeciesName);
                 }
             });
-            
+
             console.log(`Added ${addedCount} species from database`);
-            
+
             // Update localStorage with combined list
             localStorage.setItem('species', JSON.stringify(speciesList));
             console.log('Updated species list saved to localStorage');
         } else {
             console.log('Fish database not ready or not available');
         }
-        
+
         console.log('Final species list:', speciesList);
-        
+
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
-            const matches = speciesList.filter(species => 
+            const matches = speciesList.filter(species =>
                 species.name.toLowerCase().startsWith(searchTerm)
             );
             await updateSpeciesDropdown(matches);
         }
-        
+
         // Update manager list if it's visible
         if (!document.getElementById('manage-species-modal').classList.contains('hidden')) {
             displayCustomSpeciesList();
         }
-        
+
         console.log('=== REFRESH SPECIES LIST END ===');
     }
 
     // Make refreshSpeciesList globally accessible for database initialization
-    window.refreshSpeciesList = refreshSpeciesList;    async function updateSpeciesDropdown(matches) {
+    window.refreshSpeciesList = refreshSpeciesList; async function updateSpeciesDropdown(matches) {
+        console.log('=== UPDATE SPECIES DROPDOWN START ===');
+        console.log('Matches:', matches);
+
         const isDbReady = window.fishDB && await window.fishDB.isReady();
-        
+        console.log('Database ready:', isDbReady);
+
         if (matches.length > 0) {
+            console.log('Building dropdown with matches...');
             const dropdownHTML = await Promise.all(matches.map(async species => {
                 let cleanName = cleanSpeciesName(species.name);
                 let speciesInfo = '';
@@ -942,16 +947,18 @@ function setupSpeciesHandlers() {
                         speciesInfo = ` <small class="text-gray-500">${edibleIcon} ${accuracyPercent}%</small>`;
                     }
                 }
-                
+
                 return `
                     <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-original-name="${species.name}">
                         ${cleanName}${speciesInfo}
                     </div>
                 `;
             }));
-            
+
+            console.log('Dropdown HTML generated:', dropdownHTML);
             speciesDropdown.innerHTML = dropdownHTML.join('');
         } else {
+            console.log('No matches, showing add new species option');
             speciesDropdown.innerHTML = `
                 <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     Add "${speciesInput.value}" as new species
@@ -961,10 +968,10 @@ function setupSpeciesHandlers() {
         speciesDropdown.querySelectorAll('.species-option').forEach(option => {
             let touchStartY = 0;
             let touchStartTime = 0;
-              const handleSelection = (e) => {
+            const handleSelection = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 if (option.textContent.includes('Add "')) {
                     // Show add species modal with the current input value
                     document.getElementById('species-modal').classList.remove('hidden');
@@ -974,7 +981,7 @@ function setupSpeciesHandlers() {
                     // Always use the cleaned name for display in the input field
                     const originalName = option.dataset.originalName;
                     speciesInput.value = cleanSpeciesName(originalName || option.textContent.trim());
-                    
+
                     // Automatically focus on the length input field
                     setTimeout(() => {
                         const lengthInput = document.getElementById('length');
@@ -985,43 +992,53 @@ function setupSpeciesHandlers() {
                 }
                 speciesDropdown.classList.add('hidden');
             };
-            
+
             // Track touch start to distinguish between tap and scroll
             option.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
                 touchStartTime = Date.now();
             }, { passive: true });
-            
+
             // Only handle selection if it's a short tap, not a scroll
             option.addEventListener('touchend', (e) => {
                 const touchEndY = e.changedTouches[0].clientY;
                 const touchDuration = Date.now() - touchStartTime;
                 const touchDistance = Math.abs(touchEndY - touchStartY);
-                
+
                 // Only trigger if it's a quick tap with minimal movement
                 if (touchDuration < 500 && touchDistance < 10) {
                     handleSelection(e);
                 }
             }, { passive: false });
-            
+
             // Add click event for desktop
             option.addEventListener('click', handleSelection);
         });
+        console.log('Dropdown classList after removing hidden:', speciesDropdown.classList.toString());
+        console.log('Dropdown innerHTML after update:', speciesDropdown.innerHTML);
+        console.log('=== UPDATE SPECIES DROPDOWN END ===');
         speciesDropdown.classList.remove('hidden');
     }
 
     // Handle species input
     speciesInput.addEventListener('input', () => {
         const searchTerm = speciesInput.value.toLowerCase();
+        console.log('Species input event triggered, search term:', searchTerm);
+
         if (searchTerm.length === 0) {
+            console.log('Empty search term, hiding dropdown');
             speciesDropdown.classList.add('hidden');
             return;
         }
 
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
-        const matches = speciesList.filter(species => 
+        console.log('Species list from localStorage:', speciesList);
+
+        const matches = speciesList.filter(species =>
             species.name.toLowerCase().startsWith(searchTerm)
         );
+        console.log('Filtered matches:', matches);
+
         updateSpeciesDropdown(matches);
     });
 
@@ -1038,7 +1055,7 @@ function setupSpeciesHandlers() {
         manageSpeciesBtn.disabled = true;
         manageSpeciesBtn.style.pointerEvents = 'none';
         manageSpeciesBtn.style.opacity = '0.5';
-        
+
         document.getElementById('manage-species-modal').classList.remove('hidden');
         displayCustomSpeciesList();
     });
@@ -1058,14 +1075,14 @@ function setupSpeciesHandlers() {
     speciesForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newSpeciesName = document.getElementById('new-species-name').value.trim();
-        
+
         if (!newSpeciesName) {
             showMessage('Please enter a species name', 'error');
             return;
         }
 
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
-        
+
         // Check for duplicates
         if (speciesList.some(species => species.name.toLowerCase() === newSpeciesName.toLowerCase())) {
             showMessage('This species already exists', 'error');
@@ -1075,7 +1092,7 @@ function setupSpeciesHandlers() {
         // Add new species
         speciesList.push({ name: newSpeciesName, isCustom: true });
         localStorage.setItem('species', JSON.stringify(speciesList));
-        
+
         // Update UI
         speciesModal.classList.add('hidden');
         document.getElementById('new-species-name').value = '';
@@ -1086,7 +1103,7 @@ function setupSpeciesHandlers() {
     // Handle modal close buttons
     document.getElementById('close-manage-species-btn').addEventListener('click', () => {
         document.getElementById('manage-species-modal').classList.add('hidden');
-        
+
         // Re-enable the manage species button
         manageSpeciesBtn.disabled = false;
         manageSpeciesBtn.style.pointerEvents = 'auto';
@@ -1102,7 +1119,7 @@ function setupSpeciesHandlers() {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
-                
+
                 // If it's the manage species modal, re-enable the button
                 if (modal.id === 'manage-species-modal') {
                     manageSpeciesBtn.disabled = false;
@@ -1125,7 +1142,7 @@ function displayCustomSpeciesList() {
     const customSpeciesList = document.getElementById('custom-species-list');
     const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
     const customSpecies = speciesList.filter(species => species.isCustom);
-    
+
     if (customSpecies.length === 0) {
         customSpeciesList.innerHTML = `
             <p class="text-gray-500 italic">No custom species added yet.</p>
@@ -1179,7 +1196,7 @@ function setupLocationHandling() {
         locationNameForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const locationName = modalLocationNameInput.value.trim();
-            
+
             if (!locationName) {
                 showMessage('Please enter a location name', 'error');
                 return;
@@ -1190,7 +1207,7 @@ function setupLocationHandling() {
             const locationStatus = document.getElementById('location-status');
             locationStatus.textContent = `Location name: ${locationName}`;
             locationStatus.className = 'text-sm text-green-600';
-            
+
             // Hide modal and reset
             locationNameModal.classList.add('hidden');
             showMessage('Location:       Success!', 'success');
@@ -1217,14 +1234,14 @@ function setupLocationHandling() {
 function setupPhotoHandling() {
     const photoInput = document.getElementById('photo');
     const photoUploadBtn = document.getElementById('photo-upload-btn');
-    
+
     // Handle button click to trigger file input
     if (photoUploadBtn) {
         photoUploadBtn.addEventListener('click', () => {
             photoInput.click();
         });
     }
-    
+
     photoInput.addEventListener('change', handlePhotoUpload);
 }
 
@@ -1233,7 +1250,7 @@ async function handlePhotoUpload(event) {
     const photoUploadBtn = document.getElementById('photo-upload-btn');
     const photoBtnText = document.getElementById('photo-btn-text');
     const helperText = document.getElementById('photo-helper-text');
-    
+
     if (!file) {
         // Reset to default state if no file selected
         photoUploadBtn.className = 'shiny-button ripple-effect w-full';
@@ -1279,16 +1296,16 @@ async function handlePhotoUpload(event) {
         helperText.textContent = 'Processing image...';
         helperText.className = 'text-xs text-yellow-600 mt-1';
         showMessage('Processing image...', 'info');
-        
+
         // Compress the image
         const compressedDataUrl = await compressImage(file);
-        
+
         // Store the compressed image data URL
         event.target.dataset.imageData = compressedDataUrl;
-        
+
         // Calculate compressed size for user feedback
         const compressedSizeKB = Math.round((compressedDataUrl.length * 0.75) / 1024); // Approximate size in KB
-          // Show success state
+        // Show success state
         photoUploadBtn.className = 'shiny-button ripple-effect w-full';
         photoUploadBtn.style.setProperty('--button-bg', '#dcfce7');
         photoUploadBtn.style.setProperty('--button-text', '#166534');
@@ -1296,7 +1313,7 @@ async function handlePhotoUpload(event) {
         helperText.textContent = 'Upload Successful';
         helperText.className = 'text-xs text-green-600 mt-1';
         showMessage('Upload Successful', 'success');
-        
+
     } catch (error) {
         console.error('Image compression failed:', error);
         photoUploadBtn.className = 'shiny-button ripple-effect w-full';
@@ -1316,58 +1333,58 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         const img = new Image();
-        
+
         img.onload = () => {
             try {
                 // Calculate new dimensions while maintaining aspect ratio
                 let { width, height } = img;
-                
+
                 // Calculate scaling factor
                 const scaleX = maxWidth / width;
                 const scaleY = maxHeight / height;
                 const scale = Math.min(scaleX, scaleY, 1); // Don't upscale
-                
+
                 const newWidth = Math.round(width * scale);
                 const newHeight = Math.round(height * scale);
-                
+
                 canvas.width = newWidth;
                 canvas.height = newHeight;
-                
+
                 // Draw with high quality settings
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                
+
                 // Convert to compressed JPEG
                 let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                
+
                 // Check if still too large for localStorage (aim for <2MB base64)
                 const maxBase64Size = 2 * 1024 * 1024; // 2MB
                 if (compressedDataUrl.length > maxBase64Size) {
                     console.log('Image still too large, reducing quality further...');
-                    
+
                     // Try with lower quality
                     compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                    
+
                     // If still too large, reduce dimensions further
                     if (compressedDataUrl.length > maxBase64Size) {
                         console.log('Reducing dimensions further...');
                         return compressImage(file, 800, 800, 0.5).then(resolve).catch(reject);
                     }
                 }
-                
-                console.log(`Image compressed: ${Math.round(file.size/1024)}KB → ${Math.round(compressedDataUrl.length*0.75/1024)}KB`);
+
+                console.log(`Image compressed: ${Math.round(file.size / 1024)}KB → ${Math.round(compressedDataUrl.length * 0.75 / 1024)}KB`);
                 resolve(compressedDataUrl);
-                
+
             } catch (error) {
                 reject(error);
             }
         };
-        
+
         img.onerror = () => {
             reject(new Error('Failed to load image'));
         };
-        
+
         // Create object URL for the image to avoid memory issues with large files
         img.src = URL.createObjectURL(file);
     });
@@ -1375,46 +1392,46 @@ function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
 
 function showFullscreenImage(imageUrl) {
     console.log('showFullscreenImage called with:', imageUrl);
-    
+
     // Validate image URL
     if (!imageUrl || imageUrl.trim() === '' || imageUrl === 'undefined' || imageUrl === 'null') {
         console.warn('showFullscreenImage called with invalid image URL:', imageUrl);
         return;
     }
-    
+
     const fullscreenModal = document.getElementById('fullscreen-image');
     const fullscreenImage = document.getElementById('fullscreen-image-content');
-    
+
     if (!fullscreenModal || !fullscreenImage) {
         console.error('Fullscreen modal elements not found');
         return;
     }
-    
+
     // Reset rotation, zoom, and sizing for new image
     imageRotation = 0;
     currentScale = 1;
     currentTranslateX = 0;
     currentTranslateY = 0;
     isZoomed = false;
-    
+
     fullscreenImage.style.transform = '';
     fullscreenImage.style.maxWidth = '100vw';
     fullscreenImage.style.maxHeight = '100vh';
     fullscreenImage.style.width = 'auto';
     fullscreenImage.style.height = 'auto';
-      // Set image source and show modal
+    // Set image source and show modal
     fullscreenImage.src = imageUrl;
     fullscreenImage.alt = 'Full size catch photo';
-    
+
     // Restore modal visibility using multiple methods
     fullscreenModal.classList.remove('hidden');
     fullscreenModal.style.display = 'flex';
     fullscreenModal.style.visibility = 'visible';
     fullscreenModal.style.opacity = '1';
     fullscreenModal.style.zIndex = '1300';
-    
+
     console.log('Fullscreen modal shown with image:', imageUrl);
-    
+
     // Setup touch handlers for zoom and pan
     setupImageTouchHandlers(fullscreenImage);
 }
@@ -1429,14 +1446,14 @@ function setupImageTouchHandlers(imageElement) {
     let lastTouchY = 0;
     let touchStartY = 0;
     let touchCount = 0;
-    
+
     // Prevent default touch behaviors
     imageElement.style.touchAction = 'none';
-    
+
     function handleTouchStart(e) {
         e.preventDefault();
         touchCount = e.touches.length;
-        
+
         if (touchCount === 1) {
             // Single touch - prepare for pan or swipe
             const touch = e.touches[0];
@@ -1447,73 +1464,73 @@ function setupImageTouchHandlers(imageElement) {
             // Two fingers - prepare for pinch zoom
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
-            
+
             initialDistance = Math.hypot(
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
             initialScale = currentScale;
-            
+
             // Get center point of pinch
             initialX = (touch1.clientX + touch2.clientX) / 2;
             initialY = (touch1.clientY + touch2.clientY) / 2;
         }
     }
-    
+
     function handleTouchMove(e) {
         e.preventDefault();
-        
+
         if (touchCount === 1 && isZoomed) {
             // Single touch pan when zoomed
             const touch = e.touches[0];
             const deltaX = touch.clientX - lastTouchX;
             const deltaY = touch.clientY - lastTouchY;
-            
+
             currentTranslateX += deltaX;
             currentTranslateY += deltaY;
-            
+
             updateImageTransform();
-            
+
             lastTouchX = touch.clientX;
             lastTouchY = touch.clientY;
         } else if (touchCount === 2) {
             // Two finger pinch zoom
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
-            
+
             const currentDistance = Math.hypot(
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
-            
+
             const scale = (currentDistance / initialDistance) * initialScale;
             currentScale = Math.max(1, Math.min(scale, 4)); // Limit zoom between 1x and 4x
-            
+
             // Update zoom state
             isZoomed = currentScale > 1;
-            
+
             updateImageTransform();
         }
     }
-    
+
     function handleTouchEnd(e) {
         e.preventDefault();
-        
+
         // Check for swipe up to exit when not zoomed
         if (touchCount === 1 && !isZoomed && e.changedTouches.length === 1) {
             const touch = e.changedTouches[0];
             const swipeDistance = touchStartY - touch.clientY;
             const swipeThreshold = 100; // pixels
-            
+
             if (swipeDistance > swipeThreshold) {
                 // Swipe up detected - exit fullscreen
                 closeFullscreenImage();
                 return;
             }
         }
-        
+
         touchCount = Math.max(0, touchCount - e.changedTouches.length);
-        
+
         // Reset to fit if zoomed out completely
         if (currentScale <= 1) {
             currentScale = 1;
@@ -1523,14 +1540,14 @@ function setupImageTouchHandlers(imageElement) {
             updateImageTransform();
         }
     }
-    
+
     // Store handlers for removal later
     imageElement._touchHandlers = {
         touchstart: handleTouchStart,
         touchmove: handleTouchMove,
         touchend: handleTouchEnd
     };
-    
+
     // Add event listeners
     imageElement.addEventListener('touchstart', handleTouchStart, { passive: false });
     imageElement.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -1544,7 +1561,7 @@ function removeImageTouchHandlers(imageElement) {
         imageElement.removeEventListener('touchend', imageElement._touchHandlers.touchend);
         delete imageElement._touchHandlers;
     }
-    
+
     // Reset touch action
     imageElement.style.touchAction = 'pinch-zoom';
 }
@@ -1553,11 +1570,11 @@ function removeImageTouchHandlers(imageElement) {
 function updateImageTransform() {
     const fullscreenImage = document.getElementById('fullscreen-image-content');
     if (!fullscreenImage) return;
-    
+
     const rotateTransform = `rotate(${imageRotation}deg)`;
     const scaleTransform = `scale(${currentScale})`;
     const translateTransform = `translate(${currentTranslateX}px, ${currentTranslateY}px)`;
-    
+
     fullscreenImage.style.transform = `${rotateTransform} ${scaleTransform} ${translateTransform}`;
 }
 
@@ -1571,13 +1588,13 @@ function showMessage(message, type = 'info') {
         slideNotification.className = 'slide-notification';
         document.body.appendChild(slideNotification);
     }
-    
+
     // Set message content
     slideNotification.textContent = message;
-    
+
     // Set colors based on type
     let bgColor, textColor;
-    switch(type) {
+    switch (type) {
         case 'error':
             bgColor = 'bg-red-100';
             textColor = 'text-red-700';
@@ -1590,16 +1607,16 @@ function showMessage(message, type = 'info') {
             bgColor = 'bg-blue-100';
             textColor = 'text-blue-700';
     }
-    
+
     // Apply styling
     slideNotification.className = `slide-notification p-3 rounded-md text-sm font-medium ${bgColor} ${textColor}`;
-    
+
     // Position the notification to cover the location status area
     const locationStatus = document.getElementById('location-status');
     if (locationStatus) {
         const rect = locationStatus.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         slideNotification.style.position = 'absolute';
         slideNotification.style.top = (rect.top + scrollTop) + 'px';
         slideNotification.style.left = '-' + (rect.width + 20) + 'px'; // Start off-screen to the left
@@ -1619,7 +1636,7 @@ function showMessage(message, type = 'info') {
         slideNotification.style.verticalAlign = 'middle';
         slideNotification.style.lineHeight = getComputedStyle(locationStatus).lineHeight;
         slideNotification.style.fontSize = getComputedStyle(locationStatus).fontSize;
-        
+
         // Copy padding from location status for exact alignment
         const locationStatusStyles = getComputedStyle(locationStatus);
         slideNotification.style.paddingLeft = locationStatusStyles.paddingLeft;
@@ -1627,21 +1644,21 @@ function showMessage(message, type = 'info') {
         slideNotification.style.paddingTop = locationStatusStyles.paddingTop;
         slideNotification.style.paddingBottom = locationStatusStyles.paddingBottom;
     }
-    
+
     // Show notification with slide animation
     slideNotification.style.display = 'block';
-    
+
     // Trigger slide-in animation
     setTimeout(() => {
         slideNotification.style.left = '10px'; // Slide in from left
     }, 50);
-    
+
     // Auto-hide after duration with slide-out animation (half duration)
     const duration = type === 'success' ? 2000 : 1500; // Reduced from 4000/3000 to 2000/1500
     setTimeout(() => {
         // Slide out to the left
         slideNotification.style.left = '-' + (locationStatus ? locationStatus.getBoundingClientRect().width + 20 : 300) + 'px';
-        
+
         // Hide completely after animation
         setTimeout(() => {
             slideNotification.style.display = 'none';
@@ -1652,9 +1669,22 @@ function showMessage(message, type = 'info') {
 function loadCatchHistory() {
     let catches = [];
     try {
-        catches = JSON.parse(localStorage.getItem('catches') || '[]');
+        const catchesData = localStorage.getItem('catches') || '[]';
+        console.log('Raw catches data from localStorage:', catchesData);
+        console.log('Type of catches data:', typeof catchesData);
+        console.log('Length of catches data:', catchesData.length);
+
+        catches = JSON.parse(catchesData);
+        console.log('Successfully parsed catches:', catches.length, 'items');
     } catch (err) {
         console.error('Error reading catches from localStorage:', err);
+        console.error('Error type:', err.constructor.name);
+        console.error('Error message:', err.message);
+        const catchesData = localStorage.getItem('catches');
+        console.error('Problematic data:', catchesData);
+        console.error('Data type:', typeof catchesData);
+        console.error('Data length:', catchesData ? catchesData.length : 'null');
+
         showMessage('Error loading catch history. Data may be corrupted.', 'error');
         catches = [];
     }
@@ -1677,13 +1707,13 @@ function loadCatchHistory() {
             <div class="flex justify-between items-start gap-4">
                 <div class="flex-grow">
                     <h3 class="text-lg font-semibold text-blue-700">${cleanSpeciesName(catch_.species)}</h3>
-                    <span class="text-sm text-gray-500">${new Date(catch_.datetime).toLocaleDateString('en-GB', { 
-                        day: '2-digit', 
-                        month: '2-digit', 
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}</span>
+                    <span class="text-sm text-gray-500">${new Date(catch_.datetime).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })}</span>
                     <div class="mt-2 space-y-1">
                         <p class="text-sm"><span class="font-medium">Length:</span> ${catch_.length}cm</p>
                         <p class="text-sm"><span class="font-medium">Weight:</span> ${Number(catch_.weight).toFixed(3)}kg</p>
@@ -1722,7 +1752,7 @@ function setupModalHandlers() {
     document.getElementById('confirm-action-btn').addEventListener('click', () => {
         const confirmationModal = document.getElementById('confirmation-modal');
         const catchId = confirmationModal.dataset.catchId;
-        
+
         if (catchId) {
             deleteCatch(catchId);
             confirmationModal.classList.add('hidden');
@@ -1776,18 +1806,18 @@ function deleteCatch(catchId) {
         let catches = JSON.parse(localStorage.getItem('catches') || '[]');
         catches = catches.filter(c => c.id !== catchId);
         localStorage.setItem('catches', JSON.stringify(catches));
-        
+
         // Close any open modals
         document.getElementById('catch-modal').classList.add('hidden');
-          // Refresh displays
+        // Refresh displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
-        
+
         // Refresh map if the map tab is currently active
         refreshMapIfVisible();
-        
+
         showMessage('Catch deleted successfully');
     } catch (error) {
         console.error('Error deleting catch:', error);
@@ -1807,14 +1837,14 @@ function initializeDatetime() {
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        
+
         datetimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 }
 
 function showCatchModal(catchData) {
     const catchModal = document.getElementById('catch-modal');
-      // Fill in modal content
+    // Fill in modal content
     document.getElementById('modal-species').textContent = cleanSpeciesName(catchData.species);
     document.getElementById('modal-date').textContent = new Date(catchData.datetime).toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -1825,10 +1855,10 @@ function showCatchModal(catchData) {
     });
     document.getElementById('modal-length').textContent = `Length: ${catchData.length}cm`;
     document.getElementById('modal-weight').textContent = `Weight: ${Number(catchData.weight).toFixed(3)}kg`;
-    
+
     const locationContainer = document.getElementById('modal-location-container');
     const locationName = document.getElementById('modal-location-name');
-      if (catchData.locationName) {
+    if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
     } else if (catchData.latitude && catchData.longitude) {
@@ -1837,7 +1867,7 @@ function showCatchModal(catchData) {
     } else {
         locationContainer.classList.add('hidden');
     }
-    
+
     const notes = document.getElementById('modal-notes');
     if (catchData.notes) {
         notes.textContent = catchData.notes;
@@ -1845,7 +1875,7 @@ function showCatchModal(catchData) {
     } else {
         notes.classList.add('hidden');
     }
-    
+
     const photoContainer = document.getElementById('modal-photo-container');
     const modalPhoto = document.getElementById('modal-photo');
     if (catchData.photo) {
@@ -1855,22 +1885,22 @@ function showCatchModal(catchData) {
     } else {
         photoContainer.classList.add('hidden');
     }
-    
+
     // Setup edit button
     document.getElementById('edit-catch-btn').onclick = () => {
         catchModal.classList.add('hidden');
         showEditModal(catchData);
     };
-    
+
     // Setup delete button
     document.getElementById('delete-catch-btn').onclick = () => {
         catchModal.classList.add('hidden');
         showDeleteConfirmation(catchData);
     };
-    
+
     // Show the modal
     catchModal.classList.remove('hidden');
-    
+
     // Close modal when clicking outside
     catchModal.addEventListener('click', (e) => {
         if (e.target === catchModal) {
@@ -1890,40 +1920,40 @@ function showCatchFromMap(catchId) {
     console.log('Showing catch from map:', catchId);
     console.log('User agent:', navigator.userAgent);
     console.log('Is mobile:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent));
-    
+
     // Get all catches from localStorage
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
     console.log('Total catches found:', catches.length);
     console.log('Available catch IDs:', catches.map(c => c.id));
     console.log('Looking for ID:', catchId, 'Type:', typeof catchId);
-    
+
     // Find the specific catch - handle both string and number IDs
     const catchData = catches.find(catch_ => {
         console.log('Comparing:', catch_.id, 'with', catchId, 'Match:', catch_.id == catchId);
         return catch_.id == catchId || catch_.id === catchId;
     });
-    
+
     if (!catchData) {
         console.error('Catch not found:', catchId);
         console.error('Available catches:', catches);
-        
+
         // Mobile fallback: Try to find by partial ID match
-        const partialMatch = catches.find(catch_ => 
-            catch_.id.toString().includes(catchId.toString()) || 
+        const partialMatch = catches.find(catch_ =>
+            catch_.id.toString().includes(catchId.toString()) ||
             catchId.toString().includes(catch_.id.toString())
         );
-        
+
         if (partialMatch) {
             console.log('Found partial match:', partialMatch);
             showCatchModal(partialMatch);
             return;
         }
-        
+
         showMessage('Catch not found - please try again', 'error');
         return;
     }
-      console.log('Found catch data:', catchData);
-    
+    console.log('Found catch data:', catchData);
+
     // Stay on the Map tab - just show the modal directly
     console.log('Showing catch modal on Map tab');
     showCatchModal(catchData);
@@ -2013,15 +2043,15 @@ function setupDataOptions() {
 
 function setupTabSystem() {
     console.log('=== SETTING UP TAB SYSTEM ===');
-    
+
     // Get tab buttons and content areas
     const historyTab = document.getElementById('history-tab-btn');
     const recordsTab = document.getElementById('records-tab-btn');
     const mapTab = document.getElementById('map-tab-btn');
-      const catchLog = document.getElementById('catch-log');
+    const catchLog = document.getElementById('catch-log');
     const recordsContainer = document.getElementById('records-container');
     const mapContainer = document.getElementById('map-view-container');
-    
+
     console.log('Tab elements found:', {
         historyTab: !!historyTab,
         recordsTab: !!recordsTab,
@@ -2038,21 +2068,21 @@ function setupTabSystem() {
         const recordsTab = document.getElementById('records-tab-btn');
         const mapTab = document.getElementById('map-tab-btn');
         const labelElement = document.getElementById('active-tab-label');
-        
+
         // Remove active class from all tab buttons
         [historyTab, recordsTab, mapTab].forEach(tab => {
             if (tab) {
                 tab.classList.remove('active');
             }
         });
-        
+
         // Hide all content areas
         [catchLog, recordsContainer, mapContainer].forEach(content => {
             if (content) {
                 content.classList.add('hidden');
             }
         });
-        
+
         // Clear both groups and rebuild layout
         if (leftGroup && rightGroup) {
             // Remove all tabs from their current positions
@@ -2061,35 +2091,35 @@ function setupTabSystem() {
                     tab.remove();
                 }
             });
-            
+
             // Remove label from current position
             if (labelElement && labelElement.parentElement) {
                 labelElement.remove();
             }
-            
+
             // Always start with History in left group
             leftGroup.appendChild(historyTab);
-            
+
             if (activeTab === historyTab) {
                 // History active: History left with label, Records and Map slide to right (no labels)
                 historyTab.classList.add('active');
                 labelElement.textContent = historyTab.getAttribute('data-label');
                 leftGroup.appendChild(labelElement);
-                
+
                 // Add Records and Map to right group in sequence
                 rightGroup.appendChild(recordsTab);
                 rightGroup.appendChild(mapTab);
-                
+
             } else if (activeTab === recordsTab) {
                 // Records active: Records slides next to History with label, Map stays right
                 recordsTab.classList.add('active');
                 leftGroup.appendChild(recordsTab);
                 labelElement.textContent = recordsTab.getAttribute('data-label');
                 leftGroup.appendChild(labelElement);
-                
+
                 // Map stays on right
                 rightGroup.appendChild(mapTab);
-                
+
             } else if (activeTab === mapTab) {
                 // Map active: Records slides next to History, Map slides next to Records with label
                 mapTab.classList.add('active');
@@ -2099,20 +2129,20 @@ function setupTabSystem() {
                 leftGroup.appendChild(labelElement);
             }
         }
-        
+
         // Show the active content
         if (activeContent) {
             activeContent.classList.remove('hidden');
         }
     }
-      // History tab click handler
+    // History tab click handler
     if (historyTab) {
         historyTab.addEventListener('click', () => {
             console.log('History tab clicked');
             switchTab(historyTab, catchLog);
         });
     }
-    
+
     // Records tab click handler with toggle behavior
     if (recordsTab) {
         recordsTab.addEventListener('click', () => {
@@ -2126,7 +2156,7 @@ function setupTabSystem() {
             }
         });
     }
-      // Map tab click handler with toggle behavior
+    // Map tab click handler with toggle behavior
     if (mapTab) {
         mapTab.addEventListener('click', () => {
             console.log('Map tab clicked');
@@ -2136,7 +2166,7 @@ function setupTabSystem() {
                 displayRecords(); // Load records when switching to records
             } else {
                 switchTab(mapTab, mapContainer);
-                
+
                 // Initialize or refresh map view
                 setTimeout(() => {
                     setupMainMap();
@@ -2144,12 +2174,12 @@ function setupTabSystem() {
             }
         });
     }
-    
+
     // Initialize - make sure History tab is active by default
     if (historyTab) {
         switchTab(historyTab, catchLog);
     }
-    
+
     console.log('Tab system setup complete');
 }
 
@@ -2162,25 +2192,25 @@ function setupViewToggle() {
 // Map functionality
 function setupMapHandlers() {
     console.log('Setting up map handlers...');
-    
+
     // Map modal buttons
     const closeMapModalBtn = document.getElementById('close-map-modal-btn');
     const cancelMapModalBtn = document.getElementById('cancel-map-modal-btn');
     const useCurrentLocationBtn = document.getElementById('use-current-location-btn');
     const saveMapLocationBtn = document.getElementById('save-map-location-btn');
-    
+
     if (closeMapModalBtn) {
         closeMapModalBtn.addEventListener('click', closeMapModal);
     }
-    
+
     if (cancelMapModalBtn) {
         cancelMapModalBtn.addEventListener('click', closeMapModal);
     }
-    
+
     if (useCurrentLocationBtn) {
         useCurrentLocationBtn.addEventListener('click', useCurrentLocationOnMap);
     }
-    
+
     if (saveMapLocationBtn) {
         saveMapLocationBtn.addEventListener('click', saveSelectedLocation);
     }      // Setup the location button to open map modal (don't replace, just add listener)
@@ -2188,7 +2218,7 @@ function setupMapHandlers() {
     if (getLocationBtn) {
         getLocationBtn.addEventListener('click', openMapModal);
     }
-    
+
     // Setup the edit location button to open map modal in edit mode
     const editLocationBtn = document.getElementById('edit-location-btn');
     if (editLocationBtn) {
@@ -2204,7 +2234,7 @@ function openMapModal() {
     console.log('Opening map modal...');
     const mapModal = document.getElementById('map-modal');
     mapModal.classList.remove('hidden');
-    
+
     // Initialize map if not already done
     setTimeout(() => {
         if (!map) {
@@ -2219,30 +2249,30 @@ function closeMapModal() {
     console.log('Closing map modal...');
     const mapModal = document.getElementById('map-modal');
     mapModal.classList.add('hidden');
-    
+
     // Reset modal state
     selectedLatitude = null;
     selectedLongitude = null;
-    
+
     // Reset form elements
     document.getElementById('location-name-input').value = '';
     document.getElementById('location-name-input').placeholder = 'Enter a name for this location (optional)';
     document.getElementById('coord-display').textContent = 'No location selected';
-    
+
     // Reset save button
     const saveBtn = document.getElementById('save-map-location-btn');
     saveBtn.disabled = true;
     saveBtn.textContent = 'Save Location';
-    
+
     // Clear edit mode flag if present
     delete mapModal.dataset.editMode;
-    
+
     // Clean up markers
     if (currentMarker && map) {
         map.removeLayer(currentMarker);
         currentMarker = null;
     }
-    
+
     if (currentLocationMarker && map) {
         map.removeLayer(currentLocationMarker);
         currentLocationMarker = null;
@@ -2251,7 +2281,7 @@ function closeMapModal() {
 
 function initializeMap() {
     console.log('Initializing map...');
-    
+
     try {
         // Try to get user's current location first
         if (navigator.geolocation) {
@@ -2261,25 +2291,25 @@ function initializeMap() {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
                     console.log('User location obtained:', userLat, userLng);
-                    
+
                     // Initialize map with user's location
                     map = L.map('map-container').setView([userLat, userLng], 13);
-                    
+
                     // Add OpenStreetMap tiles
                     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom: 19,
                         attribution: '© OpenStreetMap contributors'
                     }).addTo(map);
-                    
+
                     // Add click handler
                     map.on('click', onMapClick);
-                    
+
                     // Add a marker showing user's current location
                     currentLocationMarker = L.marker([userLat, userLng])
                         .addTo(map)
                         .bindPopup('📍 Your current location')
                         .openPopup();
-                    
+
                     console.log('Map initialized successfully with user location');
                 },
                 (error) => {
@@ -2304,23 +2334,23 @@ function initializeMap() {
 
 function initializeMapWithDefault() {
     console.log('Initializing map with default location (Cape Town)...');
-    
+
     try {
         // Fallback to Cape Town, South Africa
         const defaultLat = -33.9249;
         const defaultLng = 18.4241;
-        
+
         map = L.map('map-container').setView([defaultLat, defaultLng], 10);
-        
+
         // Add OpenStreetMap tiles
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-        
+
         // Add click handler
         map.on('click', onMapClick);
-        
+
         console.log('Map initialized successfully with default location');
         showMessage('Map loaded with default location. Allow location access for better experience.', 'info');
     } catch (error) {
@@ -2331,33 +2361,33 @@ function initializeMapWithDefault() {
 
 function onMapClick(e) {
     console.log('Map clicked at:', e.latlng);
-    
+
     selectedLatitude = e.latlng.lat;
     selectedLongitude = e.latlng.lng;
-    
+
     // Remove existing selected marker
     if (currentMarker) {
         map.removeLayer(currentMarker);
     }
-    
+
     // Remove current location marker when user selects a different location
     if (currentLocationMarker) {
         map.removeLayer(currentLocationMarker);
         currentLocationMarker = null;
     }
-    
+
     // Add new selected marker
     currentMarker = L.marker([selectedLatitude, selectedLongitude]).addTo(map);
-    
+
     // Update display
-    document.getElementById('coord-display').textContent = 
+    document.getElementById('coord-display').textContent =
         `${selectedLatitude.toFixed(6)}, ${selectedLongitude.toFixed(6)}`;
-    
+
     // Enable save button and update its text
     const saveBtn = document.getElementById('save-map-location-btn');
     saveBtn.disabled = false;
     saveBtn.textContent = 'Save Location';
-    
+
     // Update the location name input placeholder to show it's selected
     const locationNameInput = document.getElementById('location-name-input');
     locationNameInput.placeholder = 'Enter a name (or leave blank to use coordinates)';
@@ -2365,7 +2395,7 @@ function onMapClick(e) {
 
 function useCurrentLocationOnMap() {
     console.log('Getting current location for map...');
-    
+
     if (!navigator.geolocation) {
         showMessage('Geolocation is not supported by your browser.', 'error');
         return;
@@ -2387,35 +2417,35 @@ function useCurrentLocationOnMap() {
         (position) => {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            
+
             console.log('Current location obtained:', lat, lng);
-            
+
             // Center map on current location
             map.setView([lat, lng], 15);
-            
+
             // Remove existing current location marker
             if (currentLocationMarker) {
                 map.removeLayer(currentLocationMarker);
             }
-            
+
             // Remove any selected marker (user will need to click again to select a different location)
             if (currentMarker) {
                 map.removeLayer(currentMarker);
                 currentMarker = null;
             }
-            
+
             // Add current location marker
             currentLocationMarker = L.marker([lat, lng])
                 .addTo(map)
                 .bindPopup('📍 Your current location')
                 .openPopup();
-            
+
             // Set the current location as selected
             selectedLatitude = lat;
             selectedLongitude = lng;
-            
+
             // Update display
-            document.getElementById('coord-display').textContent = 
+            document.getElementById('coord-display').textContent =
                 `${lat.toFixed(6)}, ${lng.toFixed(6)} (Current Location)`;
             document.getElementById('save-map-location-btn').disabled = false;
         },
@@ -2429,22 +2459,22 @@ function useCurrentLocationOnMap() {
 
 function saveSelectedLocation() {
     console.log('Saving selected location...');
-    
+
     if (!selectedLatitude || !selectedLongitude) {
         showMessage('Please select a location on the map first.', 'error');
         return;
     }
-    
+
     const locationName = document.getElementById('location-name-input').value.trim();
     const mapModal = document.getElementById('map-modal');
     const isEditMode = mapModal.dataset.editMode === 'true';
-    
+
     if (isEditMode) {
         // Update edit form fields
         document.getElementById('edit-latitude').value = selectedLatitude;
         document.getElementById('edit-longitude').value = selectedLongitude;
         document.getElementById('edit-location-name').value = locationName;
-        
+
         // Update edit location status
         const editLocationStatus = document.getElementById('edit-location-status');
         if (locationName) {
@@ -2453,13 +2483,13 @@ function saveSelectedLocation() {
             editLocationStatus.textContent = `Location: ${selectedLatitude.toFixed(4)}, ${selectedLongitude.toFixed(4)}`;
         }
         editLocationStatus.className = 'text-sm text-green-600';
-        
+
         // Update edit location button with feedback
         const editLocationBtn = document.getElementById('edit-location-btn');
         if (editLocationBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
             window.beautifulButtons.addSuccessFeedback(editLocationBtn);
         }
-        
+
         // Clear edit mode flag
         delete mapModal.dataset.editMode;
     } else {
@@ -2467,7 +2497,7 @@ function saveSelectedLocation() {
         document.getElementById('latitude').value = selectedLatitude;
         document.getElementById('longitude').value = selectedLongitude;
         document.getElementById('location-name').value = locationName;
-        
+
         // Update location status
         const locationStatus = document.getElementById('location-status');
         if (locationName) {
@@ -2477,15 +2507,15 @@ function saveSelectedLocation() {
         }
         locationStatus.className = 'text-sm text-green-600';
     }
-    
+
     // Add success feedback to save button
     const saveMapLocationBtn = document.getElementById('save-map-location-btn');
     if (saveMapLocationBtn && window.beautifulButtons && typeof window.beautifulButtons.addSuccessFeedback === 'function') {
         window.beautifulButtons.addSuccessFeedback(saveMapLocationBtn);
     }
-    
+
     closeMapModal();
-    
+
     if (locationName) {
         showMessage(`Location "${locationName}" saved successfully!`, 'success');
     } else {
@@ -2498,7 +2528,7 @@ function saveCatchData() {
     console.log('=== SAVE CATCH DATA CALLED DIRECTLY ===');
     console.log('Function called at:', new Date().toISOString());
     console.log('Call stack:', new Error().stack);
-    
+
     // Check if we're currently scrolling
     if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
         if (window.beautifulButtons.isScrolling()) {
@@ -2506,28 +2536,28 @@ function saveCatchData() {
             return;
         }
     }
-    
+
     try {
         console.log('Step 1: Getting form elements');
         const speciesInput = document.getElementById('species');
         const lengthInput = document.getElementById('length');
         const weightInput = document.getElementById('weight');
         const datetimeInput = document.getElementById('datetime');
-        
+
         console.log('Form inputs found:');
         console.log('- speciesInput:', !!speciesInput, speciesInput?.value);
         console.log('- lengthInput:', !!lengthInput, lengthInput?.value);
         console.log('- weightInput:', !!weightInput, weightInput?.value);
         console.log('- datetimeInput:', !!datetimeInput, datetimeInput?.value);
-        
+
         console.log('Step 2: Getting datetime and species values');
         // Get datetime - the only required field
         const datetime = datetimeInput ? datetimeInput.value : '';
         const species = speciesInput ? speciesInput.value.trim() : '';
-        
+
         console.log('Direct save - Datetime:', datetime);
         console.log('Direct save - Species:', species);
-        
+
         console.log('Step 3: Validating required fields');
         // Validate required fields
         if (!datetime) {
@@ -2535,21 +2565,21 @@ function saveCatchData() {
             showMessage('Please enter the date and time', 'error');
             return;
         }
-        
+
         if (!species) {
             console.log('Direct save validation failed: Missing species');
             showMessage('Please enter the species', 'error');
             return;
-        }        console.log('Step 4: Validation passed, processing catch data...');
-        
+        } console.log('Step 4: Validation passed, processing catch data...');
+
         // Get length value - we'll treat it as the optional main field
         const length = lengthInput ? (lengthInput.value ? parseFloat(lengthInput.value) : null) : null;
-        
+
         console.log('Step 5: Creating catch data object');
         console.log('Length:', length);
         console.log('Weight:', weightInput?.value);
         console.log('Photo data:', document.getElementById('photo')?.dataset?.imageData ? 'Present' : 'None');
-        
+
         // Create catch object - making sure to only include non-empty fields
         const catchData = {
             id: crypto.randomUUID(),
@@ -2565,19 +2595,19 @@ function saveCatchData() {
             photo: document.getElementById('photo')?.dataset?.imageData || null,
             timestamp: Date.now()
         };
-        
+
         console.log('Step 6: Catch data created:', catchData);
-        
+
         console.log('Step 7: Getting existing catches from localStorage');
         // Get existing catches from localStorage
         const catches = JSON.parse(localStorage.getItem('catches') || '[]');
-        
+
         console.log('Existing catches:', catches.length);
-        
+
         console.log('Step 8: Adding new catch to array');
         // Add new catch
         catches.push(catchData);
-        
+
         console.log('Step 9: Saving to localStorage');
         // Save updated catches array with better error handling
         try {
@@ -2595,7 +2625,7 @@ function saveCatchData() {
             } else {
                 throw storageError;
             }
-        }        console.log('Step 11: Checking for success message');
+        } console.log('Step 11: Checking for success message');
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
             console.log('Step 11a: Showing success message');
             showMessage('Catch saved successfully!');
@@ -2607,41 +2637,41 @@ function saveCatchData() {
         if (catchForm) {
             catchForm.reset();
         }
-        
+
         const photoElement = document.getElementById('photo');
         if (photoElement) {
             photoElement.dataset.imageData = '';
         }
-        
+
         const locationStatus = document.getElementById('location-status');
         if (locationStatus) {
             locationStatus.textContent = 'Location not saved.';
             locationStatus.className = 'text-sm text-gray-500';
         }
-        
+
         const latInput = document.getElementById('latitude');
         const lngInput = document.getElementById('longitude');
         const locNameInput = document.getElementById('location-name');
-        
+
         if (latInput) latInput.value = '';
         if (lngInput) lngInput.value = '';
         if (locNameInput) locNameInput.value = '';
 
         console.log('Step 13: Reinitializing datetime');
         // Reset datetime to current time
-        initializeDatetime();        console.log('Step 14: Updating displays');
+        initializeDatetime(); console.log('Step 14: Updating displays');
         // Update displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
             displayRecords();
         }
-        
+
         console.log('Step 15: Refreshing map if visible');
         // Refresh map if the map tab is currently active
         refreshMapIfVisible();
-        
+
         console.log('=== SAVE CATCH DATA COMPLETED SUCCESSFULLY ===');
-        
+
     } catch (error) {
         console.error('Error saving catch:', error);
         console.error('Error stack:', error.stack);
@@ -2652,21 +2682,21 @@ function saveCatchData() {
 // Main map functionality for the Map tab
 function setupMainMap() {
     console.log('=== SETTING UP MAIN MAP ===');
-    
+
     const mapContainer = document.getElementById('map-view-container');
     const mapElement = document.getElementById('main-map');
-    
+
     if (!mapContainer || !mapElement) {
         console.error('Map container elements not found');
         return;
     }
-    
+
     // Get all catches with location data
     const catches = JSON.parse(localStorage.getItem('catches') || '[]');
     const catchesWithLocation = catches.filter(c => c.latitude && c.longitude);
-    
+
     console.log('Catches with location:', catchesWithLocation.length);
-    
+
     if (catchesWithLocation.length === 0) {
         mapContainer.innerHTML = `
             <div class="bg-white p-6 rounded-lg shadow text-center">
@@ -2678,32 +2708,32 @@ function setupMainMap() {
         `;
         return;
     }
-    
+
     // Initialize map if not already done
     if (!mainMap) {
         console.log('Initializing main map...');
-        
+
         // Calculate center point from all catches
         const avgLat = catchesWithLocation.reduce((sum, c) => sum + c.latitude, 0) / catchesWithLocation.length;
         const avgLng = catchesWithLocation.reduce((sum, c) => sum + c.longitude, 0) / catchesWithLocation.length;
-        
+
         mainMap = L.map('main-map').setView([avgLat, avgLng], 10);
-        
+
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mainMap);
     }
-    
+
     // Clear existing markers
     catchMarkers.forEach(marker => mainMap.removeLayer(marker));
     catchMarkers = [];
-    
+
     // Add markers for each catch
     catchesWithLocation.forEach(catch_ => {
         const marker = L.marker([catch_.latitude, catch_.longitude])
             .addTo(mainMap);
-        
+
         // Create popup content
         const popupContent = `
             <div class="p-2 max-w-xs">
@@ -2722,33 +2752,33 @@ function setupMainMap() {
                 </button>
             </div>
         `;
-        
+
         marker.bindPopup(popupContent);
         catchMarkers.push(marker);
     });
-    
+
     // Fit map to show all markers if we have multiple catches
     if (catchesWithLocation.length > 1) {
         const group = new L.featureGroup(catchMarkers);
         mainMap.fitBounds(group.getBounds().pad(0.1));
     }
-    
+
     console.log('Main map setup complete');
 }
 
 // Handle View Details button clicks with mobile touch support
 function handleViewDetailsClick(event, catchId) {
     console.log('handleViewDetailsClick called with:', catchId, 'Event type:', event.type);
-    
+
     // Prevent default behavior and stop propagation
     event.preventDefault();
     event.stopPropagation();
-    
+
     // Debounce multiple rapid calls (common on mobile)
     if (window.viewDetailsClickTimeout) {
         clearTimeout(window.viewDetailsClickTimeout);
     }
-    
+
     window.viewDetailsClickTimeout = setTimeout(() => {
         console.log('Executing showCatchFromMap for:', catchId);
         showCatchFromMap(catchId);
@@ -2764,7 +2794,7 @@ function refreshMapIfVisible() {
     // Check if the map tab is currently active
     const mapContainer = document.getElementById('map-view-container');
     const mapTab = document.getElementById('map-tab-btn');
-    
+
     if (mapContainer && !mapContainer.classList.contains('hidden') && mapTab && mapTab.classList.contains('active')) {
         console.log('Map tab is active, refreshing map...');
         setupMainMap();
@@ -2772,7 +2802,7 @@ function refreshMapIfVisible() {
 }
 
 // Global error handler for mobile debugging
-window.addEventListener('error', function(e) {
+window.addEventListener('error', function (e) {
     console.error('Global error caught:', e.error);
     console.error('Error message:', e.message);
     console.error('Error filename:', e.filename);
@@ -2787,19 +2817,19 @@ window.showCatchFromMap = showCatchFromMap;
 window.handleRotateClick = handleRotateClick;
 
 // Add touch event debugging for mobile
-document.addEventListener('touchstart', function(e) {
+document.addEventListener('touchstart', function (e) {
     if (e.target.tagName === 'BUTTON' && e.target.textContent.includes('View Details')) {
         console.log('Touch detected on View Details button');
         console.log('Button onclick:', e.target.onclick);
         console.log('Button dataset:', e.target.dataset);
     }
-    
+
     if (e.target.id === 'rotate-image-btn') {
         console.log('Touch detected on Rotate button');
         console.log('Button id:', e.target.id);
         console.log('Button title:', e.target.title);
     }
-    
+
     if (e.target.id === 'close-fullscreen-btn') {
         console.log('Touch detected on Close fullscreen button');
         console.log('Button id:', e.target.id);
@@ -2827,7 +2857,7 @@ const mainLocationNameInput = document.getElementById('location-name');
 if (mainLocationNameInput) {
     // Remove any existing handler to prevent duplicates
     mainLocationNameInput.removeEventListener('keydown', mainLocationNameInput._enterHandler);
-    
+
     // Create the handler function
     mainLocationNameInput._enterHandler = (e) => {
         if (e.key === 'Enter') {
@@ -2837,7 +2867,7 @@ if (mainLocationNameInput) {
             return false; // Extra prevention
         }
     };
-    
+
     // Add the handler
     mainLocationNameInput.addEventListener('keydown', mainLocationNameInput._enterHandler);
 }
