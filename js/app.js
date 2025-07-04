@@ -16,7 +16,7 @@ let currentTranslateY = 0;
 let isZoomed = false;
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('=== DOM CONTENT LOADED ===');
     console.log('Current URL:', window.location.href);
     console.log('User Agent:', navigator.userAgent);
@@ -85,6 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('About to initialize main app functionality...');
 
+        // Initialize fish database first
+        await initializeFishDatabase();
+
         // Initialize the main app functionality
         setupFormHandlers();
         setupLocationHandling(); setupPhotoHandling();
@@ -95,9 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupMapHandlers(); // New map functionality
 
         console.log('Main app functionality initialized');
-
-        // Initialize fish database and update species list
-        initializeFishDatabase();
 
         // Initialize datetime input with current time
         initializeDatetime();
@@ -212,16 +212,57 @@ function setupFormHandlers() {
 
     // Setup automatic weight calculation
     const autoCalculateWeight = async () => {
-        const species = speciesInput.value.trim();
-        const length = parseFloat(lengthInput.value);
+        console.log('=== AUTO CALCULATE WEIGHT TRIGGERED ===');
+        
+        try {
+            const species = speciesInput.value ? speciesInput.value.trim() : '';
+            const length = lengthInput.value ? parseFloat(lengthInput.value) : 0;
+            
+            console.log('Auto-calculate inputs - Species:', species, 'Length:', length);
 
-        if (species && length && length > 0) {
-            await calculateEstimatedWeight(species, length);
+            if (species && length && length > 0) {
+                console.log('Valid inputs, calculating weight...');
+                const result = await calculateEstimatedWeight(species, length);
+                console.log('Auto-calculate result:', result);
+            } else {
+                console.log('Invalid inputs, skipping calculation');
+                // Clear weight if inputs are invalid
+                const weightInput = document.getElementById('weight');
+                if (weightInput && weightInput.dataset.calculated === 'true') {
+                    weightInput.value = '';
+                    weightInput.dataset.calculated = 'false';
+                    weightInput.title = '';
+                    weightInput.classList.remove('bg-green-50', 'bg-yellow-50', 'bg-red-50');
+                }
+            }
+        } catch (error) {
+            console.error('Error in autoCalculateWeight:', error);
         }
-    };    // Calculate weight when length or species changes
-    lengthInput.addEventListener('input', autoCalculateWeight);
-    speciesInput.addEventListener('input', autoCalculateWeight);
-    speciesInput.addEventListener('change', autoCalculateWeight);
+    };
+
+    // Calculate weight when length or species changes
+    console.log('Setting up auto-calculate event listeners...');
+    
+    try {
+        lengthInput.addEventListener('input', (e) => {
+            console.log('Length input changed:', e.target.value);
+            autoCalculateWeight();
+        });
+        
+        speciesInput.addEventListener('input', (e) => {
+            console.log('Species input changed:', e.target.value);
+            autoCalculateWeight();
+        });
+        
+        speciesInput.addEventListener('change', (e) => {
+            console.log('Species changed:', e.target.value);
+            autoCalculateWeight();
+        });
+        
+        console.log('Auto-calculate event listeners set up successfully');
+    } catch (error) {
+        console.error('Error setting up auto-calculate event listeners:', error);
+    }
     // Handle catch form submission with comprehensive debugging
     console.log('Setting up form submit handler...');
     catchForm.addEventListener('submit', (e) => {
@@ -354,44 +395,131 @@ function setupFormHandlers() {
 }
 
 async function calculateEstimatedWeight(species, length) {
-    if (!length || length <= 0) return null;
+    console.log('=== CALCULATE ESTIMATED WEIGHT START ===');
+    console.log('Species:', species, 'Length:', length);
+    
+    try {
+        // Input validation with detailed logging
+        if (!length || length <= 0) {
+            console.log('Invalid length provided:', length);
+            return null;
+        }
 
-    // Wait for fish database to be ready
-    if (window.fishDB && await window.fishDB.isReady()) {
-        const result = window.fishDB.calculateWeight(species, length);
+        if (!species || species.trim() === '') {
+            console.log('Invalid species provided:', species);
+            return null;
+        }
 
-        if (result) {
+        // Get weight input element with error handling
+        const weightInput = document.getElementById('weight');
+        if (!weightInput) {
+            console.error('Weight input element not found!');
+            return null;
+        }
+
+        // Clear previous values and status
+        weightInput.value = '';
+        weightInput.title = '';
+        weightInput.classList.remove('bg-green-50', 'bg-yellow-50', 'bg-red-50');
+
+        // Check if fish database is available and ready
+        console.log('Checking fish database availability...');
+        if (!window.fishDB) {
+            console.error('window.fishDB not available');
+            return await fallbackCalculation(species, length, weightInput, 'Database not available');
+        }
+
+        const isReady = await window.fishDB.isReady();
+        console.log('Fish database ready status:', isReady);
+
+        if (!isReady) {
+            console.error('Fish database not ready');
+            return await fallbackCalculation(species, length, weightInput, 'Database not ready');
+        }
+
+        // Try to get improved weight estimate with detailed error handling
+        console.log('Getting improved weight estimate...');
+        const result = await window.fishDB.getImprovedWeightEstimate(species, length);
+        console.log('Weight estimate result:', result);
+
+        if (result && result.estimatedWeight > 0) {
             // Update weight input with calculated value
-            const weightInput = document.getElementById('weight');
-            weightInput.value = result.weight.toFixed(3);
+            const weight = parseFloat(result.estimatedWeight.toFixed(3));
+            weightInput.value = weight;
 
             // Mark the weight as calculated and show info about the calculation
             weightInput.dataset.calculated = 'true';
-            weightInput.dataset.species = result.species;
-            weightInput.dataset.accuracy = result.accuracy;
+            weightInput.dataset.species = result.species || species;
+            weightInput.dataset.accuracy = result.accuracy || 0;
+            weightInput.dataset.algorithmSource = result.algorithm_source || 'default';
 
             // Show calculation info as a tooltip or note
+            const algorithmType = result.algorithm_source === 'improved' ? 'Self-Improving' : 
+                                 result.algorithm_source === 'default' ? 'Database' : 'Generic';
+            
+            const confidenceText = result.confidence ? ` (${result.confidence} confidence)` : '';
+            const accuracyText = result.accuracy ? ` - ${(result.accuracy * 100).toFixed(1)}% accuracy` : '';
+            
             const calculationInfo = result.isSpeciesSpecific
-                ? `Calculated using ${result.species} data (${(result.accuracy * 100).toFixed(1)}% accuracy, ${result.measureType})`
-                : `Estimated using generic fish formula (${(result.accuracy * 100).toFixed(1)}% accuracy)`;
+                ? `${algorithmType} ${species} algorithm${accuracyText}${confidenceText}`
+                : `Generic fish formula${accuracyText}`;
 
             weightInput.title = calculationInfo;
 
-            return result.weight;
+            // Add visual feedback based on confidence
+            if (result.confidence === 'high' || result.accuracy > 0.8) {
+                weightInput.classList.add('bg-green-50');
+            } else if (result.confidence === 'medium' || result.accuracy > 0.6) {
+                weightInput.classList.add('bg-yellow-50');
+            } else {
+                weightInput.classList.add('bg-red-50');
+            }
+
+            console.log('Weight calculated successfully:', weight, 'kg');
+            return weight;
+        } else {
+            console.warn('No valid result from getImprovedWeightEstimate');
+            return await fallbackCalculation(species, length, weightInput, 'No algorithm found for species');
         }
+
+    } catch (error) {
+        console.error('Error in calculateEstimatedWeight:', error);
+        const weightInput = document.getElementById('weight');
+        return await fallbackCalculation(species, length, weightInput, `Error: ${error.message}`);
     }
+}
 
-    // Fallback to original generic calculation if database not available
-    const a = 0.000013;
-    const b = 3.0;
-    const estimatedWeight = a * Math.pow(length, b);
+// Fallback calculation with error handling
+async function fallbackCalculation(species, length, weightInput, reason) {
+    console.log('Using fallback calculation. Reason:', reason);
+    
+    try {
+        // Generic fish weight formula: W = a * L^b
+        const a = 0.000013;
+        const b = 3.0;
+        const estimatedWeight = a * Math.pow(length, b);
 
-    const weightInput = document.getElementById('weight');
-    weightInput.value = estimatedWeight.toFixed(3);
-    weightInput.dataset.calculated = 'true';
-    weightInput.title = 'Generic estimate (80% accuracy)';
+        if (weightInput) {
+            weightInput.value = estimatedWeight.toFixed(3);
+            weightInput.dataset.calculated = 'true';
+            weightInput.dataset.species = species;
+            weightInput.dataset.accuracy = 0.6;
+            weightInput.dataset.algorithmSource = 'fallback';
+            weightInput.title = `Generic estimate (60% accuracy) - ${reason}`;
+            weightInput.classList.add('bg-red-50');
+        }
 
-    return estimatedWeight;
+        console.log('Fallback calculation completed:', estimatedWeight.toFixed(3), 'kg');
+        return estimatedWeight;
+    } catch (error) {
+        console.error('Error in fallback calculation:', error);
+        if (weightInput) {
+            weightInput.value = '';
+            weightInput.title = `Calculation failed: ${error.message}`;
+            weightInput.classList.add('bg-red-50');
+        }
+        return null;
+    }
 }
 
 function showEditModal(catchData) {
@@ -2524,7 +2652,7 @@ function saveSelectedLocation() {
 }
 
 // Backup function to save catch data (can be called directly)
-function saveCatchData() {
+async function saveCatchData() {
     console.log('=== SAVE CATCH DATA CALLED DIRECTLY ===');
     console.log('Function called at:', new Date().toISOString());
     console.log('Call stack:', new Error().stack);
@@ -2613,6 +2741,30 @@ function saveCatchData() {
         try {
             localStorage.setItem('catches', JSON.stringify(catches));
             console.log('Step 10: localStorage save successful');
+            
+            // Step 10.5: Update self-improving algorithm if we have length and weight
+            if (catchData.length && catchData.weight && catchData.species) {
+                console.log('Step 10.5: Updating self-improving algorithm...');
+                if (window.fishDB && window.fishDB.updateSpeciesWithCatchData) {
+                    try {
+                        const algorithmResult = await window.fishDB.updateSpeciesWithCatchData(
+                            catchData.species,
+                            catchData.length,
+                            catchData.weight
+                        );
+                        console.log('Self-improving algorithm update result:', algorithmResult);
+                        
+                        if (algorithmResult.status === 'success') {
+                            console.log(`Algorithm improved for ${catchData.species}! R²: ${algorithmResult.algorithm.r_squared.toFixed(3)}`);
+                        } else if (algorithmResult.status === 'pending') {
+                            console.log(`Data point added for ${catchData.species}. ${algorithmResult.message}`);
+                        }
+                    } catch (algorithmError) {
+                        console.error('Error updating self-improving algorithm:', algorithmError);
+                    }
+                }
+            }
+            
         } catch (storageError) {
             console.error('localStorage error:', storageError);
             if (storageError.name === 'QuotaExceededError') {

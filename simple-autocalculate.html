@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Autocalculate Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .result { background: #f0f0f0; padding: 10px; margin-top: 10px; border-radius: 4px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Simple Autocalculate Test</h1>
+    
+    <div class="form-group">
+        <label for="species">Species:</label>
+        <input type="text" id="species" placeholder="Enter species name">
+    </div>
+    
+    <div class="form-group">
+        <label for="length">Length (cm):</label>
+        <input type="number" id="length" placeholder="Enter length">
+    </div>
+    
+    <div class="form-group">
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" placeholder="Auto-calculated" step="0.001">
+    </div>
+    
+    <div id="result" class="result"></div>
+    
+    <script>
+        // Simple algorithm data for testing
+        const fishAlgorithms = {
+            "Blacktail (M&F)": {
+                a: 0.000012874560883344124,
+                b: 3.242670850555155,
+                r_squared: 0.9999816616380391
+            },
+            "Dusky kob (M&F)": {
+                a: 0.000009314000631977542,
+                b: 3.2179529036703953,
+                r_squared: 0.981916317649533
+            }
+        };
+        
+        function calculateWeight(species, length) {
+            const algorithm = fishAlgorithms[species];
+            if (!algorithm) {
+                return null;
+            }
+            
+            const weight = algorithm.a * Math.pow(length, algorithm.b);
+            return {
+                weight: weight,
+                r_squared: algorithm.r_squared
+            };
+        }
+        
+        function autoCalculate() {
+            const species = document.getElementById('species').value.trim();
+            const length = parseFloat(document.getElementById('length').value);
+            const weightInput = document.getElementById('weight');
+            const resultDiv = document.getElementById('result');
+            
+            if (!species || !length || length <= 0) {
+                weightInput.value = '';
+                resultDiv.innerHTML = '<span class="error">Please enter valid species and length</span>';
+                return;
+            }
+            
+            const result = calculateWeight(species, length);
+            if (result) {
+                weightInput.value = result.weight.toFixed(3);
+                resultDiv.innerHTML = `<span class="success">✓ Calculated: ${result.weight.toFixed(3)}kg (R² = ${result.r_squared.toFixed(3)})</span>`;
+            } else {
+                weightInput.value = '';
+                resultDiv.innerHTML = `<span class="error">✗ Species "${species}" not found. Available: ${Object.keys(fishAlgorithms).join(', ')}</span>`;
+            }
+        }
+        
+        // Set up event listeners
+        document.getElementById('species').addEventListener('input', autoCalculate);
+        document.getElementById('length').addEventListener('input', autoCalculate);
+        
+        // Test with some initial values
+        setTimeout(() => {
+            document.getElementById('species').value = 'Blacktail (M&F)';
+            document.getElementById('length').value = '30';
+            autoCalculate();
+        }, 100);
+        
+        console.log('Simple autocalculate test initialized');
+    </script>
+</body>
+</html>

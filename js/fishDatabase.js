@@ -77,6 +77,12 @@ class FishDatabase {
             // Store in IndexedDB for offline access
             await this.storeAlgorithms(data);
             
+            // Initialize self-improving algorithm
+            if (window.SelfImprovingAlgorithm) {
+                this.selfImprovingAlgorithm = new window.SelfImprovingAlgorithm();
+                console.log('Self-improving algorithm initialized');
+            }
+            
             return data;
         } catch (error) {
             console.error('Failed to load algorithms from network:', error);
@@ -254,6 +260,110 @@ class FishDatabase {
         await this.initPromise;
         return this.db !== null && this.algorithms !== null;
     }
+
+    // Self-Improving Algorithm Integration Methods
+    
+    // Update species algorithm with new catch data
+    async updateSpeciesWithCatchData(speciesName, length, weight) {
+        console.log('=== UPDATE SPECIES WITH CATCH DATA ===');
+        console.log('Species:', speciesName, 'Length:', length, 'Weight:', weight);
+        
+        try {
+            // Input validation
+            if (!speciesName || typeof speciesName !== 'string' || speciesName.trim() === '') {
+                console.error('Invalid species name provided:', speciesName);
+                return {
+                    status: "error",
+                    message: "Invalid species name provided"
+                };
+            }
+
+            if (!length || typeof length !== 'number' || length <= 0) {
+                console.error('Invalid length provided:', length);
+                return {
+                    status: "error",
+                    message: "Invalid length provided"
+                };
+            }
+
+            if (!weight || typeof weight !== 'number' || weight <= 0) {
+                console.error('Invalid weight provided:', weight);
+                return {
+                    status: "error",
+                    message: "Invalid weight provided"
+                };
+            }
+
+            // Wait for initialization
+            await this.initPromise;
+
+            // Check if self-improving algorithm is available
+            if (!this.selfImprovingAlgorithm) {
+                console.error('Self-improving algorithm not initialized');
+                return {
+                    status: "error",
+                    message: "Self-improving algorithm not initialized"
+                };
+            }
+
+            // Update the algorithm with new data
+            const result = this.selfImprovingAlgorithm.updateSpeciesAlgorithm(speciesName, length, weight);
+            
+            if (result.status === 'success') {
+                console.log('Algorithm updated successfully:', result.algorithm);
+                
+                // Optionally store the updated algorithm in IndexedDB as well
+                try {
+                    await this.storeImprovedAlgorithm(speciesName, result.algorithm);
+                } catch (storageError) {
+                    console.warn('Failed to store improved algorithm in IndexedDB:', storageError);
+                }
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Error updating species with catch data:', error);
+            return {
+                status: "error",
+                message: `Error: ${error.message}`
+            };
+        }
+    }
+
+    // Store improved algorithm in IndexedDB (optional backup)
+    async storeImprovedAlgorithm(speciesName, algorithm) {
+        try {
+            if (!this.db) {
+                console.warn('Database not available for storing improved algorithm');
+                return false;
+            }
+
+            const transaction = this.db.transaction(['algorithms'], 'readwrite');
+            const store = transaction.objectStore('algorithms');
+            
+            const improvedAlgorithmData = {
+                species_id: `improved_${speciesName}`,
+                species_name: speciesName,
+                algorithm: algorithm,
+                source: 'self_improving',
+                created_at: new Date().toISOString()
+            };
+
+            await new Promise((resolve, reject) => {
+                const request = store.put(improvedAlgorithmData);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+
+            console.log('Improved algorithm stored in IndexedDB for', speciesName);
+            return true;
+        } catch (error) {
+            console.error('Error storing improved algorithm:', error);
+            return false;
+        }
+    }
+
+    // ...existing code...
 }
 
 // Create global instance
