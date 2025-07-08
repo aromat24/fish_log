@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fish Log Advanced Features Test</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .test-result { margin: 8px 0; padding: 8px; border-radius: 4px; }
-        .test-pass { background-color: #d4edda; color: #155724; }
-        .test-fail { background-color: #f8d7da; color: #721c24; }
-        .test-info { background-color: #d1ecf1; color: #0c5460; }
+        .test-result {
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .test-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
     </style>
 </head>
+
 <body class="bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold mb-6">Fish Log Advanced Features Test Suite</h1>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Error Handler Tests -->
             <div class="bg-white p-6 rounded-lg shadow">
@@ -39,7 +57,8 @@
             <div class="bg-white p-6 rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-4">Self-Improving Algorithm</h2>
                 <div id="algorithm-results"></div>
-                <button onclick="testSelfImprovingAlgorithm()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                <button onclick="testSelfImprovingAlgorithm()"
+                    class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
                     Test Algorithm
                 </button>
             </div>
@@ -48,7 +67,8 @@
             <div class="bg-white p-6 rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-4">Enhanced Autocalculation</h2>
                 <div id="autocalc-results"></div>
-                <button onclick="testAutocalculation()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                <button onclick="testAutocalculation()"
+                    class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
                     Test Autocalculation
                 </button>
             </div>
@@ -67,7 +87,8 @@
         <div class="bg-gray-800 text-white p-6 rounded-lg shadow mt-6">
             <h2 class="text-xl font-semibold mb-4">Comprehensive Test Suite</h2>
             <div id="comprehensive-results"></div>
-            <button onclick="runAllTests()" class="bg-yellow-500 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-600">
+            <button onclick="runAllTests()"
+                class="bg-yellow-500 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-600">
                 Run All Tests
             </button>
         </div>
@@ -93,7 +114,7 @@
 
         async function testErrorHandler() {
             clearResults('error-handler-results');
-            
+
             try {
                 // Test 1: Error Handler Initialization
                 if (window.errorHandler) {
@@ -140,12 +161,12 @@
 
         async function testIndexedDB() {
             clearResults('indexeddb-results');
-            
+
             try {
                 // Test 1: Database Initialization
                 const fishDB = new FishDatabase();
                 await fishDB.init();
-                
+
                 if (fishDB.db) {
                     addResult('indexeddb-results', '✓ IndexedDB initialized', 'pass');
                 } else {
@@ -186,11 +207,11 @@
 
         async function testSelfImprovingAlgorithm() {
             clearResults('algorithm-results');
-            
+
             try {
                 // Test 1: Algorithm Initialization
                 const algorithm = new SelfImprovingAlgorithm();
-                
+
                 if (algorithm) {
                     addResult('algorithm-results', '✓ Self-improving algorithm initialized', 'pass');
                 } else {
@@ -232,7 +253,7 @@
 
         async function testAutocalculation() {
             clearResults('autocalc-results');
-            
+
             try {
                 // Test 1: Check if enhanced functions exist
                 if (typeof calculateEstimatedWeightInternal === 'function') {
@@ -258,7 +279,7 @@
                 }
 
                 // Test 4: Fallback calculation helpers
-                if (typeof getConfidenceBackgroundClass === 'function' && 
+                if (typeof getConfidenceBackgroundClass === 'function' &&
                     typeof getAlgorithmTypeDisplay === 'function') {
                     addResult('autocalc-results', '✓ Calculation helpers available', 'pass');
                 } else {
@@ -272,17 +293,17 @@
 
         async function testPatternLearning() {
             clearResults('pattern-results');
-            
+
             try {
                 const algorithm = new SelfImprovingAlgorithm();
-                
+
                 // Test 1: Species Classification
                 const species1 = algorithm.classifySpeciesType('Largemouth Bass');
                 const species2 = algorithm.classifySpeciesType('Atlantic Cod');
                 const species3 = algorithm.classifySpeciesType('Rainbow Trout');
-                
-                if (species1 === 'predator_freshwater' && 
-                    species2 === 'demersal_marine' && 
+
+                if (species1 === 'predator_freshwater' &&
+                    species2 === 'demersal_marine' &&
                     species3 === 'salmonid') {
                     addResult('pattern-results', '✓ Species classification working correctly', 'pass');
                 } else {
@@ -293,7 +314,7 @@
                 const small = algorithm.categorizeLengthRange(10);
                 const medium = algorithm.categorizeLengthRange(30);
                 const large = algorithm.categorizeLengthRange(80);
-                
+
                 if (small === 'small' && medium === 'medium' && large === 'large') {
                     addResult('pattern-results', '✓ Length categorization working', 'pass');
                 } else {
@@ -303,7 +324,7 @@
                 // Test 3: Body Shape Inference
                 const elongated = algorithm.inferBodyShape('American Eel');
                 const flattened = algorithm.inferBodyShape('Summer Flounder');
-                
+
                 if (elongated === 'elongated' && flattened === 'flattened') {
                     addResult('pattern-results', '✓ Body shape inference working', 'pass');
                 } else {
@@ -314,7 +335,7 @@
                 const initialWeight = algorithm.patternWeights.get('test_pattern') || 0.5;
                 algorithm.updatePatternWeights({ test_type: 'test_pattern' }, 0.8);
                 const updatedWeight = algorithm.patternWeights.get('test_type:test_pattern');
-                
+
                 if (updatedWeight !== undefined && updatedWeight !== initialWeight) {
                     addResult('pattern-results', '✓ Pattern weight updates working', 'pass');
                 } else {
@@ -324,7 +345,7 @@
                 // Test 5: Performance Tracking
                 algorithm.recordAlgorithmPerformance('TestSpecies', 'improved', 2.0, 1.9);
                 const performance = algorithm.performanceCache.get('TestSpecies:improved');
-                
+
                 if (performance && performance.samples > 0) {
                     addResult('pattern-results', '✓ Performance tracking working', 'pass');
                 } else {
@@ -339,7 +360,7 @@
         async function runAllTests() {
             clearResults('comprehensive-results');
             addResult('comprehensive-results', 'Starting comprehensive test suite...', 'info');
-            
+
             try {
                 // Run all individual tests
                 await testErrorHandler();
@@ -347,22 +368,22 @@
                 await testSelfImprovingAlgorithm();
                 await testAutocalculation();
                 await testPatternLearning();
-                
+
                 // Count results
                 const allResults = document.querySelectorAll('.test-result');
                 const passCount = document.querySelectorAll('.test-pass').length;
                 const failCount = document.querySelectorAll('.test-fail').length;
                 const infoCount = document.querySelectorAll('.test-info').length;
-                
-                addResult('comprehensive-results', `Test Summary: ${passCount} passed, ${failCount} failed, ${infoCount} warnings`, 
-                         failCount === 0 ? 'pass' : 'info');
-                
+
+                addResult('comprehensive-results', `Test Summary: ${passCount} passed, ${failCount} failed, ${infoCount} warnings`,
+                    failCount === 0 ? 'pass' : 'info');
+
                 if (failCount === 0) {
                     addResult('comprehensive-results', '🎉 All critical tests passed! Advanced features are working correctly.', 'pass');
                 } else {
                     addResult('comprehensive-results', `⚠ ${failCount} tests failed. Please review the issues above.`, 'fail');
                 }
-                
+
             } catch (error) {
                 addResult('comprehensive-results', '✗ Comprehensive test failed: ' + error.message, 'fail');
             }
@@ -377,4 +398,5 @@
         });
     </script>
 </body>
+
 </html>

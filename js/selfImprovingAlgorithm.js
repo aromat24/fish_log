@@ -8,13 +8,13 @@ class SelfImprovingAlgorithm {
         this.metricsKey = 'fish_algorithm_metrics';
         this.performanceKey = 'fish_algorithm_performance';
         this.patternKey = 'fish_pattern_recognition';
-        
+
         // Algorithm performance tracking
         this.performanceCache = new Map();
         this.patternWeights = new Map();
         this.learningRate = 0.1;
         this.confidenceThreshold = 0.75;
-        
+
         // Initialize pattern learning system
         this.initializePatternLearning();
     }
@@ -28,7 +28,7 @@ class SelfImprovingAlgorithm {
                     this.patternWeights.set(pattern, weight);
                 }
             }
-            
+
             // Load performance metrics
             const storedPerformance = this.getStoredPerformance();
             if (storedPerformance) {
@@ -36,7 +36,7 @@ class SelfImprovingAlgorithm {
                     this.performanceCache.set(key, metrics);
                 }
             }
-            
+
             console.log('Pattern learning system initialized');
         } catch (error) {
             if (window.errorHandler) {
@@ -65,7 +65,7 @@ class SelfImprovingAlgorithm {
                 const patternKey = `${patternType}:${patternValue}`;
                 const weight = this.patternWeights.get(patternKey) || 0.5;
                 const confidence = this.calculatePatternConfidence(patternKey, historicalData);
-                
+
                 totalConfidence += confidence * weight;
                 weightSum += weight;
             }
@@ -91,7 +91,7 @@ class SelfImprovingAlgorithm {
 
     classifySpeciesType(speciesName) {
         const name = speciesName.toLowerCase();
-        
+
         // Marine fish patterns
         if (name.includes('tuna') || name.includes('marlin') || name.includes('shark')) {
             return 'pelagic_marine';
@@ -102,7 +102,7 @@ class SelfImprovingAlgorithm {
         if (name.includes('snapper') || name.includes('grouper') || name.includes('parrotfish')) {
             return 'reef_marine';
         }
-        
+
         // Freshwater patterns
         if (name.includes('bass') || name.includes('pike') || name.includes('walleye')) {
             return 'predator_freshwater';
@@ -113,7 +113,7 @@ class SelfImprovingAlgorithm {
         if (name.includes('trout') || name.includes('salmon') || name.includes('char')) {
             return 'salmonid';
         }
-        
+
         return 'general';
     }
 
@@ -126,30 +126,30 @@ class SelfImprovingAlgorithm {
 
     inferBodyShape(speciesName) {
         const name = speciesName.toLowerCase();
-        
+
         if (name.includes('eel') || name.includes('snake')) return 'elongated';
         if (name.includes('flounder') || name.includes('sole') || name.includes('ray')) return 'flattened';
         if (name.includes('puffer') || name.includes('boxfish')) return 'rounded';
         if (name.includes('tuna') || name.includes('mackerel')) return 'fusiform';
         if (name.includes('angelfish') || name.includes('butterflyfish')) return 'compressed';
-        
+
         return 'typical';
     }
 
     inferHabitat(speciesName) {
         const name = speciesName.toLowerCase();
-        
+
         if (name.includes('reef') || name.includes('coral')) return 'coral_reef';
         if (name.includes('deep') || name.includes('abyssal')) return 'deep_sea';
         if (name.includes('freshwater') || name.includes('lake') || name.includes('river')) return 'freshwater';
         if (name.includes('estuary') || name.includes('brackish')) return 'estuarine';
-        
+
         return 'marine';
     }
 
     inferFamily(speciesName) {
         const name = speciesName.toLowerCase();
-        
+
         // Common fish families
         if (name.includes('bass')) return 'serranidae';
         if (name.includes('cod')) return 'gadidae';
@@ -157,7 +157,7 @@ class SelfImprovingAlgorithm {
         if (name.includes('salmon') || name.includes('trout')) return 'salmonidae';
         if (name.includes('shark')) return 'chondrichthyes';
         if (name.includes('flounder') || name.includes('sole')) return 'pleuronectidae';
-        
+
         return 'unknown';
     }
 
@@ -165,14 +165,14 @@ class SelfImprovingAlgorithm {
         // Get historical performance for this pattern
         const performance = this.performanceCache.get(patternKey);
         if (!performance) return 0.5; // Default confidence
-        
+
         const successRate = performance.successes / (performance.successes + performance.failures);
         const totalSamples = performance.successes + performance.failures;
-        
+
         // Apply confidence interval adjustment
         const confidenceInterval = 1.96 * Math.sqrt((successRate * (1 - successRate)) / totalSamples);
         const adjustedConfidence = Math.max(0, successRate - confidenceInterval);
-        
+
         return Math.min(1, adjustedConfidence);
     }
 
@@ -193,7 +193,7 @@ class SelfImprovingAlgorithm {
         try {
             const accuracy = this.calculatePredictionAccuracy(actualWeight, predictedWeight);
             const timestamp = new Date().toISOString();
-            
+
             // Record overall performance
             const performanceKey = `${speciesName}:${algorithmType}`;
             const currentPerformance = this.performanceCache.get(performanceKey) || {
@@ -203,29 +203,29 @@ class SelfImprovingAlgorithm {
                 samples: 0,
                 lastUpdated: timestamp
             };
-            
+
             if (accuracy > this.confidenceThreshold) {
                 currentPerformance.successes++;
             } else {
                 currentPerformance.failures++;
             }
-            
+
             currentPerformance.totalAccuracy += accuracy;
             currentPerformance.samples++;
             currentPerformance.lastUpdated = timestamp;
-            
+
             this.performanceCache.set(performanceKey, currentPerformance);
-            
+
             // Update pattern weights using machine learning approach
             if (patterns) {
                 this.updatePatternWeights(patterns, accuracy);
             }
-            
+
             // Persist performance data
             this.savePerformanceData();
-            
+
             console.log(`Algorithm performance recorded: ${algorithmType} for ${speciesName}, accuracy: ${accuracy.toFixed(3)}`);
-            
+
         } catch (error) {
             if (window.errorHandler) {
                 window.errorHandler.logError(new window.CalculationError('Performance recording failed', error, speciesName), 'PerformanceTracking');
@@ -235,7 +235,7 @@ class SelfImprovingAlgorithm {
 
     calculatePredictionAccuracy(actual, predicted) {
         if (actual <= 0 || predicted <= 0) return 0;
-        
+
         const relativeError = Math.abs(actual - predicted) / actual;
         return Math.max(0, 1 - relativeError);
     }
@@ -245,15 +245,15 @@ class SelfImprovingAlgorithm {
         for (const [patternType, patternValue] of Object.entries(patterns)) {
             const patternKey = `${patternType}:${patternValue}`;
             const currentWeight = this.patternWeights.get(patternKey) || 0.5;
-            
+
             // Calculate weight adjustment based on prediction accuracy
             const error = accuracy - this.confidenceThreshold;
             const adjustment = this.learningRate * error;
             const newWeight = Math.max(0.1, Math.min(1.0, currentWeight + adjustment));
-            
+
             this.patternWeights.set(patternKey, newWeight);
         }
-        
+
         // Persist pattern weights
         this.savePatternWeights();
     }
@@ -274,29 +274,29 @@ class SelfImprovingAlgorithm {
     async getOptimalAlgorithmInternal(speciesName, length, context) {
         // Analyze patterns for this species and length
         const patternAnalysis = this.analyzeSpeciesPattern(speciesName, length, context.historicalData);
-        
+
         // Get available algorithms
         const algorithms = await this.getAvailableAlgorithms(speciesName);
-        
+
         // Score each algorithm based on patterns and performance
         const scoredAlgorithms = algorithms.map(algorithm => ({
             ...algorithm,
             score: this.scoreAlgorithm(algorithm, patternAnalysis, speciesName, length)
         }));
-        
+
         // Sort by score (highest first)
         scoredAlgorithms.sort((a, b) => b.score - a.score);
-        
+
         const selectedAlgorithm = scoredAlgorithms[0];
-        
+
         console.log(`Selected algorithm: ${selectedAlgorithm.type} for ${speciesName} (score: ${selectedAlgorithm.score.toFixed(3)})`);
-        
+
         return selectedAlgorithm;
     }
 
     async getAvailableAlgorithms(speciesName) {
         const algorithms = [];
-        
+
         // Check for improved algorithm
         const improvedAlg = this.getImprovedAlgorithm(speciesName);
         if (improvedAlg) {
@@ -306,7 +306,7 @@ class SelfImprovingAlgorithm {
                 priority: 1
             });
         }
-        
+
         // Check for default algorithm
         const defaultAlg = await this.getDefaultAlgorithm(speciesName);
         if (defaultAlg) {
@@ -316,7 +316,7 @@ class SelfImprovingAlgorithm {
                 priority: 2
             });
         }
-        
+
         // Always include generic algorithm as fallback
         algorithms.push({
             type: 'generic',
@@ -325,19 +325,19 @@ class SelfImprovingAlgorithm {
             r_squared: 0.5,
             priority: 3
         });
-        
+
         return algorithms;
     }
 
     scoreAlgorithm(algorithm, patternAnalysis, speciesName, length) {
         let score = 0;
-        
+
         // Base score from R-squared
         score += (algorithm.r_squared || 0.5) * 0.4;
-        
+
         // Pattern confidence contribution
         score += patternAnalysis.confidence * 0.3;
-        
+
         // Historical performance contribution
         const performanceKey = `${speciesName}:${algorithm.type}`;
         const performance = this.performanceCache.get(performanceKey);
@@ -345,10 +345,10 @@ class SelfImprovingAlgorithm {
             const successRate = performance.successes / (performance.successes + performance.failures);
             score += successRate * 0.2;
         }
-        
+
         // Algorithm priority (lower number = higher priority)
         score += (4 - algorithm.priority) * 0.1;
-        
+
         return Math.max(0, Math.min(1, score));
     }
 

@@ -42,7 +42,7 @@ class FishDatabase {
 
                 request.onsuccess = () => {
                     const db = request.result;
-                    
+
                     // Set up multi-tab synchronization
                     db.onversionchange = () => {
                         console.warn('Database version changed in another tab');
@@ -134,7 +134,7 @@ class FishDatabase {
         return new Promise((resolve, reject) => {
             try {
                 const transaction = this.db.transaction(storeNames, mode);
-                
+
                 transaction.oncomplete = () => {
                     console.log('Transaction completed successfully');
                     resolve();
@@ -178,13 +178,13 @@ class FishDatabase {
                 const transaction = this.db.transaction(['algorithms'], 'readonly');
                 const store = transaction.objectStore('algorithms');
                 const request = store.openCursor();
-                
+
                 let batch = [];
                 let processed = 0;
 
                 request.onsuccess = async (event) => {
                     const cursor = event.target.result;
-                    
+
                     if (cursor) {
                         batch.push({
                             key: cursor.primaryKey,
@@ -245,13 +245,13 @@ class FishDatabase {
     // Advanced search with cursor and filtering
     async searchSpecies(query, options = {}) {
         const { limit = 10, offset = 0, filterEdible = null } = options;
-        
+
         return new Promise((resolve, reject) => {
             try {
                 const transaction = this.db.transaction(['algorithms'], 'readonly');
                 const store = transaction.objectStore('algorithms');
                 const index = store.index('species_name');
-                
+
                 const results = [];
                 let skipped = 0;
                 let found = 0;
@@ -261,17 +261,17 @@ class FishDatabase {
 
                 request.onsuccess = (event) => {
                     const cursor = event.target.result;
-                    
+
                     if (cursor && found < limit) {
                         const species = cursor.value;
                         const speciesName = species.species_name.toLowerCase();
-                        
+
                         // Apply filters
                         let matches = speciesName.includes(normalizedQuery);
                         if (filterEdible !== null) {
                             matches = matches && species.edible === filterEdible;
                         }
-                        
+
                         if (matches) {
                             if (skipped < offset) {
                                 skipped++;
@@ -280,7 +280,7 @@ class FishDatabase {
                                 found++;
                             }
                         }
-                        
+
                         cursor.continue();
                     } else {
                         resolve(results);
@@ -320,20 +320,20 @@ class FishDatabase {
     async _loadAlgorithmsInternal() {
         try {
             console.log('Loading fish algorithms from: ./fish_algorithms.json');
-            
+
             // Try network first with timeout
             const response = await Promise.race([
                 fetch('./fish_algorithms.json'),
-                new Promise((_, reject) => 
+                new Promise((_, reject) =>
                     setTimeout(() => reject(new Error('Network timeout')), 10000)
                 )
             ]);
 
             if (!response.ok) {
                 throw new window.NetworkError(
-                    `Failed to fetch algorithms: ${response.status} ${response.statusText}`, 
-                    null, 
-                    './fish_algorithms.json', 
+                    `Failed to fetch algorithms: ${response.status} ${response.statusText}`,
+                    null,
+                    './fish_algorithms.json',
                     response.status
                 );
             }
@@ -341,10 +341,10 @@ class FishDatabase {
             const data = await response.json();
             console.log('Fish algorithms loaded successfully:', data);
             console.log('Number of species in database:', Object.keys(data).length);
-            
+
             // Validate data structure
             this._validateAlgorithmData(data);
-            
+
             this.algorithms = data;
 
             // Store in IndexedDB for offline access with batching
@@ -360,7 +360,7 @@ class FishDatabase {
         } catch (error) {
             console.error('Failed to load algorithms from network:', error);
             console.log('Attempting to load from IndexedDB...');
-            
+
             // Try to load from IndexedDB as fallback
             const fallbackResult = await this.getStoredAlgorithms();
             if (fallbackResult.success && fallbackResult.result && Object.keys(fallbackResult.result).length > 0) {
@@ -386,7 +386,7 @@ class FishDatabase {
         // Validate a few random entries
         const sampleSize = Math.min(5, entries.length);
         const samples = entries.slice(0, sampleSize);
-        
+
         for (const [speciesId, speciesData] of samples) {
             if (!speciesData.species_name) {
                 throw new window.ValidationError(`Missing species_name for ${speciesId}`);
@@ -400,10 +400,10 @@ class FishDatabase {
     async storeAlgorithmsBatch(algorithms) {
         const batchSize = 50;
         const entries = Object.entries(algorithms);
-        
+
         return await this.executeTransaction(['algorithms'], 'readwrite', async (transaction) => {
             const store = transaction.objectStore('algorithms');
-            
+
             // Clear existing data first
             await new Promise((resolve, reject) => {
                 const clearRequest = store.clear();
@@ -431,7 +431,7 @@ class FishDatabase {
                                 edible: data.edible,
                                 algorithm: data.algorithm
                             };
-                            
+
                             const request = store.put(record);
                             request.onsuccess = () => resolve();
                             request.onerror = (event) => {
@@ -479,7 +479,7 @@ class FishDatabase {
                             edible: data.edible,
                             algorithm: data.algorithm
                         };
-                        
+
                         const request = store.put(record);
                         request.onerror = (event) => {
                             if (event.target.error.name === 'ConstraintError') {
@@ -528,7 +528,7 @@ class FishDatabase {
                     try {
                         const records = request.result;
                         const algorithms = {};
-                        
+
                         records.forEach(record => {
                             if (record.species_id && record.species_name && record.algorithm) {
                                 algorithms[record.species_id] = {
@@ -538,7 +538,7 @@ class FishDatabase {
                                 };
                             }
                         });
-                        
+
                         resolve({ success: true, result: algorithms });
                     } catch (parseError) {
                         const error = new window.DatabaseError('Error parsing stored algorithms', parseError);
@@ -754,7 +754,61 @@ class FishDatabase {
         }
     }
 
-    // ...existing code...
+    // Get improved weight estimate (wrapper for calculateWeight with expected format)
+    async getImprovedWeightEstimate(speciesName, length) {
+        console.log('=== GET IMPROVED WEIGHT ESTIMATE ===');
+        console.log('Species:', speciesName, 'Length:', length);
+
+        if (!length || length <= 0) {
+            console.log('Invalid length, returning null');
+            return null;
+        }
+
+        try {
+            // First try to use the self-improving algorithm if available
+            if (this.selfImprovingAlgorithm) {
+                console.log('Trying self-improving algorithm...');
+                const improvedResult = await this.selfImprovingAlgorithm.calculateWeight(speciesName, length);
+                if (improvedResult && improvedResult.estimatedWeight > 0) {
+                    console.log('Self-improving algorithm successful:', improvedResult);
+                    return {
+                        estimatedWeight: improvedResult.estimatedWeight,
+                        algorithm_source: 'improved',
+                        species: speciesName,
+                        confidence: improvedResult.confidence || 'high',
+                        accuracy: improvedResult.accuracy || 0.9,
+                        isSpeciesSpecific: true
+                    };
+                }
+            }
+
+            // Fallback to regular calculation
+            console.log('Trying regular calculation...');
+            const result = this.calculateWeight(speciesName, length);
+            if (result && result.weight > 0) {
+                console.log('Regular calculation successful:', result);
+                return {
+                    estimatedWeight: result.weight,
+                    algorithm_source: 'default',
+                    species: result.species,
+                    confidence: result.accuracy > 0.9 ? 'high' : result.accuracy > 0.7 ? 'medium' : 'low',
+                    accuracy: result.accuracy,
+                    isSpeciesSpecific: result.isSpeciesSpecific
+                };
+            }
+
+            console.log('Regular calculation failed, using generic estimate');
+            return null;
+        } catch (error) {
+            console.error('Error in getImprovedWeightEstimate:', error);
+            if (window.errorHandler) {
+                window.errorHandler.logError(new window.CalculationError('Improved weight estimation failed', error, speciesName, { length }), 'getImprovedWeightEstimate');
+            }
+            return null;
+        }
+    }
+
+    // Check if database is ready
 }
 
 // Create global instance

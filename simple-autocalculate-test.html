@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Autocalculate Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .test-form input {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .test-form label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .bg-green-50 {
+            background-color: #f0fdf4;
+        }
+
+        .bg-yellow-50 {
+            background-color: #fefce8;
+        }
+
+        .bg-red-50 {
+            background-color: #fef2f2;
+        }
+
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Simple Autocalculate Test</h1>
+
+    <div class="test-form">
+        <label for="species">Species:</label>
+        <input type="text" id="species" placeholder="Enter species name">
+
+        <label for="length">Length (cm):</label>
+        <input type="number" id="length" placeholder="Enter length">
+
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" placeholder="Auto-calculated weight" readonly>
+
+        <div id="info" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script src="js/selfImprovingAlgorithm.js"></script>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // Override console methods to capture all output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function (...args) {
+            originalLog.apply(console, args);
+            log('LOG: ' + args.join(' '));
+        };
+
+        console.error = function (...args) {
+            originalError.apply(console, args);
+            log('ERROR: ' + args.join(' '));
+        };
+
+        console.warn = function (...args) {
+            originalWarn.apply(console, args);
+            log('WARN: ' + args.join(' '));
+        };
+
+        async function setupTest() {
+            log('Setting up test...');
+
+            // Wait for initialization
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            log('Checking components...');
+            log('window.errorHandler: ' + (window.errorHandler ? 'available' : 'not available'));
+            log('window.fishDB: ' + (window.fishDB ? 'available' : 'not available'));
+
+            if (!window.errorHandler || !window.fishDB) {
+                log('Required components not available. Stopping test.');
+                return;
+            }
+
+            log('Checking database readiness...');
+            const isReady = await window.fishDB.isReady();
+            log('Database ready: ' + isReady);
+
+            if (!isReady) {
+                log('Database not ready. Checking details...');
+                log('fishDB.db: ' + (window.fishDB.db ? 'exists' : 'null'));
+                log('fishDB.algorithms: ' + (window.fishDB.algorithms ? 'exists' : 'null'));
+
+                if (window.fishDB.algorithms) {
+                    log('Algorithms count: ' + Object.keys(window.fishDB.algorithms).length);
+                } else {
+                    log('Attempting to reload algorithms...');
+                    try {
+                        await window.fishDB.loadAlgorithms();
+                        log('Algorithms reloaded successfully');
+                    } catch (error) {
+                        log('Failed to reload algorithms: ' + error.message);
+                    }
+                }
+            } else {
+                log('Database is ready. Setting up autocalculate...');
+                setupAutocalculate();
+            }
+        }
+
+        async function testCalculation(species, length) {
+            log(`Testing calculation for ${species} at ${length}cm...`);
+
+            try {
+                const result = await window.errorHandler.withErrorBoundary(async () => {
+                    log('Validating inputs...');
+                    window.errorHandler.validateString(species, 'Species', 1, 100);
+                    window.errorHandler.validateNumber(length, 'Length', 0.1, 500);
+
+                    log('Getting improved weight estimate...');
+                    const improvedResult = await window.fishDB.getImprovedWeightEstimate(species, length);
+                    if (improvedResult && improvedResult.estimatedWeight > 0) {
+                        log('Improved estimate successful: ' + improvedResult.estimatedWeight);
+                        return improvedResult;
+                    }
+
+                    log('Improved estimate failed, trying default...');
+                    const defaultResult = await window.fishDB.calculateWeight(species, length);
+                    if (defaultResult && defaultResult > 0) {
+                        log('Default calculation successful: ' + defaultResult);
+                        return {
+                            estimatedWeight: defaultResult,
+                            algorithm_source: 'default',
+                            species: species,
+                            confidence: 'medium',
+                            accuracy: 0.7,
+                            isSpeciesSpecific: true
+                        };
+                    }
+
+                    log('Default calculation failed, using generic...');
+                    const a = 0.000013;
+                    const b = 3.0;
+                    const estimatedWeight = a * Math.pow(length, b);
+                    log('Generic calculation: ' + estimatedWeight);
+                    return {
+                        estimatedWeight,
+                        algorithm_source: 'generic',
+                        species: species,
+                        confidence: 'low',
+                        accuracy: 0.5,
+                        isSpeciesSpecific: false
+                    };
+                }, 'TestCalculation', {
+                    showUserError: false,
+                    userMessage: null
+                });
+
+                log('Calculation result: ' + JSON.stringify(result));
+                return result;
+            } catch (error) {
+                log('Exception in testCalculation: ' + error.message);
+                return { success: false, error: error };
+            }
+        }
+
+        function setupAutocalculate() {
+            log('Setting up autocalculate...');
+
+            const speciesInput = document.getElementById('species');
+            const lengthInput = document.getElementById('length');
+            const weightInput = document.getElementById('weight');
+            const infoDiv = document.getElementById('info');
+
+            async function calculate() {
+                const species = speciesInput.value.trim();
+                const length = parseFloat(lengthInput.value);
+
+                if (!species || !length || length <= 0) {
+                    weightInput.value = '';
+                    weightInput.className = '';
+                    infoDiv.textContent = '';
+                    return;
+                }
+
+                log(`Calculating for ${species} at ${length}cm...`);
+
+                const result = await testCalculation(species, length);
+
+                if (result.success) {
+                    const data = result.result;
+                    const weight = parseFloat(data.estimatedWeight.toFixed(3));
+                    weightInput.value = weight;
+
+                    // Add visual feedback
+                    weightInput.className = '';
+                    if (data.confidence === 'high' || data.accuracy > 0.8) {
+                        weightInput.className = 'bg-green-50';
+                    } else if (data.confidence === 'medium' || data.accuracy > 0.6) {
+                        weightInput.className = 'bg-yellow-50';
+                    } else {
+                        weightInput.className = 'bg-red-50';
+                    }
+
+                    infoDiv.textContent = `${data.algorithm_source} algorithm - ${data.confidence} confidence - ${(data.accuracy * 100).toFixed(1)}% accuracy`;
+                    log(`Result: ${weight}kg using ${data.algorithm_source} algorithm`);
+                } else {
+                    weightInput.value = '';
+                    weightInput.className = 'bg-red-50';
+                    infoDiv.textContent = 'Calculation failed: ' + (result.error?.message || 'Unknown error');
+                    log('Calculation failed: ' + (result.error?.message || 'Unknown error'));
+                }
+            }
+
+            speciesInput.addEventListener('input', calculate);
+            lengthInput.addEventListener('input', calculate);
+
+            log('Autocalculate setup complete');
+        }
+
+        // Start test when page loads
+        window.addEventListener('load', setupTest);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Autocalculate Fix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-green-50 {
+            background-color: #f0fdf4;
+        }
+
+        .bg-yellow-50 {
+            background-color: #fefce8;
+        }
+
+        .bg-red-50 {
+            background-color: #fef2f2;
+        }
+
+        .test-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .test-pass {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .test-fail {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .test-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Fish Log Autocalculate Test</h1>
+
+        <div id="test-results" class="mb-6">
+            <div id="init-status" class="test-status test-pending">
+                🔄 Initializing...
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Test Form</h2>
+            <form id="test-form">
+                <div class="mb-4">
+                    <label for="species" class="block text-sm font-medium text-gray-700 mb-2">Species:</label>
+                    <input type="text" id="species" name="species" class="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="Enter fish species">
+                </div>
+
+                <div class="mb-4">
+                    <label for="length" class="block text-sm font-medium text-gray-700 mb-2">Length (cm):</label>
+                    <input type="number" id="length" name="length" step="0.1"
+                        class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter length">
+                </div>
+
+                <div class="mb-4">
+                    <label for="weight" class="block text-sm font-medium text-gray-700 mb-2">Weight (kg):</label>
+                    <input type="number" id="weight" name="weight" step="0.001"
+                        class="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="Auto-calculated weight will appear here">
+                </div>
+
+                <div id="calculation-info" class="text-sm text-gray-600 mt-2"></div>
+            </form>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-3">Test Log</h3>
+            <div id="test-log" class="bg-gray-100 p-4 rounded-lg font-mono text-sm max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Load scripts in correct order -->
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script src="js/selfImprovingAlgorithm.js"></script>
+    <script src="js/advancedIndexedDB.js"></script>
+    <script src="js/storageOptimizer.js"></script>
+    <script src="js/beautiful-buttons.js"></script>
+
+    <script>
+        // Test logging
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            const logDiv = document.getElementById('test-log');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // Test status updates
+        function updateTestStatus(id, status, message) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.className = `test-status test-${status}`;
+                const icon = status === 'pass' ? '✅' : status === 'fail' ? '❌' : '🔄';
+                element.textContent = `${icon} ${message}`;
+            }
+        }
+
+        // Override console.log to capture all logging
+        const originalLog = console.log;
+        console.log = function (...args) {
+            originalLog.apply(console, args);
+            if (args.length > 0 && typeof args[0] === 'string') {
+                log(args.join(' '));
+            }
+        };
+
+        // Test initialization
+        async function runTests() {
+            log('Starting Fish Log Autocalculate Test');
+
+            // Test 1: Check if error handler loads
+            try {
+                if (window.errorHandler) {
+                    log('✅ Error handler loaded successfully');
+                    updateTestStatus('init-status', 'pass', 'Error handler loaded');
+                } else {
+                    log('❌ Error handler not available');
+                    updateTestStatus('init-status', 'fail', 'Error handler not loaded');
+                    return;
+                }
+            } catch (error) {
+                log('❌ Error checking error handler: ' + error.message);
+                updateTestStatus('init-status', 'fail', 'Error handler check failed');
+                return;
+            }
+
+            // Test 2: Check if fish database loads
+            try {
+                if (window.fishDB) {
+                    log('✅ Fish database available');
+                    const isReady = await window.fishDB.isReady();
+                    if (isReady) {
+                        log('✅ Fish database is ready');
+                        updateTestStatus('init-status', 'pass', 'All systems initialized');
+                    } else {
+                        log('⚠️ Fish database not ready yet, waiting...');
+                        updateTestStatus('init-status', 'pending', 'Waiting for database...');
+
+                        // Wait a bit more and try again
+                        setTimeout(async () => {
+                            const isReadyNow = await window.fishDB.isReady();
+                            if (isReadyNow) {
+                                log('✅ Fish database is now ready');
+                                updateTestStatus('init-status', 'pass', 'All systems initialized');
+                                setupAutocalculate();
+                            } else {
+                                log('❌ Fish database failed to initialize');
+                                updateTestStatus('init-status', 'fail', 'Database initialization failed');
+                            }
+                        }, 2000);
+                        return;
+                    }
+                } else {
+                    log('❌ Fish database not available');
+                    updateTestStatus('init-status', 'fail', 'Fish database not loaded');
+                    return;
+                }
+            } catch (error) {
+                log('❌ Error checking fish database: ' + error.message);
+                updateTestStatus('init-status', 'fail', 'Database check failed');
+                return;
+            }
+
+            // If we get here, setup autocalculate
+            setupAutocalculate();
+        }
+
+        function setupAutocalculate() {
+            log('Setting up autocalculate functionality...');
+
+            const speciesInput = document.getElementById('species');
+            const lengthInput = document.getElementById('length');
+            const weightInput = document.getElementById('weight');
+            const calcInfo = document.getElementById('calculation-info');
+
+            if (!speciesInput || !lengthInput || !weightInput) {
+                log('❌ Form inputs not found');
+                return;
+            }
+
+            // Auto-calculate function (copied from main app)
+            const autoCalculateWeight = async () => {
+                log('=== AUTO CALCULATE WEIGHT TRIGGERED ===');
+
+                const species = speciesInput.value ? speciesInput.value.trim() : '';
+                const length = lengthInput.value ? parseFloat(lengthInput.value) : 0;
+
+                log(`Auto-calculate inputs - Species: "${species}", Length: ${length}`);
+
+                if (!species || !length || length <= 0) {
+                    log('Invalid inputs, clearing calculated weight');
+                    weightInput.value = '';
+                    weightInput.title = '';
+                    weightInput.classList.remove('bg-green-50', 'bg-yellow-50', 'bg-red-50');
+                    calcInfo.textContent = '';
+                    return;
+                }
+
+                try {
+                    // Use the same logic as the main app
+                    const result = await window.errorHandler.withErrorBoundary(async () => {
+                        // Validate inputs
+                        window.errorHandler.validateString(species, 'Species', 1, 100);
+                        window.errorHandler.validateNumber(length, 'Length', 0.1, 500);
+
+                        // Get weight estimate
+                        const improvedResult = await window.fishDB.getImprovedWeightEstimate(species, length);
+                        if (improvedResult && improvedResult.estimatedWeight > 0) {
+                            return improvedResult;
+                        }
+
+                        // Fallback to default algorithm
+                        const defaultResult = await window.fishDB.calculateWeight(species, length);
+                        if (defaultResult && defaultResult > 0) {
+                            return {
+                                estimatedWeight: defaultResult,
+                                algorithm_source: 'default',
+                                species: species,
+                                confidence: 'medium',
+                                accuracy: 0.7,
+                                isSpeciesSpecific: true
+                            };
+                        }
+
+                        // Generic fallback
+                        const a = 0.000013;
+                        const b = 3.0;
+                        const estimatedWeight = a * Math.pow(length, b);
+                        return {
+                            estimatedWeight,
+                            algorithm_source: 'generic',
+                            species: species,
+                            confidence: 'low',
+                            accuracy: 0.5,
+                            isSpeciesSpecific: false
+                        };
+                    }, 'AutoCalculateWeight', {
+                        showUserError: false,
+                        userMessage: null
+                    });
+
+                    if (result.success) {
+                        const weightResult = result.result;
+                        const weight = parseFloat(weightResult.estimatedWeight.toFixed(3));
+
+                        log(`✅ Auto-calculation succeeded: ${weight} kg`);
+
+                        // Update weight input
+                        weightInput.value = weight;
+                        weightInput.dataset.calculated = 'true';
+                        weightInput.dataset.species = weightResult.species || species;
+                        weightInput.dataset.accuracy = weightResult.accuracy || 0;
+                        weightInput.dataset.algorithmSource = weightResult.algorithm_source || 'generic';
+
+                        // Show calculation info
+                        const algorithmType = weightResult.algorithm_source === 'improved' ? 'Self-Improving' :
+                            weightResult.algorithm_source === 'default' ? 'Database' :
+                                weightResult.algorithm_source === 'generic' ? 'Generic' : 'Unknown';
+
+                        const confidenceText = weightResult.confidence ? ` (${weightResult.confidence} confidence)` : '';
+                        const accuracyText = weightResult.accuracy ? ` - ${(weightResult.accuracy * 100).toFixed(1)}% accuracy` : '';
+
+                        const calculationInfo = weightResult.isSpeciesSpecific
+                            ? `${algorithmType} ${species} algorithm${accuracyText}${confidenceText}`
+                            : `Generic fish formula${accuracyText}`;
+
+                        weightInput.title = calculationInfo;
+                        calcInfo.textContent = calculationInfo;
+
+                        // Add visual feedback
+                        weightInput.classList.remove('bg-green-50', 'bg-yellow-50', 'bg-red-50');
+                        if (weightResult.confidence === 'high' || weightResult.accuracy > 0.8) {
+                            weightInput.classList.add('bg-green-50');
+                        } else if (weightResult.confidence === 'medium' || weightResult.accuracy > 0.6) {
+                            weightInput.classList.add('bg-yellow-50');
+                        } else {
+                            weightInput.classList.add('bg-red-50');
+                        }
+
+                    } else {
+                        log(`❌ Auto-calculation failed: ${result.error?.message}`);
+                        weightInput.value = '';
+                        weightInput.title = `Calculation failed: ${result.error?.message}`;
+                        calcInfo.textContent = `Error: ${result.error?.message}`;
+                        weightInput.classList.remove('bg-green-50', 'bg-yellow-50');
+                        weightInput.classList.add('bg-red-50');
+                    }
+                } catch (error) {
+                    log(`❌ Exception in auto-calculation: ${error.message}`);
+                    weightInput.value = '';
+                    weightInput.title = `Exception: ${error.message}`;
+                    calcInfo.textContent = `Exception: ${error.message}`;
+                    weightInput.classList.remove('bg-green-50', 'bg-yellow-50');
+                    weightInput.classList.add('bg-red-50');
+                }
+            };
+
+            // Set up event listeners
+            lengthInput.addEventListener('input', (e) => {
+                log(`Length input changed: ${e.target.value}`);
+                autoCalculateWeight();
+            });
+
+            speciesInput.addEventListener('input', (e) => {
+                log(`Species input changed: ${e.target.value}`);
+                autoCalculateWeight();
+            });
+
+            speciesInput.addEventListener('change', (e) => {
+                log(`Species changed: ${e.target.value}`);
+                autoCalculateWeight();
+            });
+
+            log('✅ Autocalculate setup complete');
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            log('Page loaded, waiting for scripts...');
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+
+</html>

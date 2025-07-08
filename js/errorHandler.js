@@ -66,10 +66,10 @@ class ErrorHandler {
         window.addEventListener('unhandledrejection', (event) => {
             console.error('Unhandled promise rejection:', event.reason);
             this.logError(event.reason, 'UnhandledPromiseRejection');
-            
+
             // Prevent default behavior (console error)
             event.preventDefault();
-            
+
             // Show user-friendly error message
             this.showUserError('An unexpected error occurred. Please try again.');
         });
@@ -78,7 +78,7 @@ class ErrorHandler {
         window.addEventListener('error', (event) => {
             console.error('Global error:', event.error);
             this.logError(event.error, 'GlobalError');
-            
+
             // Show user-friendly error message
             this.showUserError('An unexpected error occurred. Please refresh the page.');
         });
@@ -116,19 +116,19 @@ class ErrorHandler {
 
     handleIndexedDBError(error, request) {
         console.error('IndexedDB error:', error);
-        
+
         // Specific handling for different IndexedDB errors
         if (error.name === 'ConstraintError') {
             this.logError(new DatabaseError('Constraint violation in database operation', error, 'constraint'));
             return false; // Don't show user error for constraint violations
         }
-        
+
         if (error.name === 'TransactionInactiveError') {
             this.logError(new DatabaseError('Transaction became inactive', error, 'transaction'));
             this.showUserError('Database operation timed out. Please try again.');
             return true;
         }
-        
+
         if (error.name === 'QuotaExceededError') {
             this.logError(new StorageError('Storage quota exceeded', error, 'IndexedDB'));
             this.showUserError('Storage space is full. Please clear some data.');
@@ -148,15 +148,15 @@ class ErrorHandler {
             return { success: true, result };
         } catch (error) {
             this.logError(error, context);
-            
+
             if (options.showUserError !== false) {
                 this.showUserError(options.userMessage || 'An error occurred. Please try again.');
             }
-            
+
             if (options.rethrow) {
                 throw error;
             }
-            
+
             return { success: false, error };
         }
     }
@@ -168,15 +168,15 @@ class ErrorHandler {
             return { success: true, result };
         } catch (error) {
             this.logError(error, context);
-            
+
             if (options.showUserError !== false) {
                 this.showUserError(options.userMessage || 'An error occurred. Please try again.');
             }
-            
+
             if (options.rethrow) {
                 throw error;
             }
-            
+
             return { success: false, error };
         }
     }
@@ -184,10 +184,10 @@ class ErrorHandler {
     // Show user-friendly error messages
     showUserError(message, severity = 'error') {
         console.warn(`User error (${severity}):`, message);
-        
+
         // Try to find existing error display element
         let errorElement = document.getElementById('error-message');
-        
+
         if (!errorElement) {
             // Create error display element if it doesn't exist
             errorElement = document.createElement('div');
@@ -213,7 +213,7 @@ class ErrorHandler {
 
         errorElement.textContent = message;
         errorElement.style.display = 'block';
-        
+
         // Auto-hide after 5 seconds
         setTimeout(() => {
             if (errorElement) {
@@ -233,11 +233,11 @@ class ErrorHandler {
         if (isNaN(value) || !isFinite(value)) {
             throw new ValidationError(`${fieldName} must be a valid number`, fieldName, value);
         }
-        
+
         if (min !== null && value < min) {
             throw new ValidationError(`${fieldName} must be at least ${min}`, fieldName, value);
         }
-        
+
         if (max !== null && value > max) {
             throw new ValidationError(`${fieldName} must be at most ${max}`, fieldName, value);
         }
@@ -247,11 +247,11 @@ class ErrorHandler {
         if (typeof value !== 'string') {
             throw new ValidationError(`${fieldName} must be a string`, fieldName, value);
         }
-        
+
         if (minLength !== null && value.length < minLength) {
             throw new ValidationError(`${fieldName} must be at least ${minLength} characters long`, fieldName, value);
         }
-        
+
         if (maxLength !== null && value.length > maxLength) {
             throw new ValidationError(`${fieldName} must be at most ${maxLength} characters long`, fieldName, value);
         }
@@ -266,7 +266,7 @@ class ErrorHandler {
                 if (i === maxRetries - 1) {
                     throw error;
                 }
-                
+
                 console.warn(`Operation failed (attempt ${i + 1}/${maxRetries}):`, error.message);
                 await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
             }
@@ -285,7 +285,7 @@ class ErrorHandler {
         this.errorLog.forEach(entry => {
             const errorType = entry.error.name;
             const context = entry.context;
-            
+
             stats.errorsByType[errorType] = (stats.errorsByType[errorType] || 0) + 1;
             stats.errorsByContext[context] = (stats.errorsByContext[context] || 0) + 1;
         });

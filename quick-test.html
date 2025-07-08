@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Quick Function Test</title>
+</head>
+
+<body>
+    <h1>Quick Function Test</h1>
+    <div id="status">Loading...</div>
+    <div id="result"></div>
+
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script src="js/selfImprovingAlgorithm.js"></script>
+
+    <script>
+        async function testFunction() {
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+
+            statusDiv.textContent = 'Testing...';
+
+            try {
+                // Wait for initialization
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                console.log('window.fishDB:', window.fishDB);
+                console.log('window.fishDB.getImprovedWeightEstimate:', window.fishDB.getImprovedWeightEstimate);
+
+                if (window.fishDB && typeof window.fishDB.getImprovedWeightEstimate === 'function') {
+                    statusDiv.textContent = '✅ Function exists!';
+
+                    const isReady = await window.fishDB.isReady();
+                    if (isReady) {
+                        resultDiv.textContent = '✅ Database is ready, trying calculation...';
+
+                        const result = await window.fishDB.getImprovedWeightEstimate('Bass', 30);
+                        resultDiv.innerHTML += '<br>Result: ' + JSON.stringify(result);
+                    } else {
+                        resultDiv.textContent = '❌ Database not ready';
+                    }
+                } else {
+                    statusDiv.textContent = '❌ Function does not exist';
+                    console.error('Function not found. Available methods:');
+                    if (window.fishDB) {
+                        console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(window.fishDB)));
+                    }
+                }
+            } catch (error) {
+                statusDiv.textContent = '❌ Error: ' + error.message;
+                console.error('Test error:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(testFunction, 500);
+        });
+    </script>
+</body>
+
+</html>

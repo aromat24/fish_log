@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Fish Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Fish Database Debug</h1>
+
+    <div id="test-results"></div>
+
+    <div class="test-section">
+        <h2>Debug Log</h2>
+        <pre id="debug-log"></pre>
+    </div>
+
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+
+    <script>
+        function log(message) {
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            const logElement = document.getElementById('debug-log');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function addTestResult(title, status, details = '') {
+            const resultsDiv = document.getElementById('test-results');
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-section ${status}`;
+            testDiv.innerHTML = `
+                <h3>${title}</h3>
+                <p>${details}</p>
+            `;
+            resultsDiv.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            log('Starting fish database debugging...');
+
+            // Test 1: Check if error handler is available
+            try {
+                if (window.errorHandler) {
+                    log('✅ Error handler available');
+                    addTestResult('Error Handler', 'pass', 'Error handler loaded successfully');
+                } else {
+                    log('❌ Error handler not available');
+                    addTestResult('Error Handler', 'fail', 'Error handler not loaded');
+                    return;
+                }
+            } catch (error) {
+                log('❌ Error checking error handler: ' + error.message);
+                addTestResult('Error Handler', 'fail', 'Error checking error handler: ' + error.message);
+                return;
+            }
+
+            // Test 2: Check if fish database is available
+            try {
+                if (window.fishDB) {
+                    log('✅ Fish database available');
+                    addTestResult('Fish Database Object', 'pass', 'Fish database object created');
+                } else {
+                    log('❌ Fish database not available');
+                    addTestResult('Fish Database Object', 'fail', 'Fish database object not created');
+                    return;
+                }
+            } catch (error) {
+                log('❌ Error checking fish database: ' + error.message);
+                addTestResult('Fish Database Object', 'fail', 'Error checking fish database: ' + error.message);
+                return;
+            }
+
+            // Test 3: Check database initialization
+            try {
+                log('Checking database initialization...');
+                const isReady = await window.fishDB.isReady();
+                if (isReady) {
+                    log('✅ Fish database is ready');
+                    addTestResult('Database Ready', 'pass', 'Database initialized successfully');
+                } else {
+                    log('❌ Fish database is not ready');
+                    addTestResult('Database Ready', 'fail', 'Database failed to initialize');
+
+                    // Try to get more details
+                    log('Checking database properties...');
+                    log('Database object:', window.fishDB.db);
+                    log('Algorithms object:', window.fishDB.algorithms);
+
+                    if (!window.fishDB.db) {
+                        log('❌ Database connection is null');
+                        addTestResult('Database Connection', 'fail', 'IndexedDB connection failed');
+                    } else {
+                        log('✅ Database connection exists');
+                        addTestResult('Database Connection', 'pass', 'IndexedDB connection successful');
+                    }
+
+                    if (!window.fishDB.algorithms) {
+                        log('❌ Algorithms not loaded');
+                        addTestResult('Algorithms Loading', 'fail', 'Failed to load fish algorithms');
+                    } else {
+                        log('✅ Algorithms loaded');
+                        addTestResult('Algorithms Loading', 'pass', 'Fish algorithms loaded successfully');
+                    }
+                }
+            } catch (error) {
+                log('❌ Error checking database readiness: ' + error.message);
+                addTestResult('Database Ready', 'fail', 'Error checking database readiness: ' + error.message);
+            }
+
+            // Test 4: Test direct file access
+            try {
+                log('Testing direct file access...');
+                const response = await fetch('./fish_algorithms.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Fish algorithms file accessible');
+                    log('Number of species in file:', Object.keys(data).length);
+                    addTestResult('File Access', 'pass', `Fish algorithms file accessible with ${Object.keys(data).length} species`);
+                } else {
+                    log('❌ Fish algorithms file not accessible: ' + response.status);
+                    addTestResult('File Access', 'fail', `Fish algorithms file not accessible: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                log('❌ Error accessing fish algorithms file: ' + error.message);
+                addTestResult('File Access', 'fail', 'Error accessing fish algorithms file: ' + error.message);
+            }
+
+            // Test 5: Test weight calculation
+            try {
+                log('Testing weight calculation...');
+                if (window.fishDB.algorithms && Object.keys(window.fishDB.algorithms).length > 0) {
+                    const firstSpecies = Object.values(window.fishDB.algorithms)[0];
+                    const testResult = await window.fishDB.calculateWeight(firstSpecies.species_name, 30);
+                    if (testResult && testResult > 0) {
+                        log('✅ Weight calculation works');
+                        log('Test result:', testResult);
+                        addTestResult('Weight Calculation', 'pass', `Weight calculation works (${testResult} kg for ${firstSpecies.species_name})`);
+                    } else {
+                        log('❌ Weight calculation failed');
+                        addTestResult('Weight Calculation', 'fail', 'Weight calculation returned invalid result');
+                    }
+                } else {
+                    log('❌ Cannot test weight calculation - no algorithms loaded');
+                    addTestResult('Weight Calculation', 'fail', 'Cannot test - no algorithms loaded');
+                }
+            } catch (error) {
+                log('❌ Error in weight calculation: ' + error.message);
+                addTestResult('Weight Calculation', 'fail', 'Error in weight calculation: ' + error.message);
+            }
+
+            // Test 6: Test improved weight estimation
+            try {
+                log('Testing improved weight estimation...');
+                if (window.fishDB.algorithms && Object.keys(window.fishDB.algorithms).length > 0) {
+                    const firstSpecies = Object.values(window.fishDB.algorithms)[0];
+                    const testResult = await window.fishDB.getImprovedWeightEstimate(firstSpecies.species_name, 30);
+                    if (testResult && testResult.estimatedWeight > 0) {
+                        log('✅ Improved weight estimation works');
+                        log('Test result:', testResult);
+                        addTestResult('Improved Weight Estimation', 'pass', `Improved estimation works (${testResult.estimatedWeight} kg for ${firstSpecies.species_name})`);
+                    } else {
+                        log('❌ Improved weight estimation failed');
+                        addTestResult('Improved Weight Estimation', 'fail', 'Improved estimation returned invalid result');
+                    }
+                } else {
+                    log('❌ Cannot test improved weight estimation - no algorithms loaded');
+                    addTestResult('Improved Weight Estimation', 'fail', 'Cannot test - no algorithms loaded');
+                }
+            } catch (error) {
+                log('❌ Error in improved weight estimation: ' + error.message);
+                addTestResult('Improved Weight Estimation', 'fail', 'Error in improved weight estimation: ' + error.message);
+            }
+
+            log('Debugging complete');
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+
+</html>

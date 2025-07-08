@@ -229,6 +229,9 @@ function setupFormHandlers() {
             console.warn('Auto-calculation failed:', result.error?.message);
             // Clear weight input on failure
             clearCalculatedWeight();
+        } else {
+            console.log('Auto-calculation succeeded:', result.result);
+            return result.result;
         }
     };
 
@@ -456,12 +459,20 @@ async function calculateEstimatedWeight(species, length) {
         return await calculateEstimatedWeightBasic(species, length);
     }
 
-    return await window.errorHandler.withErrorBoundary(async () => {
+    const result = await window.errorHandler.withErrorBoundary(async () => {
         return await calculateEstimatedWeightInternal(species, length);
     }, 'AutoCalculation', {
         userMessage: 'Weight calculation failed. Using fallback estimate.',
         showUserError: false // We'll handle user feedback ourselves
     });
+
+    if (result.success) {
+        return result.result;
+    } else {
+        console.warn('Weight calculation failed, using fallback:', result.error?.message);
+        // Try fallback calculation
+        return await fallbackCalculation(species, length, document.getElementById('weight'), result.error?.message || 'Calculation failed');
+    }
 }
 
 async function calculateEstimatedWeightInternal(species, length) {
@@ -491,7 +502,7 @@ async function calculateEstimatedWeightInternal(species, length) {
 
     // Check if fish database is available and ready with retry mechanism
     console.log('Checking fish database availability...');
-    
+
     if (!window.fishDB) {
         console.error('window.fishDB not available');
         throw new window.DatabaseError('Fish database not initialized');
@@ -542,14 +553,14 @@ async function getWeightEstimateWithFallback(species, length) {
     try {
         // Try default algorithm
         const defaultResult = await window.fishDB.calculateWeight(species, length);
-        if (defaultResult && defaultResult > 0) {
+        if (defaultResult && defaultResult.weight > 0) {
             return {
-                estimatedWeight: defaultResult,
+                estimatedWeight: defaultResult.weight,
                 algorithm_source: 'default',
-                species: species,
-                confidence: 'medium',
-                accuracy: 0.7,
-                isSpeciesSpecific: true
+                species: defaultResult.species,
+                confidence: defaultResult.accuracy > 0.8 ? 'high' : 'medium',
+                accuracy: defaultResult.accuracy,
+                isSpeciesSpecific: defaultResult.isSpeciesSpecific
             };
         }
     } catch (error) {
@@ -1182,7 +1193,13 @@ function setupSpeciesHandlers() {
             // Add database species that aren't already in the list
             let addedCount = 0;
             dbSpecies.forEach(dbSpeciesName => {
+                if (!dbSpeciesName || typeof dbSpeciesName !== 'string') {
+                    console.warn('Invalid species name from database:', dbSpeciesName);
+                    return;
+                }
+
                 const exists = speciesList.some(species =>
+                    species && species.name &&
                     species.name.toLowerCase() === dbSpeciesName.toLowerCase()
                 );
                 if (!exists) {
