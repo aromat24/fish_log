@@ -1,5 +1,5 @@
 {
-  "name": "Fish Log Dev Container",
+  "name": "Fish Log PWA Dev Container",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -16,16 +16,39 @@
     "vscode": {
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python3",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "files.associations": {
+          "*.html": "html",
+          "*.css": "css",
+          "*.js": "javascript",
+          "*.json": "json"
+        }
       },
       "extensions": [
         "ms-python.python",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.live-server",
+        "ms-vscode.vscode-json",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense"
       ]
     }
   },
+  "forwardPorts": [8080, 3000, 5000],
+  "portsAttributes": {
+    "8080": {
+      "label": "Fish Log PWA",
+      "onAutoForward": "notify"
+    }
+  },
   "remoteUser": "vscode",
-  "postCreateCommand": "npm install || true"
+  "postCreateCommand": "npm install && echo 'Dev container setup complete! Run npm run dev to start the development server.'",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ]
 }

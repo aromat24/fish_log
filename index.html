@@ -1155,7 +1155,7 @@
             themeToggleBtn.title = 'Switch to Day Mode';
           }
         } else {
-          root.removeAttribute('data-theme');
+          root.setAttribute('data-theme', 'day'); // Explicitly set day theme instead of removing
           console.log('Applied day theme');
           if (themeToggleBtn) {
             themeToggleBtn.textContent = '🌙';
@@ -1170,17 +1170,22 @@
 
       function toggleTheme() {
         console.log('toggleTheme called, current theme:', currentTheme);
-        updateTheme(currentTheme === 'night' ? 'day' : 'night');
-        console.log('Theme switched to:', currentTheme);
+        const newTheme = currentTheme === 'night' ? 'day' : 'night';
+        updateTheme(newTheme);
+        console.log('Theme switched to:', newTheme);
       }
 
       // Initialize theme
       updateTheme(currentTheme);
 
-      // Add click handler with debugging
+      // Add click handler - simplified and more reliable
       if (themeToggleBtn) {
         console.log('Adding click handler to theme toggle button');
-        themeToggleBtn.addEventListener('click', function (e) {
+        // Remove any existing event listeners first
+        themeToggleBtn.replaceWith(themeToggleBtn.cloneNode(true));
+        const newThemeBtn = document.getElementById('theme-toggle-btn');
+        
+        newThemeBtn.addEventListener('click', function (e) {
           console.log('Theme toggle button clicked');
           e.preventDefault();
           e.stopPropagation();
@@ -1204,43 +1209,6 @@
     } else {
       initThemeSystem();
     }
-
-    // Additional debugging for theme toggle button
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
-        const themeBtn = document.getElementById('theme-toggle-btn');
-        console.log('=== THEME BUTTON DEBUG ===');
-        console.log('Theme button element:', themeBtn);
-        console.log('Theme button disabled:', themeBtn ? themeBtn.disabled : 'N/A');
-        console.log('Theme button style.pointerEvents:', themeBtn ? themeBtn.style.pointerEvents : 'N/A');
-        console.log('Theme button onclick:', themeBtn ? themeBtn.onclick : 'N/A');
-
-        if (themeBtn) {
-          // Add a direct onclick handler as backup
-          themeBtn.onclick = function (e) {
-            console.log('Direct onclick handler triggered');
-            e.preventDefault();
-            e.stopPropagation();
-            const currentTheme = localStorage.getItem('theme') || 'day';
-            const newTheme = currentTheme === 'night' ? 'day' : 'night';
-            console.log('Switching from', currentTheme, 'to', newTheme);
-
-            const root = document.documentElement;
-            if (newTheme === 'night') {
-              root.setAttribute('data-theme', 'night');
-              themeBtn.textContent = '☀️';
-              themeBtn.title = 'Switch to Day Mode';
-            } else {
-              root.removeAttribute('data-theme');
-              themeBtn.textContent = '🌙';
-              themeBtn.title = 'Switch to Night Mode';
-            }
-            localStorage.setItem('theme', newTheme);
-            console.log('Theme switched successfully');
-          };
-        }
-      }, 2000);
-    });
   </script>
 </body>
 

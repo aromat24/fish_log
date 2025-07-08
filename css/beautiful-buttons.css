@@ -53,6 +53,32 @@
   --shadow-medium: rgba(0, 0, 0, 0.5);
 }
 
+/* Day Mode Colors - Explicit selector for when data-theme="day" is set */
+[data-theme="day"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  /* Button Colors - Day Mode - Bright and Vibrant */
+  --btn-primary-start: #0ea5e9;
+  --btn-primary-mid: #0284c7;
+  --btn-primary-end: #0369a1;
+  --btn-secondary-start: #f1f5f9;
+  --btn-secondary-mid: #e2e8f0;
+  --btn-secondary-end: #cbd5e0;
+  --btn-text-primary: #ffffff;
+  --btn-text-secondary: #334155;
+
+  /* Border and Shadow Colors - Light and Subtle */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e0;
+  --shadow-light: rgba(15, 23, 42, 0.08);
+  --shadow-medium: rgba(15, 23, 42, 0.15);
+}
+
 /* Auto Night Mode (based on system preference) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {

@@ -1,0 +1,31 @@
+{
+  "name": "fish-log-pwa",
+  "version": "1.0.0",
+  "description": "A Progressive Web App for logging fish catches",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=8080 --host=0.0.0.0 --no-browser",
+    "start": "npx live-server --port=8080 --host=0.0.0.0 --no-browser",
+    "serve": "npx live-server --port=8080 --host=0.0.0.0 --no-browser",
+    "build": "echo 'No build process needed for static PWA'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "pwa",
+    "fishing",
+    "log",
+    "progressive-web-app"
+  ],
+  "author": "Aromat",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "local"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
