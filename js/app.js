@@ -1272,7 +1272,7 @@ function setupSpeciesHandlers() {
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
             const matches = speciesList.filter(species =>
-                species.name.toLowerCase().startsWith(searchTerm)
+                species.name.toLowerCase().includes(searchTerm)
             );
             await updateSpeciesDropdown(matches);
         }
@@ -1394,7 +1394,7 @@ function setupSpeciesHandlers() {
         console.log('Species list from localStorage:', speciesList);
 
         const matches = speciesList.filter(species =>
-            species.name.toLowerCase().startsWith(searchTerm)
+            species.name.toLowerCase().includes(searchTerm)
         );
         console.log('Filtered matches:', matches);
 
@@ -2266,9 +2266,27 @@ function showCatchModal(catchData) {
     if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
+        
+        // Make location clickable with Google Maps link
+        if (catchData.latitude && catchData.longitude) {
+            const googleMapsUrl = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+            locationName.href = googleMapsUrl;
+            locationName.title = `Open "${catchData.locationName}" in Google Maps`;
+        } else {
+            // If no coordinates, try to search by name
+            const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(catchData.locationName)}`;
+            locationName.href = searchUrl;
+            locationName.title = `Search for "${catchData.locationName}" in Google Maps`;
+        }
     } else if (catchData.latitude && catchData.longitude) {
         locationContainer.classList.remove('hidden');
-        locationName.textContent = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
+        const coordinatesText = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
+        locationName.textContent = coordinatesText;
+        
+        // Make coordinates clickable with Google Maps link
+        const googleMapsUrl = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+        locationName.href = googleMapsUrl;
+        locationName.title = `Open coordinates in Google Maps`;
     } else {
         locationContainer.classList.add('hidden');
     }

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Theme and Location Fixes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        #theme-toggle { font-size: 18px; }
+        .location-link { color: blue; text-decoration: underline; cursor: pointer; }
+        .location-link:hover { color: darkblue; }
+    </style>
+</head>
+<body>
+    <h1>Test Theme Toggle and Location Link Fixes</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Theme Toggle Icon</h2>
+        <p>Current theme: <span id="current-theme">day</span></p>
+        <button id="theme-toggle">🌙</button>
+        <p>Click the button above - the icon should change from 🌙 to ☀️ and back.</p>
+        <div id="theme-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Location Links</h2>
+        <p>Test location with coordinates:</p>
+        <a id="location-with-coords" class="location-link" target="_blank">Cape Town Waterfront</a>
+        
+        <p>Test location without coordinates:</p>
+        <a id="location-without-coords" class="location-link" target="_blank">Unknown Location</a>
+        
+        <p>Test coordinates only:</p>
+        <a id="coordinates-only" class="location-link" target="_blank">-33.9012, 18.4197</a>
+        
+        <div id="location-test-result" class="test-result"></div>
+    </div>
+
+    <script>
+        // Test 1: Theme Toggle
+        let currentTheme = localStorage.getItem('theme') || 'day';
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const currentThemeSpan = document.getElementById('current-theme');
+        const themeTestResult = document.getElementById('theme-test-result');
+        
+        function updateTheme(theme) {
+            console.log('updateTheme called with:', theme);
+            currentTheme = theme;
+            currentThemeSpan.textContent = theme;
+            
+            if (theme === 'night') {
+                document.body.style.backgroundColor = '#2d3748';
+                document.body.style.color = '#f7fafc';
+                themeToggleBtn.textContent = '☀️';
+                themeToggleBtn.title = 'Switch to Day Mode';
+            } else {
+                document.body.style.backgroundColor = '#ffffff';
+                document.body.style.color = '#1a202c';
+                themeToggleBtn.textContent = '🌙';
+                themeToggleBtn.title = 'Switch to Night Mode';
+            }
+            
+            localStorage.setItem('theme', theme);
+            testThemeToggle();
+        }
+        
+        function toggleTheme() {
+            console.log('toggleTheme called, current theme:', currentTheme);
+            const newTheme = currentTheme === 'night' ? 'day' : 'night';
+            updateTheme(newTheme);
+        }
+        
+        function testThemeToggle() {
+            const expectedIcon = currentTheme === 'night' ? '☀️' : '🌙';
+            const actualIcon = themeToggleBtn.textContent;
+            
+            if (actualIcon === expectedIcon) {
+                themeTestResult.className = 'test-result success';
+                themeTestResult.textContent = `✅ SUCCESS: Theme is ${currentTheme}, icon is ${actualIcon}`;
+            } else {
+                themeTestResult.className = 'test-result error';
+                themeTestResult.textContent = `❌ FAILED: Theme is ${currentTheme}, but icon is ${actualIcon} (expected ${expectedIcon})`;
+            }
+        }
+        
+        // Test 2: Location Links
+        function testLocationLinks() {
+            const locationTestResult = document.getElementById('location-test-result');
+            
+            // Test data
+            const testData = [
+                {
+                    name: 'Cape Town Waterfront',
+                    latitude: -33.9012,
+                    longitude: 18.4197,
+                    element: document.getElementById('location-with-coords')
+                },
+                {
+                    name: 'Unknown Location',
+                    latitude: null,
+                    longitude: null,
+                    element: document.getElementById('location-without-coords')
+                },
+                {
+                    name: null,
+                    latitude: -33.9012,
+                    longitude: 18.4197,
+                    element: document.getElementById('coordinates-only')
+                }
+            ];
+            
+            let allTestsPassed = true;
+            let testResults = [];
+            
+            testData.forEach((test, index) => {
+                let expectedUrl, actualUrl;
+                
+                if (test.name && test.latitude && test.longitude) {
+                    // Named location with coordinates
+                    expectedUrl = `https://www.google.com/maps?q=${test.latitude},${test.longitude}`;
+                    test.element.href = expectedUrl;
+                    test.element.title = `Open "${test.name}" in Google Maps`;
+                } else if (test.name && !test.latitude) {
+                    // Named location without coordinates
+                    expectedUrl = `https://www.google.com/maps/search/${encodeURIComponent(test.name)}`;
+                    test.element.href = expectedUrl;
+                    test.element.title = `Search for "${test.name}" in Google Maps`;
+                } else if (!test.name && test.latitude && test.longitude) {
+                    // Coordinates only
+                    expectedUrl = `https://www.google.com/maps?q=${test.latitude},${test.longitude}`;
+                    test.element.href = expectedUrl;
+                    test.element.title = `Open coordinates in Google Maps`;
+                }
+                
+                actualUrl = test.element.href;
+                
+                if (actualUrl === expectedUrl) {
+                    testResults.push(`✅ Test ${index + 1}: Link generated correctly`);
+                } else {
+                    testResults.push(`❌ Test ${index + 1}: Expected "${expectedUrl}", got "${actualUrl}"`);
+                    allTestsPassed = false;
+                }
+            });
+            
+            if (allTestsPassed) {
+                locationTestResult.className = 'test-result success';
+                locationTestResult.innerHTML = testResults.join('<br>');
+            } else {
+                locationTestResult.className = 'test-result error';
+                locationTestResult.innerHTML = testResults.join('<br>');
+            }
+        }
+        
+        // Initialize
+        updateTheme(currentTheme);
+        testLocationLinks();
+        
+        // Add event listener
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        
+        // Add click listeners to location links to test opening
+        document.querySelectorAll('.location-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Location link clicked:', link.href);
+                // In a real app, this would open the link
+                alert(`Would open: ${link.href}`);
+            });
+        });
+    </script>
+</body>
+</html>

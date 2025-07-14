@@ -957,7 +957,9 @@
           <div id="modal-location-container" class="text-sm">
             <p class="flex flex-wrap items-center gap-1">
               <span>Location:</span>
-              <span id="modal-location-name"></span>
+              <a id="modal-location-name" class="text-blue-500 underline cursor-pointer" 
+                 target="_blank" title="Open in Google Maps">
+              </a>
             </p>
           </div>
 
@@ -1304,20 +1306,23 @@
       function updateTheme(theme) {
         console.log('updateTheme called with:', theme);
         const root = document.documentElement;
+        
+        // Always get fresh reference to the button
+        const currentThemeBtn = document.getElementById('theme-toggle-btn');
 
         if (theme === 'night') {
           root.setAttribute('data-theme', 'night');
           console.log('Applied night theme');
-          if (themeToggleBtn) {
-            themeToggleBtn.textContent = '☀️';
-            themeToggleBtn.title = 'Switch to Day Mode';
+          if (currentThemeBtn) {
+            currentThemeBtn.textContent = '☀️';
+            currentThemeBtn.title = 'Switch to Day Mode';
           }
         } else {
           root.setAttribute('data-theme', 'day'); // Explicitly set day theme instead of removing
           console.log('Applied day theme');
-          if (themeToggleBtn) {
-            themeToggleBtn.textContent = '🌙';
-            themeToggleBtn.title = 'Switch to Night Mode';
+          if (currentThemeBtn) {
+            currentThemeBtn.textContent = '🌙';
+            currentThemeBtn.title = 'Switch to Night Mode';
           }
         }
 
@@ -1333,22 +1338,20 @@
         console.log('Theme switched to:', newTheme);
       }
 
-      // Initialize theme
-      updateTheme(currentTheme);
-
       // Add click handler - simplified and more reliable
       if (themeToggleBtn) {
         console.log('Adding click handler to theme toggle button');
-        // Remove any existing event listeners first
-        themeToggleBtn.replaceWith(themeToggleBtn.cloneNode(true));
-        const newThemeBtn = document.getElementById('theme-toggle-btn');
         
-        newThemeBtn.addEventListener('click', function (e) {
+        // Add event listener directly without replacing the button
+        themeToggleBtn.addEventListener('click', function (e) {
           console.log('Theme toggle button clicked');
           e.preventDefault();
           e.stopPropagation();
           toggleTheme();
         });
+        
+        // Initialize theme
+        updateTheme(currentTheme);
       } else {
         console.error('Theme toggle button not found!');
       }

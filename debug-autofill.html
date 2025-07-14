@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Autofill</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #species-input { width: 300px; padding: 10px; margin: 10px 0; }
+        #species-dropdown { border: 1px solid #ccc; max-height: 200px; overflow-y: auto; }
+        .species-option { padding: 10px; cursor: pointer; }
+        .species-option:hover { background-color: #f0f0f0; }
+        .debug-info { background-color: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Debug Autofill Functionality</h1>
+    <div>
+        <label for="species-input">Species:</label>
+        <input type="text" id="species-input" placeholder="Type a species name...">
+        <div id="species-dropdown" class="hidden"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h3>Debug Information</h3>
+        <div id="debug-log"></div>
+    </div>
+
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script>
+        const speciesInput = document.getElementById('species-input');
+        const speciesDropdown = document.getElementById('species-dropdown');
+        const debugLog = document.getElementById('debug-log');
+        
+        function log(message) {
+            console.log(message);
+            debugLog.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+        
+        async function initializeDebugTest() {
+            log('Initializing debug test...');
+            
+            // Wait for fish database to be ready
+            if (window.fishDB) {
+                log('Fish database found, waiting for initialization...');
+                const isReady = await window.fishDB.isReady();
+                log(`Fish database ready: ${isReady}`);
+                
+                if (isReady) {
+                    const speciesNames = window.fishDB.getSpeciesNames();
+                    log(`Species names from database: ${speciesNames.length} species`);
+                    log(`First 10 species: ${speciesNames.slice(0, 10).join(', ')}`);
+                    
+                    // Check localStorage
+                    const localSpecies = JSON.parse(localStorage.getItem('species') || '[]');
+                    log(`Species in localStorage: ${localSpecies.length} species`);
+                    
+                    // Add species to localStorage if not present
+                    if (localSpecies.length === 0) {
+                        log('Adding species to localStorage...');
+                        const speciesList = speciesNames.map(name => ({
+                            name: name,
+                            isCustom: false,
+                            isFromDatabase: true
+                        }));
+                        localStorage.setItem('species', JSON.stringify(speciesList));
+                        log(`Added ${speciesList.length} species to localStorage`);
+                    }
+                } else {
+                    log('Fish database not ready');
+                }
+            } else {
+                log('Fish database not found');
+            }
+        }
+        
+        function filterSpecies(searchTerm) {
+            const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+            log(`Filtering species with term: "${searchTerm}"`);
+            log(`Total species available: ${speciesList.length}`);
+            
+            const matches = speciesList.filter(species =>
+                species.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            log(`Found ${matches.length} matches`);
+            
+            return matches;
+        }
+        
+        function updateDropdown(matches) {
+            if (matches.length === 0) {
+                speciesDropdown.innerHTML = '<div class="species-option">No species found</div>';
+            } else {
+                speciesDropdown.innerHTML = matches.map(species => 
+                    `<div class="species-option" data-species="${species.name}">${species.name}</div>`
+                ).join('');
+            }
+            speciesDropdown.classList.remove('hidden');
+        }
+        
+        // Event listeners
+        speciesInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            log(`Input changed: "${searchTerm}"`);
+            
+            if (searchTerm.length === 0) {
+                speciesDropdown.classList.add('hidden');
+                return;
+            }
+            
+            if (searchTerm.length >= 2) {
+                const matches = filterSpecies(searchTerm);
+                updateDropdown(matches);
+            }
+        });
+        
+        // Handle dropdown clicks
+        speciesDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('species-option')) {
+                const selectedSpecies = e.target.dataset.species;
+                if (selectedSpecies) {
+                    speciesInput.value = selectedSpecies;
+                    speciesDropdown.classList.add('hidden');
+                    log(`Selected species: ${selectedSpecies}`);
+                }
+            }
+        });
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDebugTest);
+    </script>
+</body>
+</html>
