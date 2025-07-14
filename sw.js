@@ -5,7 +5,9 @@ const ASSETS_TO_CACHE = [
     '/manifest.json',
     '/fish_algorithms.json',
     '/js/app.js',
+    '/js/errorHandler.js',
     '/js/fishDatabase.js',
+    '/js/selfImprovingAlgorithm.js',
     '/js/beautiful-buttons.js',
     '/css/beautiful-buttons.css',
     '/Splashscreen.jpg'

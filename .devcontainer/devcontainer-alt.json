@@ -1,5 +1,5 @@
 {
-  "name": "Fish Log Dev Container",
+  "name": "Fish Log Dev Container (Alternative)",
   "image": "node:18",
   "forwardPorts": [8080],
   "postCreateCommand": "npm install",

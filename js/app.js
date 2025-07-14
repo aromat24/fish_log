@@ -147,32 +147,57 @@ async function initializeFishDatabase() {
 }
 
 function initLandingPage() {
-    const landingPage = document.getElementById('landing-page');
-    const appContent = document.getElementById('app-content');
-    const enterAppBtn = document.getElementById('enter-app-btn');
+    try {
+        const landingPage = document.getElementById('landing-page');
+        const appContent = document.getElementById('app-content');
+        const enterAppBtn = document.getElementById('enter-app-btn');
 
-    // No need for event listener here since HTML calls window.enterApp directly
-    console.log('Landing page initialized');
+        if (!landingPage || !appContent || !enterAppBtn) {
+            throw new Error('Required landing page elements not found');
+        }
+
+        // No need for event listener here since HTML calls window.enterApp directly
+        console.log('Landing page initialized');
+    } catch (error) {
+        console.error('Error initializing landing page:', error);
+        if (window.errorHandler) {
+            window.errorHandler.handleError(error, 'Landing Page Initialization');
+        }
+    }
 }
 
 // Global function for landing page button
 window.enterApp = function () {
     console.log('enterApp called');
 
-    // CRITICAL: Reset fullscreen modal when entering the app
-    resetFullscreenModal();
+    try {
+        // CRITICAL: Reset fullscreen modal when entering the app
+        resetFullscreenModal();
 
-    const landingPage = document.getElementById('landing-page');
-    const appContent = document.getElementById('app-content');
+        const landingPage = document.getElementById('landing-page');
+        const appContent = document.getElementById('app-content');
 
-    if (landingPage && appContent) {
+        if (!landingPage || !appContent) {
+            console.error('Required elements not found for app transition');
+            window.errorHandler?.handleError(new Error('App transition elements missing'), 'AppTransition');
+            return;
+        }
+
         landingPage.classList.add('fade-out');
         appContent.classList.remove('hidden');
         setTimeout(() => {
-            appContent.classList.add('fade-in');
-            // Load catch history after app content is visible
-            loadCatchHistory();
+            try {
+                appContent.classList.add('fade-in');
+                // Load catch history after app content is visible
+                loadCatchHistory();
+            } catch (error) {
+                console.error('Error during app transition animation:', error);
+                window.errorHandler?.handleError(error, 'AppTransitionAnimation');
+            }
         }, 50);
+    } catch (error) {
+        console.error('Error in enterApp:', error);
+        window.errorHandler?.handleError(error, 'EnterApp');
     }
 };
 
@@ -326,8 +351,15 @@ function setupFormHandlers() {
         console.log('=== FORM SUBMISSION STARTED ===');
         console.log('Event:', e);
         console.log('Form element:', catchForm);
-        // Call the unified save function instead of duplicating logic
-        saveCatchData();
+        
+        try {
+            // Call the unified save function instead of duplicating logic
+            saveCatchData();
+        } catch (error) {
+            console.error('Error in form submission handler:', error);
+            window.errorHandler?.handleError(error, 'FormSubmission');
+            showMessage('Error submitting form. Please try again.', 'error');
+        }
     });      // Also add a direct click handler to the submit button as a fallback
     const submitButton = document.querySelector('#catch-form button[type="submit"]');
     console.log('Submit button found:', submitButton);
@@ -364,20 +396,26 @@ function setupFormHandlers() {
                 touchTimeout = setTimeout(() => {
                     console.log('Touch timeout triggered, calling saveCatchData...');
 
-                    // Check if this is a valid touch (not part of a scroll or drag)
-                    const rect = submitButton.getBoundingClientRect();
-                    const touch = e.changedTouches[0];
+                    try {
+                        // Check if this is a valid touch (not part of a scroll or drag)
+                        const rect = submitButton.getBoundingClientRect();
+                        const touch = e.changedTouches[0];
 
-                    if (touch &&
-                        touch.clientX >= rect.left &&
-                        touch.clientX <= rect.right &&
-                        touch.clientY >= rect.top &&
-                        touch.clientY <= rect.bottom) {
+                        if (touch &&
+                            touch.clientX >= rect.left &&
+                            touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top &&
+                            touch.clientY <= rect.bottom) {
 
-                        console.log('Valid touch detected, saving catch...');
-                        saveCatchData();
-                    } else {
-                        console.log('Touch outside button bounds, ignoring');
+                            console.log('Valid touch detected, saving catch...');
+                            saveCatchData();
+                        } else {
+                            console.log('Touch outside button bounds, ignoring');
+                        }
+                    } catch (error) {
+                        console.error('Error in touch handler:', error);
+                        window.errorHandler?.handleError(error, 'TouchHandler');
+                        showMessage('Error processing touch. Please try again.', 'error');
                     }
                 }, 100); // Increased delay slightly
 
@@ -393,24 +431,30 @@ function setupFormHandlers() {
             console.log('Event target:', e.target);
             console.log('Button element:', submitButton);
 
-            // Add visual feedback
-            submitButton.style.backgroundColor = '#1e40af';
-            setTimeout(() => {
-                submitButton.style.backgroundColor = '';
-            }, 200);
+            try {
+                // Add visual feedback
+                submitButton.style.backgroundColor = '#1e40af';
+                setTimeout(() => {
+                    submitButton.style.backgroundColor = '';
+                }, 200);
 
-            // Clear any touch timeout to prevent double submission
-            if (touchTimeout) {
-                clearTimeout(touchTimeout);
-                touchTimeout = null;
+                // Clear any touch timeout to prevent double submission
+                if (touchTimeout) {
+                    clearTimeout(touchTimeout);
+                    touchTimeout = null;
+                }
+
+                // Always prevent default to avoid form submission conflicts
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log('Click handler calling saveCatchData...');
+                saveCatchData();
+            } catch (error) {
+                console.error('Error in click handler:', error);
+                window.errorHandler?.handleError(error, 'ClickHandler');
+                showMessage('Error processing click. Please try again.', 'error');
             }
-
-            // Always prevent default to avoid form submission conflicts
-            e.preventDefault();
-            e.stopPropagation();
-
-            console.log('Click handler calling saveCatchData...');
-            saveCatchData();
         });
 
         // Add visual feedback for mobile users
@@ -1431,18 +1475,25 @@ function setupSpeciesHandlers() {
 
     // Add click-outside handlers for modals
     [speciesModal, document.getElementById('manage-species-modal')].forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.add('hidden');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                try {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
 
-                // If it's the manage species modal, re-enable the button
-                if (modal.id === 'manage-species-modal') {
-                    manageSpeciesBtn.disabled = false;
-                    manageSpeciesBtn.style.pointerEvents = 'auto';
-                    manageSpeciesBtn.style.opacity = '1';
+                        // If it's the manage species modal, re-enable the button
+                        if (modal.id === 'manage-species-modal') {
+                            manageSpeciesBtn.disabled = false;
+                            manageSpeciesBtn.style.pointerEvents = 'auto';
+                            manageSpeciesBtn.style.opacity = '1';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in modal click handler:', error);
+                    window.errorHandler?.handleError(error, 'ModalClickHandler');
                 }
-            }
-        });
+            });
+        }
     });
 
     // Initial refresh to include any already-loaded database species
@@ -1557,7 +1608,15 @@ function setupPhotoHandling() {
         });
     }
 
-    photoInput.addEventListener('change', handlePhotoUpload);
+    photoInput.addEventListener('change', (event) => {
+        try {
+            handlePhotoUpload(event);
+        } catch (error) {
+            console.error('Error in photo upload handler:', error);
+            window.errorHandler?.handleError(error, 'PhotoUploadHandler');
+            showMessage('Error uploading photo. Please try again.', 'error');
+        }
+    });
 }
 
 async function handlePhotoUpload(event) {
@@ -1614,6 +1673,7 @@ async function handlePhotoUpload(event) {
 
         // Compress the image
         const compressedDataUrl = await compressImage(file);
+        console.log('Image compressed successfully');
 
         // Store the compressed image data URL
         event.target.dataset.imageData = compressedDataUrl;
@@ -1748,7 +1808,14 @@ function showFullscreenImage(imageUrl) {
     console.log('Fullscreen modal shown with image:', imageUrl);
 
     // Setup touch handlers for zoom and pan
-    setupImageTouchHandlers(fullscreenImage);
+    try {
+        setupImageTouchHandlers(fullscreenImage);
+    } catch (error) {
+        console.error('Error setting up touch handlers:', error);
+        if (window.errorHandler) {
+            window.errorHandler.handleError(error, 'Touch Handler Setup');
+        }
+    }
 }
 
 // Touch handling for fullscreen image zoom and pan
@@ -1864,9 +1931,32 @@ function setupImageTouchHandlers(imageElement) {
     };
 
     // Add event listeners
-    imageElement.addEventListener('touchstart', handleTouchStart, { passive: false });
-    imageElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-    imageElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+    imageElement.addEventListener('touchstart', (e) => {
+        try {
+            handleTouchStart(e);
+        } catch (error) {
+            console.error('Error in touch start handler:', error);
+            window.errorHandler?.handleError(error, 'TouchStartHandler');
+        }
+    }, { passive: false });
+    
+    imageElement.addEventListener('touchmove', (e) => {
+        try {
+            handleTouchMove(e);
+        } catch (error) {
+            console.error('Error in touch move handler:', error);
+            window.errorHandler?.handleError(error, 'TouchMoveHandler');
+        }
+    }, { passive: false });
+    
+    imageElement.addEventListener('touchend', (e) => {
+        try {
+            handleTouchEnd(e);
+        } catch (error) {
+            console.error('Error in touch end handler:', error);
+            window.errorHandler?.handleError(error, 'TouchEndHandler');
+        }
+    }, { passive: false });
 }
 
 function removeImageTouchHandlers(imageElement) {
@@ -2337,17 +2427,20 @@ function setupDataOptions() {
                     }
                 } catch (error) {
                     console.error('Error importing data:', error);
+                    window.errorHandler?.handleError(error, 'DataImport');
                     showMessage('Error importing data. Please check the file format.', 'error');
                 }
             };
             reader.onerror = (e) => {
                 console.error('FileReader error:', e);
+                window.errorHandler?.handleError(new Error('FileReader error'), 'FileReader');
                 showMessage('Error reading import file.', 'error');
             };
             try {
                 reader.readAsText(file);
             } catch (err) {
                 console.error('Error starting FileReader:', err);
+                window.errorHandler?.handleError(err, 'FileReaderStart');
                 showMessage('Error reading import file.', 'error');
             }
         }
@@ -2531,16 +2624,35 @@ function setupMapHandlers() {
     }      // Setup the location button to open map modal (don't replace, just add listener)
     const getLocationBtn = document.getElementById('get-location-btn');
     if (getLocationBtn) {
-        getLocationBtn.addEventListener('click', openMapModal);
+        getLocationBtn.addEventListener('click', () => {
+            try {
+                openMapModal();
+            } catch (error) {
+                console.error('Error opening map modal:', error);
+                window.errorHandler?.handleError(error, 'MapModalHandler');
+                showMessage('Error opening location selector. Please try again.', 'error');
+            }
+        });
     }
 
     // Setup the edit location button to open map modal in edit mode
     const editLocationBtn = document.getElementById('edit-location-btn');
     if (editLocationBtn) {
         editLocationBtn.addEventListener('click', () => {
-            const mapModal = document.getElementById('map-modal');
-            mapModal.dataset.editMode = 'true';
-            openMapModal();
+            try {
+                const mapModal = document.getElementById('map-modal');
+                if (mapModal) {
+                    mapModal.dataset.editMode = 'true';
+                    openMapModal();
+                } else {
+                    console.error('Map modal not found');
+                    showMessage('Error opening location editor. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error opening edit location modal:', error);
+                window.errorHandler?.handleError(error, 'EditLocationModalHandler');
+                showMessage('Error opening location editor. Please try again.', 'error');
+            }
         });
     }
 }

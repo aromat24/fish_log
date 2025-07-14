@@ -119,6 +119,58 @@
       background-size: cover;
       background-position: center;
       transition: opacity 0.5s ease-out;
+      min-height: 100vh;
+      min-width: 100vw;
+    }
+
+    /* Desktop optimization */
+    @media (min-width: 1024px) {
+      #landing-page {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: #1a202c;
+      }
+      
+      #landing-header {
+        margin-top: 10vh;
+      }
+      
+      #landing-footer {
+        margin-bottom: 10vh;
+      }
+    }
+
+    /* Large desktop optimization */
+    @media (min-width: 1440px) {
+      #landing-page {
+        background-size: 80% auto;
+        background-position: center;
+      }
+      
+      #landing-header {
+        margin-top: 12vh;
+      }
+      
+      #landing-footer {
+        margin-bottom: 12vh;
+      }
+    }
+
+    /* Tablet optimization */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      #landing-page {
+        background-size: cover;
+        background-position: center;
+      }
+      
+      #landing-header {
+        margin-top: 8vh;
+      }
+      
+      #landing-footer {
+        margin-bottom: 8vh;
+      }
     }
 
     #landing-page.fade-out {
@@ -152,14 +204,121 @@
       padding: 1rem 1.5rem 1.5rem 1.5rem;
     }
 
-    /* Mobile optimization */
+    /* Mobile splash screen optimization */
     @media (max-width: 768px) {
+      #landing-page {
+        background-size: cover;
+        background-position: center;
+        padding: 2rem 1rem;
+      }
+      
+      #landing-header {
+        margin-top: 10vh;
+      }
+      
+      #landing-header h1 {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+      }
+      
+      #landing-header p {
+        font-size: 1.1rem;
+        line-height: 1.4;
+        margin-bottom: 2rem;
+      }
+      
+      #landing-footer {
+        margin-bottom: 15vh;
+      }
+      
       .form-section {
         padding: 0.75rem 1rem 1rem 1rem;
       }
 
       .app-container {
         padding-top: 0;
+      }
+    }
+
+    /* Extra small mobile devices */
+    @media (max-width: 480px) {
+      #landing-page {
+        padding: 1rem 0.75rem;
+      }
+      
+      #landing-header {
+        margin-top: 8vh;
+      }
+      
+      #landing-header h1 {
+        font-size: 2rem;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+      }
+      
+      #landing-header p {
+        font-size: 1rem;
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
+      }
+      
+      #landing-footer {
+        margin-bottom: 12vh;
+      }
+    }
+
+    /* Ultra-wide desktop optimization */
+    @media (min-width: 1920px) {
+      #landing-page {
+        background-size: 60% auto;
+        background-position: center;
+      }
+      
+      #landing-header {
+        margin-top: 15vh;
+      }
+      
+      #landing-footer {
+        margin-bottom: 15vh;
+      }
+    }
+
+    /* Landscape mobile orientation */
+    @media (max-width: 768px) and (orientation: landscape) {
+      #landing-page {
+        background-size: cover;
+        background-position: center;
+        padding: 1rem;
+      }
+      
+      #landing-header {
+        margin-top: 5vh;
+      }
+      
+      #landing-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      #landing-header p {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      
+      #landing-footer {
+        margin-bottom: 8vh;
+      }
+    }
+
+    /* Very short screens */
+    @media (max-height: 600px) {
+      #landing-header {
+        margin-top: 5vh;
+      }
+      
+      #landing-footer {
+        margin-bottom: 5vh;
       }
     }
 
@@ -609,7 +768,6 @@
   <script src="js/fishDatabase.js"></script>
   <script src="js/selfImprovingAlgorithm.js"></script>
   <script src="js/beautiful-buttons.js"></script>
-  <script src="test-autocalculate.js"></script>
   <script src="js/app.js" defer></script>
 </head>
 

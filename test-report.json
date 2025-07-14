@@ -1,0 +1,327 @@
+{
+  "timestamp": "2025-07-05T08:49:23.712Z",
+  "summary": {
+    "total": 63,
+    "passed": 50,
+    "failed": 0,
+    "warnings": 7,
+    "successRate": 79.4
+  },
+  "results": [
+    {
+      "timestamp": "2025-07-05T08:49:23.694Z",
+      "message": "Testing file structure...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.695Z",
+      "message": "✓ File exists: index.html",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.695Z",
+      "message": "✓ File exists: js/app.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.695Z",
+      "message": "✓ File exists: js/errorHandler.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.696Z",
+      "message": "✓ File exists: js/fishDatabase.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.696Z",
+      "message": "✓ File exists: js/selfImprovingAlgorithm.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.696Z",
+      "message": "✓ File exists: js/beautiful-buttons.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.697Z",
+      "message": "✓ File exists: css/beautiful-buttons.css",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.697Z",
+      "message": "✓ File exists: manifest.json",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.697Z",
+      "message": "✓ File exists: sw.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.698Z",
+      "message": "Testing HTML structure...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.699Z",
+      "message": "✓ HTML element found: #catch-form",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.699Z",
+      "message": "✓ HTML element found: #species",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.699Z",
+      "message": "✓ HTML element found: #length",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.699Z",
+      "message": "✓ HTML element found: #weight",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.699Z",
+      "message": "✓ HTML element found: #datetime",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.700Z",
+      "message": "✓ HTML element found: #notes",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.700Z",
+      "message": "✓ HTML element found: #catch-modal",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.700Z",
+      "message": "✓ HTML element found: #edit-modal",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.700Z",
+      "message": "✓ HTML element found: #map-modal",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.700Z",
+      "message": "✓ Script included: js/app.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.701Z",
+      "message": "✓ Script included: js/errorHandler.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.701Z",
+      "message": "✓ Script included: js/fishDatabase.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.701Z",
+      "message": "✓ Script included: js/selfImprovingAlgorithm.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.701Z",
+      "message": "Testing JavaScript syntax...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.702Z",
+      "message": "✓ Functions found in: js/app.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.702Z",
+      "message": "⚠ 214 console.log statements (consider removing for production) in js/app.js",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.703Z",
+      "message": "✓ Error handling found in: js/app.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.703Z",
+      "message": "✓ Functions found in: js/errorHandler.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.703Z",
+      "message": "⚠ 1 console.log statements (consider removing for production) in js/errorHandler.js",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.704Z",
+      "message": "✓ Error handling found in: js/errorHandler.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.704Z",
+      "message": "✓ Functions found in: js/fishDatabase.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.704Z",
+      "message": "⚠ 14 console.log statements (consider removing for production) in js/fishDatabase.js",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.705Z",
+      "message": "✓ Error handling found in: js/fishDatabase.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.705Z",
+      "message": "✓ Functions found in: js/selfImprovingAlgorithm.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.705Z",
+      "message": "⚠ 12 console.log statements (consider removing for production) in js/selfImprovingAlgorithm.js",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.705Z",
+      "message": "✓ Error handling found in: js/selfImprovingAlgorithm.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.706Z",
+      "message": "✓ Functions found in: js/beautiful-buttons.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.706Z",
+      "message": "⚠ 4 console.log statements (consider removing for production) in js/beautiful-buttons.js",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.706Z",
+      "message": "✓ Error handling found in: js/beautiful-buttons.js",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.706Z",
+      "message": "Testing PWA components...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest field: name",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest field: short_name",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest field: start_url",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest field: display",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest field: theme_color",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Manifest icons: 3 defined",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.707Z",
+      "message": "✓ Service worker has install and activate events",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.708Z",
+      "message": "✓ Service worker implements caching",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.708Z",
+      "message": "Testing configuration files...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.708Z",
+      "message": "⚠ Optional config file missing: package.json",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.708Z",
+      "message": "✓ Config file found: _config.yml",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.708Z",
+      "message": "⚠ Optional config file missing: .gitignore",
+      "type": "warn"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.709Z",
+      "message": "✓ Config file found: README.md",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.709Z",
+      "message": "Testing data structure...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.710Z",
+      "message": "✓ Fish algorithms object with 203 entries",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.710Z",
+      "message": "✓ Algorithm entry 333 has required fields",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.710Z",
+      "message": "✓ Algorithm entry 335 has required fields",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.710Z",
+      "message": "✓ Algorithm entry 341 has required fields",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.711Z",
+      "message": "✓ Fish database directory with 35 files",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.711Z",
+      "message": "✓ Database file found: complete_fish_algorithms.json",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.711Z",
+      "message": "✓ Database file found: complete_fish_species_data.csv",
+      "type": "pass"
+    },
+    {
+      "timestamp": "2025-07-05T08:49:23.711Z",
+      "message": "✓ Database file found: fish_species_database.db",
+      "type": "pass"
+    }
+  ]
+}

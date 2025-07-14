@@ -161,7 +161,7 @@ class SelfImprovingAlgorithm {
         return 'unknown';
     }
 
-    calculatePatternConfidence(patternKey, historicalData) {
+    calculatePatternConfidence(patternKey) {
         // Get historical performance for this pattern
         const performance = this.performanceCache.get(patternKey);
         if (!performance) return 0.5; // Default confidence
@@ -308,7 +308,7 @@ class SelfImprovingAlgorithm {
         }
 
         // Check for default algorithm
-        const defaultAlg = await this.getDefaultAlgorithm(speciesName);
+        const defaultAlg = await this.getBestAlgorithm(speciesName);
         if (defaultAlg) {
             algorithms.push({
                 type: 'default',
@@ -329,7 +329,7 @@ class SelfImprovingAlgorithm {
         return algorithms;
     }
 
-    scoreAlgorithm(algorithm, patternAnalysis, speciesName, length) {
+    scoreAlgorithm(algorithm, patternAnalysis, speciesName) {
         let score = 0;
 
         // Base score from R-squared
