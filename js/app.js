@@ -1271,9 +1271,13 @@ function setupSpeciesHandlers() {
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
-            const matches = speciesList.filter(species =>
-                species.name.toLowerCase().includes(searchTerm)
-            );
+            const matches = speciesList.filter(species => {
+                const speciesName = species.name.toLowerCase();
+                const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+                
+                // Check if all search words are found in the species name
+                return searchWords.every(word => speciesName.includes(word));
+            });
             await updateSpeciesDropdown(matches);
         }
 
@@ -1393,9 +1397,13 @@ function setupSpeciesHandlers() {
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         console.log('Species list from localStorage:', speciesList);
 
-        const matches = speciesList.filter(species =>
-            species.name.toLowerCase().includes(searchTerm)
-        );
+        const matches = speciesList.filter(species => {
+            const speciesName = species.name.toLowerCase();
+            const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+            
+            // Check if all search words are found in the species name
+            return searchWords.every(word => speciesName.includes(word));
+        });
         console.log('Filtered matches:', matches);
 
         updateSpeciesDropdown(matches);

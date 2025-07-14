@@ -1326,14 +1326,22 @@
           }
         }
 
+        // Update localStorage and currentTheme variable synchronously
         localStorage.setItem('theme', theme);
         currentTheme = theme;
         console.log('Theme updated to:', currentTheme);
+        
+        // Force a small delay to ensure DOM updates are complete
+        setTimeout(() => {
+          console.log('Theme update complete, current theme:', currentTheme);
+        }, 50);
       }
 
       function toggleTheme() {
-        console.log('toggleTheme called, current theme:', currentTheme);
-        const newTheme = currentTheme === 'night' ? 'day' : 'night';
+        // Always get the current theme from localStorage to ensure accuracy
+        const actualCurrentTheme = localStorage.getItem('theme') || 'day';
+        console.log('toggleTheme called, current theme from localStorage:', actualCurrentTheme);
+        const newTheme = actualCurrentTheme === 'night' ? 'day' : 'night';
         updateTheme(newTheme);
         console.log('Theme switched to:', newTheme);
       }

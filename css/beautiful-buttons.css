@@ -608,6 +608,15 @@
     align-items: center;
     justify-content: center;
   }
+  
+  /* Fix menu button visibility in day mode - ensure dark text on light background */
+  #data-options-btn {
+    color: var(--text-primary) !important;
+  }
+  
+  #data-options-btn .lucide {
+    color: var(--text-primary) !important;
+  }
 }
 
 
@@ -962,6 +971,12 @@ label {
   color: var(--text-muted) !important;
 }
 
+/* Ensure text is visible in day mode */
+.text-sm {
+  color: var(--text-muted) !important;
+}
+}
+
 /* === DROPDOWN MENU THEMING === */
 #data-options-menu {
   background-color: var(--bg-secondary) !important;
@@ -994,6 +1009,15 @@ label {
 /* Save catch button keeps its thicker border and special effect */
 .shiny-button.shimmer-border {
   border: 2px solid var(--border-input-focus) !important;
+}
+
+/* Make borders more visible in day mode */
+[data-theme="day"] .shiny-button:not(.shimmer-border) {
+  border: 1px solid #94a3b8 !important; /* Slightly darker gray for better visibility */
+}
+
+[data-theme="day"] .tab-button {
+  border: 1px solid #94a3b8 !important; /* Slightly darker gray for better visibility */
 }
 
 /* Manage species button styling to match theme */
