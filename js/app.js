@@ -2045,9 +2045,24 @@ function showCatchModal(catchData) {
     if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
+        
+        // Set up Google Maps link for named location
+        if (catchData.latitude && catchData.longitude) {
+            // Named location with coordinates - link to exact coordinates
+            locationName.href = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+            locationName.title = `Open "${catchData.locationName}" in Google Maps`;
+        } else {
+            // Named location without coordinates - search for the name
+            locationName.href = `https://www.google.com/maps/search/${encodeURIComponent(catchData.locationName)}`;
+            locationName.title = `Search for "${catchData.locationName}" in Google Maps`;
+        }
     } else if (catchData.latitude && catchData.longitude) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
+        
+        // Set up Google Maps link for coordinates
+        locationName.href = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
+        locationName.title = `Open coordinates in Google Maps`;
     } else {
         locationContainer.classList.add('hidden');
     }

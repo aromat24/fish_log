@@ -36,19 +36,19 @@
   --text-secondary: #e2e8f0;
   --text-muted: #a0aec0;
 
-  /* Button Colors - Night Mode (Warmer, easier on eyes) */
-  --btn-primary-start: #4a5568;
-  --btn-primary-mid: #718096;
-  --btn-primary-end: #a0aec0;
-  --btn-secondary-start: #2d3748;
-  --btn-secondary-mid: #4a5568;
-  --btn-secondary-end: #718096;
+  /* Button Colors - Night Mode (More grey with gradients) */
+  --btn-primary-start: #374151;
+  --btn-primary-mid: #4b5563;
+  --btn-primary-end: #6b7280;
+  --btn-secondary-start: #1f2937;
+  --btn-secondary-mid: #374151;
+  --btn-secondary-end: #4b5563;
   --btn-text-primary: #f7fafc;
   --btn-text-secondary: #e2e8f0;
 
   /* Softer shadows for night mode */
   --border-light: #4a5568;
-  --border-medium: #718096;
+  --border-medium: #6b7280;
   --shadow-light: rgba(0, 0, 0, 0.3);
   --shadow-medium: rgba(0, 0, 0, 0.5);
 }
@@ -89,17 +89,17 @@
     --text-secondary: #e2e8f0;
     --text-muted: #a0aec0;
 
-    --btn-primary-start: #4a5568;
-    --btn-primary-mid: #718096;
-    --btn-primary-end: #a0aec0;
-    --btn-secondary-start: #2d3748;
-    --btn-secondary-mid: #4a5568;
-    --btn-secondary-end: #718096;
+    --btn-primary-start: #374151;
+    --btn-primary-mid: #4b5563;
+    --btn-primary-end: #6b7280;
+    --btn-secondary-start: #1f2937;
+    --btn-secondary-mid: #374151;
+    --btn-secondary-end: #4b5563;
     --btn-text-primary: #f7fafc;
     --btn-text-secondary: #e2e8f0;
 
     --border-light: #4a5568;
-    --border-medium: #718096;
+    --border-medium: #6b7280;
     --shadow-light: rgba(0, 0, 0, 0.3);
     --shadow-medium: rgba(0, 0, 0, 0.5);
   }
@@ -1002,7 +1002,6 @@ label {
 .text-sm {
   color: var(--text-muted) !important;
 }
-}
 
 /* === DROPDOWN MENU THEMING === */
 #data-options-menu {
@@ -1045,6 +1044,22 @@ label {
 
 [data-theme="day"] .tab-button {
   border: 1px solid #94a3b8 !important; /* Slightly darker gray for better visibility */
+}
+
+/* Burger menu styling for day mode - make icon white */
+[data-theme="day"] #data-options-btn .lucide {
+  color: #ffffff !important;
+}
+
+/* Ensure burger menu icon is white in day mode - more specific selector */
+[data-theme="day"] #data-options-btn svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Delete button text color - make it grey */
+#delete-catch-btn {
+  --button-text: #64748b !important;
 }
 
 /* Manage species button styling to match theme */
