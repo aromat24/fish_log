@@ -868,21 +868,16 @@
             <input type="hidden" id="location-name" name="location-name">
 
             <!-- Data options dropdown menu -->
-            <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 rounded-md shadow-lg z-50">
+            <div id="data-options-menu" class="hidden absolute right-0 mt-1 w-48 rounded-md shadow-lg z-50 border">
               <button type="button" id="export-data-btn"
-                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2">
+                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 transition-colors">
                 <span class="lucide lucide-export"></span> Export Data
               </button>
               <label for="import-data-input"
-                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 cursor-pointer">
+                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 cursor-pointer transition-colors">
                 <span class="lucide lucide-import"></span> Import Data
               </label>
               <input type="file" id="import-data-input" accept=".json" class="hidden">
-              <hr class="my-1 border-gray-200">
-              <button type="button" id="check-updates-btn"
-                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2">
-                🔄 Check for Updates
-              </button>
             </div>
           </div>
           <div class="photo-upload">
@@ -1112,7 +1107,7 @@
     <div class="rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto modal-content">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-xl font-bold">Manage Species</h3>
-        <button class="text-gray-500 hover:text-gray-700" id="close-manage-species-btn">✖</button>
+        <button class="absolute top-2 right-2 p-2 z-10" id="close-manage-species-btn" style="color: var(--text-muted); transition: color 0.2s ease;">✖</button>
       </div>
       <div class="space-y-4">
         <div id="custom-species-list" class="space-y-2">

@@ -157,6 +157,19 @@
   box-shadow: 0 4px 15px var(--shadow-medium);
 }
 
+/* Support for custom button colors while maintaining theme compatibility */
+.shiny-button[style*="--button-color"] {
+  background: linear-gradient(135deg, var(--button-bg, var(--btn-primary-start)) 0%, var(--button-color, var(--btn-primary-mid)) 50%, var(--button-color, var(--btn-primary-end)) 100%);
+  color: var(--button-text, var(--btn-text-primary));
+}
+
+/* Ensure custom colored buttons are still legible in both themes */
+[data-theme="night"] .shiny-button[style*="--button-color"] {
+  background: linear-gradient(135deg, var(--button-bg, var(--btn-primary-start)) 0%, var(--button-color, var(--btn-primary-mid)) 50%, var(--button-color, var(--btn-primary-end)) 100%);
+  color: var(--button-text, var(--btn-text-primary));
+  filter: brightness(0.8) saturate(0.9);
+}
+
 .shiny-button:active {
   transform: translateY(0) scale(0.98);
 }
@@ -936,7 +949,8 @@ label {
 /* Close button */
 #close-modal-btn,
 #close-edit-modal-btn,
-#close-map-modal-btn {
+#close-map-modal-btn,
+#close-manage-species-btn {
   color: var(--text-muted) !important;
   transition: color 0.2s ease;
 }
@@ -946,7 +960,9 @@ label {
 #close-edit-modal-btn:hover,
 #close-edit-modal-btn:active,
 #close-map-modal-btn:hover,
-#close-map-modal-btn:active {
+#close-map-modal-btn:active,
+#close-manage-species-btn:hover,
+#close-manage-species-btn:active {
   color: var(--text-primary) !important;
 }
 
@@ -1028,6 +1044,30 @@ label {
 
 #manage-species-btn:active {
   color: var(--text-primary) !important;
+}
+
+/* === DATA OPTIONS MENU THEMING === */
+#data-options-menu {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary) !important;
+}
+
+#data-options-menu button,
+#data-options-menu label {
+  color: var(--text-primary) !important;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#data-options-menu button:hover,
+#data-options-menu label:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Ensure hover effects work in both themes */
+[data-theme="night"] #data-options-menu button:hover,
+[data-theme="night"] #data-options-menu label:hover {
+  background-color: var(--bg-tertiary) !important;
 }
 
 /* === NOTIFICATION THEMING === */

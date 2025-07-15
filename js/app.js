@@ -2224,18 +2224,6 @@ function setupDataOptions() {
         importDataInput.value = ''; // Reset input
     });
 
-    // Handle app updates
-    const checkUpdatesBtn = document.getElementById('check-updates-btn');
-    if (checkUpdatesBtn) {
-        checkUpdatesBtn.addEventListener('click', () => {
-            if (window.swUpdateManager) {
-                window.swUpdateManager.forceUpdate();
-            } else {
-                showMessage('Update manager not available', 'error');
-            }
-            dataOptionsMenu.classList.add('hidden');
-        });
-    }
 }
 
 function setupTabSystem() {
