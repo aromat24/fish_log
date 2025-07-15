@@ -567,6 +567,7 @@
 #get-location-btn {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
+  color: var(--btn-text-primary) !important;
 }
 
 #get-location-btn .lucide {
@@ -604,6 +605,7 @@
     font-size: 0.8rem;
     white-space: nowrap;
     min-width: auto;
+    color: var(--btn-text-primary) !important;
   }
   
   #get-location-btn .lucide {
@@ -630,6 +632,15 @@
   #data-options-btn .lucide {
     color: var(--text-primary) !important;
   }
+}
+
+/* === SAVE LOCATION BUTTON === */
+#save-map-location-btn {
+  color: var(--btn-text-primary) !important;
+}
+
+#save-map-location-btn:disabled {
+  color: var(--text-muted) !important;
 }
 
 

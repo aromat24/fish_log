@@ -2748,13 +2748,13 @@ async function saveCatchData() {
         if (!datetime) {
             console.log('Direct save validation failed: Missing datetime');
             showMessage('Please enter the date and time', 'error');
-            return;
+            throw new Error('Validation failed: Missing datetime');
         }
 
         if (!species) {
             console.log('Direct save validation failed: Missing species');
             showMessage('Please enter the species', 'error');
-            return;
+            throw new Error('Validation failed: Missing species');
         } console.log('Step 4: Validation passed, processing catch data...');
 
         // Get length value - we'll treat it as the optional main field
