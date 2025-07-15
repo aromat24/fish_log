@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ghoti-fishing-cache-v3';
+const CACHE_NAME = 'ghoti-fishing-cache-v5-auto-update';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -9,6 +9,10 @@ const ASSETS_TO_CACHE = [
     '/js/fishDatabase.js',
     '/js/selfImprovingAlgorithm.js',
     '/js/beautiful-buttons.js',
+    '/js/logger.js',
+    '/js/utils.js',
+    '/js/eventManager.js',
+    '/js/swUpdateManager.js',
     '/css/beautiful-buttons.css',
     '/Splashscreen.jpg'
 ];
@@ -41,6 +45,14 @@ self.addEventListener('activate', (event) => {
             console.error('Service Worker activate error:', err);
         })
     );
+});
+
+// Handle messages from main thread
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        console.log('Service Worker: Skip waiting requested');
+        self.skipWaiting();
+    }
 });
 
 self.addEventListener('fetch', (event) => {

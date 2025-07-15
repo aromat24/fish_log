@@ -767,6 +767,7 @@
   <script src="js/logger.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/eventManager.js"></script>
+  <script src="js/swUpdateManager.js"></script>
   <script src="js/errorHandler.js"></script>
   <script src="js/fishDatabase.js"></script>
   <script src="js/selfImprovingAlgorithm.js"></script>
@@ -877,6 +878,11 @@
                 <span class="lucide lucide-import"></span> Import Data
               </label>
               <input type="file" id="import-data-input" accept=".json" class="hidden">
+              <hr class="my-1 border-gray-200">
+              <button type="button" id="check-updates-btn"
+                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2">
+                🔄 Check for Updates
+              </button>
             </div>
           </div>
           <div class="photo-upload">
@@ -1213,18 +1219,7 @@
     </div>
   </div>
   </div>
-  <script>        // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful');
-          })
-          .catch(err => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-      });
-    }
+  <script>        // Service Worker Registration now handled by swUpdateManager.js
 
     // Fullscreen handling for PWA
     function initializeFullscreenMode() {            // Check if app is running in fullscreen mode (PWA from home screen)
