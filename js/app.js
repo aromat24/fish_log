@@ -2267,12 +2267,15 @@ function setupTabSystem() {
         const historyTab = document.getElementById('history-tab-btn');
         const recordsTab = document.getElementById('records-tab-btn');
         const mapTab = document.getElementById('map-tab-btn');
-        const labelElement = document.getElementById('active-tab-label');
 
-        // Remove active class from all tab buttons
+        // Remove active class from all tab buttons and reset their content
         [historyTab, recordsTab, mapTab].forEach(tab => {
             if (tab) {
                 tab.classList.remove('active');
+                // Reset to icon only for inactive tabs
+                const tabLabel = tab.getAttribute('data-label');
+                const tabIcon = getTabIcon(tab.id);
+                tab.innerHTML = tabIcon;
             }
         });
 
@@ -2292,47 +2295,61 @@ function setupTabSystem() {
                 }
             });
 
-            // Remove label from current position
-            if (labelElement && labelElement.parentElement) {
-                labelElement.remove();
-            }
-
             // Always start with History in left group
             leftGroup.appendChild(historyTab);
 
             if (activeTab === historyTab) {
-                // History active: History left with label, Records and Map slide to right (no labels)
+                // History active: History left with icon + label, Records and Map slide to right (icons only)
                 historyTab.classList.add('active');
-                labelElement.textContent = historyTab.getAttribute('data-label');
-                leftGroup.appendChild(labelElement);
+                const historyIcon = getTabIcon('history-tab-btn');
+                const historyLabel = historyTab.getAttribute('data-label');
+                historyTab.innerHTML = `${historyIcon}<span class="tab-text">${historyLabel}</span>`;
 
                 // Add Records and Map to right group in sequence
                 rightGroup.appendChild(recordsTab);
                 rightGroup.appendChild(mapTab);
 
             } else if (activeTab === recordsTab) {
-                // Records active: Records slides next to History with label, Map stays right
+                // Records active: Records slides next to History with icon + label, Map stays right
                 recordsTab.classList.add('active');
+                const recordsIcon = getTabIcon('records-tab-btn');
+                const recordsLabel = recordsTab.getAttribute('data-label');
+                recordsTab.innerHTML = `${recordsIcon}<span class="tab-text">${recordsLabel}</span>`;
+                
                 leftGroup.appendChild(recordsTab);
-                labelElement.textContent = recordsTab.getAttribute('data-label');
-                leftGroup.appendChild(labelElement);
 
                 // Map stays on right
                 rightGroup.appendChild(mapTab);
 
             } else if (activeTab === mapTab) {
-                // Map active: Records slides next to History, Map slides next to Records with label
+                // Map active: Records slides next to History, Map slides next to Records with icon + label
                 mapTab.classList.add('active');
+                const mapIcon = getTabIcon('map-tab-btn');
+                const mapLabel = mapTab.getAttribute('data-label');
+                mapTab.innerHTML = `${mapIcon}<span class="tab-text">${mapLabel}</span>`;
+                
                 leftGroup.appendChild(recordsTab);
                 leftGroup.appendChild(mapTab);
-                labelElement.textContent = mapTab.getAttribute('data-label');
-                leftGroup.appendChild(labelElement);
             }
         }
 
         // Show the active content
         if (activeContent) {
             activeContent.classList.remove('hidden');
+        }
+    }
+
+    // Helper function to get the appropriate icon for each tab
+    function getTabIcon(tabId) {
+        switch(tabId) {
+            case 'history-tab-btn':
+                return '📋';
+            case 'records-tab-btn':
+                return '🏆';
+            case 'map-tab-btn':
+                return '🗺️';
+            default:
+                return '';
         }
     }
     // History tab click handler
