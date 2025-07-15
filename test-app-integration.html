@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Log - App Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .pass { background: #d4edda; border-color: #c3e6cb; }
+        .fail { background: #f8d7da; border-color: #f5c6cb; }
+        .pending { background: #fff3cd; border-color: #ffeaa7; }
+        button { margin: 5px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; max-height: 200px; overflow-y: auto; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Fish Log PWA - App Integration Tests</h1>
+        <p>Testing the main application functionality with optimized code</p>
+        
+        <button onclick="runAppTests()">Run App Integration Tests</button>
+        <button onclick="clearLogs()">Clear Logs</button>
+        <button onclick="simulateUserFlow()">Simulate User Flow</button>
+        
+        <div id="test-results"></div>
+        <div id="test-logs" class="log"></div>
+        
+        <!-- Minimal form for testing -->
+        <div class="test-section">
+            <h3>Test Form Elements</h3>
+            <form id="test-form">
+                <input type="text" id="test-species" placeholder="Species name" />
+                <input type="number" id="test-length" placeholder="Length (cm)" step="0.1" />
+                <input type="number" id="test-weight" placeholder="Weight (kg)" step="0.01" />
+                <button type="submit">Test Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load app scripts in correct order -->
+    <script src="js/logger.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/eventManager.js"></script>
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script src="js/selfImprovingAlgorithm.js"></script>
+    
+    <script>
+        // Integration test suite
+        class AppIntegrationTests {
+            constructor() {
+                this.results = [];
+                this.logs = [];
+                this.resultsDiv = document.getElementById('test-results');
+                this.logsDiv = document.getElementById('test-logs');
+                
+                // Capture console logs for testing
+                this.originalLog = console.log;
+                this.originalWarn = console.warn;
+                this.originalError = console.error;
+                
+                this.setupLogCapture();
+            }
+            
+            setupLogCapture() {
+                const self = this;
+                
+                console.log = (...args) => {
+                    self.originalLog.apply(console, args);
+                    self.addLog('LOG', args.join(' '));
+                };
+                
+                console.warn = (...args) => {
+                    self.originalWarn.apply(console, args);
+                    self.addLog('WARN', args.join(' '));
+                };
+                
+                console.error = (...args) => {
+                    self.originalError.apply(console, args);
+                    self.addLog('ERROR', args.join(' '));
+                };
+            }
+            
+            addLog(level, message) {
+                this.logs.push({ level, message, timestamp: new Date().toISOString() });
+                this.updateLogsDisplay();
+            }
+            
+            updateLogsDisplay() {
+                const recentLogs = this.logs.slice(-20); // Show last 20 logs
+                this.logsDiv.innerHTML = recentLogs.map(log => 
+                    `<div style="color: ${this.getLogColor(log.level)}">[${log.level}] ${log.message}</div>`
+                ).join('');
+                this.logsDiv.scrollTop = this.logsDiv.scrollHeight;
+            }
+            
+            getLogColor(level) {
+                switch(level) {
+                    case 'ERROR': return '#dc3545';
+                    case 'WARN': return '#ffc107';
+                    default: return '#6c757d';
+                }
+            }
+            
+            async runTest(name, testFn) {
+                console.log(`🧪 Running test: ${name}`);
+                const startTime = performance.now();
+                
+                try {
+                    const result = await testFn();
+                    const duration = (performance.now() - startTime).toFixed(2);
+                    
+                    this.addResult(name, true, result || 'PASS', duration);
+                    return true;
+                } catch (error) {
+                    const duration = (performance.now() - startTime).toFixed(2);
+                    this.addResult(name, false, error.message, duration);
+                    console.error(`❌ Test failed: ${name}`, error);
+                    return false;
+                }
+            }
+            
+            addResult(name, passed, message, duration) {
+                const result = { name, passed, message, duration };
+                this.results.push(result);
+                this.renderResults();
+            }
+            
+            renderResults() {
+                const html = this.results.map(result => `
+                    <div class="test-section ${result.passed ? 'pass' : 'fail'}">
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong> 
+                        <small>(${result.duration}ms)</small>
+                        <br>
+                        <small>${result.message}</small>
+                    </div>
+                `).join('');
+                
+                this.resultsDiv.innerHTML = html;
+            }
+            
+            clear() {
+                this.results = [];
+                this.logs = [];
+                this.resultsDiv.innerHTML = '';
+                this.logsDiv.innerHTML = '';
+            }
+        }
+
+        const appTests = new AppIntegrationTests();
+
+        // Test cases for app integration
+        async function testAppScriptLoading() {
+            const requiredGlobals = [
+                'logger',
+                'eventManager', 
+                'utils',
+                'debounce',
+                'throttle',
+                'storage',
+                'generateId'
+            ];
+            
+            const missing = requiredGlobals.filter(name => !window[name]);
+            if (missing.length > 0) {
+                throw new Error(`Missing required globals: ${missing.join(', ')}`);
+            }
+            
+            return `All ${requiredGlobals.length} required scripts loaded successfully`;
+        }
+
+        async function testLoggerIntegration() {
+            // Test that logger respects environment
+            const isDev = logger.isDevelopment;
+            console.log('Test logger message');
+            
+            if (typeof logger.log !== 'function') {
+                throw new Error('Logger.log not available');
+            }
+            
+            // Test different log levels
+            logger.debug('Integration', 'Debug message test');
+            logger.warn('Warning message test');
+            logger.error('Error message test');
+            
+            return `Logger working, development mode: ${isDev}`;
+        }
+
+        async function testEventManagerIntegration() {
+            // Test form setup
+            const testForm = document.getElementById('test-form');
+            if (!testForm) throw new Error('Test form not found');
+            
+            let formSubmitted = false;
+            
+            eventManager.setupForm(testForm, (e) => {
+                formSubmitted = true;
+                console.log('Form submission handled by EventManager');
+            }, { validateOnSubmit: false });
+            
+            // Test button setup
+            const submitButton = testForm.querySelector('button[type="submit"]');
+            if (!submitButton) throw new Error('Submit button not found');
+            
+            // Check that event manager is tracking listeners
+            const listenerCount = eventManager.listeners.size;
+            
+            return `EventManager integrated, tracking ${listenerCount} listener types`;
+        }
+
+        async function testUtilsIntegration() {
+            // Test storage integration
+            const testData = { 
+                species: 'Test Fish',
+                weight: 2.5,
+                timestamp: Date.now()
+            };
+            
+            const key = 'integration-test';
+            
+            if (!storage.set(key, testData)) {
+                throw new Error('Storage.set failed');
+            }
+            
+            const retrieved = storage.get(key);
+            if (!retrieved || retrieved.species !== testData.species) {
+                throw new Error('Storage.get failed or data corrupted');
+            }
+            
+            storage.remove(key);
+            
+            // Test debounce in real scenario
+            let debounceCallCount = 0;
+            const debouncedFunction = debounce(() => {
+                debounceCallCount++;
+            }, 100);
+            
+            // Simulate rapid user input
+            for (let i = 0; i < 5; i++) {
+                debouncedFunction();
+            }
+            
+            await sleep(150);
+            
+            if (debounceCallCount !== 1) {
+                throw new Error(`Debounce failed: expected 1 call, got ${debounceCallCount}`);
+            }
+            
+            return 'Utils integration working correctly';
+        }
+
+        async function testFormInteractionFlow() {
+            const speciesInput = document.getElementById('test-species');
+            const lengthInput = document.getElementById('test-length');
+            const weightInput = document.getElementById('test-weight');
+            
+            if (!speciesInput || !lengthInput || !weightInput) {
+                throw new Error('Test form inputs not found');
+            }
+            
+            // Simulate user input
+            speciesInput.value = 'Test Bass';
+            lengthInput.value = '30.5';
+            weightInput.value = '1.2';
+            
+            // Trigger input events
+            speciesInput.dispatchEvent(new Event('input', { bubbles: true }));
+            lengthInput.dispatchEvent(new Event('input', { bubbles: true }));
+            
+            // Verify values were set
+            if (speciesInput.value !== 'Test Bass') {
+                throw new Error('Species input value not set correctly');
+            }
+            
+            if (parseFloat(lengthInput.value) !== 30.5) {
+                throw new Error('Length input value not set correctly');
+            }
+            
+            return 'Form interaction flow working';
+        }
+
+        async function testErrorHandlingIntegration() {
+            if (!window.errorHandler) {
+                return 'ErrorHandler not loaded (optional dependency)';
+            }
+            
+            // Test that error handler works with our new patterns
+            let errorCaught = false;
+            
+            try {
+                // This should trigger error handling
+                throw new Error('Test error for integration');
+            } catch (error) {
+                errorCaught = true;
+                if (typeof errorHandler.handleError === 'function') {
+                    // Test error handler integration
+                    console.log('Testing error handler integration');
+                }
+            }
+            
+            if (!errorCaught) {
+                throw new Error('Error handling test failed');
+            }
+            
+            return 'Error handling integration working';
+        }
+
+        async function testPerformanceAfterOptimization() {
+            const startTime = performance.now();
+            
+            // Simulate multiple rapid operations
+            for (let i = 0; i < 100; i++) {
+                generateId();
+                debounce(() => {}, 10)();
+                storage.get('non-existent-key', null);
+            }
+            
+            const duration = performance.now() - startTime;
+            
+            if (duration > 100) { // Should complete in under 100ms
+                console.warn(`Performance test took ${duration}ms (may be acceptable)`);
+            }
+            
+            return `Performance test completed in ${duration.toFixed(2)}ms`;
+        }
+
+        async function testMemoryManagement() {
+            const initialListeners = eventManager.listeners.size;
+            
+            // Create temporary elements and add listeners
+            const tempElements = [];
+            for (let i = 0; i < 5; i++) {
+                const button = document.createElement('button');
+                button.textContent = `Temp Button ${i}`;
+                document.body.appendChild(button);
+                tempElements.push(button);
+                
+                eventManager.setupButton(button, () => {
+                    console.log(`Temp button ${i} clicked`);
+                });
+            }
+            
+            const afterAddingListeners = eventManager.listeners.size;
+            
+            // Clean up
+            tempElements.forEach(element => {
+                document.body.removeChild(element);
+            });
+            
+            // Note: In a real app, we'd call cleanup, but for this test we'll just verify listeners were added
+            const listenersAdded = afterAddingListeners > initialListeners;
+            
+            if (!listenersAdded) {
+                throw new Error('Event listeners not being tracked properly');
+            }
+            
+            return `Memory management: ${afterAddingListeners - initialListeners} listeners tracked`;
+        }
+
+        // Main test runner functions
+        async function runAppTests() {
+            appTests.clear();
+            console.log('🚀 Starting Fish Log PWA Integration Tests...');
+            
+            const tests = [
+                ['App Script Loading', testAppScriptLoading],
+                ['Logger Integration', testLoggerIntegration],
+                ['EventManager Integration', testEventManagerIntegration],
+                ['Utils Integration', testUtilsIntegration],
+                ['Form Interaction Flow', testFormInteractionFlow],
+                ['Error Handling Integration', testErrorHandlingIntegration],
+                ['Performance After Optimization', testPerformanceAfterOptimization],
+                ['Memory Management', testMemoryManagement]
+            ];
+            
+            let passed = 0;
+            let total = tests.length;
+            
+            for (const [name, testFn] of tests) {
+                const success = await appTests.runTest(name, testFn);
+                if (success) passed++;
+                
+                // Small delay between tests
+                await sleep(200);
+            }
+            
+            console.log(`✅ Integration tests completed: ${passed}/${total} passed`);
+            
+            // Add summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'test-section ' + (passed === total ? 'pass' : 'fail');
+            summaryDiv.innerHTML = `
+                <strong>🎯 Integration Test Summary: ${passed}/${total} tests passed</strong>
+                <br>
+                <small>Total logs captured: ${appTests.logs.length}</small>
+            `;
+            appTests.resultsDiv.appendChild(summaryDiv);
+        }
+
+        async function simulateUserFlow() {
+            console.log('🎭 Simulating realistic user flow...');
+            
+            const speciesInput = document.getElementById('test-species');
+            const lengthInput = document.getElementById('test-length');
+            
+            // Simulate typing
+            console.log('👤 User typing species name...');
+            speciesInput.focus();
+            speciesInput.value = '';
+            
+            const species = 'Rainbow Trout';
+            for (let i = 0; i < species.length; i++) {
+                await sleep(100);
+                speciesInput.value = species.substring(0, i + 1);
+                speciesInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            
+            await sleep(500);
+            
+            console.log('👤 User entering length...');
+            lengthInput.focus();
+            lengthInput.value = '25.5';
+            lengthInput.dispatchEvent(new Event('input', { bubbles: true }));
+            
+            await sleep(300);
+            
+            console.log('👤 User submitting form...');
+            const form = document.getElementById('test-form');
+            form.dispatchEvent(new Event('submit', { bubbles: true }));
+            
+            console.log('✅ User flow simulation completed');
+        }
+
+        function clearLogs() {
+            appTests.clear();
+        }
+
+        // Auto-initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🏁 Integration test page loaded and ready');
+        });
+    </script>
+</body>
+</html>

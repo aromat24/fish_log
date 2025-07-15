@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Log - Functionality Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .pass { background: #d4edda; border-color: #c3e6cb; }
+        .fail { background: #f8d7da; border-color: #f5c6cb; }
+        .pending { background: #fff3cd; border-color: #ffeaa7; }
+        #results { margin-top: 20px; }
+        button { margin: 5px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <h1>Fish Log PWA - Functionality Tests</h1>
+    
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+
+    <!-- Load the actual app scripts -->
+    <script src="js/logger.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/eventManager.js"></script>
+    <script src="js/errorHandler.js"></script>
+    
+    <script>
+        // Test suite for Fish Log PWA functionality
+        class TestRunner {
+            constructor() {
+                this.results = [];
+                this.resultsDiv = document.getElementById('results');
+            }
+
+            async runTest(name, testFn) {
+                console.log(`Running test: ${name}`);
+                const startTime = performance.now();
+                
+                try {
+                    const result = await testFn();
+                    const duration = (performance.now() - startTime).toFixed(2);
+                    
+                    this.addResult(name, true, result || 'PASS', duration);
+                    return true;
+                } catch (error) {
+                    const duration = (performance.now() - startTime).toFixed(2);
+                    this.addResult(name, false, error.message, duration);
+                    return false;
+                }
+            }
+
+            addResult(name, passed, message, duration) {
+                const result = { name, passed, message, duration };
+                this.results.push(result);
+                this.renderResults();
+            }
+
+            renderResults() {
+                const html = this.results.map(result => `
+                    <div class="test ${result.passed ? 'pass' : 'fail'}">
+                        <strong>${result.name}</strong> (${result.duration}ms)
+                        <br>
+                        <small>${result.message}</small>
+                    </div>
+                `).join('');
+                
+                this.resultsDiv.innerHTML = html;
+            }
+
+            clear() {
+                this.results = [];
+                this.resultsDiv.innerHTML = '';
+            }
+        }
+
+        const testRunner = new TestRunner();
+
+        // Test cases
+        async function testLoggerFunctionality() {
+            if (!window.logger) throw new Error('Logger not found');
+            
+            // Test logging methods exist
+            const methods = ['log', 'warn', 'error', 'debug', 'time', 'timeEnd', 'group', 'groupEnd'];
+            for (const method of methods) {
+                if (typeof logger[method] !== 'function') {
+                    throw new Error(`Logger method ${method} not found`);
+                }
+            }
+            
+            // Test logging doesn't throw errors
+            logger.log('Test log');
+            logger.debug('Test', 'debug message');
+            logger.warn('Test warning');
+            
+            return 'Logger methods working correctly';
+        }
+
+        async function testUtilityFunctions() {
+            if (!window.utils) throw new Error('Utils not found');
+            
+            // Test debounce
+            let counter = 0;
+            const debouncedFn = debounce(() => counter++, 100);
+            debouncedFn();
+            debouncedFn();
+            debouncedFn();
+            
+            await sleep(150);
+            if (counter !== 1) throw new Error(`Debounce failed: expected 1, got ${counter}`);
+            
+            // Test storage
+            const testKey = 'test-key';
+            const testValue = { test: 'data', number: 42 };
+            
+            if (!storage.set(testKey, testValue)) throw new Error('Storage set failed');
+            
+            const retrieved = storage.get(testKey);
+            if (!retrieved || retrieved.test !== 'data' || retrieved.number !== 42) {
+                throw new Error('Storage get/set mismatch');
+            }
+            
+            storage.remove(testKey);
+            if (storage.get(testKey) !== null) throw new Error('Storage remove failed');
+            
+            // Test ID generation
+            const id1 = generateId();
+            const id2 = generateId();
+            if (!id1 || !id2 || id1 === id2) throw new Error('ID generation failed');
+            
+            return 'Utility functions working correctly';
+        }
+
+        async function testEventManager() {
+            if (!window.eventManager) throw new Error('EventManager not found');
+            
+            // Test methods exist
+            const methods = ['addListener', 'removeListener', 'delegateClick', 'setupButton', 'setupForm', 'setupModal'];
+            for (const method of methods) {
+                if (typeof eventManager[method] !== 'function') {
+                    throw new Error(`EventManager method ${method} not found`);
+                }
+            }
+            
+            // Test scroll detection
+            if (typeof eventManager.isScrolling !== 'function') {
+                throw new Error('EventManager isScrolling method not found');
+            }
+            
+            // Test button setup (create a test button)
+            const testButton = document.createElement('button');
+            testButton.textContent = 'Test Button';
+            document.body.appendChild(testButton);
+            
+            let clicked = false;
+            eventManager.setupButton(testButton, () => { clicked = true; });
+            
+            // Simulate click
+            testButton.click();
+            
+            // Clean up
+            document.body.removeChild(testButton);
+            
+            if (!clicked) throw new Error('Button click handler not working');
+            
+            return 'EventManager working correctly';
+        }
+
+        async function testErrorHandler() {
+            if (!window.errorHandler) {
+                return 'ErrorHandler not loaded (optional)';
+            }
+            
+            // Test basic error handling
+            if (typeof errorHandler.handleError !== 'function') {
+                throw new Error('ErrorHandler handleError method not found');
+            }
+            
+            return 'ErrorHandler available';
+        }
+
+        async function testModernJavaScriptFeatures() {
+            // Test async/await support
+            const asyncTest = async () => 'async works';
+            const result = await asyncTest();
+            if (result !== 'async works') throw new Error('Async/await not working');
+            
+            // Test destructuring
+            const testObj = { a: 1, b: 2 };
+            const { a, b } = testObj;
+            if (a !== 1 || b !== 2) throw new Error('Destructuring not working');
+            
+            // Test template literals
+            const name = 'Test';
+            const template = `Hello ${name}`;
+            if (template !== 'Hello Test') throw new Error('Template literals not working');
+            
+            // Test arrow functions
+            const arrow = (x) => x * 2;
+            if (arrow(5) !== 10) throw new Error('Arrow functions not working');
+            
+            // Test optional chaining (if supported)
+            const testOptional = { nested: { value: 42 } };
+            const optionalResult = testOptional?.nested?.value;
+            if (optionalResult !== 42) {
+                console.warn('Optional chaining not supported (but that\'s okay)');
+            }
+            
+            return 'Modern JavaScript features working';
+        }
+
+        async function testPerformanceOptimizations() {
+            // Test that debounce reduces function calls
+            let callCount = 0;
+            const debouncedFn = debounce(() => callCount++, 50);
+            
+            // Rapid calls
+            for (let i = 0; i < 10; i++) {
+                debouncedFn();
+            }
+            
+            await sleep(100);
+            if (callCount !== 1) throw new Error(`Debounce optimization failed: ${callCount} calls instead of 1`);
+            
+            // Test throttle
+            let throttleCount = 0;
+            const throttledFn = throttle(() => throttleCount++, 100);
+            
+            // Rapid calls
+            for (let i = 0; i < 5; i++) {
+                throttledFn();
+                await sleep(20);
+            }
+            
+            if (throttleCount < 1) throw new Error('Throttle not working');
+            if (throttleCount > 2) throw new Error('Throttle not limiting calls effectively');
+            
+            return 'Performance optimizations working';
+        }
+
+        async function testCodeCleanupIntegrity() {
+            // Verify critical functions still exist
+            const criticalFunctions = [
+                'debounce', 'throttle', 'generateId', 'storage', 'logger', 'eventManager'
+            ];
+            
+            for (const funcName of criticalFunctions) {
+                if (!window[funcName]) {
+                    throw new Error(`Critical function ${funcName} missing after cleanup`);
+                }
+            }
+            
+            // Test that we haven't broken localStorage
+            try {
+                localStorage.setItem('test-integrity', 'test');
+                const value = localStorage.getItem('test-integrity');
+                localStorage.removeItem('test-integrity');
+                
+                if (value !== 'test') throw new Error('localStorage integrity check failed');
+            } catch (error) {
+                throw new Error('localStorage broken: ' + error.message);
+            }
+            
+            return 'Code cleanup maintained integrity';
+        }
+
+        // Main test runner
+        async function runAllTests() {
+            testRunner.clear();
+            console.log('Starting Fish Log PWA tests...');
+            
+            const tests = [
+                ['Logger Functionality', testLoggerFunctionality],
+                ['Utility Functions', testUtilityFunctions],
+                ['Event Manager', testEventManager],
+                ['Error Handler', testErrorHandler],
+                ['Modern JavaScript Features', testModernJavaScriptFeatures],
+                ['Performance Optimizations', testPerformanceOptimizations],
+                ['Code Cleanup Integrity', testCodeCleanupIntegrity]
+            ];
+            
+            let passed = 0;
+            let total = tests.length;
+            
+            for (const [name, testFn] of tests) {
+                const success = await testRunner.runTest(name, testFn);
+                if (success) passed++;
+                
+                // Small delay between tests
+                await sleep(100);
+            }
+            
+            console.log(`Tests completed: ${passed}/${total} passed`);
+            
+            // Add summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'test ' + (passed === total ? 'pass' : 'fail');
+            summaryDiv.innerHTML = `<strong>Test Summary: ${passed}/${total} tests passed</strong>`;
+            testRunner.resultsDiv.appendChild(summaryDiv);
+        }
+
+        function clearResults() {
+            testRunner.clear();
+        }
+
+        // Auto-run tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded, ready to run tests');
+        });
+    </script>
+</body>
+</html>

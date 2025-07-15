@@ -170,34 +170,20 @@ function initLandingPage() {
 window.enterApp = function () {
     console.log('enterApp called');
 
-    try {
-        // CRITICAL: Reset fullscreen modal when entering the app
-        resetFullscreenModal();
+    // CRITICAL: Reset fullscreen modal when entering the app
+    resetFullscreenModal();
 
-        const landingPage = document.getElementById('landing-page');
-        const appContent = document.getElementById('app-content');
+    const landingPage = document.getElementById('landing-page');
+    const appContent = document.getElementById('app-content');
 
-        if (!landingPage || !appContent) {
-            console.error('Required elements not found for app transition');
-            window.errorHandler?.handleError(new Error('App transition elements missing'), 'AppTransition');
-            return;
-        }
-
+    if (landingPage && appContent) {
         landingPage.classList.add('fade-out');
         appContent.classList.remove('hidden');
         setTimeout(() => {
-            try {
-                appContent.classList.add('fade-in');
-                // Load catch history after app content is visible
-                loadCatchHistory();
-            } catch (error) {
-                console.error('Error during app transition animation:', error);
-                window.errorHandler?.handleError(error, 'AppTransitionAnimation');
-            }
+            appContent.classList.add('fade-in');
+            // Load catch history after app content is visible
+            loadCatchHistory();
         }, 50);
-    } catch (error) {
-        console.error('Error in enterApp:', error);
-        window.errorHandler?.handleError(error, 'EnterApp');
     }
 };
 
@@ -237,72 +223,42 @@ function setupFormHandlers() {
 
     // Setup automatic weight calculation with enhanced error handling
     const autoCalculateWeight = async () => {
-        console.log('=== AUTO CALCULATE WEIGHT TRIGGERED ===');
+        logger.debug('AutoCalc', 'Weight calculation triggered');
 
-        if (!window.errorHandler) {
-            return await autoCalculateWeightBasic();
-        }
-
-        const result = await window.errorHandler.withErrorBoundary(async () => {
-            return await autoCalculateWeightInternal();
-        }, 'AutoCalculateWeight', {
-            showUserError: false, // Don't show errors for auto-calculation
-            userMessage: null
-        });
-
-        if (!result.success) {
-            console.warn('Auto-calculation failed:', result.error?.message);
-            // Clear weight input on failure
-            clearCalculatedWeight();
-        } else {
-            console.log('Auto-calculation succeeded:', result.result);
-            return result.result;
-        }
-    };
-
-    const autoCalculateWeightInternal = async () => {
-        const species = speciesInput.value ? speciesInput.value.trim() : '';
+        const species = speciesInput.value?.trim() || '';
         const length = lengthInput.value ? parseFloat(lengthInput.value) : 0;
 
-        console.log('Auto-calculate inputs - Species:', species, 'Length:', length);
-
+        // Validate inputs
         if (!species || !length || length <= 0) {
-            console.log('Invalid inputs, clearing calculated weight');
             clearCalculatedWeight();
-            return;
+            return null;
         }
 
-        // Validate inputs using error handler
-        if (window.errorHandler) {
-            window.errorHandler.validateString(species, 'Species', 1, 100);
-            window.errorHandler.validateNumber(length, 'Length', 0.1, 500);
-        }
-
-        console.log('Valid inputs, calculating weight...');
-        const result = await calculateEstimatedWeight(species, length);
-        console.log('Auto-calculate result:', result);
-        return result;
-    };
-
-    const autoCalculateWeightBasic = async () => {
         try {
-            const species = speciesInput.value ? speciesInput.value.trim() : '';
-            const length = lengthInput.value ? parseFloat(lengthInput.value) : 0;
+            // Use error handler if available, otherwise basic calculation
+            if (window.errorHandler) {
+                window.errorHandler.validateString(species, 'Species', 1, 100);
+                window.errorHandler.validateNumber(length, 'Length', 0.1, 500);
+                
+                const result = await window.errorHandler.withErrorBoundary(
+                    () => calculateEstimatedWeight(species, length),
+                    'AutoCalculateWeight',
+                    { showUserError: false }
+                );
 
-            console.log('Auto-calculate inputs - Species:', species, 'Length:', length);
-
-            if (species && length && length > 0) {
-                console.log('Valid inputs, calculating weight...');
-                const result = await calculateEstimatedWeight(species, length);
-                console.log('Auto-calculate result:', result);
-                return result;
+                if (result.success) {
+                    logger.debug('AutoCalc', 'Success:', result.result);
+                    return result.result;
+                } else {
+                    throw result.error;
+                }
             } else {
-                console.log('Invalid inputs, clearing calculated weight');
-                clearCalculatedWeight();
-                return null;
+                const result = await calculateEstimatedWeight(species, length);
+                logger.debug('AutoCalc', 'Basic calculation result:', result);
+                return result;
             }
         } catch (error) {
-            console.error('Error in autoCalculateWeight:', error);
+            logger.warn('Auto-calculation failed:', error.message);
             clearCalculatedWeight();
             return null;
         }
@@ -322,184 +278,45 @@ function setupFormHandlers() {
     };
 
     // Calculate weight when length or species changes
-    console.log('Setting up auto-calculate event listeners...');
+    logger.debug('Setup', 'Adding auto-calculate listeners');
 
-    try {
-        lengthInput.addEventListener('input', (e) => {
-            console.log('Length input changed:', e.target.value);
-            autoCalculateWeight();
-        });
+    const debounceCalc = debounce(autoCalculateWeight, 300);
+    
+    eventManager.addListener(lengthInput, 'input', () => debounceCalc());
+    eventManager.addListener(speciesInput, 'input', () => debounceCalc());
+    eventManager.addListener(speciesInput, 'change', () => debounceCalc());
+    // Setup form with modern event management
+    logger.debug('Setup', 'Setting up form handlers');
+    
+    eventManager.setupForm(catchForm, saveCatchData, {
+        validateOnSubmit: true,
+        resetAfterSubmit: false
+    });
 
-        speciesInput.addEventListener('input', (e) => {
-            console.log('Species input changed:', e.target.value);
-            autoCalculateWeight();
-        });
-
-        speciesInput.addEventListener('change', (e) => {
-            console.log('Species changed:', e.target.value);
-            autoCalculateWeight();
-        });
-
-        console.log('Auto-calculate event listeners set up successfully');
-    } catch (error) {
-        console.error('Error setting up auto-calculate event listeners:', error);
-    }
-    // Handle catch form submission with comprehensive debugging
-    console.log('Setting up form submit handler...');
-    catchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log('=== FORM SUBMISSION STARTED ===');
-        console.log('Event:', e);
-        console.log('Form element:', catchForm);
-        
-        try {
-            // Call the unified save function instead of duplicating logic
-            saveCatchData();
-        } catch (error) {
-            console.error('Error in form submission handler:', error);
-            window.errorHandler?.handleError(error, 'FormSubmission');
-            showMessage('Error submitting form. Please try again.', 'error');
-        }
-    });      // Also add a direct click handler to the submit button as a fallback
     const submitButton = document.querySelector('#catch-form button[type="submit"]');
-    console.log('Submit button found:', submitButton);
     if (submitButton) {
-        console.log('Adding mobile-friendly touch and click handlers to submit button');
+        logger.debug('Setup', 'Adding submit button handlers');
 
-        // Use a less aggressive approach that works better with local testing
-        let touchTimeout = null;
-        let hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-        if (hasTouchSupport) {
-            console.log('Touch support detected, adding touch handlers');
-
-            // Enhanced touch handler with improved scroll detection
-            submitButton.addEventListener('touchend', (e) => {
-                console.log('=== SUBMIT BUTTON TOUCHEND (ENHANCED) ===');
-
-                // Check if we're currently scrolling using the enhanced detection
-                if (window.beautifulButtons && typeof window.beautifulButtons.isScrolling === 'function') {
-                    if (window.beautifulButtons.isScrolling()) {
-                        console.log('Touch blocked - user is scrolling');
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                }
-
-                // Clear any existing timeout to prevent double submission
-                if (touchTimeout) {
-                    clearTimeout(touchTimeout);
-                }
-
-                // Add a small delay to ensure the touch event completes
-                touchTimeout = setTimeout(() => {
-                    console.log('Touch timeout triggered, calling saveCatchData...');
-
-                    try {
-                        // Check if this is a valid touch (not part of a scroll or drag)
-                        const rect = submitButton.getBoundingClientRect();
-                        const touch = e.changedTouches[0];
-
-                        if (touch &&
-                            touch.clientX >= rect.left &&
-                            touch.clientX <= rect.right &&
-                            touch.clientY >= rect.top &&
-                            touch.clientY <= rect.bottom) {
-
-                            console.log('Valid touch detected, saving catch...');
-                            saveCatchData();
-                        } else {
-                            console.log('Touch outside button bounds, ignoring');
-                        }
-                    } catch (error) {
-                        console.error('Error in touch handler:', error);
-                        window.errorHandler?.handleError(error, 'TouchHandler');
-                        showMessage('Error processing touch. Please try again.', 'error');
-                    }
-                }, 100); // Increased delay slightly
-
-            }, { passive: false }); // Changed to passive: false to allow preventDefault
-
-        } else {
-            console.log('No touch support detected, relying on click events');
-        }
-        // Add a more robust click handler for all devices
-        submitButton.addEventListener('click', (e) => {
-            console.log('=== SUBMIT BUTTON CLICK (IMPROVED) ===');
-            console.log('Event type:', e.type);
-            console.log('Event target:', e.target);
-            console.log('Button element:', submitButton);
-
-            try {
-                // Add visual feedback
-                submitButton.style.backgroundColor = '#1e40af';
-                setTimeout(() => {
-                    submitButton.style.backgroundColor = '';
-                }, 200);
-
-                // Clear any touch timeout to prevent double submission
-                if (touchTimeout) {
-                    clearTimeout(touchTimeout);
-                    touchTimeout = null;
-                }
-
-                // Always prevent default to avoid form submission conflicts
-                e.preventDefault();
-                e.stopPropagation();
-
-                console.log('Click handler calling saveCatchData...');
-                saveCatchData();
-            } catch (error) {
-                console.error('Error in click handler:', error);
-                window.errorHandler?.handleError(error, 'ClickHandler');
-                showMessage('Error processing click. Please try again.', 'error');
-            }
+        // Use the unified button handler
+        eventManager.setupButton(submitButton, saveCatchData, {
+            preventDefault: true,
+            debounce: 300,
+            loading: true
         });
 
-        // Add visual feedback for mobile users
-        if (hasTouchSupport) {
-            submitButton.style.cursor = 'pointer';
-            submitButton.style.userSelect = 'none';
-            submitButton.style.webkitUserSelect = 'none';
-            submitButton.style.webkitTouchCallout = 'none';
-        }
-
-        console.log('=== MOBILE ENVIRONMENT DETECTION ===');
-        console.log('User Agent:', navigator.userAgent);
-        console.log('Touch Support:', hasTouchSupport);
-        console.log('Max Touch Points:', navigator.maxTouchPoints);
-        console.log('Protocol:', location.protocol);
-        console.log('Is Local File:', location.protocol === 'file:');
-        console.log('Is HTTPS:', location.protocol === 'https:');
-        console.log('Viewport Width:', window.innerWidth);
-        console.log('Screen Width:', screen.width);
-
+        logger.debug('Environment', 'Touch support:', 'ontouchstart' in window);
     } else {
-        console.error('Submit button not found!');
+        logger.error('Submit button not found!');
     }
 
-    console.log('Form handlers setup complete');
-
-    // Add a simple test to verify the button works
-    setTimeout(() => {
-        const testBtn = document.querySelector('#catch-form button[type="submit"]');
-        if (testBtn) {
-            console.log('=== BUTTON TEST ===');
-            console.log('Button text:', testBtn.textContent);
-            console.log('Button disabled:', testBtn.disabled);
-            console.log('Button type:', testBtn.type);
-            console.log('Button form:', testBtn.form);
-        }
-    }, 2000);
+    logger.debug('Setup', 'Form handlers setup complete');
 }
 
 async function calculateEstimatedWeight(species, length) {
-    console.log('=== CALCULATE ESTIMATED WEIGHT START ===');
-    console.log('Species:', species, 'Length:', length);
+    logger.debug('WeightCalc', `Calculating for ${species} (${length}cm)`);
 
     if (!window.errorHandler) {
-        console.warn('Error handler not available, using basic error handling');
+        logger.warn('Error handler not available, using basic calculation');
         return await calculateEstimatedWeightBasic(species, length);
     }
 
@@ -1271,13 +1088,9 @@ function setupSpeciesHandlers() {
         // Update dropdown if it's visible
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
-            const matches = speciesList.filter(species => {
-                const speciesName = species.name.toLowerCase();
-                const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
-                
-                // Check if all search words are found in the species name
-                return searchWords.every(word => speciesName.includes(word));
-            });
+            const matches = speciesList.filter(species =>
+                species.name.toLowerCase().startsWith(searchTerm)
+            );
             await updateSpeciesDropdown(matches);
         }
 
@@ -1397,13 +1210,9 @@ function setupSpeciesHandlers() {
         const speciesList = JSON.parse(localStorage.getItem('species') || '[]');
         console.log('Species list from localStorage:', speciesList);
 
-        const matches = speciesList.filter(species => {
-            const speciesName = species.name.toLowerCase();
-            const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
-            
-            // Check if all search words are found in the species name
-            return searchWords.every(word => speciesName.includes(word));
-        });
+        const matches = speciesList.filter(species =>
+            species.name.toLowerCase().startsWith(searchTerm)
+        );
         console.log('Filtered matches:', matches);
 
         updateSpeciesDropdown(matches);
@@ -1483,25 +1292,18 @@ function setupSpeciesHandlers() {
 
     // Add click-outside handlers for modals
     [speciesModal, document.getElementById('manage-species-modal')].forEach(modal => {
-        if (modal) {
-            modal.addEventListener('click', (e) => {
-                try {
-                    if (e.target === modal) {
-                        modal.classList.add('hidden');
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
 
-                        // If it's the manage species modal, re-enable the button
-                        if (modal.id === 'manage-species-modal') {
-                            manageSpeciesBtn.disabled = false;
-                            manageSpeciesBtn.style.pointerEvents = 'auto';
-                            manageSpeciesBtn.style.opacity = '1';
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error in modal click handler:', error);
-                    window.errorHandler?.handleError(error, 'ModalClickHandler');
+                // If it's the manage species modal, re-enable the button
+                if (modal.id === 'manage-species-modal') {
+                    manageSpeciesBtn.disabled = false;
+                    manageSpeciesBtn.style.pointerEvents = 'auto';
+                    manageSpeciesBtn.style.opacity = '1';
                 }
-            });
-        }
+            }
+        });
     });
 
     // Initial refresh to include any already-loaded database species
@@ -1616,15 +1418,7 @@ function setupPhotoHandling() {
         });
     }
 
-    photoInput.addEventListener('change', (event) => {
-        try {
-            handlePhotoUpload(event);
-        } catch (error) {
-            console.error('Error in photo upload handler:', error);
-            window.errorHandler?.handleError(error, 'PhotoUploadHandler');
-            showMessage('Error uploading photo. Please try again.', 'error');
-        }
-    });
+    photoInput.addEventListener('change', handlePhotoUpload);
 }
 
 async function handlePhotoUpload(event) {
@@ -1939,32 +1733,9 @@ function setupImageTouchHandlers(imageElement) {
     };
 
     // Add event listeners
-    imageElement.addEventListener('touchstart', (e) => {
-        try {
-            handleTouchStart(e);
-        } catch (error) {
-            console.error('Error in touch start handler:', error);
-            window.errorHandler?.handleError(error, 'TouchStartHandler');
-        }
-    }, { passive: false });
-    
-    imageElement.addEventListener('touchmove', (e) => {
-        try {
-            handleTouchMove(e);
-        } catch (error) {
-            console.error('Error in touch move handler:', error);
-            window.errorHandler?.handleError(error, 'TouchMoveHandler');
-        }
-    }, { passive: false });
-    
-    imageElement.addEventListener('touchend', (e) => {
-        try {
-            handleTouchEnd(e);
-        } catch (error) {
-            console.error('Error in touch end handler:', error);
-            window.errorHandler?.handleError(error, 'TouchEndHandler');
-        }
-    }, { passive: false });
+    imageElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+    imageElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+    imageElement.addEventListener('touchend', handleTouchEnd, { passive: false });
 }
 
 function removeImageTouchHandlers(imageElement) {
@@ -2274,27 +2045,9 @@ function showCatchModal(catchData) {
     if (catchData.locationName) {
         locationContainer.classList.remove('hidden');
         locationName.textContent = catchData.locationName;
-        
-        // Make location clickable with Google Maps link
-        if (catchData.latitude && catchData.longitude) {
-            const googleMapsUrl = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
-            locationName.href = googleMapsUrl;
-            locationName.title = `Open "${catchData.locationName}" in Google Maps`;
-        } else {
-            // If no coordinates, try to search by name
-            const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(catchData.locationName)}`;
-            locationName.href = searchUrl;
-            locationName.title = `Search for "${catchData.locationName}" in Google Maps`;
-        }
     } else if (catchData.latitude && catchData.longitude) {
         locationContainer.classList.remove('hidden');
-        const coordinatesText = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
-        locationName.textContent = coordinatesText;
-        
-        // Make coordinates clickable with Google Maps link
-        const googleMapsUrl = `https://www.google.com/maps?q=${catchData.latitude},${catchData.longitude}`;
-        locationName.href = googleMapsUrl;
-        locationName.title = `Open coordinates in Google Maps`;
+        locationName.textContent = `${catchData.latitude.toFixed(4)}, ${catchData.longitude.toFixed(4)}`;
     } else {
         locationContainer.classList.add('hidden');
     }
@@ -2453,20 +2206,17 @@ function setupDataOptions() {
                     }
                 } catch (error) {
                     console.error('Error importing data:', error);
-                    window.errorHandler?.handleError(error, 'DataImport');
                     showMessage('Error importing data. Please check the file format.', 'error');
                 }
             };
             reader.onerror = (e) => {
                 console.error('FileReader error:', e);
-                window.errorHandler?.handleError(new Error('FileReader error'), 'FileReader');
                 showMessage('Error reading import file.', 'error');
             };
             try {
                 reader.readAsText(file);
             } catch (err) {
                 console.error('Error starting FileReader:', err);
-                window.errorHandler?.handleError(err, 'FileReaderStart');
                 showMessage('Error reading import file.', 'error');
             }
         }
@@ -2650,35 +2400,16 @@ function setupMapHandlers() {
     }      // Setup the location button to open map modal (don't replace, just add listener)
     const getLocationBtn = document.getElementById('get-location-btn');
     if (getLocationBtn) {
-        getLocationBtn.addEventListener('click', () => {
-            try {
-                openMapModal();
-            } catch (error) {
-                console.error('Error opening map modal:', error);
-                window.errorHandler?.handleError(error, 'MapModalHandler');
-                showMessage('Error opening location selector. Please try again.', 'error');
-            }
-        });
+        getLocationBtn.addEventListener('click', openMapModal);
     }
 
     // Setup the edit location button to open map modal in edit mode
     const editLocationBtn = document.getElementById('edit-location-btn');
     if (editLocationBtn) {
         editLocationBtn.addEventListener('click', () => {
-            try {
-                const mapModal = document.getElementById('map-modal');
-                if (mapModal) {
-                    mapModal.dataset.editMode = 'true';
-                    openMapModal();
-                } else {
-                    console.error('Map modal not found');
-                    showMessage('Error opening location editor. Please try again.', 'error');
-                }
-            } catch (error) {
-                console.error('Error opening edit location modal:', error);
-                window.errorHandler?.handleError(error, 'EditLocationModalHandler');
-                showMessage('Error opening location editor. Please try again.', 'error');
-            }
+            const mapModal = document.getElementById('map-modal');
+            mapModal.dataset.editMode = 'true';
+            openMapModal();
         });
     }
 }
