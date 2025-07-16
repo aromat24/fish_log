@@ -1136,7 +1136,7 @@ function setupSpeciesHandlers() {
         if (!speciesDropdown.classList.contains('hidden')) {
             const searchTerm = speciesInput.value.toLowerCase();
             const matches = speciesList.filter(species =>
-                species.name.toLowerCase().startsWith(searchTerm)
+                species.name.toLowerCase().includes(searchTerm)
             );
             await updateSpeciesDropdown(matches);
         }
@@ -1258,7 +1258,7 @@ function setupSpeciesHandlers() {
         console.log('Species list from localStorage:', speciesList);
 
         const matches = speciesList.filter(species =>
-            species.name.toLowerCase().startsWith(searchTerm)
+            species.name.toLowerCase().includes(searchTerm)
         );
         console.log('Filtered matches:', matches);
 
