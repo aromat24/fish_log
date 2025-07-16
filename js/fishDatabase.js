@@ -575,13 +575,18 @@ class FishDatabase {
 
     // Find species by name (fuzzy matching)
     findSpeciesByName(name) {
-        if (!this.algorithms || !name) return null;
+        if (!this.algorithms || !name || typeof name !== 'string' || name.trim() === '') {
+            console.warn('Invalid species name:', name);
+            return null;
+        }
 
         const normalizedName = name.toLowerCase().trim();
 
         // First try exact match
         for (const [id, species] of Object.entries(this.algorithms)) {
-            if (species && species.species_name && species.species_name.toLowerCase() === normalizedName) {
+            if (species && species.species_name && 
+                typeof species.species_name === 'string' && 
+                species.species_name.toLowerCase().trim() === normalizedName) {
                 return { id, ...species };
             }
         }
@@ -589,9 +594,12 @@ class FishDatabase {
         // Then try partial match
         for (const [id, species] of Object.entries(this.algorithms)) {
             if (species && species.species_name && 
-                (species.species_name.toLowerCase().includes(normalizedName) ||
-                normalizedName.includes(species.species_name.toLowerCase()))) {
-                return { id, ...species };
+                typeof species.species_name === 'string') {
+                const speciesNameLower = species.species_name.toLowerCase().trim();
+                if (speciesNameLower.includes(normalizedName) ||
+                    normalizedName.includes(speciesNameLower)) {
+                    return { id, ...species };
+                }
             }
         }
 

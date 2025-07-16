@@ -140,6 +140,18 @@ class ConfettiManager {
         }
 
         try {
+            // Fishing-themed color palette (local variable)
+            const fishingColors = [
+                '#1e40af', // Ocean blue
+                '#059669', // Sea green  
+                '#dc2626', // Hook red
+                '#f59e0b', // Golden fish
+                '#8b5cf6', // Sunset purple
+                '#06b6d4', // Aqua blue
+                '#10b981', // Fresh green
+                '#f97316'  // Coral orange
+            ];
+            
             const saveButton = document.querySelector('#catch-form button[type="submit"]');
             
             if (saveButton) {
@@ -156,7 +168,7 @@ class ConfettiManager {
                     startVelocity: 45,
                     decay: 0.9,
                     scalar: 1.2,
-                    colors: this.fishingColors
+                    colors: fishingColors
                 });
             } else {
                 // Fallback to center if button not found
@@ -168,7 +180,7 @@ class ConfettiManager {
                     startVelocity: 45,
                     decay: 0.9,
                     scalar: 1.2,
-                    colors: this.fishingColors
+                    colors: fishingColors
                 });
             }
         } catch (error) {

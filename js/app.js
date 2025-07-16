@@ -2881,6 +2881,14 @@ async function saveCatchData() {
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
             console.log('Step 11a: Showing success message');
             showMessage('Catch saved successfully!');
+            
+            // Fire confetti for successful save
+            console.log('Step 11b: Firing confetti for successful save');
+            if (window.confettiManager) {
+                window.confettiManager.fireSaveCatchConfetti().catch(confettiError => {
+                    console.warn('Confetti effect failed:', confettiError);
+                });
+            }
         }
 
         console.log('Step 12: Resetting form');
@@ -2923,6 +2931,15 @@ async function saveCatchData() {
         console.log('Step 15: Refreshing map if visible');
         // Refresh map if the map tab is currently active
         refreshMapIfVisible();
+
+        console.log('Step 16: Resetting submit button state');
+        // Ensure submit button is reset to normal state
+        const submitButton = document.querySelector('#catch-form button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Save Catch';
+            console.log('Submit button reset to normal state');
+        }
 
         console.log('=== SAVE CATCH DATA COMPLETED SUCCESSFULLY ===');
 

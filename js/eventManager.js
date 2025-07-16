@@ -148,20 +148,24 @@ class EventManager {
                 
                 try {
                     await handler(e);
+                } catch (error) {
+                    console.error('Button handler error:', error);
+                    throw error; // Re-throw to maintain error behavior
                 } finally {
-                    setTimeout(() => {
-                        button.disabled = false;
-                        button.textContent = originalText;
-                        isProcessing = false;
-                    }, debounce);
+                    // Always reset button state, even on error
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    isProcessing = false;
                 }
             } else {
                 isProcessing = true;
-                handler(e);
-                
-                setTimeout(() => {
-                    isProcessing = false;
-                }, debounce);
+                try {
+                    await handler(e);
+                } finally {
+                    setTimeout(() => {
+                        isProcessing = false;
+                    }, debounce);
+                }
             }
         };
 

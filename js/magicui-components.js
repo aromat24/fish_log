@@ -149,15 +149,22 @@ class MagicUIComponents {
     initializeSplashParticles() {
         // Wait a bit for the page to load
         setTimeout(() => {
-            this.createParticles();
-            
-            // Refresh bubbles more frequently for continuous effect
-            setInterval(() => {
-                const landingPage = document.getElementById('landing-page');
-                if (landingPage && !landingPage.classList.contains('hidden')) {
-                    this.createParticles();
-                }
-            }, 10000); // Refresh every 10 seconds (even faster refresh)
+            console.log('🫧 Initializing splash particles...');
+            const landingPage = document.getElementById('landing-page');
+            if (landingPage) {
+                console.log('✅ Landing page found, creating particles');
+                this.createParticles();
+                
+                // Refresh bubbles more frequently for continuous effect
+                setInterval(() => {
+                    const landingPage = document.getElementById('landing-page');
+                    if (landingPage && !landingPage.classList.contains('hidden')) {
+                        this.createParticles();
+                    }
+                }, 10000); // Refresh every 10 seconds (even faster refresh)
+            } else {
+                console.warn('❌ Landing page not found for particles');
+            }
         }, 1000);
     }
 }
