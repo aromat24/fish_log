@@ -15,6 +15,69 @@ let currentTranslateX = 0;
 let currentTranslateY = 0;
 let isZoomed = false;
 
+// Mobile keyboard management
+function setupMobileKeyboardManagement() {
+    console.log('Setting up mobile keyboard management');
+    
+    // Track if user is actively typing
+    let isTyping = false;
+    let typingTimeout;
+    
+    // Add event listeners to all input fields
+    const inputFields = document.querySelectorAll('input[type="text"], input[type="number"], input[type="datetime-local"], textarea');
+    
+    inputFields.forEach(input => {
+        // Track when user starts typing
+        input.addEventListener('focus', () => {
+            isTyping = true;
+            clearTimeout(typingTimeout);
+        });
+        
+        input.addEventListener('input', () => {
+            isTyping = true;
+            clearTimeout(typingTimeout);
+            // Set a timeout to detect when user stops typing
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+            }, 1000);
+        });
+        
+        input.addEventListener('blur', () => {
+            isTyping = false;
+            clearTimeout(typingTimeout);
+        });
+    });
+    
+    // Dismiss keyboard when scrolling (mobile optimization)
+    let scrollTimeout;
+    document.addEventListener('scroll', () => {
+        // Only dismiss if user is not actively typing
+        if (!isTyping && document.activeElement && document.activeElement.tagName === 'INPUT') {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.activeElement.blur();
+                console.log('Keyboard dismissed due to scrolling');
+            }, 150); // Small delay to prevent accidental dismissal
+        }
+    }, { passive: true });
+    
+    // Dismiss keyboard when touching outside input fields
+    document.addEventListener('touchstart', (e) => {
+        if (!isTyping && document.activeElement && document.activeElement.tagName === 'INPUT') {
+            const activeInput = document.activeElement;
+            const touchedElement = e.target;
+            
+            // Check if touch is outside the active input and not on another input
+            if (!activeInput.contains(touchedElement) && touchedElement.tagName !== 'INPUT') {
+                activeInput.blur();
+                console.log('Keyboard dismissed due to touch outside input');
+            }
+        }
+    }, { passive: true });
+    
+    console.log('Mobile keyboard management initialized');
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('=== DOM CONTENT LOADED ===');
@@ -22,7 +85,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('User Agent:', navigator.userAgent);
     try {
         // Initialize landing page functionality
-        initLandingPage();        // Setup fullscreen image handling and ensure it's hidden on startup
+        initLandingPage();
+        
+        // Setup mobile keyboard management
+        setupMobileKeyboardManagement();
+        
+        // Setup fullscreen image handling and ensure it's hidden on startup
         console.log('=== FULLSCREEN MODAL INITIALIZATION ===');
         // Reset fullscreen modal to clean state first
         resetFullscreenModal();
@@ -2939,6 +3007,11 @@ async function saveCatchData() {
         }
 
         console.log('Step 12: Resetting form');
+        // Blur any focused input to dismiss mobile keyboard
+        if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+            document.activeElement.blur();
+        }
+        
         // Reset form and clear data
         const catchForm = document.getElementById('catch-form');
         if (catchForm) {
@@ -2966,7 +3039,15 @@ async function saveCatchData() {
 
         console.log('Step 13: Reinitializing datetime');
         // Reset datetime to current time
-        initializeDatetime(); 
+        initializeDatetime();
+        
+        // Prevent auto-focus after form operations
+        setTimeout(() => {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur();
+                console.log('Prevented auto-focus after form reset');
+            }
+        }, 100); 
         
         console.log('Step 14: Updating displays');
         // Update displays
