@@ -1032,12 +1032,44 @@ function setupSpeciesHandlers() {
         return;
     }
 
-    // Initialize species list if empty
-    if (!localStorage.getItem('species')) {
-        const defaultSpecies = [
-            'Bass', 'Trout', 'Salmon', 'Pike', 'Catfish', 'Perch', 'Carp'
-        ].map(name => ({ name, isCustom: false }));
-        localStorage.setItem('species', JSON.stringify(defaultSpecies));
+    // Initialize species list if empty or migrate old defaults
+    let speciesList = JSON.parse(localStorage.getItem('species') || '[]');
+    
+    // Define new default species with actual database matches
+    const newDefaultSpecies = [
+        'Brindle bass (M&F)', 'Cavebass (M&F)', 'Eel-catfish (M&F)', 
+        'White seacatfish (M&F)', 'Black seabarbel / Black seacatfish (M&F)',
+        'Trout', 'Salmon', 'Pike', 'Perch', 'Carp'
+    ];
+    
+    // If empty, add all defaults
+    if (speciesList.length === 0) {
+        speciesList = newDefaultSpecies.map(name => ({ name, isCustom: false }));
+        localStorage.setItem('species', JSON.stringify(speciesList));
+    } else {
+        // Check if we need to add new defaults (for existing users)
+        const oldDefaults = ['Bass', 'Catfish'];
+        const hasOldDefaults = oldDefaults.some(oldDefault => 
+            speciesList.some(species => species.name === oldDefault)
+        );
+        
+        if (hasOldDefaults) {
+            // Remove old generic defaults and add new specific ones
+            speciesList = speciesList.filter(species => !oldDefaults.includes(species.name));
+            
+            // Add new defaults if they don't exist
+            newDefaultSpecies.forEach(defaultName => {
+                const exists = speciesList.some(species => 
+                    species.name.toLowerCase() === defaultName.toLowerCase()
+                );
+                if (!exists) {
+                    speciesList.push({ name: defaultName, isCustom: false });
+                }
+            });
+            
+            localStorage.setItem('species', JSON.stringify(speciesList));
+            console.log('Migrated old default species to new database-specific species');
+        }
     }
 
     async function refreshSpeciesList() {
@@ -1050,6 +1082,21 @@ function setupSpeciesHandlers() {
             console.log('Fish database is ready, getting species names...');
             const dbSpecies = window.fishDB.getSpeciesNames();
             console.log('Database species:', dbSpecies);
+
+            // First, mark existing species as database species if they exist in database
+            let updatedCount = 0;
+            speciesList.forEach(species => {
+                if (species && species.name && typeof species.name === 'string') {
+                    const dbMatch = dbSpecies.find(dbSpecies => 
+                        dbSpecies.toLowerCase() === species.name.toLowerCase()
+                    );
+                    if (dbMatch && !species.isFromDatabase) {
+                        species.isFromDatabase = true;
+                        updatedCount++;
+                        console.log('Marked existing species as database species:', species.name);
+                    }
+                }
+            });
 
             // Add database species that aren't already in the list
             let addedCount = 0;
@@ -1074,7 +1121,7 @@ function setupSpeciesHandlers() {
                 }
             });
 
-            console.log(`Added ${addedCount} species from database`);
+            console.log(`Updated ${updatedCount} existing species, added ${addedCount} new species from database`);
 
             // Update localStorage with combined list
             localStorage.setItem('species', JSON.stringify(speciesList));
