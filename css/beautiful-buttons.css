@@ -187,7 +187,7 @@
   animation-delay: 1s;
 }
 
-.shiny-button:hover::before {
+.shiny-button:active::before {
   animation-duration: 0.8s;
 }
 
@@ -949,7 +949,8 @@ label {
   transition: background-color 0.2s ease;
 }
 
-.species-option:hover,
+.species-option:active,
+.species-option:focus,
 .species-option.highlighted {
   background-color: var(--bg-tertiary) !important;
 }
@@ -995,14 +996,14 @@ label {
   transition: color 0.2s ease;
 }
 
-#close-modal-btn:hover,
 #close-modal-btn:active,
-#close-edit-modal-btn:hover,
+#close-modal-btn:focus,
 #close-edit-modal-btn:active,
-#close-map-modal-btn:hover,
+#close-edit-modal-btn:focus,
 #close-map-modal-btn:active,
-#close-manage-species-btn:hover,
-#close-manage-species-btn:active {
+#close-map-modal-btn:focus,
+#close-manage-species-btn:active,
+#close-manage-species-btn:focus {
   color: var(--text-primary) !important;
 }
 
@@ -1045,8 +1046,10 @@ label {
   transition: background-color 0.2s ease;
 }
 
-#data-options-menu button:hover,
-#data-options-menu label:hover {
+#data-options-menu button:active,
+#data-options-menu button:focus,
+#data-options-menu label:active,
+#data-options-menu label:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
@@ -1114,14 +1117,18 @@ label {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-#data-options-menu button:hover,
-#data-options-menu label:hover {
+#data-options-menu button:active,
+#data-options-menu button:focus,
+#data-options-menu label:active,
+#data-options-menu label:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
-/* Ensure hover effects work in both themes */
-[data-theme="night"] #data-options-menu button:hover,
-[data-theme="night"] #data-options-menu label:hover {
+/* Ensure active/focus effects work in both themes */
+[data-theme="night"] #data-options-menu button:active,
+[data-theme="night"] #data-options-menu button:focus,
+[data-theme="night"] #data-options-menu label:active,
+[data-theme="night"] #data-options-menu label:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
@@ -1181,10 +1188,14 @@ label {
   transition: all 0.3s ease;
 }
 
-.catch-entry:hover,
-.record-entry:hover,
-.species-item:hover,
-#custom-species-list .flex:hover {
+.catch-entry:active,
+.catch-entry:focus,
+.record-entry:active,
+.record-entry:focus,
+.species-item:active,
+.species-item:focus,
+#custom-species-list .flex:active,
+#custom-species-list .flex:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
@@ -1231,7 +1242,8 @@ label {
   transition: color 0.2s ease;
 }
 
-#custom-species-list .flex button:hover {
+#custom-species-list .flex button:active,
+#custom-species-list .flex button:focus {
   color: var(--text-primary) !important;
 }
 
@@ -1521,7 +1533,8 @@ div[data-catch-id] p, div[data-species] p,
   color: var(--text-primary) !important;
 }
 
-.dropdown-content button:hover {
+.dropdown-content button:active,
+.dropdown-content button:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
@@ -1638,10 +1651,11 @@ input.bg-white, textarea.bg-white, select.bg-white {
   pointer-events: auto !important;
 }
 
-#theme-toggle-btn:hover {
+#theme-toggle-btn:active,
+#theme-toggle-btn:focus {
   background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%) !important;
   color: var(--btn-text-primary) !important;
-  transform: translateY(-1px) !important;
+  transform: translateY(-1px) scale(0.98) !important;
 }
 
 #theme-toggle-btn:active {
@@ -1674,3 +1688,60 @@ html, body {
   min-height: 100vh !important;
   height: 100% !important;
 }
+
+/* === MAGICUI PARTICLE EFFECTS === */
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+  animation: float-up ease-out infinite;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0.8);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+    transform: translateY(95vh) translateX(var(--drift-start, 0px)) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(50vh) translateX(var(--drift-mid, 10px)) scale(1.1);
+  }
+  95% {
+    opacity: 0.6;
+    transform: translateY(5vh) translateX(var(--drift, 20px)) scale(0.9);
+  }
+  100% {
+    transform: translateY(-10vh) translateX(var(--drift, 0px)) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* Ensure particles work in both themes */
+[data-theme="night"] .particle {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="day"] .particle {
+  background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.4), rgba(0, 100, 200, 0.1));
+  box-shadow: 0 0 8px rgba(0, 150, 255, 0.2);
+}
+
+/* === END MAGICUI EFFECTS === */

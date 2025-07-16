@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagicUI Test - Fish Log PWA</title>
+    <link rel="stylesheet" href="css/beautiful-buttons.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a202c;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2d3748;
+            border-radius: 8px;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .test-area {
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 MagicUI Test Suite - Fish Log PWA</h1>
+    
+    <div class="test-section">
+        <h2>1. 🌟 Shiny Button Effect (Enter Logbook Style)</h2>
+        <p>This button should have shiny animation, no ripple on click:</p>
+        <button id="test-shiny-btn" class="shiny-button">
+            Test Shiny Button
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 💧 Ripple Effect Buttons</h2>
+        <p>These buttons should have ripple effects on press/click:</p>
+        <div class="button-grid">
+            <button class="shiny-button">Button 1</button>
+            <button class="shiny-button">Button 2</button>
+            <button class="shiny-button">Button 3</button>
+            <button class="tab-button">Tab Button</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 🫧 Bubble Effects Test Area</h2>
+        <p>Super fast-moving bubbles should float up from bottom to top (1-3 seconds each):</p>
+        <div id="particle-test-area" class="test-area">
+            <h3>Bubble Background</h3>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 🎊 Confetti Test</h2>
+        <p>Click to test confetti layering (should appear above everything):</p>
+        <button id="confetti-test-btn" class="shiny-button">
+            Trigger Confetti
+        </button>
+    </div>
+
+    <!-- Include all necessary scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="js/magicui-components.js"></script>
+    <script src="js/confetti-effects.js"></script>
+    
+    <script>
+        // Test the shiny button (should NOT get ripple effects)
+        document.getElementById('test-shiny-btn').addEventListener('click', () => {
+            console.log('🌟 Shiny button clicked - should have shiny animation only');
+        });
+
+        // Test confetti
+        document.getElementById('confetti-test-btn').addEventListener('click', () => {
+            console.log('🎊 Testing confetti layering');
+            if (window.confetti) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    zIndex: 9999
+                });
+            }
+        });
+
+        // Create bubbles in test area
+        setTimeout(() => {
+            const testArea = document.getElementById('particle-test-area');
+            if (window.magicUI) {
+                window.magicUI.createParticles(testArea);
+                console.log('🫧 Bubbles created in test area');
+            }
+        }, 1000);
+
+        // Log test results
+        console.log('🧪 MagicUI Test Suite loaded');
+        console.log('Expected behavior:');
+        console.log('  🌟 Shiny button: Animation effect, no ripple');
+        console.log('  💧 Other buttons: Ripple effects on click');
+        console.log('  🫧 Bubbles: Super fast-floating background animation (1-3s)');
+        console.log('  🎊 Confetti: Appears above all elements');
+    </script>
+</body>
+</html>

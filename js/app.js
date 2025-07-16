@@ -662,7 +662,7 @@ function showEditModal(catchData) {
             editPhotoText.textContent = 'Photo Upload Failed';
 
             // Change button to red to indicate error
-            editPhotoBtn.className = 'w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-md border border-red-300 flex items-center justify-center gap-2';
+            editPhotoBtn.className = 'w-full px-4 py-2 bg-red-100 active:bg-red-200 focus:bg-red-200 text-red-700 font-medium rounded-md border border-red-300 flex items-center justify-center gap-2';
         }
     };
 
@@ -838,7 +838,7 @@ function displayRecords() {
     recordsContainer.innerHTML = Object.entries(speciesRecords)
         .sort(([, a], [, b]) => b.length - a.length) // Sort by length descending
         .map(([species, record]) => `
-            <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${record.id}">
+            <div class="bg-white p-4 rounded-lg shadow active:shadow-md focus:shadow-md transition-shadow cursor-pointer" data-catch-id="${record.id}">
                 <div class="flex items-start gap-4">
                     <div class="flex-grow">
                         <h3 class="text-lg font-semibold text-blue-700 mb-2">${cleanSpeciesName(species)}</h3>
@@ -1125,7 +1125,7 @@ function setupSpeciesHandlers() {
                 }
 
                 return `
-                    <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-original-name="${species.name}">
+                    <div class="species-option px-4 py-2 active:bg-gray-100 focus:bg-gray-100 cursor-pointer" data-original-name="${species.name}">
                         ${cleanName}${speciesInfo}
                     </div>
                 `;
@@ -1136,7 +1136,7 @@ function setupSpeciesHandlers() {
         } else {
             console.log('No matches, showing add new species option');
             speciesDropdown.innerHTML = `
-                <div class="species-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <div class="species-option px-4 py-2 active:bg-gray-100 focus:bg-gray-100 cursor-pointer">
                     Add "${speciesInput.value}" as new species
                 </div>
             `;
@@ -1330,7 +1330,7 @@ function displayCustomSpeciesList() {
         .map(species => `
             <div class="flex items-center justify-between bg-gray-50 p-2 rounded">
                 <span class="flex-grow">${species.name}</span>
-                <button class="delete-species-btn text-red-600 hover:text-red-700 p-1" 
+                <button class="delete-species-btn text-red-600 active:text-red-700 focus:text-red-700 p-1" 
                         data-species="${species.name}" 
                         title="Delete species">
                     🗑️
@@ -1887,7 +1887,7 @@ function loadCatchHistory() {
     catches.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
     catchLog.innerHTML = catches.map(catch_ => `
-        <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer" data-catch-id="${catch_.id}">
+        <div class="bg-white p-4 rounded-lg shadow active:shadow-md focus:shadow-md transition-shadow cursor-pointer" data-catch-id="${catch_.id}">
             <div class="flex justify-between items-start gap-4">
                 <div class="flex-grow">
                     <h3 class="text-lg font-semibold text-blue-700">${cleanSpeciesName(catch_.species)}</h3>
@@ -2863,10 +2863,21 @@ async function saveCatchData() {
                 catches[catches.length - 1] = catchData;
                 localStorage.setItem('catches', JSON.stringify(catches));
                 showMessage('Catch saved successfully! Photo was too large and could not be saved.', 'warning');
+                
+                // Still fire confetti for successful save (even without photo)
+                console.log('Step 10b: Firing confetti for successful save (no photo)');
+                if (window.confettiManager) {
+                    // Don't await confetti - fire it asynchronously to avoid blocking the UI
+                    window.confettiManager.fireSaveCatchConfetti().catch(confettiError => {
+                        console.warn('Confetti effect failed:', confettiError);
+                    });
+                }
             } else {
                 throw storageError;
             }
-        } console.log('Step 11: Checking for success message');
+        }
+        
+        console.log('Step 11: Checking for success message');
         if (!document.getElementById('message-box').textContent.includes('Photo was too large')) {
             console.log('Step 11a: Showing success message');
             showMessage('Catch saved successfully!');
@@ -2900,7 +2911,9 @@ async function saveCatchData() {
 
         console.log('Step 13: Reinitializing datetime');
         // Reset datetime to current time
-        initializeDatetime(); console.log('Step 14: Updating displays');
+        initializeDatetime(); 
+        
+        console.log('Step 14: Updating displays');
         // Update displays
         loadCatchHistory();
         if (!document.getElementById('records-container').classList.contains('hidden')) {
@@ -2986,7 +2999,7 @@ function setupMainMap() {
                     <div><span class="font-medium">Date:</span> ${new Date(catch_.datetime).toLocaleDateString('en-GB')}</div>
                     ${catch_.locationName ? `<div><span class="font-medium">Location:</span> ${catch_.locationName}</div>` : ''}
                     ${catch_.notes ? `<div class="mt-2 p-2 bg-gray-50 rounded text-xs">${catch_.notes}</div>` : ''}
-                </div>                <button class="mt-2 w-full px-4 py-3 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-600 active:bg-blue-700 transition-colors touch-manipulation" 
+                </div>                <button class="mt-2 w-full px-4 py-3 bg-blue-500 text-white text-sm font-semibold rounded active:bg-blue-600 focus:bg-blue-600 transition-colors touch-manipulation" 
                         onclick="handleViewDetailsClick(event, '${catch_.id}')"
                         style="min-height: 44px; touch-action: manipulation;">
                     View Details

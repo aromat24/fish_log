@@ -772,6 +772,8 @@
   <script src="js/fishDatabase.js"></script>
   <script src="js/selfImprovingAlgorithm.js"></script>
   <script src="js/beautiful-buttons.js"></script>
+  <script src="js/magicui-components.js"></script>
+  <script src="js/confetti-effects.js"></script>
   <script src="js/app.js" defer></script>
 </head>
 
@@ -783,7 +785,7 @@
         <h1 class="text-3xl md:text-5xl font-bold mb-2">Ghoti - Hooked</h1>
         <p class="text-lg md:text-xl">Log your catches and track your fishing journey</p>
       </div>
-      <div id="landing-footer" class="relative z-10"> <button id="enter-app-btn" class="shimmer-button ripple-effect"
+      <div id="landing-footer" class="relative z-10"> <button id="enter-app-btn" class="shiny-button"
           onclick="window.enterApp && window.enterApp()" style="cursor: pointer; z-index: 100; position: relative;">
           Enter Logbook
         </button>
@@ -1089,10 +1091,10 @@
     </div><!-- Move buttons to bottom right for thumb access -->
     <div class="absolute bottom-4 right-4 flex flex-col gap-4">
       <button id="rotate-image-btn"
-        class="text-white text-xl bg-black bg-opacity-70 rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-all"
+        class="text-white text-xl bg-black bg-opacity-70 rounded-full w-14 h-14 flex items-center justify-center shadow-lg active:bg-opacity-90 focus:bg-opacity-90 transition-all"
         title="Rotate image" style="min-height: 48px; min-width: 48px; touch-action: manipulation;">🔄</button>
       <button id="close-fullscreen-btn"
-        class="text-white text-xl bg-black bg-opacity-70 rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-all"
+        class="text-white text-xl bg-black bg-opacity-70 rounded-full w-14 h-14 flex items-center justify-center shadow-lg active:bg-opacity-90 focus:bg-opacity-90 transition-all"
         title="Close" style="min-height: 48px; min-width: 48px; touch-action: manipulation;">✖</button>
     </div>
   </div>

@@ -566,7 +566,9 @@ class FishDatabase {
             return [];
         }
 
-        const speciesNames = Object.values(this.algorithms).map(species => species.species_name);
+        const speciesNames = Object.values(this.algorithms)
+            .filter(species => species && species.species_name && species.species_name.trim())
+            .map(species => species.species_name);
         console.log('Returning species names:', speciesNames);
         return speciesNames;
     }
@@ -579,15 +581,16 @@ class FishDatabase {
 
         // First try exact match
         for (const [id, species] of Object.entries(this.algorithms)) {
-            if (species.species_name.toLowerCase() === normalizedName) {
+            if (species && species.species_name && species.species_name.toLowerCase() === normalizedName) {
                 return { id, ...species };
             }
         }
 
         // Then try partial match
         for (const [id, species] of Object.entries(this.algorithms)) {
-            if (species.species_name.toLowerCase().includes(normalizedName) ||
-                normalizedName.includes(species.species_name.toLowerCase())) {
+            if (species && species.species_name && 
+                (species.species_name.toLowerCase().includes(normalizedName) ||
+                normalizedName.includes(species.species_name.toLowerCase()))) {
                 return { id, ...species };
             }
         }

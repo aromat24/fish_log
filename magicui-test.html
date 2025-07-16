@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagicUI Components Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            color: white;
+            margin: 0;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .test-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 800px;
+        }
+        
+        .test-button {
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .test-button:active {
+            transform: scale(0.98);
+        }
+        
+        #particle-demo {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            border: 2px dashed rgba(255,255,255,0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 MagicUI Components Test Page</h1>
+    
+    <div class="test-container">
+        <button class="test-button" onclick="testRipple(this, event)">
+            🌊 Test Ripple Effect
+        </button>
+        
+        <button id="shiny-test" class="test-button">
+            ✨ Test Shiny Button
+        </button>
+        
+        <button class="test-button" onclick="testConfetti()">
+            🎉 Test Confetti
+        </button>
+        
+        <button class="test-button" onclick="toggleTheme()">
+            🌙 Toggle Theme
+        </button>
+    </div>
+    
+    <div id="particle-demo">
+        <span>Particles Demo Area</span>
+    </div>
+
+    <script>
+        // Add theme system
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'night' ? 'day' : 'night';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            console.log('Theme toggled to:', newTheme);
+        }
+
+        // Test ripple effect
+        function testRipple(button, event) {
+            const rect = button.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: rippling 0.6s linear;
+                pointer-events: none;
+                left: ${x - 10}px;
+                top: ${y - 10}px;
+                width: 20px;
+                height: 20px;
+            `;
+
+            if (!button.style.position || button.style.position === 'static') {
+                button.style.position = 'relative';
+                button.style.overflow = 'hidden';
+            }
+
+            button.appendChild(ripple);
+
+            setTimeout(() => {
+                if (ripple.parentNode) {
+                    ripple.parentNode.removeChild(ripple);
+                }
+            }, 600);
+        }
+
+        // Test confetti
+        function testConfetti() {
+            console.log('Testing confetti...');
+            if (window.confetti) {
+                window.confetti({
+                    particleCount: 50,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#0ea5e9', '#8b5cf6', '#06b6d4', '#10b981', '#f97316']
+                });
+            } else {
+                alert('Confetti library not loaded');
+            }
+        }
+
+        // Load confetti library
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js';
+        document.head.appendChild(script);
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippling {
+                0% { opacity: 1; transform: scale(0); }
+                100% { transform: scale(2); opacity: 0; }
+            }
+            
+            #shiny-test {
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(135deg, #0ea5e9, #0369a1);
+            }
+            
+            #shiny-test::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: shimmer-slide 3s infinite;
+            }
+            
+            @keyframes shimmer-slide {
+                to { transform: translate(calc(100% + 100%), 0); }
+            }
+            
+            [data-theme="night"] {
+                filter: hue-rotate(180deg) saturate(0.8);
+            }
+        `;
+        document.head.appendChild(style);
+
+        console.log('🎨 MagicUI Test Page Ready!');
+    </script>
+</body>
+</html>

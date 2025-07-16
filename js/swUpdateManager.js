@@ -132,17 +132,17 @@ class ServiceWorkerUpdateManager {
                         <p class="text-xs opacity-90">New features and improvements ready</p>
                     </div>
                 </div>
-                <button id="close-update-notification" class="ml-4 text-white hover:text-gray-200">
+                <button id="close-update-notification" class="ml-4 text-white active:text-gray-200 focus:text-gray-200">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
             <div class="mt-3 flex gap-2">
-                <button id="update-now-btn" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
+                <button id="update-now-btn" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium active:bg-gray-100 focus:bg-gray-100 transition-colors">
                     Update Now
                 </button>
-                <button id="update-later-btn" class="border border-white text-white px-3 py-1 rounded text-sm hover:bg-white hover:text-blue-600 transition-colors">
+                <button id="update-later-btn" class="border border-white text-white px-3 py-1 rounded text-sm active:bg-white active:text-blue-600 focus:bg-white focus:text-blue-600 transition-colors">
                     Later
                 </button>
             </div>

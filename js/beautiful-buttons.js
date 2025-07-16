@@ -112,18 +112,26 @@ function createRippleEffect(event, button) {
 function initializeShinyButtons() {
     const shinyButtons = document.querySelectorAll('.shiny-button');
     shinyButtons.forEach(button => {
-        // Enhanced hover effects
-        button.addEventListener('mouseenter', function() {
+        // Enhanced press/active effects
+        button.addEventListener('touchstart', function() {
             this.style.setProperty('--x', '-100%');
         });
         
-        button.addEventListener('mouseleave', function() {
+        button.addEventListener('touchend', function() {
+            this.style.setProperty('--x', '100%');
+        });
+        
+        button.addEventListener('mousedown', function() {
+            this.style.setProperty('--x', '-100%');
+        });
+        
+        button.addEventListener('mouseup', function() {
             this.style.setProperty('--x', '100%');
         });
     });
 }
 
-// Interactive hover buttons
+// Interactive press buttons
 function initializeInteractiveButtons() {
     const interactiveButtons = document.querySelectorAll('.interactive-hover-button');
     
