@@ -62,6 +62,12 @@
   --text-secondary: #334155;
   --text-muted: #64748b;
 
+  /* Input field specific colors for day mode */
+  --bg-input: #f1f5f9;
+  --bg-input-focus: #e0f2fe;
+  --border-input: #cbd5e1;
+  --border-input-focus: #0ea5e9;
+
   /* Button Colors - Day Mode - Bright and Vibrant */
   --btn-primary-start: #0ea5e9;
   --btn-primary-mid: #0284c7;
@@ -114,6 +120,12 @@
     --text-primary: #0f172a;
     --text-secondary: #334155;
     --text-muted: #64748b;
+
+    /* Input field specific colors for auto light mode */
+    --bg-input: #f1f5f9;
+    --bg-input-focus: #e0f2fe;
+    --border-input: #cbd5e1;
+    --border-input-focus: #0ea5e9;
 
     --btn-primary-start: #0ea5e9;
     --btn-primary-mid: #0284c7;
@@ -1446,28 +1458,30 @@ form {
 
 /* Input field theming */
 input, textarea, select {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
-  border: 1px solid var(--border-light) !important;
+  border: 1px solid var(--border-input, var(--border-light)) !important;
   transition: all 0.3s ease;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--btn-primary-start) !important;
-  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+  background-color: var(--bg-input-focus, var(--bg-tertiary)) !important;
+  border-color: var(--border-input-focus, var(--btn-primary-start)) !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1) !important;
   outline: none !important;
 }
 
 /* Specific input type styling */
 input[type="text"], input[type="number"], input[type="datetime-local"], input[type="email"], input[type="password"] {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
-  border: 1px solid var(--border-light) !important;
+  border: 1px solid var(--border-input, var(--border-light)) !important;
 }
 
 input[type="text"]:focus, input[type="number"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-  border-color: var(--btn-primary-start) !important;
-  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+  background-color: var(--bg-input-focus, var(--bg-tertiary)) !important;
+  border-color: var(--border-input-focus, var(--btn-primary-start)) !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1) !important;
 }
 
 /* Placeholder text styling */
@@ -1723,14 +1737,54 @@ html, body {
     opacity: 1;
     transform: translateY(50vh) translateX(var(--drift-mid, 10px)) scale(1.1);
   }
+  85% {
+    opacity: 0.8;
+    transform: translateY(15vh) translateX(var(--drift, 20px)) scale(0.95);
+  }
   95% {
-    opacity: 0.6;
+    opacity: 0.4;
     transform: translateY(5vh) translateX(var(--drift, 20px)) scale(0.9);
   }
   100% {
-    transform: translateY(-10vh) translateX(var(--drift, 0px)) scale(0.7);
+    transform: translateY(-5vh) translateX(var(--drift, 0px)) scale(0.8);
     opacity: 0;
   }
+}
+
+/* Animation for top bubbles that float near the surface */
+@keyframes float-top {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.8);
+    opacity: 0.3;
+  }
+  25% {
+    opacity: 0.6;
+    transform: translateY(-5vh) translateX(var(--drift-start, 5px)) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-10vh) translateX(var(--drift-mid, 10px)) scale(1.1);
+  }
+  75% {
+    opacity: 0.6;
+    transform: translateY(-5vh) translateX(var(--drift, 15px)) scale(0.95);
+  }
+  100% {
+    transform: translateY(0) translateX(var(--drift, 0px)) scale(0.8);
+    opacity: 0.3;
+  }
+}
+
+/* Top bubbles use different animation and start position */
+.particle.top-bubble {
+  animation: float-top ease-in-out infinite;
+  top: 0; /* Start at the top */
+}
+
+/* Regular particles start at bottom */
+.particle:not(.top-bubble) {
+  animation: float-up ease-out infinite;
+  top: initial;
 }
 
 /* Ensure particles work in both themes */
@@ -1742,6 +1796,17 @@ html, body {
 [data-theme="day"] .particle {
   background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.4), rgba(0, 100, 200, 0.1));
   box-shadow: 0 0 8px rgba(0, 150, 255, 0.2);
+}
+
+/* Top bubbles get slightly different styling for subtlety */
+[data-theme="night"] .particle.top-bubble {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08));
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="day"] .particle.top-bubble {
+  background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.3), rgba(0, 100, 200, 0.08));
+  box-shadow: 0 0 6px rgba(0, 150, 255, 0.15);
 }
 
 /* === END MAGICUI EFFECTS === */

@@ -106,26 +106,32 @@ class MagicUIComponents {
             container.appendChild(particlesContainer);
         }
 
-        // Clear existing particles
-        particlesContainer.innerHTML = '';
+        // Clean up old particles to prevent memory issues
+        const existingParticles = particlesContainer.querySelectorAll('.particle:not(.top-bubble)');
+        if (existingParticles.length > 60) { // Keep max 60 regular particles
+            // Remove the oldest particles
+            for (let i = 0; i < existingParticles.length - 40; i++) {
+                existingParticles[i].remove();
+            }
+        }
 
-        // Create floating bubble-like particles
-        const particleCount = 35;
+        // Create more floating bubble-like particles for better coverage
+        const particleCount = 50; // Increased from 35
         
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
             
-            // Random bubble properties - even faster!
-            const size = Math.random() * 6 + 3; // 3-9px (larger like bubbles)
+            // More varied bubble properties for better coverage
+            const size = Math.random() * 8 + 2; // 2-10px (wider range)
             const left = Math.random() * 100; // 0-100%
-            const animationDuration = Math.random() * 2 + 1; // 1-3s (much faster!)
-            const animationDelay = Math.random() * 2; // 0-2s delay
+            const animationDuration = Math.random() * 4 + 2; // 2-6s (longer durations)
+            const animationDelay = Math.random() * 6; // 0-6s delay (longer stagger)
             
             // More complex drift patterns for bubble effect
-            const driftStart = (Math.random() - 0.5) * 20; // -10px to 10px
-            const driftMid = (Math.random() - 0.5) * 40; // -20px to 20px  
-            const driftEnd = (Math.random() - 0.5) * 60; // -30px to 30px
+            const driftStart = (Math.random() - 0.5) * 30; // -15px to 15px
+            const driftMid = (Math.random() - 0.5) * 50; // -25px to 25px  
+            const driftEnd = (Math.random() - 0.5) * 80; // -40px to 40px
             
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
@@ -145,6 +151,70 @@ class MagicUIComponents {
         console.log('🫧 Bubbles created for splash screen');
     }
 
+    // Create persistent top bubbles that stay near the surface
+    createTopBubbles(container) {
+        if (!container) {
+            container = document.getElementById('landing-page');
+        }
+        
+        if (!container) {
+            console.warn('No container found for top bubbles');
+            return;
+        }
+
+        // Create particles container if it doesn't exist
+        let particlesContainer = container.querySelector('.particles-container');
+        if (!particlesContainer) {
+            particlesContainer = document.createElement('div');
+            particlesContainer.className = 'particles-container';
+            container.appendChild(particlesContainer);
+        }
+
+        // Clean up old top bubbles to prevent memory issues
+        const existingTopBubbles = particlesContainer.querySelectorAll('.particle.top-bubble');
+        if (existingTopBubbles.length > 25) { // Keep max 25 top bubbles
+            // Remove the oldest top bubbles
+            for (let i = 0; i < existingTopBubbles.length - 15; i++) {
+                existingTopBubbles[i].remove();
+            }
+        }
+
+        // Create slower floating bubbles that stay near the top
+        const topBubbleCount = 15;
+        
+        for (let i = 0; i < topBubbleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle top-bubble';
+            
+            // Smaller, more subtle bubbles for top area
+            const size = Math.random() * 4 + 2; // 2-6px
+            const left = Math.random() * 100; // 0-100%
+            const animationDuration = Math.random() * 8 + 6; // 6-14s (very slow)
+            const animationDelay = Math.random() * 8; // 0-8s delay
+            
+            // Gentle horizontal drift for top bubbles
+            const driftStart = (Math.random() - 0.5) * 20; // -10px to 10px
+            const driftMid = (Math.random() - 0.5) * 30; // -15px to 15px  
+            const driftEnd = (Math.random() - 0.5) * 40; // -20px to 20px
+            
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = left + '%';
+            particle.style.animationDuration = animationDuration + 's';
+            particle.style.animationDelay = animationDelay + 's';
+            particle.style.setProperty('--drift-start', driftStart + 'px');
+            particle.style.setProperty('--drift-mid', driftMid + 'px');
+            particle.style.setProperty('--drift', driftEnd + 'px');
+            
+            // Lower opacity for subtle effect
+            particle.style.opacity = Math.random() * 0.5 + 0.2; // 0.2-0.7
+            
+            particlesContainer.appendChild(particle);
+        }
+
+        console.log('🫧 Top bubbles created for persistent effect');
+    }
+
     // Initialize bubble particles on splash screen
     initializeSplashParticles() {
         // Wait a bit for the page to load
@@ -154,14 +224,23 @@ class MagicUIComponents {
             if (landingPage) {
                 console.log('✅ Landing page found, creating particles');
                 this.createParticles();
+                this.createTopBubbles(); // Add persistent top bubbles
                 
-                // Refresh bubbles more frequently for continuous effect
+                // Refresh main bubbles more frequently for continuous effect
                 setInterval(() => {
                     const landingPage = document.getElementById('landing-page');
                     if (landingPage && !landingPage.classList.contains('hidden')) {
                         this.createParticles();
                     }
-                }, 10000); // Refresh every 10 seconds (even faster refresh)
+                }, 6000); // Refresh every 6 seconds (faster refresh)
+                
+                // Refresh top bubbles less frequently
+                setInterval(() => {
+                    const landingPage = document.getElementById('landing-page');
+                    if (landingPage && !landingPage.classList.contains('hidden')) {
+                        this.createTopBubbles();
+                    }
+                }, 15000); // Refresh top bubbles every 15 seconds
             } else {
                 console.warn('❌ Landing page not found for particles');
             }
