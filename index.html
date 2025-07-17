@@ -828,6 +828,14 @@
     [data-theme="night"] .stats-card-species {
       background-color: rgba(55, 65, 81, 0.3);
     }
+
+    /* Modal heading text - ensure white in night mode */
+    .modal-heading-text {
+      color: inherit;
+    }
+    [data-theme="night"] .modal-heading-text {
+      color: white;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
@@ -1028,7 +1036,7 @@
           ✖
         </button>
         <div class="space-y-3">
-          <h3 id="modal-species" class="text-xl font-bold pr-8"></h3>
+          <h3 id="modal-species" class="text-xl font-bold pr-8 modal-heading-text"></h3>
           <p id="modal-date" class="text-sm"></p>
 
           <div class="flex flex-wrap gap-2">
@@ -1141,7 +1149,7 @@
   <div id="location-name-modal"
     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div class="rounded-lg shadow-lg p-4 w-full max-w-md modal-content">
-      <h3 class="text-xl font-bold mb-4">Save Location</h3>
+      <h3 class="text-xl font-bold mb-4 modal-heading-text">Save Location</h3>
       <form id="location-name-form" class="space-y-4">
         <div>
           <label for="modal-location-name-input" class="block text-sm font-medium mb-1">Location Name:</label>
@@ -1183,7 +1191,7 @@
     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div class="rounded-lg shadow-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto modal-content">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-bold">Manage Species</h3>
+        <h3 class="text-xl font-bold modal-heading-text">Manage Species</h3>
         <button class="absolute top-2 right-2 p-2 z-10" id="close-manage-species-btn" style="color: var(--text-muted); transition: color 0.2s ease;">✖</button>
       </div>
       <div class="space-y-4">
@@ -1201,7 +1209,7 @@
   <div id="species-modal"
     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[51] p-4">
     <div class="rounded-lg shadow-lg p-4 w-full max-w-md modal-content">
-      <h3 class="text-xl font-bold mb-4">Add New Species</h3>
+      <h3 class="text-xl font-bold mb-4 modal-heading-text">Add New Species</h3>
       <form id="species-form" class="space-y-4">
         <div>
           <label for="new-species-name" class="block text-sm font-medium mb-1">Species Name:</label>
@@ -1224,7 +1232,7 @@
   <div id="confirmation-modal"
     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
     <div class="rounded-lg shadow-lg p-4 w-full max-w-sm modal-content">
-      <h3 class="text-xl font-bold mb-4" id="confirmation-title"></h3>
+      <h3 class="text-xl font-bold mb-4 modal-heading-text" id="confirmation-title"></h3>
       <p class="mb-6" id="confirmation-message"></p>
       <div class="flex gap-3">
         <button id="confirm-action-btn" class="shiny-button ripple-effect flex-1"
@@ -1248,12 +1256,18 @@
           ✖
         </button>
         <div class="space-y-4">
-          <h3 class="text-xl font-bold mb-4 pr-8">📊 Catch Statistics</h3>
+          <h3 class="text-xl font-bold mb-4 pr-8 modal-heading-text">📊 Catch Statistics</h3>
           
           <!-- Total catches summary -->
           <div class="stats-card-blue p-3 rounded-md border-l-4 border-blue-400">
             <h4 class="font-semibold stats-text-blue-dark">Total Catches</h4>
             <p class="text-2xl font-bold stats-text-blue" id="total-catches-count">0</p>
+            
+            <!-- Unique species counter moved under total count -->
+            <div class="mt-2 pt-2 border-t border-blue-200 dark:border-blue-600">
+              <p class="font-medium stats-text-blue-dark text-sm">Unique Species</p>
+              <p class="text-lg font-bold stats-text-blue" id="unique-species-count">0</p>
+            </div>
           </div>
 
           <!-- Species breakdown -->
@@ -1261,14 +1275,6 @@
             <h4 class="font-semibold stats-text-gray">Species Breakdown</h4>
             <div id="species-stats-list" class="space-y-2 max-h-60 overflow-y-auto">
               <!-- Species statistics will be populated here -->
-            </div>
-          </div>
-
-          <!-- Additional stats -->
-          <div class="flex justify-center">
-            <div class="stats-card-green p-3 rounded border-l-4 border-green-400 w-full max-w-48">
-              <p class="font-medium stats-text-green-dark">Unique Species</p>
-              <p class="text-lg font-bold stats-text-green" id="unique-species-count">0</p>
             </div>
           </div>
 
@@ -1291,7 +1297,7 @@
 
         <!-- Header - compact -->
         <div class="flex-shrink-0 pb-2">
-          <h3 class="text-lg sm:text-xl font-bold pr-8">Select Location</h3>
+          <h3 class="text-lg sm:text-xl font-bold pr-8 modal-heading-text">Select Location</h3>
           <p class="text-xs sm:text-sm">🗺️ Click on the map to select a location, or use the current location button
           </p>
         </div>

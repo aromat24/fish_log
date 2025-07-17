@@ -3331,7 +3331,7 @@ function populateCatchStatistics() {
                 const speciesItem = document.createElement('div');
                 speciesItem.className = 'flex justify-between items-center p-2 stats-card-species rounded';
                 speciesItem.innerHTML = `
-                    <span class="font-medium stats-text-gray">${species}</span>
+                    <span class="font-medium stats-text-gray">🐟 ${species}</span>
                     <span class="stats-card-blue stats-text-blue-dark px-2 py-1 rounded-full text-sm font-semibold">${count}</span>
                 `;
                 speciesListContainer.appendChild(speciesItem);
