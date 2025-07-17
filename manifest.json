@@ -3,7 +3,7 @@
     "short_name": "Ghoti",
     "description": "Track your fishing catches and maintain a detailed fishing log",
     "start_url": "./",
-    "display": "fullscreen",
+    "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#3b82f6",
     "orientation": "portrait-primary",
