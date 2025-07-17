@@ -834,7 +834,7 @@
       color: inherit;
     }
     [data-theme="night"] .modal-heading-text {
-      color: white;
+      color: white !important;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1260,13 +1260,15 @@
           
           <!-- Total catches summary -->
           <div class="stats-card-blue p-3 rounded-md border-l-4 border-blue-400">
-            <h4 class="font-semibold stats-text-blue-dark">Total Catches</h4>
-            <p class="text-2xl font-bold stats-text-blue" id="total-catches-count">0</p>
-            
-            <!-- Unique species counter moved under total count -->
-            <div class="mt-2 pt-2 border-t border-blue-200 dark:border-blue-600">
-              <p class="font-medium stats-text-blue-dark text-sm">Unique Species</p>
-              <p class="text-lg font-bold stats-text-blue" id="unique-species-count">0</p>
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-semibold stats-text-blue-dark">Total Catches</h4>
+                <p class="text-2xl font-bold stats-text-blue" id="total-catches-count">0</p>
+              </div>
+              <div class="border-l border-blue-300 pl-3 ml-3">
+                <p class="font-medium stats-text-blue-dark text-sm">Unique Species</p>
+                <p class="text-lg font-bold stats-text-blue text-center" id="unique-species-count">0</p>
+              </div>
             </div>
           </div>
 
