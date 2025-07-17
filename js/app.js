@@ -2418,7 +2418,7 @@ function setupTabSystem() {
                 historyTab.classList.add('active');
                 const historyIcon = getTabIcon('history-tab-btn');
                 const historyLabel = historyTab.getAttribute('data-label');
-                historyTab.innerHTML = `${historyIcon}<span class="tab-text">${historyLabel}</span>`;
+                historyTab.innerHTML = `${historyIcon}<span class="tab-text">${historyLabel} <span class="text-xs opacity-70">ⓘ</span></span>`;
 
                 // Add Records and Map to right group in sequence
                 rightGroup.appendChild(recordsTab);
@@ -3329,10 +3329,10 @@ function populateCatchStatistics() {
         } else {
             sortedSpecies.forEach(([species, count]) => {
                 const speciesItem = document.createElement('div');
-                speciesItem.className = 'flex justify-between items-center p-2 bg-gray-50 rounded';
+                speciesItem.className = 'flex justify-between items-center p-2 stats-card-species rounded';
                 speciesItem.innerHTML = `
-                    <span class="font-medium text-gray-700">${species}</span>
-                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-semibold">${count}</span>
+                    <span class="font-medium stats-text-gray">${species}</span>
+                    <span class="stats-card-blue stats-text-blue-dark px-2 py-1 rounded-full text-sm font-semibold">${count}</span>
                 `;
                 speciesListContainer.appendChild(speciesItem);
             });
@@ -3343,19 +3343,9 @@ function populateCatchStatistics() {
     const uniqueSpeciesCount = Object.keys(speciesCount).length;
     document.getElementById('unique-species-count').textContent = uniqueSpeciesCount;
     
-    // Calculate this month's catches
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthCatches = catches.filter(catchData => {
-        const catchDate = new Date(catchData.datetime);
-        return catchDate >= startOfMonth;
-    }).length;
-    document.getElementById('month-catches-count').textContent = monthCatches;
-    
     console.log('Statistics calculated:', {
         total: totalCatches,
         unique: uniqueSpeciesCount,
-        thisMonth: monthCatches,
         speciesCounts: speciesCount
     });
 }

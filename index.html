@@ -767,6 +767,67 @@
 
     /* === INPUT FIELD THEMING === */
     /* Removed conflicting styles - now handled by CSS file */
+
+    /* === STATISTICS MODAL THEME STYLES === */
+    /* Blue stats card */
+    .stats-card-blue {
+      background-color: #dbeafe;
+    }
+    [data-theme="night"] .stats-card-blue {
+      background-color: rgba(30, 58, 138, 0.3);
+    }
+
+    .stats-text-blue {
+      color: #2563eb;
+    }
+    [data-theme="night"] .stats-text-blue {
+      color: #93c5fd;
+    }
+
+    .stats-text-blue-dark {
+      color: #1e40af;
+    }
+    [data-theme="night"] .stats-text-blue-dark {
+      color: #bfdbfe;
+    }
+
+    /* Green stats card */
+    .stats-card-green {
+      background-color: #dcfce7;
+    }
+    [data-theme="night"] .stats-card-green {
+      background-color: rgba(20, 83, 45, 0.3);
+    }
+
+    .stats-text-green {
+      color: #16a34a;
+    }
+    [data-theme="night"] .stats-text-green {
+      color: #86efac;
+    }
+
+    .stats-text-green-dark {
+      color: #15803d;
+    }
+    [data-theme="night"] .stats-text-green-dark {
+      color: #bbf7d0;
+    }
+
+    /* Gray text */
+    .stats-text-gray {
+      color: #374151;
+    }
+    [data-theme="night"] .stats-text-gray {
+      color: #d1d5db;
+    }
+
+    /* Species list items */
+    .stats-card-species {
+      background-color: #f9fafb;
+    }
+    [data-theme="night"] .stats-card-species {
+      background-color: rgba(55, 65, 81, 0.3);
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
@@ -1190,28 +1251,24 @@
           <h3 class="text-xl font-bold mb-4 pr-8">📊 Catch Statistics</h3>
           
           <!-- Total catches summary -->
-          <div class="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
-            <h4 class="font-semibold text-blue-800">Total Catches</h4>
-            <p class="text-2xl font-bold text-blue-600" id="total-catches-count">0</p>
+          <div class="stats-card-blue p-3 rounded-md border-l-4 border-blue-400">
+            <h4 class="font-semibold stats-text-blue-dark">Total Catches</h4>
+            <p class="text-2xl font-bold stats-text-blue" id="total-catches-count">0</p>
           </div>
 
           <!-- Species breakdown -->
           <div class="space-y-3">
-            <h4 class="font-semibold text-gray-700">Species Breakdown</h4>
+            <h4 class="font-semibold stats-text-gray">Species Breakdown</h4>
             <div id="species-stats-list" class="space-y-2 max-h-60 overflow-y-auto">
               <!-- Species statistics will be populated here -->
             </div>
           </div>
 
           <!-- Additional stats -->
-          <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="bg-green-50 p-2 rounded border-l-4 border-green-400">
-              <p class="font-medium text-green-700">Unique Species</p>
-              <p class="text-lg font-bold text-green-600" id="unique-species-count">0</p>
-            </div>
-            <div class="bg-purple-50 p-2 rounded border-l-4 border-purple-400">
-              <p class="font-medium text-purple-700">This Month</p>
-              <p class="text-lg font-bold text-purple-600" id="month-catches-count">0</p>
+          <div class="flex justify-center">
+            <div class="stats-card-green p-3 rounded border-l-4 border-green-400 w-full max-w-48">
+              <p class="font-medium stats-text-green-dark">Unique Species</p>
+              <p class="text-lg font-bold stats-text-green" id="unique-species-count">0</p>
             </div>
           </div>
 
