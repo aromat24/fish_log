@@ -1,0 +1,79 @@
+name: Deploy Production (Main Branch)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-production"
+  cancel-in-progress: false
+
+jobs:
+  build-production:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Clean build directory
+      run: |
+        # Remove development files
+        rm -rf node_modules/
+        rm -rf .git/
+        rm -rf .github/
+        rm -rf "Species Data Analyzer/"
+        rm -rf "Fish App DB Files/"
+        rm -rf "New folder/"
+        rm -f *.md
+        rm -f *.txt
+        rm -f *.workspace
+        rm -f package*.json
+        rm -f h\ origin\ main
+        rm -f hell\ -NoProfile\ git\ status\ --short
+        rm -f tatus
+        rm -f temp-css.css
+        
+        # Keep only essential PWA files
+        mkdir -p dist
+        cp index.html dist/
+        cp -r css/ dist/ 2>/dev/null || true
+        cp -r js/ dist/ 2>/dev/null || true
+        cp manifest.json dist/ 2>/dev/null || true
+        cp sw.js dist/ 2>/dev/null || true
+        cp favicon.svg dist/ 2>/dev/null || true
+        cp suggestions.jpg dist/ 2>/dev/null || true
+        cp fish_algorithms.json dist/ 2>/dev/null || true
+        cp _config.yml dist/ 2>/dev/null || true
+        
+        # Update service worker cache version for production
+        if [ -f dist/sw.js ]; then
+          sed -i "s/const CACHE_VERSION = .*/const CACHE_VERSION = 'production-$(date +%s)';/" dist/sw.js
+        fi
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./dist
+        name: production-artifact
+
+  deploy-production:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-production
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      with:
+        artifact-name: production-artifact
