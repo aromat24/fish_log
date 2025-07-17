@@ -9,12 +9,13 @@
 
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Ghoti">
   <meta name="mobile-web-app-capable" content="yes">
   <!-- Theme color for light and dark mode -->
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1a202c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" id="theme-color-light">
+  <meta name="theme-color" content="#1a202c" media="(prefers-color-scheme: dark)" id="theme-color-dark">
+  <meta name="theme-color" content="#f8fafc" id="theme-color-default">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/beautiful-buttons.css">
@@ -543,6 +544,19 @@
       body {
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
+      }
+      
+      /* Night mode: Add subtle gradient at top for status bar contrast */
+      [data-theme="night"] body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: env(safe-area-inset-top, 44px);
+        background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, transparent 100%);
+        z-index: 9999;
+        pointer-events: none;
       }
     }
 
@@ -1312,6 +1326,10 @@
             currentThemeBtn.textContent = '☀️';
             currentThemeBtn.title = 'Switch to Day Mode';
           }
+          // Update status bar style for dark theme
+          updateStatusBarStyle('default');
+          // Update theme color
+          updateThemeColor('night');
         } else {
           root.setAttribute('data-theme', 'day'); // Explicitly set day theme instead of removing
           console.log('Applied day theme');
@@ -1319,6 +1337,10 @@
             currentThemeBtn.textContent = '🌙';
             currentThemeBtn.title = 'Switch to Night Mode';
           }
+          // Update status bar style for light theme - use dark content for visibility
+          updateStatusBarStyle('black');
+          // Update theme color
+          updateThemeColor('day');
         }
 
         // Update localStorage and currentTheme variable synchronously
@@ -1331,6 +1353,29 @@
           console.log('Theme update complete, current theme:', currentTheme);
         }, 50);
       }
+
+      function updateStatusBarStyle(style) {
+        // Update Apple status bar style
+        let statusBarMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+        if (statusBarMeta) {
+          statusBarMeta.setAttribute('content', style);
+        }
+      }
+
+      function updateThemeColor(theme) {
+        // Update theme-color meta tag for better browser integration
+        let defaultThemeColor = document.querySelector('meta[id="theme-color-default"]');
+        if (defaultThemeColor) {
+          if (theme === 'night') {
+            defaultThemeColor.setAttribute('content', '#1a202c');
+          } else {
+            defaultThemeColor.setAttribute('content', '#f8fafc');
+          }
+        }
+      }
+
+      // Set status bar style for splashscreen (dark overlay, so use light content)
+      updateStatusBarStyle('default');
 
       function toggleTheme() {
         // Always get the current theme from localStorage to ensure accuracy
