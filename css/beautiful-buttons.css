@@ -63,8 +63,8 @@
   --text-muted: #64748b;
 
   /* Input field specific colors for day mode */
-  --bg-input: #f1f5f9;
-  --bg-input-focus: #e0f2fe;
+  --bg-input: #e2e8f0;
+  --bg-input-focus: #d1d5db;
   --border-input: #cbd5e1;
   --border-input-focus: #0ea5e9;
 
@@ -122,8 +122,8 @@
     --text-muted: #64748b;
 
     /* Input field specific colors for auto light mode */
-    --bg-input: #f1f5f9;
-    --bg-input-focus: #e0f2fe;
+    --bg-input: #e2e8f0;
+    --bg-input-focus: #d1d5db;
     --border-input: #cbd5e1;
     --border-input-focus: #0ea5e9;
 
@@ -1194,7 +1194,7 @@ label {
 .record-entry,
 .species-item,
 #custom-species-list .flex {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   border: 1px solid var(--border-light) !important;
   color: var(--text-primary) !important;
   transition: all 0.3s ease;
@@ -1241,7 +1241,7 @@ label {
 
 /* Species list items */
 #custom-species-list .flex {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   border: 1px solid var(--border-light) !important;
 }
 
@@ -1262,7 +1262,7 @@ label {
 /* === COMPREHENSIVE TILE THEMING === */
 /* Catch History Tiles */
 #catch-log [data-catch-id] {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-light) !important;
 }
@@ -1290,7 +1290,7 @@ label {
 
 /* Records Container Tiles */
 #records-container [data-catch-id] {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-light) !important;
 }
@@ -1318,7 +1318,7 @@ label {
 
 /* Species List Tiles */
 .species-tile {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-light) !important;
 }
@@ -1332,7 +1332,7 @@ label {
 
 /* General tile overrides for any missed elements */
 .bg-white {
-  background-color: var(--bg-modal) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
 }
 
 .text-gray-500 {
@@ -1505,7 +1505,7 @@ label {
 .catch-tile, .record-tile, .species-tile,
 div[data-catch-id], div[data-species], 
 .bg-white {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--bg-input, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-light) !important;
 }
