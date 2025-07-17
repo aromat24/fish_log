@@ -2471,7 +2471,13 @@ function setupTabSystem() {
     if (historyTab) {
         historyTab.addEventListener('click', () => {
             console.log('History tab clicked');
-            switchTab(historyTab, catchLog);
+            // Check if history tab is already active - if so, show statistics modal
+            if (historyTab.classList.contains('active')) {
+                console.log('History tab already active, showing statistics modal');
+                showCatchStatisticsModal();
+            } else {
+                switchTab(historyTab, catchLog);
+            }
         });
     }
 
@@ -3269,4 +3275,120 @@ if (mainLocationNameInput) {
 
     // Add the handler
     mainLocationNameInput.addEventListener('keydown', mainLocationNameInput._enterHandler);
+}
+
+// Catch Statistics Modal Functions
+function showCatchStatisticsModal() {
+    console.log('Showing catch statistics modal');
+    
+    const modal = document.getElementById('catch-stats-modal');
+    if (!modal) {
+        console.error('Catch statistics modal not found');
+        return;
+    }
+
+    // Calculate and populate statistics
+    populateCatchStatistics();
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+    
+    // Setup close handlers
+    setupStatsModalCloseHandlers();
+}
+
+function populateCatchStatistics() {
+    console.log('Calculating catch statistics');
+    
+    // Get all catches from localStorage
+    const catches = JSON.parse(localStorage.getItem('catches') || '[]');
+    console.log('Total catches found:', catches.length);
+    
+    // Calculate total catches
+    const totalCatches = catches.length;
+    document.getElementById('total-catches-count').textContent = totalCatches;
+    
+    // Calculate species breakdown
+    const speciesCount = {};
+    catches.forEach(catchData => {
+        const species = catchData.species || 'Unknown';
+        speciesCount[species] = (speciesCount[species] || 0) + 1;
+    });
+    
+    // Sort species by count (descending)
+    const sortedSpecies = Object.entries(speciesCount)
+        .sort(([,a], [,b]) => b - a);
+    
+    // Populate species list
+    const speciesListContainer = document.getElementById('species-stats-list');
+    if (speciesListContainer) {
+        speciesListContainer.innerHTML = '';
+        
+        if (sortedSpecies.length === 0) {
+            speciesListContainer.innerHTML = '<p class="text-gray-500 text-sm italic">No catches logged yet</p>';
+        } else {
+            sortedSpecies.forEach(([species, count]) => {
+                const speciesItem = document.createElement('div');
+                speciesItem.className = 'flex justify-between items-center p-2 bg-gray-50 rounded';
+                speciesItem.innerHTML = `
+                    <span class="font-medium text-gray-700">${species}</span>
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-semibold">${count}</span>
+                `;
+                speciesListContainer.appendChild(speciesItem);
+            });
+        }
+    }
+    
+    // Calculate unique species count
+    const uniqueSpeciesCount = Object.keys(speciesCount).length;
+    document.getElementById('unique-species-count').textContent = uniqueSpeciesCount;
+    
+    // Calculate this month's catches
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthCatches = catches.filter(catchData => {
+        const catchDate = new Date(catchData.datetime);
+        return catchDate >= startOfMonth;
+    }).length;
+    document.getElementById('month-catches-count').textContent = monthCatches;
+    
+    console.log('Statistics calculated:', {
+        total: totalCatches,
+        unique: uniqueSpeciesCount,
+        thisMonth: monthCatches,
+        speciesCounts: speciesCount
+    });
+}
+
+function setupStatsModalCloseHandlers() {
+    const modal = document.getElementById('catch-stats-modal');
+    const closeBtn = document.getElementById('close-stats-modal-btn');
+    const closeStatsBtn = document.getElementById('close-stats-btn');
+    
+    // Remove existing handlers to prevent duplicates
+    const closeModal = () => {
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    };
+    
+    if (closeBtn) {
+        closeBtn.removeEventListener('click', closeModal);
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
+    if (closeStatsBtn) {
+        closeStatsBtn.removeEventListener('click', closeModal);
+        closeStatsBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close on background click
+    modal.removeEventListener('click', handleModalBackgroundClick);
+    modal.addEventListener('click', handleModalBackgroundClick);
+    
+    function handleModalBackgroundClick(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    }
 }
