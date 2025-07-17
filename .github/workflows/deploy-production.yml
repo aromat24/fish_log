@@ -51,6 +51,7 @@ jobs:
         cp sw.js dist/ 2>/dev/null || true
         cp favicon.svg dist/ 2>/dev/null || true
         cp suggestions.jpg dist/ 2>/dev/null || true
+        cp Splashscreen.png dist/ 2>/dev/null || true
         cp fish_algorithms.json dist/ 2>/dev/null || true
         cp _config.yml dist/ 2>/dev/null || true
         
