@@ -1,0 +1,39 @@
+# .gitignore for fish_log
+# Node modules
+node_modules/
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# OS generated files
+.DS_Store
+Thumbs.db
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+# Jupyter Notebooks
+.ipynb_checkpoints/
+# VS Code
+.vscode/
+# Environment
+.env
+.env.*
+# Build
+/dist/
+/build/
+# CSV, Excel, and database files
+*.csv
+*.xlsx
+*.db
+# Backup files
+*.backup
+# Misc
+*.swp
+*.swo
