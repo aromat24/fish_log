@@ -3,6 +3,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-lock.yaml
+pnpm-debug.log
+.bun/
 
 # Environment variables
 .env
@@ -18,6 +21,8 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+.idea/
+.history/
 
 # OS generated files
 .DS_Store
@@ -27,9 +32,11 @@ yarn-error.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+Icon?
+.AppleDouble
 
 # Logs
-logs
+/logs/
 *.log
 
 # Runtime data
@@ -43,6 +50,8 @@ coverage/
 
 # Database files (if needed to be excluded)
 *.db-journal
+*.sqlite
+*.db
 
 # Temporary folders
 tmp/
@@ -54,3 +63,11 @@ build/
 
 # Service Worker cache (development)
 sw-precache-*
+
+# Test output
+jest-output/
+test-results/
+
+# Docker override files
+docker-compose.override.yml
+*.local.yml
