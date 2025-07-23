@@ -42,14 +42,13 @@ class ServiceWorkerUpdateManager {
         // Listen for new service worker installations
         this.registration.addEventListener('updatefound', () => {
             logger.log('New service worker found, installing...');
-            
             const newWorker = this.registration.installing;
-            
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    logger.log('New service worker installed, waiting to activate');
+                    logger.log('New service worker installed, auto-activating');
                     this.newWorkerAvailable = true;
-                    this.showUpdateNotification();
+                    // Immediately activate and reload for seamless update
+                    this.activateNewServiceWorker();
                 }
             });
         });
