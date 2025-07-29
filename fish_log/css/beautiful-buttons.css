@@ -1,0 +1,1531 @@
+/* Beautiful Buttons for Fish Log App - Based on MagicUI Components */
+
+/* === DAY/NIGHT MODE THEME SYSTEM === */
+:root {
+  /* Day Mode Colors - Much Lighter and Brighter */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  /* Button Colors - Day Mode - Bright and Vibrant */
+  --btn-primary-start: #0ea5e9;
+  --btn-primary-mid: #0284c7;
+  --btn-primary-end: #0369a1;
+  --btn-secondary-start: #f1f5f9;
+  --btn-secondary-mid: #e2e8f0;
+  --btn-secondary-end: #cbd5e0;
+  --btn-text-primary: #ffffff;
+  --btn-text-secondary: #334155;
+
+  /* Border and Shadow Colors - Light and Subtle */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e0;
+  --shadow-light: rgba(15, 23, 42, 0.08);
+  --shadow-medium: rgba(15, 23, 42, 0.15);
+}
+
+/* Night Mode Colors */
+[data-theme="night"] {
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4a5568;
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a0aec0;
+
+  /* Button Colors - Night Mode (Warmer, easier on eyes) */
+  --btn-primary-start: #4a5568;
+  --btn-primary-mid: #718096;
+  --btn-primary-end: #a0aec0;
+  --btn-secondary-start: #2d3748;
+  --btn-secondary-mid: #4a5568;
+  --btn-secondary-end: #718096;
+  --btn-text-primary: #f7fafc;
+  --btn-text-secondary: #e2e8f0;
+
+  /* Softer shadows for night mode */
+  --border-light: #4a5568;
+  --border-medium: #718096;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+}
+
+/* Auto Night Mode (based on system preference) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #4a5568;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+
+    --btn-primary-start: #4a5568;
+    --btn-primary-mid: #718096;
+    --btn-primary-end: #a0aec0;
+    --btn-secondary-start: #2d3748;
+    --btn-secondary-mid: #4a5568;
+    --btn-secondary-end: #718096;
+    --btn-text-primary: #f7fafc;
+    --btn-text-secondary: #e2e8f0;
+
+    --border-light: #4a5568;
+    --border-medium: #718096;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+    --shadow-medium: rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Auto Light Mode (based on system preference) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+
+    --btn-primary-start: #0ea5e9;
+    --btn-primary-mid: #0284c7;
+    --btn-primary-end: #0369a1;
+    --btn-secondary-start: #f1f5f9;
+    --btn-secondary-mid: #e2e8f0;
+    --btn-secondary-end: #cbd5e0;
+    --btn-text-primary: #ffffff;
+    --btn-text-secondary: #334155;
+
+    --border-light: #e2e8f0;
+    --border-medium: #cbd5e0;
+    --shadow-light: rgba(15, 23, 42, 0.08);
+    --shadow-medium: rgba(15, 23, 42, 0.15);
+  }
+}
+
+/* === SHINY BUTTON === */
+@keyframes shiny-slide {
+  0% { --x: 100%; }
+  100% { --x: -100%; }
+}
+
+.shiny-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%);
+  color: var(--btn-text-primary);
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px var(--shadow-medium);
+}
+
+.shiny-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.shiny-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--x, 100%);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  animation: shiny-slide 2s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.shiny-button:hover::before {
+  animation-duration: 0.8s;
+}
+
+/* === RIPPLE EFFECT === */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+}
+
+/* === SHIMMER BUTTON === */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--btn-text-primary);
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.shimmer-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.shimmer-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* === PULSATING BUTTON === */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.pulsating-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--btn-text-primary);
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
+}
+
+.pulsating-button:active {
+  animation-play-state: paused;
+  transform: translateY(0) scale(0.98);
+}
+
+/* === INTERACTIVE HOVER BUTTON === */
+.interactive-hover-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 2rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #4a5568;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-text {
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button .button-arrow {
+  position: absolute;
+  right: 1rem;
+  opacity: 0;
+  transform: translateX(1rem);
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button:active {
+  background: #4a5568;
+  color: white;
+  border-color: #4a5568;
+  transform: scale(0.98);
+}
+
+.interactive-hover-button:active .button-text {
+  transform: translateX(-1rem);
+  opacity: 0;
+}
+
+.interactive-hover-button:active .button-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* === RIPPLE BUTTON === */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.ripple-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  border: 2px solid #4a5568;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ripple-button:active {
+  background: #f7fafc;
+  transform: scale(0.98);
+}
+
+.ripple-button .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(74, 85, 104, 0.3);
+  pointer-events: none;
+  animation: ripple 0.6s linear;
+}
+
+/* === SHIMMER BORDER === */
+@keyframes shimmer-border {
+  0% { border-color: #4a5568; }
+  25% { border-color: #2d3748; }
+  50% { border-color: #718096; }
+  75% { border-color: #4a5568; }
+  100% { border-color: #4a5568; }
+}
+
+.shimmer-border {
+  border: 2px solid #4a5568;
+  animation: shimmer-border 3s ease-in-out infinite;
+}
+
+.shimmer-border:active {
+  animation-duration: 1.5s;
+  transform: scale(0.98);
+}
+
+/* === FISHING THEMED VARIATIONS === */
+
+/* Save Catch Button - Gunmetal Theme */
+.ocean-button {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ocean-button::before {
+  content: '🌊';
+  position: absolute;
+  left: -2rem;
+  transition: all 0.3s ease;
+}
+
+.ocean-button:active::before {
+  left: 0.5rem;
+}
+
+.ocean-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Location Button - Gunmetal Theme */
+.nature-button {
+  background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.nature-button::before {
+  content: '📍';
+  position: absolute;
+  right: -2rem;
+  transition: all 0.3s ease;
+}
+
+.nature-button:active::before {
+  right: 0.5rem;
+}
+
+.nature-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Delete Button - Warning Theme */
+.warning-button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.warning-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* === SUCCESS FEEDBACK === */
+.success-feedback {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .rainbow-button,
+  .shimmer-button,
+  .pulsating-button,
+  .interactive-hover-button,
+  .ripple-button,
+  .ocean-button,
+  .nature-button,
+  .warning-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* === MOBILE RESPONSIVE IMPROVEMENTS === */
+@media (max-width: 640px) {
+  /* Tab layout for mobile - ensure proper spacing */
+  .tab-button {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.1rem;
+  }
+  
+  /* Active tab label responsive behavior */
+  #active-tab-label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* === LOCATION BUTTONS CONTAINER === */
+.location-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.location-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.location-main-button {
+  flex: 0 0 auto;
+}
+
+.location-control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.location-status-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+#location-status {
+  flex: 1;
+}
+
+/* Ensure all location buttons have consistent sizing */
+.location-buttons-row .shiny-button {
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Make Get Location button more compact */
+#get-location-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+#get-location-btn .lucide {
+  margin-right: 0.375rem;
+}
+
+/* Mobile responsive location button layout */
+@media (max-width: 640px) {
+  .location-buttons-row {
+    gap: 0.375rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .location-control-buttons {
+    gap: 0.25rem;
+  }
+  
+  .location-status-row {
+    text-align: left;
+  }
+  
+  /* Ensure consistent sizing on mobile */
+  .location-buttons-row .shiny-button {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+  
+  /* Compact Get Location button for mobile */
+  #get-location-btn {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    min-width: auto;
+  }
+  
+  #get-location-btn .lucide {
+    margin-right: 0.25rem;
+  }
+  
+  /* Ensure theme and options buttons are properly aligned */
+  #theme-toggle-btn,
+  #data-options-btn {
+    min-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+
+/* === ACCESSIBILITY === */
+.rainbow-button:focus,
+.shimmer-button:focus,
+.pulsating-button:focus,
+.interactive-hover-button:focus,
+.ripple-button:focus,
+.ocean-button:focus,
+.nature-button:focus,
+.warning-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-button,
+  .shimmer-button::before,
+  .pulsating-button {
+    animation: none;
+  }
+  
+  .interactive-hover-button .button-text,
+  .interactive-hover-button .button-arrow {
+    transition: none;
+  }
+}
+
+/* === TAB BUTTONS === */
+.tab-button.active {
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%) !important;
+  color: var(--btn-text-primary) !important;
+  border: 2px solid var(--border-medium) !important;
+  box-shadow: 0 4px 15px var(--shadow-medium) !important;
+}
+
+.tab-button:not(.active) {
+  background: linear-gradient(135deg, var(--btn-secondary-start) 0%, var(--btn-secondary-mid) 50%, var(--btn-secondary-end) 100%) !important;
+  color: var(--btn-text-secondary) !important;
+  border: 2px solid var(--border-light) !important;
+  box-shadow: 0 2px 8px var(--shadow-light) !important;
+}
+
+/* === TAB BUTTON STYLING === */
+.tab-button {
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  min-width: 48px;
+  min-height: 48px;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-button.active {
+  transform: translateY(-2px);
+}
+
+.tab-button:not(.active) {
+  transform: translateY(0);
+}
+
+.tab-button:active:not(.active) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Hide text label initially, only show when active */
+#active-tab-label {
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+#active-tab-label.hidden {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+/* === TAB LAYOUT IMPROVEMENTS === */
+.tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.tab-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tab-right-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Ensure proper spacing on different screen sizes */
+@media (max-width: 768px) {
+  .tab-container {
+    gap: 0.25rem;
+    overflow-x: visible;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  
+  .tab-left-group {
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .tab-right-group {
+    gap: 0.25rem;
+    flex-shrink: 0;
+    max-width: 60%;
+  }
+  
+  #active-tab-label {
+    font-size: 0.875rem;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Make sure inactive tabs stick to right on mobile */
+  .tab-right-group {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+/* Mobile specific improvements for label visibility */
+@media (max-width: 640px) {
+  #active-tab-label {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    max-width: none; /* Remove width restriction */
+    width: auto;
+    overflow: visible; /* Allow full text to show */
+  }
+  
+  /* Ensure Records label is fully visible when active */
+  .tab-right-group #active-tab-label {
+    max-width: none;
+    width: auto;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+  
+  /* Adjust spacing for better label visibility */
+  .tab-right-group {
+    gap: 0.15rem;
+  }
+  
+  /* Ensure tab container can accommodate full labels */
+  .tab-container {
+    overflow-x: visible;
+    flex-wrap: nowrap;
+  }
+  
+  .tab-left-group {
+    flex: 1;
+    min-width: 0;
+    overflow: visible;
+  }
+  
+  .tab-right-group {
+    flex-shrink: 0;
+    max-width: none; /* Remove width restriction */
+    overflow: visible;
+  }
+}
+
+/* === MAIN CONTAINER THEMING === */
+.container {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Landing page adjustments for theming */
+#landing-page {
+  color: var(--text-primary);
+}
+
+#landing-header h1,
+#landing-header p {
+  color: white; /* Keep white for landing page contrast */
+}
+
+/* === TAB CONTENT THEMING === */
+.tab-container .text-lg {
+  color: var(--text-primary) !important;
+}
+
+.active-tab-label {
+  color: var(--text-primary) !important;
+}
+
+/* === FORM AND INPUT THEMING === */
+.form-section {
+  background-color: var(--bg-form);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Form headings */
+.form-section h2 {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-light);
+}
+
+/* Input fields */
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+input[type="file"],
+textarea,
+select {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-input) !important;
+  transition: all 0.3s ease !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--border-input-focus) !important;
+  box-shadow: 0 0 0 3px var(--shadow-input) !important;
+  outline: none !important;
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Labels */
+label {
+  color: var(--text-label) !important;
+}
+
+/* Species dropdown */
+#species-dropdown {
+  background-color: var(--bg-secondary) !important;
+  border: 2px solid var(--border-input) !important;
+  color: var(--text-primary) !important;
+}
+
+.species-option {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.2s ease;
+}
+
+.species-option:hover,
+.species-option.highlighted {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* === MODAL THEMING === */
+.modal-content {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-light) !important;
+}
+
+/* Modal text elements */
+.modal-content h3 {
+  color: var(--btn-primary-start) !important;
+}
+
+.modal-content p {
+  color: var(--text-secondary) !important;
+}
+
+.modal-content .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.modal-content .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.modal-content .text-blue-600 {
+  color: var(--btn-primary-start) !important;
+}
+
+.modal-content .text-blue-700 {
+  color: var(--btn-primary-end) !important;
+}
+
+/* Close button */
+#close-modal-btn,
+#close-edit-modal-btn,
+#close-map-modal-btn {
+  color: var(--text-muted) !important;
+  transition: color 0.2s ease;
+}
+
+#close-modal-btn:hover,
+#close-modal-btn:active,
+#close-edit-modal-btn:hover,
+#close-edit-modal-btn:active,
+#close-map-modal-btn:hover,
+#close-map-modal-btn:active {
+  color: var(--text-primary) !important;
+}
+
+/* === STATUS AND HELPER TEXT === */
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+#location-status {
+  color: var(--text-muted) !important;
+}
+
+#photo-helper-text {
+  color: var(--text-muted) !important;
+}
+
+/* === DROPDOWN MENU THEMING === */
+#data-options-menu {
+  background-color: var(--bg-secondary) !important;
+  border: 2px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+}
+
+#data-options-menu button,
+#data-options-menu label {
+  color: var(--text-primary) !important;
+  transition: background-color 0.2s ease;
+}
+
+#data-options-menu button:hover,
+#data-options-menu label:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* === BUTTON BORDER UPDATES === */
+/* Update all buttons except save catch to have consistent borders */
+.shiny-button:not(.shimmer-border) {
+  border: 1px solid var(--border-medium) !important;
+}
+
+/* Tab buttons get special styling */
+.tab-button {
+  border: 1px solid var(--border-medium) !important;
+}
+
+/* Save catch button keeps its thicker border and special effect */
+.shiny-button.shimmer-border {
+  border: 2px solid var(--border-input-focus) !important;
+}
+
+/* Manage species button styling to match theme */
+#manage-species-btn {
+  color: var(--text-muted) !important;
+  transition: color 0.2s ease;
+}
+
+#manage-species-btn:active {
+  color: var(--text-primary) !important;
+}
+
+/* === NOTIFICATION THEMING === */
+#message-box {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#message-box.success {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #6ee7b7 !important;
+}
+
+[data-theme="night"] #message-box.success {
+  background-color: #064e3b !important;
+  color: #a7f3d0 !important;
+  border-color: #047857 !important;
+}
+
+#message-box.error {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+[data-theme="night"] #message-box.error {
+  background-color: #7f1d1d !important;
+  color: #fca5a5 !important;
+  border-color: #dc2626 !important;
+}
+
+/* === CATCH LOG THEMING === */
+#catch-log .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+/* === MAP VIEW THEMING === */
+#map-view-container {
+  border-color: var(--border-light) !important;
+}
+
+#map-view-container .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+/* === CATCH HISTORY AND RECORDS TILES === */
+.catch-entry,
+.record-entry,
+.species-item,
+#custom-species-list .flex {
+  background-color: var(--bg-modal) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.3s ease;
+}
+
+.catch-entry:hover,
+.record-entry:hover,
+.species-item:hover,
+#custom-species-list .flex:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Catch entry text elements */
+.catch-entry h4,
+.catch-entry .text-lg {
+  color: var(--btn-primary-start) !important;
+}
+
+.catch-entry p,
+.catch-entry .text-sm,
+.catch-entry .text-xs {
+  color: var(--text-secondary) !important;
+}
+
+.catch-entry .text-gray-500,
+.catch-entry .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+/* Record entry text elements */
+.record-entry h4,
+.record-entry .text-lg {
+  color: var(--btn-primary-start) !important;
+}
+
+.record-entry p,
+.record-entry .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+/* Species list items */
+#custom-species-list .flex {
+  background-color: var(--bg-modal) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#custom-species-list .flex span {
+  color: var(--text-primary) !important;
+}
+
+#custom-species-list .flex button {
+  color: var(--text-muted) !important;
+  transition: color 0.2s ease;
+}
+
+#custom-species-list .flex button:hover {
+  color: var(--text-primary) !important;
+}
+
+/* === COMPREHENSIVE TILE THEMING === */
+/* Catch History Tiles */
+#catch-log [data-catch-id] {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#catch-log [data-catch-id] .text-lg,
+#catch-log [data-catch-id] h3 {
+  color: var(--text-primary) !important;
+}
+
+#catch-log [data-catch-id] .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+#catch-log [data-catch-id] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+#catch-log [data-catch-id] .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+#catch-log [data-catch-id] .font-medium {
+  color: var(--text-primary) !important;
+}
+
+/* Records Container Tiles */
+#records-container [data-catch-id] {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+#records-container [data-catch-id] .text-lg,
+#records-container [data-catch-id] h3 {
+  color: var(--text-primary) !important;
+}
+
+#records-container [data-catch-id] .text-sm {
+  color: var(--text-secondary) !important;
+}
+
+#records-container [data-catch-id] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+#records-container [data-catch-id] .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+#records-container [data-catch-id] .font-medium {
+  color: var(--text-primary) !important;
+}
+
+/* Species List Tiles */
+.species-tile {
+  background-color: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.species-tile .text-lg,
+.species-tile .text-sm,
+.species-tile h3,
+.species-tile p {
+  color: var(--text-primary) !important;
+}
+
+/* General tile overrides for any missed elements */
+.bg-white {
+  background-color: var(--bg-modal) !important;
+}
+
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.text-blue-700 {
+  color: #3182ce !important;
+}
+
+/* Ensure consistent text readability */
+[data-theme="night"] .text-blue-700 {
+  color: #63b3ed !important; /* Lighter blue for night mode */
+}
+
+/* No catches message */
+#catch-log .italic {
+  color: var(--text-muted) !important;
+}
+
+#records-container .italic {
+  color: var(--text-muted) !important;
+}
+
+/* === BODY AND MAIN BACKGROUND THEMING === */
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Override Tailwind body gradient specifically */
+body.bg-gradient-to-br {
+  background: var(--bg-primary) !important;
+}
+
+/* Remove body padding and center positioning that creates the "card" effect */
+body.min-h-screen.flex.items-center.justify-center {
+  padding: 0 !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+}
+
+.min-h-screen {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Make the main container fill the entire screen */
+.container.mx-auto {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+}
+
+/* Main container backgrounds */
+.container,
+.mx-auto {
+  background-color: var(--bg-primary) !important;
+}
+
+/* === MAP MODAL OPTIMIZATION === */
+#map-modal #map-container {
+  min-height: 300px;
+  height: 100%;
+}
+
+/* Ensure map modal is properly sized without scrolling */
+#map-modal .modal-content {
+  height: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+#map-modal .border-beam-container {
+  overflow: hidden;
+}
+
+/* Responsive map modal adjustments */
+@media (max-width: 640px) {
+  #map-modal #map-container {
+    min-height: 250px;
+  }
+  
+  #map-modal .modal-content {
+    padding: 0.75rem;
+  }
+}
+
+/* === COMPREHENSIVE THEMING FOR FORMS, INPUTS, AND MODALS === */
+
+/* Container and main app theming */
+.container, .max-w-3xl {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.3s ease;
+  /* Remove problematic border */
+}
+
+/* Override any Tailwind background gradients */
+.bg-gradient-to-br {
+  background: var(--bg-primary) !important;
+}
+
+/* Form container theming - ensure forms blend with background */
+form {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Form sections should match main background */
+.form-section {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Input field theming */
+input, textarea, select {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--btn-primary-start) !important;
+  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+  outline: none !important;
+}
+
+/* Specific input type styling */
+input[type="text"], input[type="number"], input[type="datetime-local"], input[type="email"], input[type="password"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+  border-color: var(--btn-primary-start) !important;
+  box-shadow: 0 0 0 2px var(--shadow-light) !important;
+}
+
+/* Placeholder text styling */
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
+}
+
+/* Label theming */
+label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+/* Helper text and status text */
+.text-sm {
+  color: var(--text-muted) !important;
+}
+
+/* Tile theming for catch history, records, and species list */
+.catch-tile, .record-tile, .species-tile,
+div[data-catch-id], div[data-species], 
+.bg-white {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.catch-tile h3, .record-tile h3, .species-tile h3,
+div[data-catch-id] h3, div[data-species] h3,
+.text-blue-700 {
+  color: var(--btn-primary-start) !important;
+}
+
+.catch-tile p, .record-tile p, .species-tile p,
+div[data-catch-id] p, div[data-species] p,
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+/* Override any remaining Tailwind gray classes */
+.text-gray-400, .text-gray-700, .text-gray-800 {
+  color: var(--text-muted) !important;
+}
+
+/* Container backgrounds */
+.container, .max-w-4xl {
+  background-color: var(--bg-primary);
+}
+
+/* Dropdown menu theming */
+.dropdown-content {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+}
+
+.dropdown-content button {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-content button:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Status text theming */
+.text-green-600 {
+  color: #059669 !important;
+}
+
+.text-red-600 {
+  color: #dc2626 !important;
+}
+
+.text-yellow-600 {
+  color: #d97706 !important;
+}
+
+/* Message box theming */
+#message-box {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Loading and disabled states */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments for theming */
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1rem;
+  }
+  
+  input, textarea, select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Fix container border and layout issues */
+.container.mx-auto.max-w-3xl {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: var(--bg-secondary) !important;
+  border-radius: 0 !important;
+}
+
+/* Additional container border fixes */
+.max-w-3xl.rounded-xl {
+  border: none !important;
+  background-color: var(--bg-secondary) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure the main container has proper theming */
+.app-container {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Remove Tailwind rounded and shadow classes */
+.rounded-xl {
+  border-radius: 0 !important;
+}
+
+.shadow-lg {
+  box-shadow: none !important;
+}
+
+/* Ensure landing page doesn't interfere with main app */
+#landing-page {
+  background-color: transparent;
+}
+
+#app-content {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Force override any conflicting Tailwind classes */
+.bg-gray-50, .bg-gray-100, .from-gray-50, .to-gray-100 {
+  background: var(--bg-primary) !important;
+}
+
+/* Override Tailwind input styles specifically */
+.bg-white input, .bg-white textarea, .bg-white select,
+input.bg-white, textarea.bg-white, select.bg-white {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* Override Tailwind text colors */
+.text-gray-900, .text-gray-800, .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-600, .text-gray-500 {
+  color: var(--text-secondary) !important;
+}
+
+/* === THEME TOGGLE BUTTON SPECIFIC STYLING === */
+#theme-toggle-btn {
+  background: linear-gradient(135deg, var(--btn-secondary-start) 0%, var(--btn-secondary-mid) 50%, var(--btn-secondary-end) 100%) !important;
+  color: var(--btn-text-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+#theme-toggle-btn:hover {
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-end) 100%) !important;
+  color: var(--btn-text-primary) !important;
+  transform: translateY(-1px) !important;
+}
+
+#theme-toggle-btn:active {
+  transform: translateY(0) !important;
+  background: linear-gradient(135deg, var(--btn-primary-end) 0%, var(--btn-primary-mid) 50%, var(--btn-primary-start) 100%) !important;
+}
+
+/* Ensure theme toggle button is not disabled by any other styles */
+#theme-toggle-btn:not(:disabled) {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* === ENSURE HTML AND BODY FILL SCREEN === */
+html, body {
+  background-color: var(--bg-primary) !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+  /* Fill safe area for iOS/Android status bar */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.app-container, .container, .mx-auto {
+  min-height: 100vh !important;
+  height: 100% !important;
+}

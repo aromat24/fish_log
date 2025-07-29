@@ -1,0 +1,93 @@
+{
+  "342": {
+    "species_name": "Blacktail (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.746667675335004e-06,
+      "b": 3.2179529036703953,
+      "r_squared": 0.981916317649533,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "333": {
+    "species_name": "Dusky kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.314000631977542e-06,
+      "b": 3.026615580596188,
+      "r_squared": 0.9989996454212032,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "345": {
+    "species_name": "Galjoen (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.94615030727897e-06,
+      "b": 3.584837066010104,
+      "r_squared": 0.9994991700600645,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "350": {
+    "species_name": "Garrick (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.435466493740513e-07,
+      "b": 4.128618996872737,
+      "r_squared": 0.9963818972680293,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "535": {
+    "species_name": "Malabar kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.152237299727735e-06,
+      "b": 3.446745555397344,
+      "r_squared": 0.9841123834776946,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "344": {
+    "species_name": "Shad (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.423675728988069e-05,
+      "b": 2.9815854258538184,
+      "r_squared": 0.9994904099023428,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "432": {
+    "species_name": "Brown shyshark (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2475871588983019e-06,
+      "b": 3.6423004507194268,
+      "r_squared": 0.9992867237667923,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  }
+}

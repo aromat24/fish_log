@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Log Functionality Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-output {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .test-button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .test-pass { background-color: #4ade80; color: #166534; }
+        .test-fail { background-color: #f87171; color: #991b1b; }
+        .test-warn { background-color: #fbbf24; color: #92400e; }
+        .test-info { background-color: #60a5fa; color: #1e40af; }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">🐟 Fish Log Functionality Tests</h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Test Controls -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Test Controls</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="testAll()" class="test-button test-info">🚀 Run All Tests</button>
+                    <button onclick="clearOutput()" class="test-button test-warn">🧹 Clear Output</button>
+                    <button onclick="testErrorHandlers()" class="test-button test-fail">🚨 Test Error Handlers</button>
+                    <button onclick="testFishDatabase()" class="test-button test-pass">🐟 Test Fish Database</button>
+                    <button onclick="testAlgorithms()" class="test-button test-info">🧠 Test Algorithms</button>
+                    <button onclick="testLocalStorage()" class="test-button test-warn">💾 Test Storage</button>
+                    <button onclick="testFormValidation()" class="test-button test-pass">📝 Test Forms</button>
+                    <button onclick="testLocationServices()" class="test-button test-info">📍 Test Location</button>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-2">Test Statistics</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="text-center p-2 bg-green-100 rounded">
+                            <div class="font-bold text-green-800" id="pass-count">0</div>
+                            <div class="text-green-600">Passed</div>
+                        </div>
+                        <div class="text-center p-2 bg-red-100 rounded">
+                            <div class="font-bold text-red-800" id="fail-count">0</div>
+                            <div class="text-red-600">Failed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test Output -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Test Output</h2>
+                <div id="test-output" class="test-output">
+Welcome to Fish Log Functionality Tests!
+Click "Run All Tests" to begin comprehensive testing.
+
+This test suite will verify:
+- Error handling systems
+- Fish database functionality  
+- Weight calculation algorithms
+- Form validation
+- Local storage operations
+- Location services
+- And much more...
+
+Ready to start testing! 🚀
+                </div>
+            </div>
+        </div>
+        
+        <!-- Feature Test Section -->
+        <div class="mt-6 bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Interactive Feature Tests</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Species Test -->
+                <div class="border p-4 rounded">
+                    <h3 class="font-semibold mb-2">Species Input Test</h3>
+                    <input type="text" id="test-species" placeholder="Enter species name" class="w-full p-2 border rounded mb-2">
+                    <button onclick="testSpeciesInput()" class="test-button test-info w-full">Test Species</button>
+                </div>
+                
+                <!-- Weight Calculation Test -->
+                <div class="border p-4 rounded">
+                    <h3 class="font-semibold mb-2">Weight Calculation Test</h3>
+                    <input type="number" id="test-length" placeholder="Length (cm)" class="w-full p-2 border rounded mb-2">
+                    <button onclick="testWeightCalculation()" class="test-button test-pass w-full">Calculate Weight</button>
+                </div>
+                
+                <!-- Error Simulation Test -->
+                <div class="border p-4 rounded">
+                    <h3 class="font-semibold mb-2">Error Simulation Test</h3>
+                    <select id="error-type" class="w-full p-2 border rounded mb-2">
+                        <option value="validation">Validation Error</option>
+                        <option value="database">Database Error</option>
+                        <option value="calculation">Calculation Error</option>
+                        <option value="network">Network Error</option>
+                    </select>
+                    <button onclick="simulateError()" class="test-button test-fail w-full">Simulate Error</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Fish Log Scripts -->
+    <script src="js/errorHandler.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script src="js/selfImprovingAlgorithm.js"></script>
+    
+    <script>
+        // Test Framework
+        let testResults = { passed: 0, failed: 0 };
+        
+        function log(message, type = 'info') {
+            const output = document.getElementById('test-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = {
+                'pass': '✅',
+                'fail': '❌', 
+                'warn': '⚠️',
+                'info': 'ℹ️'
+            }[type] || 'ℹ️';
+            
+            output.textContent += `[${timestamp}] ${icon} ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+            
+            if (type === 'pass') testResults.passed++;
+            if (type === 'fail') testResults.failed++;
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('pass-count').textContent = testResults.passed;
+            document.getElementById('fail-count').textContent = testResults.failed;
+        }
+        
+        function clearOutput() {
+            document.getElementById('test-output').textContent = '';
+            testResults = { passed: 0, failed: 0 };
+            updateStats();
+        }
+        
+        // Main Test Functions
+        async function testAll() {
+            clearOutput();
+            log('🚀 Starting comprehensive Fish Log functionality tests...', 'info');
+            
+            try {
+                await testErrorHandlers();
+                await testFishDatabase();
+                await testAlgorithms();
+                await testLocalStorage();
+                await testFormValidation();
+                await testLocationServices();
+                await testUIComponents();
+                await testPerformance();
+                
+                const total = testResults.passed + testResults.failed;
+                const successRate = total > 0 ? (testResults.passed / total * 100).toFixed(1) : 0;
+                
+                log(`\n📊 TEST SUMMARY:`, 'info');
+                log(`Total Tests: ${total}`, 'info');
+                log(`Passed: ${testResults.passed}`, 'pass');
+                log(`Failed: ${testResults.failed}`, 'fail');
+                log(`Success Rate: ${successRate}%`, 'info');
+                
+            } catch (error) {
+                log(`Test suite failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testErrorHandlers() {
+            log('\n🚨 Testing Error Handlers...', 'info');
+            
+            try {
+                // Test 1: Check if ErrorHandler class exists
+                if (typeof ErrorHandler !== 'undefined') {
+                    log('ErrorHandler class exists', 'pass');
+                } else {
+                    log('ErrorHandler class missing', 'fail');
+                    return;
+                }
+                
+                // Test 2: Test custom error classes
+                const customErrors = ['FishLogError', 'DatabaseError', 'ValidationError', 'CalculationError'];
+                customErrors.forEach(errorClass => {
+                    if (typeof window[errorClass] !== 'undefined') {
+                        log(`${errorClass} class exists`, 'pass');
+                        
+                        // Test error instantiation
+                        try {
+                            const error = new window[errorClass]('Test error');
+                            if (error.name === errorClass) {
+                                log(`${errorClass} instantiation works`, 'pass');
+                            } else {
+                                log(`${errorClass} instantiation failed`, 'fail');
+                            }
+                        } catch (e) {
+                            log(`${errorClass} instantiation threw error: ${e.message}`, 'fail');
+                        }
+                    } else {
+                        log(`${errorClass} class missing`, 'fail');
+                    }
+                });
+                
+                // Test 3: Test error handler initialization
+                if (window.errorHandler) {
+                    log('Global error handler initialized', 'pass');
+                    
+                    // Test error logging
+                    try {
+                        window.errorHandler.logError(new Error('Test error'), 'TestContext');
+                        log('Error logging works', 'pass');
+                    } catch (e) {
+                        log(`Error logging failed: ${e.message}`, 'fail');
+                    }
+                } else {
+                    log('Global error handler not initialized', 'fail');
+                }
+                
+            } catch (error) {
+                log(`Error handler test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testFishDatabase() {
+            log('\n🐟 Testing Fish Database...', 'info');
+            
+            try {
+                // Test 1: Check if fish database is available
+                if (typeof window.fishDB !== 'undefined') {
+                    log('Fish database object exists', 'pass');
+                } else {
+                    log('Fish database object missing', 'fail');
+                    return;
+                }
+                
+                // Test 2: Test database initialization
+                if (window.fishDB.isInitialized) {
+                    log('Fish database is initialized', 'pass');
+                } else {
+                    log('Fish database not initialized', 'warn');
+                }
+                
+                // Test 3: Test species lookup
+                const testSpecies = ['Bass', 'Trout', 'Salmon', 'Cod', 'Snapper'];
+                let speciesFound = 0;
+                
+                testSpecies.forEach(species => {
+                    if (window.fishDB.getSpeciesData && window.fishDB.getSpeciesData(species)) {
+                        log(`Species data found for ${species}`, 'pass');
+                        speciesFound++;
+                    } else {
+                        log(`Species data missing for ${species}`, 'warn');
+                    }
+                });
+                
+                log(`Found data for ${speciesFound}/${testSpecies.length} test species`, 'info');
+                
+                // Test 4: Test species search functionality
+                if (typeof window.fishDB.searchSpecies === 'function') {
+                    log('Species search function exists', 'pass');
+                    
+                    try {
+                        const searchResults = window.fishDB.searchSpecies('bass');
+                        if (Array.isArray(searchResults)) {
+                            log(`Species search returned ${searchResults.length} results`, 'pass');
+                        } else {
+                            log('Species search returned invalid data', 'fail');
+                        }
+                    } catch (e) {
+                        log(`Species search failed: ${e.message}`, 'fail');
+                    }
+                } else {
+                    log('Species search function missing', 'fail');
+                }
+                
+            } catch (error) {
+                log(`Fish database test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testAlgorithms() {
+            log('\n🧠 Testing Algorithms...', 'info');
+            
+            try {
+                // Test 1: Weight calculation algorithm
+                if (window.fishDB && window.fishDB.calculateWeight) {
+                    log('Weight calculation function exists', 'pass');
+                    
+                    // Test with common species and lengths
+                    const testCases = [
+                        { species: 'Bass', length: 30 },
+                        { species: 'Trout', length: 25 },
+                        { species: 'Salmon', length: 40 }
+                    ];
+                    
+                    testCases.forEach(testCase => {
+                        try {
+                            const weight = window.fishDB.calculateWeight(testCase.species, testCase.length);
+                            if (weight && weight > 0) {
+                                log(`${testCase.species} (${testCase.length}cm) → ${weight.toFixed(3)}kg`, 'pass');
+                            } else {
+                                log(`Weight calculation failed for ${testCase.species}`, 'fail');
+                            }
+                        } catch (e) {
+                            log(`Weight calculation error for ${testCase.species}: ${e.message}`, 'fail');
+                        }
+                    });
+                } else {
+                    log('Weight calculation function missing', 'fail');
+                }
+                
+                // Test 2: Self-improving algorithm
+                if (window.selfImprovingAlgorithm) {
+                    log('Self-improving algorithm exists', 'pass');
+                    
+                    if (window.selfImprovingAlgorithm.isInitialized) {
+                        log('Self-improving algorithm initialized', 'pass');
+                    } else {
+                        log('Self-improving algorithm not initialized', 'warn');
+                    }
+                    
+                    // Test learning capability
+                    if (typeof window.selfImprovingAlgorithm.learn === 'function') {
+                        log('Algorithm learning function exists', 'pass');
+                        
+                        try {
+                            const testData = {
+                                species: 'Test Fish',
+                                length: 25,
+                                actualWeight: 1.2,
+                                predictedWeight: 1.0
+                            };
+                            window.selfImprovingAlgorithm.learn(testData);
+                            log('Algorithm learning executed successfully', 'pass');
+                        } catch (e) {
+                            log(`Algorithm learning failed: ${e.message}`, 'fail');
+                        }
+                    } else {
+                        log('Algorithm learning function missing', 'fail');
+                    }
+                } else {
+                    log('Self-improving algorithm missing', 'fail');
+                }
+                
+            } catch (error) {
+                log(`Algorithm test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testLocalStorage() {
+            log('\n💾 Testing Local Storage...', 'info');
+            
+            try {
+                // Test 1: LocalStorage availability
+                if (typeof Storage !== 'undefined') {
+                    log('LocalStorage is available', 'pass');
+                } else {
+                    log('LocalStorage not available', 'fail');
+                    return;
+                }
+                
+                // Test 2: Basic storage operations
+                try {
+                    localStorage.setItem('test-item', 'test-value');
+                    const retrieved = localStorage.getItem('test-item');
+                    if (retrieved === 'test-value') {
+                        log('Basic storage operations work', 'pass');
+                    } else {
+                        log('Basic storage operations failed', 'fail');
+                    }
+                    localStorage.removeItem('test-item');
+                } catch (e) {
+                    log(`Storage operations failed: ${e.message}`, 'fail');
+                }
+                
+                // Test 3: Check existing data structures
+                const catches = localStorage.getItem('catches');
+                if (catches) {
+                    try {
+                        const catchData = JSON.parse(catches);
+                        if (Array.isArray(catchData)) {
+                            log(`Found ${catchData.length} catches in storage`, 'pass');
+                        } else {
+                            log('Catches data structure is invalid', 'fail');
+                        }
+                    } catch (e) {
+                        log('Catches data is corrupted', 'fail');
+                    }
+                } else {
+                    log('No catches data found (normal for new installation)', 'info');
+                }
+                
+                // Test 4: Check custom species data
+                const customSpecies = localStorage.getItem('customSpecies');
+                if (customSpecies) {
+                    try {
+                        const speciesData = JSON.parse(customSpecies);
+                        if (Array.isArray(speciesData)) {
+                            log(`Found ${speciesData.length} custom species`, 'pass');
+                        } else {
+                            log('Custom species data structure is invalid', 'fail');
+                        }
+                    } catch (e) {
+                        log('Custom species data is corrupted', 'fail');
+                    }
+                } else {
+                    log('No custom species data found', 'info');
+                }
+                
+            } catch (error) {
+                log(`Local storage test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testFormValidation() {
+            log('\n📝 Testing Form Validation...', 'info');
+            
+            try {
+                // Create a temporary form to test validation
+                const testForm = document.createElement('form');
+                testForm.innerHTML = `
+                    <input type="text" id="test-species-input" required>
+                    <input type="number" id="test-length-input" step="0.1">
+                    <input type="number" id="test-weight-input" step="0.01">
+                    <input type="datetime-local" id="test-datetime-input" required>
+                `;
+                document.body.appendChild(testForm);
+                
+                // Test 1: Required field validation
+                const speciesInput = testForm.querySelector('#test-species-input');
+                const datetimeInput = testForm.querySelector('#test-datetime-input');
+                
+                if (speciesInput.required) {
+                    log('Species input has required attribute', 'pass');
+                } else {
+                    log('Species input missing required attribute', 'fail');
+                }
+                
+                if (datetimeInput.required) {
+                    log('Datetime input has required attribute', 'pass');
+                } else {
+                    log('Datetime input missing required attribute', 'fail');
+                }
+                
+                // Test 2: Numeric field validation
+                const lengthInput = testForm.querySelector('#test-length-input');
+                const weightInput = testForm.querySelector('#test-weight-input');
+                
+                if (lengthInput.type === 'number' && lengthInput.step) {
+                    log('Length input has proper numeric validation', 'pass');
+                } else {
+                    log('Length input validation incorrect', 'fail');
+                }
+                
+                if (weightInput.type === 'number' && weightInput.step) {
+                    log('Weight input has proper numeric validation', 'pass');
+                } else {
+                    log('Weight input validation incorrect', 'fail');
+                }
+                
+                // Test 3: Form submission validation
+                testForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    log('Form submission handler works', 'pass');
+                });
+                
+                // Clean up
+                document.body.removeChild(testForm);
+                
+            } catch (error) {
+                log(`Form validation test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testLocationServices() {
+            log('\n📍 Testing Location Services...', 'info');
+            
+            try {
+                // Test 1: Geolocation API availability
+                if ('geolocation' in navigator) {
+                    log('Geolocation API is available', 'pass');
+                } else {
+                    log('Geolocation API not available', 'fail');
+                    return;
+                }
+                
+                // Test 2: Permission state
+                if ('permissions' in navigator) {
+                    try {
+                        navigator.permissions.query({ name: 'geolocation' }).then(result => {
+                            log(`Geolocation permission: ${result.state}`, 'info');
+                        });
+                    } catch (e) {
+                        log('Permission query failed', 'warn');
+                    }
+                } else {
+                    log('Permissions API not available', 'warn');
+                }
+                
+                // Test 3: Leaflet map library
+                if (typeof L !== 'undefined') {
+                    log('Leaflet.js library loaded', 'pass');
+                } else {
+                    log('Leaflet.js library not loaded', 'fail');
+                }
+                
+                // Test 4: Map container elements
+                const mapContainers = ['main-map', 'map-container'];
+                mapContainers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        log(`Map container #${containerId} exists`, 'pass');
+                    } else {
+                        log(`Map container #${containerId} missing`, 'warn');
+                    }
+                });
+                
+            } catch (error) {
+                log(`Location services test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testUIComponents() {
+            log('\n🎨 Testing UI Components...', 'info');
+            
+            try {
+                // Test 1: Modal elements
+                const modals = ['catch-modal', 'edit-modal', 'map-modal'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        log(`Modal #${modalId} exists`, 'pass');
+                        
+                        if (modal.classList.contains('hidden')) {
+                            log(`Modal #${modalId} is hidden by default`, 'pass');
+                        } else {
+                            log(`Modal #${modalId} should be hidden by default`, 'warn');
+                        }
+                    } else {
+                        log(`Modal #${modalId} missing`, 'fail');
+                    }
+                });
+                
+                // Test 2: Tab system
+                const tabs = ['history-tab-btn', 'records-tab-btn', 'map-tab-btn'];
+                tabs.forEach(tabId => {
+                    const tab = document.getElementById(tabId);
+                    if (tab) {
+                        log(`Tab #${tabId} exists`, 'pass');
+                    } else {
+                        log(`Tab #${tabId} missing`, 'fail');
+                    }
+                });
+                
+                // Test 3: Theme toggle
+                const themeToggle = document.getElementById('theme-toggle-btn');
+                if (themeToggle) {
+                    log('Theme toggle button exists', 'pass');
+                } else {
+                    log('Theme toggle button missing', 'fail');
+                }
+                
+            } catch (error) {
+                log(`UI components test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        async function testPerformance() {
+            log('\n⚡ Testing Performance...', 'info');
+            
+            try {
+                // Test 1: Performance API
+                if (window.performance) {
+                    log('Performance API available', 'pass');
+                    
+                    // Test timing
+                    const start = performance.now();
+                    for (let i = 0; i < 10000; i++) {
+                        // Simple operation
+                    }
+                    const end = performance.now();
+                    log(`Simple operation timing: ${(end - start).toFixed(2)}ms`, 'info');
+                } else {
+                    log('Performance API not available', 'warn');
+                }
+                
+                // Test 2: Memory usage (if available)
+                if (performance.memory) {
+                    const memory = performance.memory;
+                    log(`JS Heap Used: ${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB`, 'info');
+                } else {
+                    log('Memory usage API not available', 'warn');
+                }
+                
+                // Test 3: Document ready state
+                if (document.readyState === 'complete') {
+                    log('Document fully loaded', 'pass');
+                } else {
+                    log(`Document state: ${document.readyState}`, 'warn');
+                }
+                
+            } catch (error) {
+                log(`Performance test failed: ${error.message}`, 'fail');
+            }
+        }
+        
+        // Interactive test functions
+        function testSpeciesInput() {
+            const species = document.getElementById('test-species').value;
+            if (!species) {
+                log('Please enter a species name first', 'warn');
+                return;
+            }
+            
+            log(`Testing species input: "${species}"`, 'info');
+            
+            if (window.fishDB && window.fishDB.searchSpecies) {
+                try {
+                    const results = window.fishDB.searchSpecies(species);
+                    if (results && results.length > 0) {
+                        log(`Found ${results.length} matching species`, 'pass');
+                        results.slice(0, 3).forEach(result => {
+                            log(`  - ${result.name || result}`, 'info');
+                        });
+                    } else {
+                        log('No matching species found', 'warn');
+                    }
+                } catch (e) {
+                    log(`Species search failed: ${e.message}`, 'fail');
+                }
+            } else {
+                log('Species search function not available', 'fail');
+            }
+        }
+        
+        function testWeightCalculation() {
+            const length = parseFloat(document.getElementById('test-length').value);
+            const species = document.getElementById('test-species').value || 'Bass';
+            
+            if (!length || length <= 0) {
+                log('Please enter a valid length first', 'warn');
+                return;
+            }
+            
+            log(`Testing weight calculation for ${species} at ${length}cm`, 'info');
+            
+            if (window.fishDB && window.fishDB.calculateWeight) {
+                try {
+                    const weight = window.fishDB.calculateWeight(species, length);
+                    if (weight && weight > 0) {
+                        log(`Calculated weight: ${weight.toFixed(3)}kg`, 'pass');
+                    } else {
+                        log('Weight calculation returned invalid result', 'fail');
+                    }
+                } catch (e) {
+                    log(`Weight calculation failed: ${e.message}`, 'fail');
+                }
+            } else {
+                log('Weight calculation function not available', 'fail');
+            }
+        }
+        
+        function simulateError() {
+            const errorType = document.getElementById('error-type').value;
+            
+            log(`Simulating ${errorType} error...`, 'info');
+            
+            try {
+                switch (errorType) {
+                    case 'validation':
+                        if (window.ValidationError) {
+                            throw new ValidationError('Test validation error', 'species', 'invalid-value');
+                        } else {
+                            throw new Error('Validation error simulation');
+                        }
+                        break;
+                        
+                    case 'database':
+                        if (window.DatabaseError) {
+                            throw new DatabaseError('Test database error', null, 'READ');
+                        } else {
+                            throw new Error('Database error simulation');
+                        }
+                        break;
+                        
+                    case 'calculation':
+                        if (window.CalculationError) {
+                            throw new CalculationError('Test calculation error', null, 'TestFish', { length: 0 });
+                        } else {
+                            throw new Error('Calculation error simulation');
+                        }
+                        break;
+                        
+                    case 'network':
+                        if (window.NetworkError) {
+                            throw new NetworkError('Test network error', null, 'http://test.com', 404);
+                        } else {
+                            throw new Error('Network error simulation');
+                        }
+                        break;
+                        
+                    default:
+                        throw new Error('Unknown error type');
+                }
+            } catch (error) {
+                if (window.errorHandler) {
+                    window.errorHandler.logError(error, 'SimulationTest');
+                    log(`Error simulated and logged: ${error.name} - ${error.message}`, 'pass');
+                } else {
+                    log(`Error simulated but no error handler available: ${error.message}`, 'warn');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Comprehensive Error Handling</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="p-4">
+    <h1 class="text-2xl font-bold mb-4">Test Comprehensive Error Handling</h1>
+
+    <div class="space-y-4">
+        <div>
+            <label class="block">Species:</label>
+            <input type="text" id="species" placeholder="Enter species name" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Length (cm):</label>
+            <input type="number" id="length" placeholder="Enter length" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Weight (auto-calculated):</label>
+            <input type="number" id="weight" placeholder="Auto-calculated weight"
+                class="w-full p-2 border rounded bg-gray-100" readonly>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <button onclick="testValidInputs()" class="bg-green-500 text-white px-4 py-2 rounded">Test Valid
+                Inputs</button>
+            <button onclick="testInvalidInputs()" class="bg-red-500 text-white px-4 py-2 rounded">Test Invalid
+                Inputs</button>
+            <button onclick="testNonExistentSpecies()" class="bg-yellow-500 text-white px-4 py-2 rounded">Test
+                Non-existent Species</button>
+            <button onclick="testEmptyInputs()" class="bg-gray-500 text-white px-4 py-2 rounded">Test Empty
+                Inputs</button>
+            <button onclick="testNegativeValues()" class="bg-orange-500 text-white px-4 py-2 rounded">Test Negative
+                Values</button>
+            <button onclick="testSelfImproving()" class="bg-purple-500 text-white px-4 py-2 rounded">Test
+                Self-Improving</button>
+        </div>
+    </div>
+
+    <div id="output" class="mt-4 p-4 bg-gray-100 rounded max-h-96 overflow-y-auto"></div>
+
+    <script src="js/selfImprovingAlgorithm.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script>
+        let fishDB;
+        let selfImprovingAlgorithm;
+
+        // Initialize the database
+        async function init() {
+            try {
+                log('Initializing test environment...');
+
+                // Wait for fishDB to be available
+                if (window.fishDB) {
+                    fishDB = window.fishDB;
+                    const isReady = await fishDB.isReady();
+                    if (isReady) {
+                        log('✓ Fish database initialized successfully!', 'success');
+                        log(`Species count: ${Object.keys(fishDB.algorithms || {}).length}`);
+
+                        // Initialize self-improving algorithm
+                        if (window.SelfImprovingAlgorithm) {
+                            selfImprovingAlgorithm = new window.SelfImprovingAlgorithm();
+                            log('✓ Self-improving algorithm initialized', 'success');
+                        } else {
+                            log('✗ Self-improving algorithm not available', 'error');
+                        }
+                    } else {
+                        log('✗ Fish database failed to initialize!', 'error');
+                    }
+                } else {
+                    log('✗ window.fishDB not available!', 'error');
+                }
+            } catch (error) {
+                log(`Error during initialization: ${error.message}`, 'error');
+            }
+        }
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'success' ? 'text-green-600' :
+                type === 'error' ? 'text-red-600' :
+                    type === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+
+            output.innerHTML += `<p class="${colorClass}">[${timestamp}] ${message}</p>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function testValidInputs() {
+            log('=== Testing Valid Inputs ===');
+            document.getElementById('species').value = 'Blacktail (M&F)';
+            document.getElementById('length').value = '30';
+
+            try {
+                const result = await fishDB.getImprovedWeightEstimate('Blacktail (M&F)', 30);
+                if (result) {
+                    document.getElementById('weight').value = result.estimatedWeight.toFixed(3);
+                    log(`✓ Weight calculated: ${result.estimatedWeight.toFixed(3)}kg`, 'success');
+                    log(`Algorithm: ${result.algorithm_source}, Confidence: ${result.confidence}`);
+                } else {
+                    log('✗ No result returned', 'error');
+                }
+            } catch (error) {
+                log(`✗ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInvalidInputs() {
+            log('=== Testing Invalid Inputs ===');
+
+            // Test invalid length
+            try {
+                const result1 = await fishDB.getImprovedWeightEstimate('Blacktail (M&F)', -5);
+                log(`Invalid length result: ${result1 ? 'Got result (unexpected)' : 'No result (expected)'}`,
+                    result1 ? 'error' : 'success');
+            } catch (error) {
+                log(`✓ Invalid length caught: ${error.message}`, 'success');
+            }
+
+            // Test invalid species
+            try {
+                const result2 = await fishDB.getImprovedWeightEstimate('', 30);
+                log(`Empty species result: ${result2 ? 'Got result (unexpected)' : 'No result (expected)'}`,
+                    result2 ? 'error' : 'success');
+            } catch (error) {
+                log(`✓ Empty species caught: ${error.message}`, 'success');
+            }
+        }
+
+        async function testNonExistentSpecies() {
+            log('=== Testing Non-existent Species ===');
+
+            try {
+                const result = await fishDB.getImprovedWeightEstimate('Unicorn Fish', 25);
+                if (result) {
+                    log(`✓ Generic fallback used: ${result.estimatedWeight.toFixed(3)}kg`, 'success');
+                    log(`Algorithm: ${result.algorithm_source}, Specific: ${result.isSpeciesSpecific}`);
+                } else {
+                    log('✗ No result returned', 'error');
+                }
+            } catch (error) {
+                log(`✗ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEmptyInputs() {
+            log('=== Testing Empty Inputs ===');
+            document.getElementById('species').value = '';
+            document.getElementById('length').value = '';
+            document.getElementById('weight').value = '';
+
+            try {
+                const result = await fishDB.getImprovedWeightEstimate('', 0);
+                log(`Empty inputs result: ${result ? 'Got result (unexpected)' : 'No result (expected)'}`,
+                    result ? 'error' : 'success');
+            } catch (error) {
+                log(`✓ Empty inputs handled: ${error.message}`, 'success');
+            }
+        }
+
+        async function testNegativeValues() {
+            log('=== Testing Negative Values ===');
+
+            try {
+                const result = await fishDB.getImprovedWeightEstimate('Blacktail (M&F)', -10);
+                log(`Negative length result: ${result ? 'Got result (unexpected)' : 'No result (expected)'}`,
+                    result ? 'error' : 'success');
+            } catch (error) {
+                log(`✓ Negative values handled: ${error.message}`, 'success');
+            }
+        }
+
+        async function testSelfImproving() {
+            log('=== Testing Self-Improving Algorithm ===');
+
+            if (!selfImprovingAlgorithm) {
+                log('✗ Self-improving algorithm not available', 'error');
+                return;
+            }
+
+            try {
+                // Add some test data
+                const result1 = selfImprovingAlgorithm.updateSpeciesAlgorithm('Test Species', 20, 0.5);
+                log(`First data point: ${result1.status} - ${result1.message}`);
+
+                const result2 = selfImprovingAlgorithm.updateSpeciesAlgorithm('Test Species', 30, 1.2);
+                log(`Second data point: ${result2.status} - ${result2.message}`);
+
+                if (result2.status === 'success') {
+                    log(`✓ Algorithm created! R²: ${result2.algorithm.r_squared.toFixed(3)}`, 'success');
+
+                    // Test calculation
+                    const calcResult = selfImprovingAlgorithm.calculateWeight('Test Species', 25);
+                    if (calcResult) {
+                        log(`✓ Weight calculated: ${calcResult.weight.toFixed(3)}kg (${calcResult.confidence} confidence)`, 'success');
+                    }
+                }
+            } catch (error) {
+                log(`✗ Self-improving test error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>

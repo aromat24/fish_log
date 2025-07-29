@@ -1,0 +1,2749 @@
+{
+  "342": {
+    "species_name": "Blacktail (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2874560883344124e-05,
+      "b": 3.242670850555155,
+      "r_squared": 0.9999816616380391,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "333": {
+    "species_name": "Dusky kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.995995813667435e-06,
+      "b": 3.0350784156230053,
+      "r_squared": 0.9998098913492915,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "345": {
+    "species_name": "Galjoen (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1842051552361438e-05,
+      "b": 3.1210613493625496,
+      "r_squared": 0.9999450708060553,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "350": {
+    "species_name": "Garrick (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1568866601848321e-05,
+      "b": 3.0175146460743063,
+      "r_squared": 0.9998914799757441,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "535": {
+    "species_name": "Malabar kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.7663140585986425e-05,
+      "b": 2.921738434641299,
+      "r_squared": 0.9999535059316088,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "344": {
+    "species_name": "Shad (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4332619759648894e-05,
+      "b": 2.979938541024472,
+      "r_squared": 0.9999016814725287,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "432": {
+    "species_name": "Brown shyshark (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2475871588983019e-06,
+      "b": 3.6423004507194268,
+      "r_squared": 0.9992867237667923,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "533": {
+    "species_name": "Albacore (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2315572180437138e-05,
+      "b": 3.2795458917384908,
+      "r_squared": 0.999983519457847,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "479": {
+    "species_name": "Banded galjoen (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.7034096816100198e-05,
+      "b": 3.152015593218282,
+      "r_squared": 0.9999736638928103,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "480": {
+    "species_name": "Barred needlefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.559741157489905e-07,
+      "b": 3.0910777646325585,
+      "r_squared": 0.9975510481038404,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 265
+    }
+  },
+  "391": {
+    "species_name": "Atlantic bonito / Sardasarda (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.25026446783094e-06,
+      "b": 3.1062309716606653,
+      "r_squared": 0.9999099634703436,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "341": {
+    "species_name": "Baardman / Belman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.47676062516783e-06,
+      "b": 3.145782180347577,
+      "r_squared": 0.9999107665410022,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "481": {
+    "species_name": "Barred rubberlip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "427": {
+    "species_name": "Bigeye kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.25167206700622e-05,
+      "b": 2.5733626478691094,
+      "r_squared": 0.9999380983566721,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "482": {
+    "species_name": "Bartailed flathead (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.45192536757093e-05,
+      "b": 2.3789184029912924,
+      "r_squared": 0.9996077270891891,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "483": {
+    "species_name": "Bigeye stumpnose (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4607051758110188e-05,
+      "b": 3.0330654217462216,
+      "r_squared": 0.9999780724121045,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "384": {
+    "species_name": "Bigeye tuna (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.964901797122338e-05,
+      "b": 2.8374605831255986,
+      "r_squared": 0.9999290275296316,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "484": {
+    "species_name": "Bigspot rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3230578507441069e-05,
+      "b": 3.0301197121873455,
+      "r_squared": 0.9999057791505691,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "362": {
+    "species_name": "Black marlin (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.8123502937398134e-06,
+      "b": 3.2661805106285504,
+      "r_squared": 0.9993701141004233,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Lwr bill fork len",
+      "data_points": 276
+    }
+  },
+  "351": {
+    "species_name": "Black musselcracker (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4255550142647743e-05,
+      "b": 3.035535331155009,
+      "r_squared": 0.9999800618342201,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "485": {
+    "species_name": "Black pomfret (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0770669087292088e-05,
+      "b": 3.0150440814815225,
+      "r_squared": 0.9999557087684735,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "486": {
+    "species_name": "Black seabarbel / Black seacatfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.5074167500112957e-05,
+      "b": 3.0407168566058527,
+      "r_squared": 0.9999447951719108,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "596": {
+    "species_name": "Blackfin barracuda (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.551368244649208e-06,
+      "b": 3.0017430053987684,
+      "r_squared": 0.9995694922729988,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "488": {
+    "species_name": "Blackspotted rubberlip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "487": {
+    "species_name": "Blacksaddle goatfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.16462936863992e-05,
+      "b": 3.0059073015095183,
+      "r_squared": 0.9998899660381805,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "408": {
+    "species_name": "Blacktip kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.8305992055776613e-05,
+      "b": 2.8519445661839953,
+      "r_squared": 0.9999324139791163,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "490": {
+    "species_name": "Bludger (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.580501662941807e-05,
+      "b": 2.7484701770841697,
+      "r_squared": 0.9999436264797965,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "609": {
+    "species_name": "Blood snapper (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.7861318543057583e-05,
+      "b": 2.9257764139324554,
+      "r_squared": 0.9998738902572968,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "489": {
+    "species_name": "Blotcheye soldier (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.9006189069429513e-05,
+      "b": 3.0369569968381773,
+      "r_squared": 0.9999617532076176,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "492": {
+    "species_name": "Blue hottentot (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4325415164240111e-05,
+      "b": 3.145843655814947,
+      "r_squared": 0.9999634821329068,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "394": {
+    "species_name": "Blue emperor (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.301608292381989e-05,
+      "b": 2.798761864170711,
+      "r_squared": 0.9999472426385698,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "491": {
+    "species_name": "Blue chub (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.836713944473481e-05,
+      "b": 3.047875629883583,
+      "r_squared": 0.999960517216711,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "494": {
+    "species_name": "Bluebarred parrotfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.637470219710963e-05,
+      "b": 3.0427120910874907,
+      "r_squared": 0.9999568429717273,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "493": {
+    "species_name": "Blue kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.723044181814828e-05,
+      "b": 2.848944604146642,
+      "r_squared": 0.999948459417693,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "439": {
+    "species_name": "Bluefin kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.1048055647630325e-05,
+      "b": 2.941492850965364,
+      "r_squared": 0.9999384719473012,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "381": {
+    "species_name": "Bluefin tuna (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.3181520300012967e-05,
+      "b": 2.933253259123606,
+      "r_squared": 0.9999431020280286,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "495": {
+    "species_name": "Blueskin (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4556884847243066e-05,
+      "b": 3.020030336670073,
+      "r_squared": 0.99990300500626,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "496": {
+    "species_name": "Bluetail mullet (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.0000344534295847e-05,
+      "b": 3.1063628871974283,
+      "r_squared": 0.9998945694618562,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "498": {
+    "species_name": "Brassy kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4502960180915947e-05,
+      "b": 2.913105006366952,
+      "r_squared": 0.9999439212549038,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "497": {
+    "species_name": "Brassy chub (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0410596605556193e-05,
+      "b": 3.0330778013814474,
+      "r_squared": 0.9999530935691029,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "371": {
+    "species_name": "Bonefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.3780075749460262e-05,
+      "b": 2.8860302143201464,
+      "r_squared": 0.9999213208054721,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "499": {
+    "species_name": "Bridle triggerfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.8858605517306892e-05,
+      "b": 2.964743796640338,
+      "r_squared": 0.9999737916242345,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "343": {
+    "species_name": "Bronze bream (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4289831032533015e-05,
+      "b": 3.047341901829299,
+      "r_squared": 0.9999701475533703,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "393": {
+    "species_name": "Brindle bass (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.7285987170107954e-05,
+      "b": 3.000142131089678,
+      "r_squared": 0.9999440726720483,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "500": {
+    "species_name": "Bumpnose kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.794680928467631e-05,
+      "b": 2.865002614923227,
+      "r_squared": 0.9999691150695038,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "501": {
+    "species_name": "Cape gurnard (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.199356813488803e-05,
+      "b": 2.9957859136127576,
+      "r_squared": 0.9998831120194323,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "502": {
+    "species_name": "Cape knifejaw (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.00029425249993281227,
+      "b": 2.314289885591962,
+      "r_squared": 0.999960375339248,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "504": {
+    "species_name": "Cape stumpnose (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.026046310591049e-05,
+      "b": 2.8490203774552443,
+      "r_squared": 0.9999776619864648,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "503": {
+    "species_name": "Cape moony (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.0156465002974915e-05,
+      "b": 2.9650540318477088,
+      "r_squared": 0.9999720449292534,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "505": {
+    "species_name": "Carpenter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.204575775350621e-05,
+      "b": 3.185650220633025,
+      "r_squared": 0.9999597617241943,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "506": {
+    "species_name": "Catface rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.851253612822262e-05,
+      "b": 2.901423221569435,
+      "r_squared": 0.9998921046508779,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "507": {
+    "species_name": "Cavebass (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.439033714610345e-05,
+      "b": 2.963992100972937,
+      "r_squared": 0.9999550029551731,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "508": {
+    "species_name": "Clown triggerfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.441106535493707e-05,
+      "b": 3.0182182468154197,
+      "r_squared": 0.9999745371608237,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "509": {
+    "species_name": "Cock grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.469650511335556e-05,
+      "b": 2.753816596172643,
+      "r_squared": 0.9998713636978497,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "510": {
+    "species_name": "Concertina fish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.746248552578832e-05,
+      "b": 3.174497403779936,
+      "r_squared": 0.9999790814522835,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "511": {
+    "species_name": "Crocodile needlefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.975035727262203e-07,
+      "b": 3.1836373861813234,
+      "r_squared": 0.9982089006819718,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 269
+    }
+  },
+  "512": {
+    "species_name": "Cutlass fish / Walla walla (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4290226501508173e-07,
+      "b": 3.2533951894965676,
+      "r_squared": 0.9966331137308886,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 257
+    }
+  },
+  "608": {
+    "species_name": "Cutthroat emperor (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.636334517580949e-05,
+      "b": 3.0726755747384433,
+      "r_squared": 0.999961048005033,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "513": {
+    "species_name": "Dane (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.948211666149497e-05,
+      "b": 2.9834249678527036,
+      "r_squared": 0.9999437268400614,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "365": {
+    "species_name": "Dolphinfish / Dorado (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.00017868254312379368,
+      "b": 2.6020787098459626,
+      "r_squared": 0.9999812796442555,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "377": {
+    "species_name": "Doublespotted queenfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.10683969131101e-05,
+      "b": 2.90679749573263,
+      "r_squared": 0.9995790629626243,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "514": {
+    "species_name": "Dusky rubberlip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "430": {
+    "species_name": "Eastern little tuna / Kawakawa (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4677762762376025e-05,
+      "b": 2.904847881348645,
+      "r_squared": 0.9999444319981111,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "516": {
+    "species_name": "Englishman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.993850352485603e-05,
+      "b": 2.7395972810250138,
+      "r_squared": 0.9999757582391106,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "515": {
+    "species_name": "Eel-catfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.581272585461315e-06,
+      "b": 2.9513177699974156,
+      "r_squared": 0.9995639497332297,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "517": {
+    "species_name": "Fransmadam (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.948211666149497e-05,
+      "b": 2.9834249678527036,
+      "r_squared": 0.9999437268400614,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "604": {
+    "species_name": "Flathead mullet (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1787846248835512e-05,
+      "b": 3.0626635246408687,
+      "r_squared": 0.9999080890636914,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "346": {
+    "species_name": "Geelbek (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.760152822281645e-06,
+      "b": 3.006690829963291,
+      "r_squared": 0.9996911232833843,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "368": {
+    "species_name": "Giant Kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.989638523363478e-05,
+      "b": 2.988843776272789,
+      "r_squared": 0.9999558354073487,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "418": {
+    "species_name": "Golden kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.9623399427899303e-05,
+      "b": 2.997691354793429,
+      "r_squared": 0.9999501983518911,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "518": {
+    "species_name": "Goldsaddle hogfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1691147989587699e-05,
+      "b": 3.1522067657525406,
+      "r_squared": 0.9999609589443577,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "356": {
+    "species_name": "Giant yellowtail (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.325455775040176e-05,
+      "b": 2.755679169829211,
+      "r_squared": 0.9998765072018821,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "519": {
+    "species_name": "Grey chub (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.794099531399604e-05,
+      "b": 2.8569182680703147,
+      "r_squared": 0.9999354666288831,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "409": {
+    "species_name": "Green Jobfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.6109648116708232e-05,
+      "b": 2.90599571233637,
+      "r_squared": 0.9998731758914972,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "520": {
+    "species_name": "Grey grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.993382272099976e-05,
+      "b": 2.8404176736592097,
+      "r_squared": 0.9999359446781055,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "523": {
+    "species_name": "Humpback snapper (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3277135726703858e-05,
+      "b": 3.134894786518457,
+      "r_squared": 0.9999658105181348,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "521": {
+    "species_name": "Halfmoon rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.8545780747236782e-05,
+      "b": 2.964429105437312,
+      "r_squared": 0.9999254266404974,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "522": {
+    "species_name": "Hottentot (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.838771992261521e-05,
+      "b": 2.967036257231363,
+      "r_squared": 0.9999707575930256,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "524": {
+    "species_name": "Indian goatfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.5183873953852767e-05,
+      "b": 3.0872296170496707,
+      "r_squared": 0.9999504840137889,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "404": {
+    "species_name": "Indian mirrorfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.296083278835014e-05,
+      "b": 2.6367126560000402,
+      "r_squared": 0.9999417775872509,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Standard len",
+      "data_points": 276
+    }
+  },
+  "525": {
+    "species_name": "Indian mackerel (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.283320056163566e-06,
+      "b": 3.1851945609034793,
+      "r_squared": 0.9999029368318678,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "348": {
+    "species_name": "Janbruin / John Brown (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.948211666149497e-05,
+      "b": 2.9834249678527036,
+      "r_squared": 0.9999437268400614,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "526": {
+    "species_name": "Javelin grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.3738202252107295e-05,
+      "b": 2.714125845973818,
+      "r_squared": 0.9998559581759855,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "392": {
+    "species_name": "King mackerel / Couta (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.448136383405152e-06,
+      "b": 3.248941693640604,
+      "r_squared": 0.9996605661739884,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "528": {
+    "species_name": "Kingklip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.428587363726854e-06,
+      "b": 3.3113879121834895,
+      "r_squared": 0.9991885232976202,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "527": {
+    "species_name": "King soldierbream (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.00011235332593821384,
+      "b": 2.649396208521289,
+      "r_squared": 0.9999816991889277,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "529": {
+    "species_name": "Ladder wrasse (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4234322618033274e-05,
+      "b": 3.0062205628149643,
+      "r_squared": 0.9999075227701175,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "530": {
+    "species_name": "Largetooth flounder (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.0677732472671443e-05,
+      "b": 3.1288015655014516,
+      "r_squared": 0.9999240925632311,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "352": {
+    "species_name": "Largespot pompano / Wave garrick (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.9631375574325816e-05,
+      "b": 2.9425020739470207,
+      "r_squared": 0.9999162758799562,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "531": {
+    "species_name": "Lemonfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "532": {
+    "species_name": "Longfin kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1421779483988679e-05,
+      "b": 3.1275793189127366,
+      "r_squared": 0.9999465665055675,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "424": {
+    "species_name": "Longfin Yellowtail (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.439405015863185e-05,
+      "b": 3.0564554469109733,
+      "r_squared": 0.9999443862053143,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "374": {
+    "species_name": "Mackerel (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.855464354655906e-06,
+      "b": 3.3128085833434104,
+      "r_squared": 0.9999276081479124,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "534": {
+    "species_name": "Maasbanker (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.3674102815624947e-05,
+      "b": 2.6787323570043537,
+      "r_squared": 0.9668390393531355,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 552
+    }
+  },
+  "536": {
+    "species_name": "Malabar rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2680303585644576e-05,
+      "b": 3.035875001671681,
+      "r_squared": 0.9998990513111344,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "538": {
+    "species_name": "Milkfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.759360220326481e-06,
+      "b": 3.3867324754618977,
+      "r_squared": 0.9999509868087952,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "537": {
+    "species_name": "Measles flounder (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.924970434410054e-06,
+      "b": 3.0751413886888432,
+      "r_squared": 0.9998822509841401,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "539": {
+    "species_name": "Minstrel (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "541": {
+    "species_name": "Natal knifejaw / Cuckoo bass (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.00017932451434292344,
+      "b": 2.4786480015259493,
+      "r_squared": 0.9999742841401004,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "540": {
+    "species_name": "Natal fingerfin (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.57933901019482e-05,
+      "b": 2.976206369066567,
+      "r_squared": 0.999907316626791,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "542": {
+    "species_name": "Natal moony (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.0156465002974915e-05,
+      "b": 2.9650540318477088,
+      "r_squared": 0.9999720449292534,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "355": {
+    "species_name": "Natal stumpnose (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.5470268724527265e-05,
+      "b": 2.9596318497217964,
+      "r_squared": 0.9999507672216305,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "545": {
+    "species_name": "Oxeye tarpon (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1877278824354933e-05,
+      "b": 3.0381521790492028,
+      "r_squared": 0.9998997704807703,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "543": {
+    "species_name": "Natal wrasse (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4234322618033274e-05,
+      "b": 3.0062205628149643,
+      "r_squared": 0.9999075227701175,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "544": {
+    "species_name": "Old woman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.9222857518391212e-05,
+      "b": 2.9704438439020975,
+      "r_squared": 0.9999419751834392,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "546": {
+    "species_name": "Panga (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.9999775208951e-06,
+      "b": 3.3010511115821903,
+      "r_squared": 0.9998795217424467,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "547": {
+    "species_name": "Patchy triggerfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.576391294897895e-05,
+      "b": 2.8735470102348866,
+      "r_squared": 0.999963653200502,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "415": {
+    "species_name": "Pickhandle barracuda (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3211465199878125e-05,
+      "b": 2.821137098746052,
+      "r_squared": 0.999506808380895,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "406": {
+    "species_name": "Prodigal son / Cobia (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.252493871307524e-06,
+      "b": 3.0790594427717917,
+      "r_squared": 0.99924994499498,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "548": {
+    "species_name": "Piggy / Olive grunt (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.472554781704676e-05,
+      "b": 2.6988195908925103,
+      "r_squared": 0.9999144653593109,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "549": {
+    "species_name": "Porcupinefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0002812547760779025,
+      "b": 2.3475387277812385,
+      "r_squared": 0.9999590933192314,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "405": {
+    "species_name": "Rainbow runner (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.372594331419226e-05,
+      "b": 2.916759704895002,
+      "r_squared": 0.9998268978107542,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "375": {
+    "species_name": "Queen mackerel / Natal snoek (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1079745289255929e-05,
+      "b": 2.9398273588431585,
+      "r_squared": 0.9996659196282167,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "550": {
+    "species_name": "Rainbow wrasse (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4234322618033274e-05,
+      "b": 3.0062205628149643,
+      "r_squared": 0.9999075227701175,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "556": {
+    "species_name": "Red roman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.725521696795269e-05,
+      "b": 3.152325136678312,
+      "r_squared": 0.9999761550423335,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "372": {
+    "species_name": "Red stumpnose / Miss Lucy (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.354118494114452e-05,
+      "b": 2.8891125191643514,
+      "r_squared": 0.9999768584079863,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "359": {
+    "species_name": "Red steenbras (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.4345234015925773e-05,
+      "b": 2.9505556849781467,
+      "r_squared": 0.999954102511535,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "551": {
+    "species_name": "Red tjor-tjor (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.774162633325658e-06,
+      "b": 3.377824184017531,
+      "r_squared": 0.9999734881776651,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "553": {
+    "species_name": "Remora (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.440762743970213e-06,
+      "b": 2.9892450157522283,
+      "r_squared": 0.9992234127573011,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "552": {
+    "species_name": "Redlip rubberlip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "554": {
+    "species_name": "Riverbream (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.3630581287666004e-05,
+      "b": 3.023394990066803,
+      "r_squared": 0.9999710177233044,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "398": {
+    "species_name": "River / Mangrove snapper (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0006122031627331382,
+      "b": 2.210692783471801,
+      "r_squared": 0.999979327393493,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "558": {
+    "species_name": "Saddle grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0681736058459602e-05,
+      "b": 2.904687160186326,
+      "r_squared": 0.9998956276495304,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "557": {
+    "species_name": "Russells snapper (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.658808537022084e-05,
+      "b": 2.9780879404134697,
+      "r_squared": 0.9999022237733729,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "555": {
+    "species_name": "Robust klipfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.699239693263899e-05,
+      "b": 3.037241216824963,
+      "r_squared": 0.9999560584460432,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "559": {
+    "species_name": "Sand steenbras (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.0747260372135875e-05,
+      "b": 3.020307725411408,
+      "r_squared": 0.9998780914062599,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "560": {
+    "species_name": "Santer / Soldier (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.062125347690095e-05,
+      "b": 2.78134882191521,
+      "r_squared": 0.9998832003421714,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "364": {
+    "species_name": "Sailfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0049613553964694655,
+      "b": 1.6616073497373296,
+      "r_squared": 0.9999722248974071,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Lwr bill fork len",
+      "data_points": 276
+    }
+  },
+  "597": {
+    "species_name": "Sawtooth barracuda (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.398985227333137e-06,
+      "b": 2.939827777715742,
+      "r_squared": 0.9995793443448627,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "562": {
+    "species_name": "Seventy-four (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.043456491531353e-05,
+      "b": 2.6648831464451086,
+      "r_squared": 0.9999162975736524,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "561": {
+    "species_name": "Scotsman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.758165718954539e-05,
+      "b": 2.812312477238431,
+      "r_squared": 0.999944727455417,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "563": {
+    "species_name": "Shallow-water sole (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.355205832568291e-06,
+      "b": 3.0686750636755673,
+      "r_squared": 0.9997148853166028,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "564": {
+    "species_name": "Silver kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.0231636031728745e-06,
+      "b": 3.070653084417465,
+      "r_squared": 0.9997088550577985,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "369": {
+    "species_name": "Skipjack tuna (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.815124644473026e-06,
+      "b": 3.3763338402197722,
+      "r_squared": 0.999942161582043,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "600": {
+    "species_name": "Silverstripe blaasop (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.1972604633094947e-05,
+      "b": 2.921424965373802,
+      "r_squared": 0.9999299214806273,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "598": {
+    "species_name": "Slender baardman (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.473936245851974e-06,
+      "b": 3.1458575438022325,
+      "r_squared": 0.9999108926673018,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "566": {
+    "species_name": "Slimy (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.6930133722580692e-05,
+      "b": 2.9801041505731862,
+      "r_squared": 0.999969791447022,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "565": {
+    "species_name": "Slender tuna (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.5174439337591756e-05,
+      "b": 3.000314797561033,
+      "r_squared": 0.9999046419819948,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "442": {
+    "species_name": "Slinger (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.822476855648564e-05,
+      "b": 2.8173535618677557,
+      "r_squared": 0.9999724672160687,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "567": {
+    "species_name": "Small kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3633168018396754e-05,
+      "b": 2.948680307210008,
+      "r_squared": 0.9998735518451847,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "601": {
+    "species_name": "Smooth blaasop (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.1528360441373923e-05,
+      "b": 2.9452012693826592,
+      "r_squared": 0.999947738976329,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "605": {
+    "species_name": "Snubnose pompano (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.7986510933978512e-05,
+      "b": 2.8875451614981,
+      "r_squared": 0.9999495635746651,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "378": {
+    "species_name": "Snoek (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.0231636031728745e-06,
+      "b": 3.070653084417465,
+      "r_squared": 0.9997088550577985,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "568": {
+    "species_name": "Snapper kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.8780797351410455e-06,
+      "b": 3.1238553208977735,
+      "r_squared": 0.9998399459267483,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "570": {
+    "species_name": "Spadefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.389582625747683e-05,
+      "b": 2.54786316690691,
+      "r_squared": 0.9998234462108317,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "436": {
+    "species_name": "Speckled snapper (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.150231306986072e-06,
+      "b": 3.266069449375256,
+      "r_squared": 0.9999620100073802,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "569": {
+    "species_name": "Southern pompano (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.7986510933978512e-05,
+      "b": 2.8875451614981,
+      "r_squared": 0.9999495635746651,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "571": {
+    "species_name": "Spineblotch scorpionfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.8705534015401724e-05,
+      "b": 3.0129973428858725,
+      "r_squared": 0.9999517211254552,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "347": {
+    "species_name": "Spotted grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.2742605787097856e-05,
+      "b": 2.954613349334768,
+      "r_squared": 0.9998571787472889,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "376": {
+    "species_name": "Springer / Ladyfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.5003866246176316e-05,
+      "b": 2.6967261017684967,
+      "r_squared": 0.9995834110622283,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "572": {
+    "species_name": "Squaretail kob (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.573952805189155e-05,
+      "b": 2.887360818809874,
+      "r_squared": 0.9998412667916423,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "573": {
+    "species_name": "Steentjie (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.71439937382348e-05,
+      "b": 3.0362084180204176,
+      "r_squared": 0.9999564816877455,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "602": {
+    "species_name": "Star blaasop (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.00020585223446510702,
+      "b": 2.663469122829124,
+      "r_squared": 0.9999960129090171,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "574": {
+    "species_name": "Stonebream (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.6511590320224515e-05,
+      "b": 3.0836971606272936,
+      "r_squared": 0.9999567661320773,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "349": {
+    "species_name": "Strepie / Karanteen (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 3.608333682160063e-05,
+      "b": 2.7959462773912014,
+      "r_squared": 0.999939684808047,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "575": {
+    "species_name": "Streakyspot rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4544665474851652e-05,
+      "b": 3.021990177526546,
+      "r_squared": 0.9999004549855666,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "576": {
+    "species_name": "Striped bonito (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.10078662971054e-05,
+      "b": 2.876267526467842,
+      "r_squared": 0.9998672572419705,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "577": {
+    "species_name": "Striped grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.680385296591208e-05,
+      "b": 2.6897705134425087,
+      "r_squared": 0.9999719836431414,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Standard len",
+      "data_points": 276
+    }
+  },
+  "358": {
+    "species_name": "Striped marlin (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3282680195421589e-06,
+      "b": 3.379717706969936,
+      "r_squared": 0.9995193476595726,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Lwr bill fork len",
+      "data_points": 276
+    }
+  },
+  "578": {
+    "species_name": "Striped mullet (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1787846248835512e-05,
+      "b": 3.0626635246408687,
+      "r_squared": 0.9999080890636914,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "579": {
+    "species_name": "Striped threadfin (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.0349089829085018e-05,
+      "b": 2.997196048501052,
+      "r_squared": 0.9998117141508209,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "581": {
+    "species_name": "Talang queenfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.8819221971031558e-05,
+      "b": 2.8135210165798394,
+      "r_squared": 0.9998696269827445,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "580": {
+    "species_name": "Surge wrasse (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.4234322618033274e-05,
+      "b": 3.0062205628149643,
+      "r_squared": 0.9999075227701175,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "582": {
+    "species_name": "Thornfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.3273719843939686e-05,
+      "b": 3.1295102573887332,
+      "r_squared": 0.9999554345166544,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "585": {
+    "species_name": "Torpedo scad (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.7178905815418415e-05,
+      "b": 2.580947767127503,
+      "r_squared": 0.9998339493040362,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "584": {
+    "species_name": "Tille kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.773368069203348e-06,
+      "b": 3.16363120445624,
+      "r_squared": 0.9999248477043258,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "583": {
+    "species_name": "Threadfin mirrorfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.7957089993418446e-05,
+      "b": 2.8511699616237673,
+      "r_squared": 0.9999778277029445,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "603": {
+    "species_name": "Twobar seabream (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.3630581287666004e-05,
+      "b": 3.023394990066803,
+      "r_squared": 0.9999710177233044,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "410": {
+    "species_name": "Tripletail / Lobotes (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.266627359268279e-05,
+      "b": 2.8405742444204987,
+      "r_squared": 0.9999626877171196,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "586": {
+    "species_name": "Twotone fingerfin / Steenklipvis (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.57933901019482e-05,
+      "b": 2.976206369066567,
+      "r_squared": 0.999907316626791,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "587": {
+    "species_name": "White edge rockod / Captain Fine (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.0371587912205043e-05,
+      "b": 3.090152486290877,
+      "r_squared": 0.9998970155667429,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "588": {
+    "species_name": "White kingfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.390041831047102e-05,
+      "b": 3.058358516187594,
+      "r_squared": 0.9999379283476018,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "425": {
+    "species_name": "Westcoast steenbras (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.5900493705452486e-05,
+      "b": 2.948111899280595,
+      "r_squared": 0.9999511547343627,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "354": {
+    "species_name": "White steenbras / Pignose grunter (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 9.707208506335482e-06,
+      "b": 3.0524852432872303,
+      "r_squared": 0.9998823895199908,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "589": {
+    "species_name": "White seacatfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1397581631262282e-05,
+      "b": 3.081383098075192,
+      "r_squared": 0.9999104379521534,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "360": {
+    "species_name": "White musselcracker (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.912399589870698e-05,
+      "b": 3.0417602902093415,
+      "r_squared": 0.9999529613299701,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "373": {
+    "species_name": "White stumpnose (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.6341774062754173e-05,
+      "b": 3.0800903130708144,
+      "r_squared": 0.99996407918236,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "623": {
+    "species_name": "Whitebarred rubberlip (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0853740917066752e-05,
+      "b": 2.947770633261507,
+      "r_squared": 0.9999398916362361,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "599": {
+    "species_name": "Whitespotted blaasop (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 8.945666127481814e-05,
+      "b": 2.8024625757128265,
+      "r_squared": 0.9999881105859821,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "591": {
+    "species_name": "Wolf-herring (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.058634627073013e-06,
+      "b": 2.9883554721976564,
+      "r_squared": 0.9994132126097678,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "590": {
+    "species_name": "Whitespotted rabbitfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 5.878798617218885e-05,
+      "b": 2.7586776129172046,
+      "r_squared": 0.9999670371380892,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "592": {
+    "species_name": "Yellowfin emperor (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.1445773289833173e-05,
+      "b": 2.952125375280748,
+      "r_squared": 0.9999428181498619,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "361": {
+    "species_name": "Yellowbelly rockcod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.43042505997598e-05,
+      "b": 3.0534394025145906,
+      "r_squared": 0.9999439503972892,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length",
+      "data_points": 276
+    }
+  },
+  "593": {
+    "species_name": "Yellowfin needlefish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.1869837662076848e-05,
+      "b": 2.4779102176435877,
+      "r_squared": 0.9961526377736553,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 271
+    }
+  },
+  "397": {
+    "species_name": "Yellowfin tuna (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.0446723396218125e-05,
+      "b": 2.975070345972732,
+      "r_squared": 0.999956508270867,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "594": {
+    "species_name": "Yellowtail fusilier (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 7.660249101851993e-05,
+      "b": 2.580766428655818,
+      "r_squared": 0.9999183473843214,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "407": {
+    "species_name": "Yellowspotted kngfish (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 4.555417192832354e-05,
+      "b": 2.707256485248113,
+      "r_squared": 0.9999202443464219,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "357": {
+    "species_name": "Zebra (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.9079239570174643e-05,
+      "b": 3.084471298122935,
+      "r_squared": 0.9999735338021296,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "595": {
+    "species_name": "Yellowtail rockod (M&F)",
+    "edible": true,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.532195655649803e-05,
+      "b": 3.0035241915626045,
+      "r_squared": 0.9999037494138058,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length",
+      "data_points": 276
+    }
+  },
+  "385": {
+    "species_name": "Shortfin mako (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 1.810437526917688e-05,
+      "b": 2.828891054932965,
+      "r_squared": 0.9989084290981057,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Fork length"
+    }
+  },
+  "386": {
+    "species_name": "Great white shark (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.2201355244762483e-05,
+      "b": 2.935860837863082,
+      "r_squared": 0.9997265793350347,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Pre-caudal"
+    }
+  },
+  "335": {
+    "species_name": "Great hammerhead (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 2.2201355244762483e-05,
+      "b": 2.935860837863082,
+      "r_squared": 0.9997265793350347,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "400": {
+    "species_name": "Giant guitarfish (M&F)",
+    "edible": false,
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 6.565101340895593e-07,
+      "b": 3.7242416187337324,
+      "r_squared": 0.997902339994792,
+      "length_column": "Length",
+      "weight_column": "Weight",
+      "measure_type": "Total length"
+    }
+  },
+  "624": {
+    "species_name": "Dageraad",
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0195,
+      "b": 2.9,
+      "r_squared": 0.99,
+      "measure_type": "Fork length",
+      "data_points": 61
+    }
+  },
+  "625": {
+    "species_name": "Blue Fish",
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0089,
+      "b": 3.09,
+      "r_squared": 0.98,
+      "measure_type": "Fork length",
+      "data_points": 61
+    }
+  },
+  "626": {
+    "species_name": "Sand Shark",
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0034,
+      "b": 3.1,
+      "r_squared": 0.99,
+      "measure_type": "Total length",
+      "data_points": 61
+    }
+  },
+  "627": {
+    "species_name": "Spotted Gulley Shark",
+    "algorithm": {
+      "formula": "W = a * L^b",
+      "a": 0.0025,
+      "b": 3.04,
+      "r_squared": 0.98,
+      "measure_type": "Total length",
+      "data_points": 66
+    }
+  },
+  "Species": "Shy Shark",
+  "a": 0.0035499999999999998,
+  "b": 3.08,
+  "r_squared": 1.0,
+  "Measure_Type": "Total length",
+  "Species_ID": 628.0
+}

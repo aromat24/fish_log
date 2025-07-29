@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Autocalculate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="p-4">
+    <h1 class="text-2xl font-bold mb-4">Test Autocalculate Functionality</h1>
+
+    <div class="space-y-4">
+        <div>
+            <label class="block">Species:</label>
+            <input type="text" id="species" placeholder="Enter species name" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Length (cm):</label>
+            <input type="number" id="length" placeholder="Enter length" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Weight (auto-calculated):</label>
+            <input type="number" id="weight" placeholder="Auto-calculated weight"
+                class="w-full p-2 border rounded bg-gray-100" readonly>
+        </div>
+        <div>
+            <button onclick="testCalculation()" class="bg-blue-500 text-white px-4 py-2 rounded">Manual Test</button>
+            <button onclick="clearInputs()" class="bg-red-500 text-white px-4 py-2 rounded">Clear</button>
+        </div>
+    </div>
+
+    <div id="output" class="mt-4 p-4 bg-gray-100 rounded"></div>
+
+    <script src="js/selfImprovingAlgorithm.js"></script>
+    <script src="js/fishDatabase.js"></script>
+    <script>
+        let fishDB;
+
+        // Initialize the database
+        async function init() {
+            try {
+                const output = document.getElementById('output');
+                output.innerHTML = '<p class="text-blue-600">Initializing fish database...</p>';
+
+                // Wait for fishDB to be available
+                if (window.fishDB) {
+                    fishDB = window.fishDB;
+                    const isReady = await fishDB.isReady();
+                    if (isReady) {
+                        output.innerHTML += '<p class="text-green-600">Fish database initialized successfully!</p>';
+                        output.innerHTML += `<p>Species count: ${Object.keys(fishDB.algorithms || {}).length}</p>`;
+
+                        // Test a few species
+                        const testSpecies = ['Blacktail (M&F)', 'Dusky kob (M&F)', 'Albacore (M&F)'];
+                        for (const species of testSpecies) {
+                            const speciesData = fishDB.findSpeciesByName(species);
+                            if (speciesData) {
+                                output.innerHTML += `<p>✓ Found: ${species} (R² = ${speciesData.algorithm.r_squared.toFixed(3)})</p>`;
+                            } else {
+                                output.innerHTML += `<p>✗ Not found: ${species}</p>`;
+                            }
+                        }
+
+                        setupAutoCalculate();
+                    } else {
+                        output.innerHTML += '<p class="text-red-600">Fish database failed to initialize!</p>';
+                    }
+                } else {
+                    output.innerHTML += '<p class="text-red-600">window.fishDB not available!</p>';
+                }
+            } catch (error) {
+                document.getElementById('output').innerHTML += `<p class="text-red-600">Error: ${error.message}</p>`;
+            }
+        }
+
+        function setupAutoCalculate() {
+            const speciesInput = document.getElementById('species');
+            const lengthInput = document.getElementById('length');
+
+            const autoCalculate = async () => {
+                const species = speciesInput.value.trim();
+                const length = parseFloat(lengthInput.value);
+
+                if (species && length && length > 0) {
+                    await calculateWeight(species, length);
+                }
+            };
+
+            lengthInput.addEventListener('input', autoCalculate);
+            speciesInput.addEventListener('input', autoCalculate);
+            speciesInput.addEventListener('change', autoCalculate);
+        }
+
+        async function calculateWeight(species, length) {
+            try {
+                const output = document.getElementById('output');
+                output.innerHTML += `<p class="text-blue-600">Calculating weight for ${species} at ${length}cm...</p>`;
+
+                if (fishDB && await fishDB.isReady()) {
+                    const result = await fishDB.getImprovedWeightEstimate(species, length);
+
+                    if (result) {
+                        const weightInput = document.getElementById('weight');
+                        weightInput.value = result.estimatedWeight.toFixed(3);
+
+                        output.innerHTML += `<p class="text-green-600">✓ Weight calculated: ${result.estimatedWeight.toFixed(3)}kg</p>`;
+                        output.innerHTML += `<p>Algorithm: ${result.algorithm_source}, Confidence: ${result.confidence}, R²: ${result.accuracy.toFixed(3)}</p>`;
+                    } else {
+                        output.innerHTML += `<p class="text-red-600">✗ Could not calculate weight</p>`;
+                    }
+                } else {
+                    output.innerHTML += `<p class="text-red-600">Database not ready</p>`;
+                }
+            } catch (error) {
+                document.getElementById('output').innerHTML += `<p class="text-red-600">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testCalculation() {
+            const species = document.getElementById('species').value.trim();
+            const length = parseFloat(document.getElementById('length').value);
+
+            if (!species || !length || length <= 0) {
+                alert('Please enter valid species and length');
+                return;
+            }
+
+            await calculateWeight(species, length);
+        }
+
+        function clearInputs() {
+            document.getElementById('species').value = '';
+            document.getElementById('length').value = '';
+            document.getElementById('weight').value = '';
+            document.getElementById('output').innerHTML = '';
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>
