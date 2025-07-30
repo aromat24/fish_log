@@ -2515,11 +2515,11 @@ function setupTabSystem() {
                 }
                 
             } else if (activeTab === gameLogTab) {
-                // Game Log active: All other tabs to left, Game Log with icon + label
+                // Game Log active: All other tabs to left, Game Log with icon + label + info icon
                 gameLogTab.classList.add('active');
                 const gameLogIcon = getTabIcon('game-log-tab-btn');
                 const gameLogLabel = gameLogTab.getAttribute('data-label');
-                gameLogTab.innerHTML = `${gameLogIcon}<span class="tab-text">${gameLogLabel}</span>`;
+                gameLogTab.innerHTML = `${gameLogIcon}<span class="tab-text">${gameLogLabel} <span class="text-xs opacity-70">ⓘ</span></span>`;
                 
                 if (recordsTab) {
                     leftGroup.appendChild(recordsTab);

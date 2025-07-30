@@ -655,4 +655,14 @@ if (typeof module !== 'undefined' && module.exports) {
         BaseScene,
         GameRenderer
     };
+    
+    // Export classes individually for game engine compatibility
+    window.EntityManager = EntityManager;
+    window.ParticleSystem = ParticleSystem;
+    window.Particle = Particle;
+    window.SceneManager = SceneManager;
+    window.BaseScene = BaseScene;
+    window.GameRenderer = GameRenderer;
+    
+    console.log('✅ [GAMECOMPONENTS] All game component classes exported globally');
 }

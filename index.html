@@ -976,6 +976,15 @@
                 <span class="lucide lucide-import"></span> Import Data
               </label>
               <input type="file" id="import-data-input" accept=".json" class="hidden">
+              <hr class="my-1 border-gray-200">
+              <button type="button" id="export-game-data-btn"
+                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 transition-colors">
+                🎮 Export Game Data
+              </button>
+              <button type="button" id="clear-game-log-btn"
+                class="w-full px-4 py-2 text-left text-sm flex items-center gap-2 transition-colors text-red-600">
+                🗑️ Clear Game Log
+              </button>
             </div>
           </div>
           <div class="photo-upload">
@@ -996,9 +1005,9 @@
         </form>
         
         <!-- Fish Now Button -->
-        <button id="fish-now-btn" class="shiny-button shimmer-border ripple-effect w-full mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium"
+        <button id="fish-now-btn" class="shiny-button shimmer-border ripple-effect w-full mt-8 mb-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium"
           style="touch-action: manipulation;">
-          🎣 Fish Now - Motion Game
+          🎣 Fish Now!
         </button>
         
         <div>
@@ -1075,19 +1084,6 @@
               </div>
             </div>
             
-            <!-- Game Controls -->
-            <div class="flex gap-2 mb-4">
-              <button id="game-stats-btn" class="shiny-button ripple-effect flex-1 text-sm">
-                📊 Game Statistics
-              </button>
-              <button id="clear-game-log-btn" class="shiny-button ripple-effect flex-1 text-sm"
-                style="--button-color: #ef4444; --button-bg: #fee2e2; --button-text: #b91c1c;">
-                🗑️ Clear Game Log
-              </button>
-              <button id="export-game-data-btn" class="shiny-button ripple-effect flex-1 text-sm">
-                📤 Export Game Data
-              </button>
-            </div>
             
             <!-- Game Catches List -->
             <div id="game-catches-list" class="space-y-3">

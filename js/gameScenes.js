@@ -724,4 +724,10 @@ if (typeof module !== 'undefined' && module.exports) {
     window.MenuScene = MenuScene;
     window.FishingScene = FishingScene;
     window.GameOverScene = GameOverScene;
+    
+    console.log('✅ [GAMESCENES] All scene classes exported globally:', {
+        MenuScene: !!window.MenuScene,
+        FishingScene: !!window.FishingScene,
+        GameOverScene: !!window.GameOverScene
+    });
 }
