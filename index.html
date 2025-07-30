@@ -836,6 +836,56 @@
     [data-theme="night"] .modal-heading-text {
       color: white !important;
     }
+    /* Fishing Game Styles */
+    #fishing-game-canvas {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .game-touch-feedback {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: touchRipple 0.6s ease-out forwards;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+    }
+
+    @keyframes touchRipple {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+      }
+    }
+
+    .game-canvas-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Game responsive design */
+    @media (max-width: 640px) {
+      #fishing-game-canvas {
+        height: 300px;
+      }
+      
+      .game-controls button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
@@ -857,6 +907,11 @@
   <script src="js/beautiful-buttons.js"></script>
   <script src="js/magicui-components.js"></script>
   <script src="js/confetti-effects.js"></script>
+  <!-- Fishing Game Scripts -->
+  <script src="js/game/GameEngine.js"></script>
+  <script src="js/game/InputManager.js"></script>
+  <script src="js/game/scenes/MenuScene.js"></script>
+  <script src="js/game-integration.js"></script>
   <script src="js/app.js" defer></script>
 </head>
 
@@ -1005,6 +1060,10 @@
                     data-label="Catch Map">
                     🗺️
                   </button>
+                  <button id="game-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium"
+                    data-label="Fishing Game">
+                    🎣
+                  </button>
                 </div>
               </div>
             </div>
@@ -1020,6 +1079,35 @@
             </div>
             <div class="mt-4 text-sm text-gray-600">
               <p>🗺️ Click on markers to view catch details</p>
+            </div>
+          </div>
+          <!-- Fishing Game Container -->
+          <div id="game-view-container" class="hidden">
+            <div class="game-status-area mb-4 p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
+              <p id="game-status-text" class="text-center text-lg font-medium text-blue-800 dark:text-blue-200">
+                Loading fishing game...
+              </p>
+            </div>
+            <div class="game-canvas-container relative">
+              <canvas id="fishing-game-canvas" 
+                style="width: 100%; height: 400px; border-radius: 0.5rem; border: 2px solid #3b82f6; background: linear-gradient(180deg, #87CEEB 0%, #4682B4 30%, #191970 70%, #000080 100%);">
+                Your browser does not support HTML5 Canvas. Please upgrade to a modern browser to play the fishing game.
+              </canvas>
+              <div class="game-controls mt-4 flex justify-center gap-4">
+                <button id="start-game-btn" class="shiny-button ripple-effect px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium">
+                  🎮 Start Game
+                </button>
+                <button id="pause-game-btn" class="shiny-button ripple-effect px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium hidden">
+                  ⏸️ Pause
+                </button>
+                <button id="stop-game-btn" class="shiny-button ripple-effect px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium hidden">
+                  ⏹️ Stop
+                </button>
+              </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <p>🎣 Touch and drag to cast your line • Use the existing fish database for authentic gameplay</p>
+              <p>🏆 Your catches will be logged in your fishing journal automatically</p>
             </div>
           </div>
         </div>

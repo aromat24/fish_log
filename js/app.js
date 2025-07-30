@@ -2363,17 +2363,21 @@ function setupTabSystem() {
     const historyTab = document.getElementById('history-tab-btn');
     const recordsTab = document.getElementById('records-tab-btn');
     const mapTab = document.getElementById('map-tab-btn');
+    const gameTab = document.getElementById('game-tab-btn');
     const catchLog = document.getElementById('catch-log');
     const recordsContainer = document.getElementById('records-container');
     const mapContainer = document.getElementById('map-view-container');
+    const gameContainer = document.getElementById('game-view-container');
 
     console.log('Tab elements found:', {
         historyTab: !!historyTab,
         recordsTab: !!recordsTab,
         mapTab: !!mapTab,
+        gameTab: !!gameTab,
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
-        mapContainer: !!mapContainer
+        mapContainer: !!mapContainer,
+        gameContainer: !!gameContainer
     });    // Function to switch tabs with proper sliding and label behavior
     function switchTab(activeTab, activeContent) {
         // Get container elements
@@ -2382,9 +2386,10 @@ function setupTabSystem() {
         const historyTab = document.getElementById('history-tab-btn');
         const recordsTab = document.getElementById('records-tab-btn');
         const mapTab = document.getElementById('map-tab-btn');
+        const gameTab = document.getElementById('game-tab-btn');
 
         // Remove active class from all tab buttons and reset their content
-        [historyTab, recordsTab, mapTab].forEach(tab => {
+        [historyTab, recordsTab, mapTab, gameTab].forEach(tab => {
             if (tab) {
                 tab.classList.remove('active');
                 // Reset to icon only for inactive tabs
@@ -2394,17 +2399,22 @@ function setupTabSystem() {
             }
         });
 
-        // Hide all content areas
-        [catchLog, recordsContainer, mapContainer].forEach(content => {
+        // Hide all content areas and handle cleanup
+        [catchLog, recordsContainer, mapContainer, gameContainer].forEach(content => {
             if (content) {
                 content.classList.add('hidden');
             }
         });
+        
+        // Cleanup game if switching away from game tab
+        if (gameContainer && !gameContainer.classList.contains('hidden') && activeContent !== gameContainer) {
+            cleanupFishingGame();
+        }
 
         // Clear both groups and rebuild layout
         if (leftGroup && rightGroup) {
             // Remove all tabs from their current positions
-            [historyTab, recordsTab, mapTab].forEach(tab => {
+            [historyTab, recordsTab, mapTab, gameTab].forEach(tab => {
                 if (tab && tab.parentElement) {
                     tab.remove();
                 }
@@ -2445,6 +2455,20 @@ function setupTabSystem() {
                 
                 leftGroup.appendChild(recordsTab);
                 leftGroup.appendChild(mapTab);
+                
+                // Game stays on right
+                rightGroup.appendChild(gameTab);
+
+            } else if (activeTab === gameTab) {
+                // Game active: All other tabs slide to left positions, Game gets label
+                gameTab.classList.add('active');
+                const gameIcon = getTabIcon('game-tab-btn');
+                const gameLabel = gameTab.getAttribute('data-label');
+                gameTab.innerHTML = `${gameIcon}<span class="tab-text">${gameLabel}</span>`;
+                
+                leftGroup.appendChild(recordsTab);
+                leftGroup.appendChild(mapTab);
+                leftGroup.appendChild(gameTab);
             }
         }
 
@@ -2463,6 +2487,8 @@ function setupTabSystem() {
                 return '🏆';
             case 'map-tab-btn':
                 return '🗺️';
+            case 'game-tab-btn':
+                return '🎣';
             default:
                 return '';
         }
@@ -2510,6 +2536,19 @@ function setupTabSystem() {
                     setupMainMap();
                 }, 100);
             }
+        });
+    }
+
+    // Game tab click handler
+    if (gameTab) {
+        gameTab.addEventListener('click', () => {
+            console.log('Game tab clicked');
+            switchTab(gameTab, gameContainer);
+            
+            // Initialize game when tab is first clicked
+            setTimeout(() => {
+                initializeFishingGame();
+            }, 100);
         });
     }
 
@@ -3380,5 +3419,49 @@ function setupStatsModalCloseHandlers() {
         if (e.target === modal) {
             closeModal();
         }
+    }
+}
+
+// Global game integration instance
+let fishingGameIntegration = null;
+
+// Initialize fishing game when needed
+async function initializeFishingGame() {
+    try {
+        console.log('🎮 Initializing fishing game integration...');
+        
+        if (!fishingGameIntegration) {
+            // Check if game integration class is available
+            if (!window.FishingGameIntegration) {
+                console.error('❌ FishingGameIntegration class not available');
+                return;
+            }
+            
+            fishingGameIntegration = new window.FishingGameIntegration();
+        }
+        
+        if (!fishingGameIntegration.isGameInitialized) {
+            const success = await fishingGameIntegration.initializeGame();
+            if (!success) {
+                console.error('❌ Failed to initialize fishing game');
+                return;
+            }
+        }
+        
+        console.log('✅ Fishing game integration ready');
+        
+    } catch (error) {
+        console.error('❌ Error initializing fishing game:', error);
+        
+        if (window.errorHandler) {
+            window.errorHandler.logError(error, 'initializeFishingGame');
+        }
+    }
+}
+
+// Cleanup game when switching tabs
+function cleanupFishingGame() {
+    if (fishingGameIntegration) {
+        fishingGameIntegration.cleanup();
     }
 }

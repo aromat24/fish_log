@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jq:*)",
+      "Bash(grep:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(git checkout:*)",
+      "Bash(rm:*)",
+      "Bash(ls:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(mv:*)",
+      "Bash(git rm:*)",
+      "Bash(find:*)",
+      "Bash(git merge:*)"
+    ],
+    "deny": []
+  }
+}
