@@ -2411,7 +2411,9 @@ function setupTabSystem() {
             });
 
             // Always start with History in left group
-            leftGroup.appendChild(historyTab);
+            if (historyTab) {
+                leftGroup.appendChild(historyTab);
+            }
 
             if (activeTab === historyTab) {
                 // History active: History left with icon + label, Records and Map slide to right (icons only)
@@ -2421,8 +2423,12 @@ function setupTabSystem() {
                 historyTab.innerHTML = `${historyIcon}<span class="tab-text">${historyLabel} <span class="text-xs opacity-70">ⓘ</span></span>`;
 
                 // Add Records and Map to right group in sequence
-                rightGroup.appendChild(recordsTab);
-                rightGroup.appendChild(mapTab);
+                if (recordsTab) {
+                    rightGroup.appendChild(recordsTab);
+                }
+                if (mapTab) {
+                    rightGroup.appendChild(mapTab);
+                }
 
             } else if (activeTab === recordsTab) {
                 // Records active: Records slides next to History with icon + label, Map stays right
@@ -2431,10 +2437,14 @@ function setupTabSystem() {
                 const recordsLabel = recordsTab.getAttribute('data-label');
                 recordsTab.innerHTML = `${recordsIcon}<span class="tab-text">${recordsLabel}</span>`;
                 
-                leftGroup.appendChild(recordsTab);
+                if (recordsTab) {
+                    leftGroup.appendChild(recordsTab);
+                }
 
                 // Map stays on right
-                rightGroup.appendChild(mapTab);
+                if (mapTab) {
+                    rightGroup.appendChild(mapTab);
+                }
 
             } else if (activeTab === mapTab) {
                 // Map active: Records slides next to History, Map slides next to Records with icon + label
@@ -2443,8 +2453,12 @@ function setupTabSystem() {
                 const mapLabel = mapTab.getAttribute('data-label');
                 mapTab.innerHTML = `${mapIcon}<span class="tab-text">${mapLabel}</span>`;
                 
-                leftGroup.appendChild(recordsTab);
-                leftGroup.appendChild(mapTab);
+                if (recordsTab) {
+                    leftGroup.appendChild(recordsTab);
+                }
+                if (mapTab) {
+                    leftGroup.appendChild(mapTab);
+                }
             }
         }
 
