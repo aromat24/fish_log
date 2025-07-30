@@ -2355,6 +2355,43 @@ function setupDataOptions() {
         importDataInput.value = ''; // Reset input
     });
 
+    // Handle game data export
+    const exportGameDataBtn = document.getElementById('export-game-data-btn');
+    if (exportGameDataBtn) {
+        exportGameDataBtn.addEventListener('click', () => {
+            console.log('Export game data button clicked');
+            try {
+                if (window.gameLogManager) {
+                    window.gameLogManager.exportGameData();
+                    showMessage('Game data exported successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error exporting game data:', error);
+                showMessage('Failed to export game data: ' + error.message, 'error');
+            }
+            dataOptionsMenu.classList.add('hidden');
+        });
+    }
+    
+    // Handle clear game log
+    const clearGameLogBtn = document.getElementById('clear-game-log-btn');
+    if (clearGameLogBtn) {
+        clearGameLogBtn.addEventListener('click', () => {
+            console.log('Clear game log button clicked');
+            if (confirm('Are you sure you want to clear all game catches? This cannot be undone.')) {
+                if (window.gameLogManager) {
+                    window.gameLogManager.clearAllGameCatches();
+                    // Refresh the game log UI
+                    if (window.fishingGameIntegration) {
+                        window.fishingGameIntegration.updateGameLogUI();
+                    }
+                    showMessage('Game log cleared successfully!', 'success');
+                }
+            }
+            dataOptionsMenu.classList.add('hidden');
+        });
+    }
+
 }
 
 function setupTabSystem() {
@@ -2569,10 +2606,11 @@ function setupTabSystem() {
             console.log('Game Log tab clicked');
             // If game log tab is already active, show game statistics
             if (gameLogTab.classList.contains('active')) {
+                console.log('Game Log tab already active, showing game statistics modal');
                 if (window.gameLogManager) {
                     const stats = window.gameLogManager.getGameStatistics();
-                    console.log('Game statistics:', stats);
-                    // TODO: Show game statistics modal
+                    const achievements = window.gameLogManager.getAchievements();
+                    showGameStatisticsModal(stats, achievements);
                 }
             } else {
                 switchTab(gameLogTab, gameLogContainer);
@@ -2599,53 +2637,9 @@ function setupTabSystem() {
 function setupGameLogHandlers() {
     console.log('Setting up game log handlers...');
     
-    // Game statistics button
-    const gameStatsBtn = document.getElementById('game-stats-btn');
-    if (gameStatsBtn) {
-        gameStatsBtn.addEventListener('click', () => {
-            console.log('Game statistics button clicked');
-            if (window.gameLogManager) {
-                const stats = window.gameLogManager.getGameStatistics();
-                const achievements = window.gameLogManager.getAchievements();
-                showGameStatisticsModal(stats, achievements);
-            }
-        });
-    }
-    
-    // Clear game log button
-    const clearGameLogBtn = document.getElementById('clear-game-log-btn');
-    if (clearGameLogBtn) {
-        clearGameLogBtn.addEventListener('click', () => {
-            console.log('Clear game log button clicked');
-            if (confirm('Are you sure you want to clear all game catches? This cannot be undone.')) {
-                if (window.gameLogManager) {
-                    window.gameLogManager.clearAllGameCatches();
-                    // Refresh the game log UI
-                    if (window.fishingGameIntegration) {
-                        window.fishingGameIntegration.updateGameLogUI();
-                    }
-                    showMessage('Game log cleared successfully!', 'success');
-                }
-            }
-        });
-    }
-    
-    // Export game data button
-    const exportGameDataBtn = document.getElementById('export-game-data-btn');
-    if (exportGameDataBtn) {
-        exportGameDataBtn.addEventListener('click', () => {
-            console.log('Export game data button clicked');
-            try {
-                if (window.gameLogManager) {
-                    window.gameLogManager.exportGameData();
-                    showMessage('Game data exported successfully!', 'success');
-                }
-            } catch (error) {
-                console.error('Error exporting game data:', error);
-                showMessage('Failed to export game data: ' + error.message, 'error');
-            }
-        });
-    }
+    // Game log handlers are now integrated with tab system and hamburger menu
+    // Tab double-click shows statistics modal
+    // Clear and export functions moved to hamburger menu
     
     console.log('Game log handlers setup complete');
 }

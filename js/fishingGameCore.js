@@ -70,34 +70,57 @@ class FishingGameCore {
      */
     async initialize() {
         try {
-            console.log('Initializing Fishing Game Core...');
+            console.log('🎮 [GAME] Initializing Fishing Game Core...');
+            console.log('🎮 [GAME] Canvas element:', this.canvas);
+            console.log('🎮 [GAME] Canvas context:', this.ctx);
+            console.log('🎮 [GAME] Game options:', this.options);
             
             // Setup canvas for optimal mobile performance
+            console.log('🎮 [GAME] Setting up canvas...');
             this.setupCanvas();
+            console.log('✅ [GAME] Canvas setup complete');
             
             // Initialize core systems
+            console.log('🎮 [GAME] Initializing renderer...');
             this.initializeRenderer();
+            console.log('✅ [GAME] Renderer initialized');
+            
+            console.log('🎮 [GAME] Initializing scene manager...');
             this.initializeSceneManager();
+            console.log('✅ [GAME] Scene manager initialized');
+            
+            console.log('🎮 [GAME] Initializing input manager...');
             this.initializeInputManager();
+            console.log('✅ [GAME] Input manager initialized');
             
             // Initialize motion controls if enabled
             if (this.options.enableMotionControls) {
+                console.log('🎮 [GAME] Initializing motion controls...');
                 await this.initializeMotionControls();
+                console.log('✅ [GAME] Motion controls initialized');
+            } else {
+                console.log('⚠️ [GAME] Motion controls disabled');
             }
             
             // Setup resize handling
+            console.log('🎮 [GAME] Setting up resize handling...');
             this.setupResizeHandling();
+            console.log('✅ [GAME] Resize handling setup complete');
             
             // Initialize audio system
+            console.log('🎮 [GAME] Initializing audio system...');
             this.initializeAudioSystem();
+            console.log('✅ [GAME] Audio system initialized');
             
             this.gameState.isInitialized = true;
-            console.log('✅ Fishing Game Core initialized successfully');
+            console.log('✅ [GAME] Fishing Game Core initialized successfully');
+            console.log('🎮 [GAME] Final game state:', this.gameState);
             
             return { success: true };
             
         } catch (error) {
-            console.error('❌ Failed to initialize Fishing Game Core:', error);
+            console.error('❌ [GAME] Failed to initialize Fishing Game Core:', error);
+            console.error('❌ [GAME] Error stack:', error.stack);
             return { success: false, error: error.message };
         }
     }
@@ -126,31 +149,55 @@ class FishingGameCore {
      * Initialize the rendering system
      */
     initializeRenderer() {
+        console.log('🎮 [RENDERER] Checking GameRenderer class availability...');
+        if (typeof GameRenderer === 'undefined') {
+            throw new Error('GameRenderer class not found! Make sure gameComponents.js is loaded.');
+        }
+        
+        console.log('🎮 [RENDERER] Creating GameRenderer instance...');
         this.renderer = new GameRenderer(this.ctx, {
             enableDebugMode: this.options.enableDebugMode,
             adaptiveQuality: this.options.adaptiveQuality,
             maxLayers: 5 // Background, water, entities, particles, UI
         });
         
-        console.log('Renderer initialized');
+        console.log('✅ [RENDERER] Renderer initialized:', this.renderer);
     }
 
     /**
      * Initialize scene management
      */
     initializeSceneManager() {
+        console.log('🎮 [SCENES] Checking required scene classes...');
+        
+        // Check for required classes
+        const requiredClasses = ['SceneManager', 'MenuScene', 'FishingScene', 'GameOverScene'];
+        for (const className of requiredClasses) {
+            if (typeof window[className] === 'undefined') {
+                throw new Error(`${className} class not found! Make sure all game files are loaded.`);
+            }
+            console.log(`✅ [SCENES] ${className} class found`);
+        }
+        
+        console.log('🎮 [SCENES] Creating SceneManager instance...');
         this.sceneManager = new SceneManager();
         
         // Register default scenes
+        console.log('🎮 [SCENES] Registering menu scene...');
         this.sceneManager.registerScene('menu', new MenuScene(this));
+        
+        console.log('🎮 [SCENES] Registering fishing scene...');
         this.sceneManager.registerScene('fishing', new FishingScene(this));
+        
+        console.log('🎮 [SCENES] Registering game over scene...');
         this.sceneManager.registerScene('gameOver', new GameOverScene(this));
         
         // Set initial scene
+        console.log('🎮 [SCENES] Setting initial scene to menu...');
         this.sceneManager.setActiveScene('menu');
         this.gameState.currentScene = 'menu';
         
-        console.log('Scene manager initialized');
+        console.log('✅ [SCENES] Scene manager initialized with active scene:', this.sceneManager.getActiveScene());
     }
 
     /**
@@ -238,7 +285,10 @@ class FishingGameCore {
      * Start the game engine
      */
     async start() {
+        console.log('🎮 [START] Starting fishing game...');
+        
         if (!this.gameState.isInitialized) {
+            console.log('🎮 [START] Game not initialized, initializing now...');
             const initResult = await this.initialize();
             if (!initResult.success) {
                 throw new Error(`Failed to initialize game: ${initResult.error}`);
@@ -246,18 +296,23 @@ class FishingGameCore {
         }
 
         if (this.gameState.isRunning) {
-            console.warn('Game is already running');
+            console.warn('⚠️ [START] Game is already running');
             return;
         }
 
+        console.log('🎮 [START] Setting game state to running...');
         this.gameState.isRunning = true;
         this.gameState.isPaused = false;
         this.lastUpdateTime = performance.now();
         
+        console.log('🎮 [START] Current scene:', this.sceneManager.getActiveScene());
+        console.log('🎮 [START] Canvas dimensions:', this.canvas.width, 'x', this.canvas.height);
+        
         // Start the game loop
+        console.log('🎮 [START] Starting game loop...');
         this.gameLoop();
         
-        console.log('🎮 Fishing game started');
+        console.log('✅ [START] Fishing game started successfully');
     }
 
     /**
@@ -320,21 +375,49 @@ class FishingGameCore {
      * Render game frame
      */
     render(interpolation) {
+        // Add frame counter for initial debug (only log first few frames)
+        if (!this.frameCounter) this.frameCounter = 0;
+        this.frameCounter++;
+        
+        if (this.frameCounter <= 5) {
+            console.log(`🎮 [RENDER] Frame ${this.frameCounter} - Starting render cycle`);
+        }
+        
         // Clear canvas
+        if (this.frameCounter <= 5) {
+            console.log('🎮 [RENDER] Clearing canvas...');
+        }
         this.renderer.clear();
 
         // Render current scene
         const activeScene = this.sceneManager.getActiveScene();
+        if (this.frameCounter <= 5) {
+            console.log('🎮 [RENDER] Active scene:', activeScene);
+        }
+        
         if (activeScene) {
+            if (this.frameCounter <= 5) {
+                console.log('🎮 [RENDER] Rendering scene...');
+            }
             activeScene.render(this.renderer, interpolation);
+        } else {
+            if (this.frameCounter <= 5) {
+                console.warn('⚠️ [RENDER] No active scene to render!');
+            }
         }
 
         // Render particles
-        this.particleSystem.render(this.renderer);
+        if (this.particleSystem) {
+            this.particleSystem.render(this.renderer);
+        }
 
         // Render debug information
         if (this.options.enableDebugMode) {
             this.renderDebugInfo();
+        }
+        
+        if (this.frameCounter <= 5) {
+            console.log(`✅ [RENDER] Frame ${this.frameCounter} render complete`);
         }
     }
 

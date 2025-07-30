@@ -127,13 +127,15 @@ class FishingGameIntegration {
      */
     async launchGame() {
         try {
-            console.log('Launching fishing game...');
+            console.log('🎮 [INTEGRATION] Launching fishing game...');
             
             // Show game container
+            console.log('🎮 [INTEGRATION] Showing game container...');
             this.gameContainer.classList.remove('hidden');
             this.isGameActive = true;
             
             // Hide main app content (fade out effect)
+            console.log('🎮 [INTEGRATION] Hiding main app content...');
             const appContent = document.getElementById('app-content');
             if (appContent) {
                 this.originalAppContent = appContent;
@@ -147,13 +149,18 @@ class FishingGameIntegration {
             
             // Initialize game if not already created
             if (!this.fishingGame) {
+                console.log('🎮 [INTEGRATION] Game not initialized, initializing...');
                 await this.initializeGame();
+            } else {
+                console.log('🎮 [INTEGRATION] Game already initialized, reusing instance');
             }
             
             // Start the game
+            console.log('🎮 [INTEGRATION] Starting game...');
             await this.fishingGame.start();
             
             // Hide loading overlay
+            console.log('🎮 [INTEGRATION] Hiding loading overlay...');
             const loadingOverlay = document.getElementById('game-loading-overlay');
             if (loadingOverlay) {
                 loadingOverlay.style.opacity = '0';
@@ -162,10 +169,11 @@ class FishingGameIntegration {
                 }, 500);
             }
             
-            console.log('🎮 Fishing game launched successfully');
+            console.log('✅ [INTEGRATION] Fishing game launched successfully');
             
         } catch (error) {
-            console.error('❌ Failed to launch fishing game:', error);
+            console.error('❌ [INTEGRATION] Failed to launch fishing game:', error);
+            console.error('❌ [INTEGRATION] Error stack:', error.stack);
             this.showGameError('Failed to launch game', error.message);
         }
     }
@@ -175,20 +183,34 @@ class FishingGameIntegration {
      */
     async initializeGame() {
         try {
+            console.log('🎮 [INIT] Initializing fishing game...');
+            
+            // Check if FishingGameCore class is available
+            if (typeof FishingGameCore === 'undefined') {
+                throw new Error('FishingGameCore class not found! Make sure fishingGameCore.js is loaded.');
+            }
+            console.log('✅ [INIT] FishingGameCore class found');
+            
             // Resize canvas to fit container
+            console.log('🎮 [INIT] Resizing canvas...');
             this.resizeCanvas();
             
             // Create fishing game instance
+            console.log('🎮 [INIT] Creating FishingGameCore instance...');
             this.fishingGame = new FishingGameCore(this.gameCanvas, {
                 enableMotionControls: true,
-                enableDebugMode: false,
+                enableDebugMode: true, // Enable debug mode to see more logs
                 targetFPS: 60,
                 adaptiveQuality: true,
                 maxParticles: 300 // Reduced for mobile performance
             });
+            console.log('✅ [INIT] FishingGameCore instance created:', this.fishingGame);
             
             // Initialize game
+            console.log('🎮 [INIT] Initializing game core...');
             const initResult = await this.fishingGame.initialize();
+            console.log('🎮 [INIT] Initialization result:', initResult);
+            
             if (!initResult.success) {
                 throw new Error(initResult.error);
             }
@@ -209,10 +231,11 @@ class FishingGameIntegration {
                 }
             });
             
-            console.log('Fishing game core initialized');
+            console.log('✅ [INIT] Fishing game core initialized successfully');
             
         } catch (error) {
-            console.error('Failed to initialize fishing game:', error);
+            console.error('❌ [INIT] Failed to initialize fishing game:', error);
+            console.error('❌ [INIT] Error stack:', error.stack);
             throw error;
         }
     }
