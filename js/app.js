@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupLocationHandling(); setupPhotoHandling();
         setupModalHandlers();
         setupTabSystem(); // Updated from setupViewToggle
+        setupGameLogHandlers(); // Game log functionality
         setupDataOptions();
         setupSpeciesHandlers();
         setupMapHandlers(); // New map functionality
@@ -2363,17 +2364,21 @@ function setupTabSystem() {
     const historyTab = document.getElementById('history-tab-btn');
     const recordsTab = document.getElementById('records-tab-btn');
     const mapTab = document.getElementById('map-tab-btn');
+    const gameLogTab = document.getElementById('game-log-tab-btn');
     const catchLog = document.getElementById('catch-log');
     const recordsContainer = document.getElementById('records-container');
     const mapContainer = document.getElementById('map-view-container');
+    const gameLogContainer = document.getElementById('game-log-container');
 
     console.log('Tab elements found:', {
         historyTab: !!historyTab,
         recordsTab: !!recordsTab,
         mapTab: !!mapTab,
+        gameLogTab: !!gameLogTab,
         catchLog: !!catchLog,
         recordsContainer: !!recordsContainer,
-        mapContainer: !!mapContainer
+        mapContainer: !!mapContainer,
+        gameLogContainer: !!gameLogContainer
     });    // Function to switch tabs with proper sliding and label behavior
     function switchTab(activeTab, activeContent) {
         // Get container elements
@@ -2382,9 +2387,10 @@ function setupTabSystem() {
         const historyTab = document.getElementById('history-tab-btn');
         const recordsTab = document.getElementById('records-tab-btn');
         const mapTab = document.getElementById('map-tab-btn');
+        const gameLogTab = document.getElementById('game-log-tab-btn');
 
         // Remove active class from all tab buttons and reset their content
-        [historyTab, recordsTab, mapTab].forEach(tab => {
+        [historyTab, recordsTab, mapTab, gameLogTab].forEach(tab => {
             if (tab) {
                 tab.classList.remove('active');
                 // Reset to icon only for inactive tabs
@@ -2395,7 +2401,7 @@ function setupTabSystem() {
         });
 
         // Hide all content areas
-        [catchLog, recordsContainer, mapContainer].forEach(content => {
+        [catchLog, recordsContainer, mapContainer, gameLogContainer].forEach(content => {
             if (content) {
                 content.classList.add('hidden');
             }
@@ -2404,7 +2410,7 @@ function setupTabSystem() {
         // Clear both groups and rebuild layout
         if (leftGroup && rightGroup) {
             // Remove all tabs from their current positions
-            [historyTab, recordsTab, mapTab].forEach(tab => {
+            [historyTab, recordsTab, mapTab, gameLogTab].forEach(tab => {
                 if (tab && tab.parentElement) {
                     tab.remove();
                 }
@@ -2422,12 +2428,15 @@ function setupTabSystem() {
                 const historyLabel = historyTab.getAttribute('data-label');
                 historyTab.innerHTML = `${historyIcon}<span class="tab-text">${historyLabel} <span class="text-xs opacity-70">ⓘ</span></span>`;
 
-                // Add Records and Map to right group in sequence
+                // Add Records, Map, and Game Log to right group in sequence
                 if (recordsTab) {
                     rightGroup.appendChild(recordsTab);
                 }
                 if (mapTab) {
                     rightGroup.appendChild(mapTab);
+                }
+                if (gameLogTab) {
+                    rightGroup.appendChild(gameLogTab);
                 }
 
             } else if (activeTab === recordsTab) {
@@ -2441,9 +2450,12 @@ function setupTabSystem() {
                     leftGroup.appendChild(recordsTab);
                 }
 
-                // Map stays on right
+                // Map and Game Log stay on right
                 if (mapTab) {
                     rightGroup.appendChild(mapTab);
+                }
+                if (gameLogTab) {
+                    rightGroup.appendChild(gameLogTab);
                 }
 
             } else if (activeTab === mapTab) {
@@ -2458,6 +2470,28 @@ function setupTabSystem() {
                 }
                 if (mapTab) {
                     leftGroup.appendChild(mapTab);
+                }
+                
+                // Game Log goes to right if present
+                if (gameLogTab) {
+                    rightGroup.appendChild(gameLogTab);
+                }
+                
+            } else if (activeTab === gameLogTab) {
+                // Game Log active: All other tabs to left, Game Log with icon + label
+                gameLogTab.classList.add('active');
+                const gameLogIcon = getTabIcon('game-log-tab-btn');
+                const gameLogLabel = gameLogTab.getAttribute('data-label');
+                gameLogTab.innerHTML = `${gameLogIcon}<span class="tab-text">${gameLogLabel}</span>`;
+                
+                if (recordsTab) {
+                    leftGroup.appendChild(recordsTab);
+                }
+                if (mapTab) {
+                    leftGroup.appendChild(mapTab);
+                }
+                if (gameLogTab) {
+                    leftGroup.appendChild(gameLogTab);
                 }
             }
         }
@@ -2477,6 +2511,8 @@ function setupTabSystem() {
                 return '🏆';
             case 'map-tab-btn':
                 return '🗺️';
+            case 'game-log-tab-btn':
+                return '🎮';
             default:
                 return '';
         }
@@ -2526,6 +2562,30 @@ function setupTabSystem() {
             }
         });
     }
+    
+    // Game Log tab click handler
+    if (gameLogTab) {
+        gameLogTab.addEventListener('click', () => {
+            console.log('Game Log tab clicked');
+            // If game log tab is already active, show game statistics
+            if (gameLogTab.classList.contains('active')) {
+                if (window.gameLogManager) {
+                    const stats = window.gameLogManager.getGameStatistics();
+                    console.log('Game statistics:', stats);
+                    // TODO: Show game statistics modal
+                }
+            } else {
+                switchTab(gameLogTab, gameLogContainer);
+                
+                // Update game log UI when switching to it
+                setTimeout(() => {
+                    if (window.fishingGameIntegration) {
+                        window.fishingGameIntegration.updateGameLogUI();
+                    }
+                }, 100);
+            }
+        });
+    }
 
     // Initialize - make sure History tab is active by default
     if (historyTab) {
@@ -2533,6 +2593,172 @@ function setupTabSystem() {
     }
 
     console.log('Tab system setup complete');
+}
+
+// Game Log functionality
+function setupGameLogHandlers() {
+    console.log('Setting up game log handlers...');
+    
+    // Game statistics button
+    const gameStatsBtn = document.getElementById('game-stats-btn');
+    if (gameStatsBtn) {
+        gameStatsBtn.addEventListener('click', () => {
+            console.log('Game statistics button clicked');
+            if (window.gameLogManager) {
+                const stats = window.gameLogManager.getGameStatistics();
+                const achievements = window.gameLogManager.getAchievements();
+                showGameStatisticsModal(stats, achievements);
+            }
+        });
+    }
+    
+    // Clear game log button
+    const clearGameLogBtn = document.getElementById('clear-game-log-btn');
+    if (clearGameLogBtn) {
+        clearGameLogBtn.addEventListener('click', () => {
+            console.log('Clear game log button clicked');
+            if (confirm('Are you sure you want to clear all game catches? This cannot be undone.')) {
+                if (window.gameLogManager) {
+                    window.gameLogManager.clearAllGameCatches();
+                    // Refresh the game log UI
+                    if (window.fishingGameIntegration) {
+                        window.fishingGameIntegration.updateGameLogUI();
+                    }
+                    showMessage('Game log cleared successfully!', 'success');
+                }
+            }
+        });
+    }
+    
+    // Export game data button
+    const exportGameDataBtn = document.getElementById('export-game-data-btn');
+    if (exportGameDataBtn) {
+        exportGameDataBtn.addEventListener('click', () => {
+            console.log('Export game data button clicked');
+            try {
+                if (window.gameLogManager) {
+                    window.gameLogManager.exportGameData();
+                    showMessage('Game data exported successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error exporting game data:', error);
+                showMessage('Failed to export game data: ' + error.message, 'error');
+            }
+        });
+    }
+    
+    console.log('Game log handlers setup complete');
+}
+
+// Show game statistics modal
+function showGameStatisticsModal(stats, achievements) {
+    const modalHTML = `
+        <div id="game-stats-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-purple-800">🎮 Game Statistics</h2>
+                    <button id="close-game-stats-modal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Main Stats -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-purple-50 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-600">${stats.totalCatches}</div>
+                            <div class="text-sm text-purple-500">Total Catches</div>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-600">${stats.highestScore}</div>
+                            <div class="text-sm text-blue-500">High Score</div>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-green-600">${stats.uniqueSpecies}</div>
+                            <div class="text-sm text-green-500">Species</div>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-orange-600">${stats.totalGameTime}m</div>
+                            <div class="text-sm text-orange-500">Play Time</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Achievements -->
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">🏆 Achievements</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${Object.keys(achievements).length > 0 ? 
+                                Object.entries(achievements).map(([key, achievement]) => `
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded p-2 text-xs">
+                                        <div class="font-medium text-yellow-800">${formatAchievementName(key)}</div>
+                                        <div class="text-yellow-600">${new Date(achievement.timestamp).toLocaleDateString()}</div>
+                                    </div>
+                                `).join('') : 
+                                '<div class="col-span-2 text-gray-500 text-center py-4">No achievements yet. Keep fishing!</div>'
+                            }
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Catches -->
+                    ${stats.recentCatches.length > 0 ? `
+                        <div>
+                            <h3 class="font-semibold text-gray-800 mb-2">🐟 Recent Catches</h3>
+                            <div class="space-y-2">
+                                ${stats.recentCatches.map(catch_ => `
+                                    <div class="bg-gray-50 p-2 rounded text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="font-medium">${catch_.species}</span>
+                                            <span class="text-purple-600">+${catch_.gameScore}</span>
+                                        </div>
+                                        <div class="text-gray-500 text-xs">${catch_.length}cm • ${catch_.weight}kg</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="mt-6 flex justify-end">
+                    <button id="close-game-stats-btn" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Setup close handlers
+    const modal = document.getElementById('game-stats-modal');
+    const closeBtn = document.getElementById('close-game-stats-btn');
+    const closeXBtn = document.getElementById('close-game-stats-modal');
+    
+    const closeModal = () => {
+        if (modal) modal.remove();
+    };
+    
+    closeBtn?.addEventListener('click', closeModal);
+    closeXBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+}
+
+// Format achievement names for display
+function formatAchievementName(achievementKey) {
+    const names = {
+        'first_catch': 'First Catch',
+        'rookie_angler': 'Rookie Angler',
+        'experienced_angler': 'Experienced',
+        'master_angler': 'Master Angler',
+        'high_scorer': 'High Scorer',
+        'perfect_accuracy': 'Perfect Cast',
+        'species_collector': 'Species Hunter',
+        'marathon_fisher': 'Marathon Fisher',
+        'speed_catcher': 'Speed Demon',
+        'big_catch': 'Big Fish'
+    };
+    return names[achievementKey] || achievementKey.replace(/_/g, ' ');
 }
 
 // Compatibility function for any legacy references

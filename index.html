@@ -857,6 +857,19 @@
   <script src="js/beautiful-buttons.js"></script>
   <script src="js/magicui-components.js"></script>
   <script src="js/confetti-effects.js"></script>
+  
+  <!-- Motion Sensor Fishing Game Scripts -->
+  <script src="js/gameLogManager.js"></script>
+  <script src="js/motionSensorManager.js"></script>
+  <script src="js/sensorFilters.js"></script>
+  <script src="js/motionPermissionUI.js"></script>
+  <script src="js/gameComponents.js"></script>
+  <script src="js/inputManager.js"></script>
+  <script src="js/gameAudioManager.js"></script>
+  <script src="js/gameScenes.js"></script>
+  <script src="js/fishingGameCore.js"></script>
+  <script src="js/fishingGameIntegration.js"></script>
+  
   <script src="js/app.js" defer></script>
 </head>
 
@@ -981,6 +994,13 @@
             <span class="lucide lucide-save"></span> Save Catch
           </button>
         </form>
+        
+        <!-- Fish Now Button -->
+        <button id="fish-now-btn" class="shiny-button shimmer-border ripple-effect w-full mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium"
+          style="touch-action: manipulation;">
+          🎣 Fish Now - Motion Game
+        </button>
+        
         <div>
           <div class="flex justify-between items-center border-b pb-2 mb-4">
             <div class="flex items-center gap-4 flex-1">
@@ -1005,6 +1025,10 @@
                     data-label="Catch Map">
                     🗺️
                   </button>
+                  <button id="game-log-tab-btn" class="tab-button shiny-button ripple-effect px-3 py-2 text-sm font-medium"
+                    data-label="Game Log">
+                    🎮
+                  </button>
                 </div>
               </div>
             </div>
@@ -1020,6 +1044,54 @@
             </div>
             <div class="mt-4 text-sm text-gray-600">
               <p>🗺️ Click on markers to view catch details</p>
+            </div>
+          </div>
+          <div id="game-log-container" class="hidden space-y-4">
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-2xl">🎮</span>
+                <h3 class="text-lg font-semibold text-blue-800">Virtual Fishing Game Log</h3>
+              </div>
+              <p class="text-sm text-blue-600">Track your motion sensor fishing game catches and achievements</p>
+            </div>
+            
+            <!-- Game Statistics Summary -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                <div class="text-purple-600 font-bold text-lg" id="game-total-catches">0</div>
+                <div class="text-purple-500 text-xs">Game Catches</div>
+              </div>
+              <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                <div class="text-green-600 font-bold text-lg" id="game-high-score">0</div>
+                <div class="text-green-500 text-xs">High Score</div>
+              </div>
+              <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                <div class="text-orange-600 font-bold text-lg" id="game-species-count">0</div>
+                <div class="text-orange-500 text-xs">Species</div>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                <div class="text-blue-600 font-bold text-lg" id="game-play-time">0m</div>
+                <div class="text-blue-500 text-xs">Play Time</div>
+              </div>
+            </div>
+            
+            <!-- Game Controls -->
+            <div class="flex gap-2 mb-4">
+              <button id="game-stats-btn" class="shiny-button ripple-effect flex-1 text-sm">
+                📊 Game Statistics
+              </button>
+              <button id="clear-game-log-btn" class="shiny-button ripple-effect flex-1 text-sm"
+                style="--button-color: #ef4444; --button-bg: #fee2e2; --button-text: #b91c1c;">
+                🗑️ Clear Game Log
+              </button>
+              <button id="export-game-data-btn" class="shiny-button ripple-effect flex-1 text-sm">
+                📤 Export Game Data
+              </button>
+            </div>
+            
+            <!-- Game Catches List -->
+            <div id="game-catches-list" class="space-y-3">
+              <p class="italic text-gray-500 text-center py-8">No game catches yet. Play the fishing game to start logging virtual catches!</p>
             </div>
           </div>
         </div>
