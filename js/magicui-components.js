@@ -226,25 +226,53 @@ class MagicUIComponents {
                 this.createParticles();
                 this.createTopBubbles(); // Add persistent top bubbles
                 
+                // Store interval IDs so we can clear them when app is entered
+                this.bubbleIntervals = [];
+                
                 // Refresh main bubbles more frequently for continuous effect
-                setInterval(() => {
+                const mainBubbleInterval = setInterval(() => {
                     const landingPage = document.getElementById('landing-page');
-                    if (landingPage && !landingPage.classList.contains('hidden')) {
-                        this.createParticles();
+                    const appContent = document.getElementById('app-content');
+                    // Stop if landing page is hidden OR app content is visible
+                    if (!landingPage || landingPage.classList.contains('hidden') || 
+                        landingPage.classList.contains('fade-out') ||
+                        (appContent && appContent.classList.contains('fade-in'))) {
+                        console.log('🛑 Stopping main bubble creation - app has been entered');
+                        clearInterval(mainBubbleInterval);
+                        return;
                     }
+                    this.createParticles();
                 }, 6000); // Refresh every 6 seconds (faster refresh)
+                this.bubbleIntervals.push(mainBubbleInterval);
                 
                 // Refresh top bubbles less frequently
-                setInterval(() => {
+                const topBubbleInterval = setInterval(() => {
                     const landingPage = document.getElementById('landing-page');
-                    if (landingPage && !landingPage.classList.contains('hidden')) {
-                        this.createTopBubbles();
+                    const appContent = document.getElementById('app-content');
+                    // Stop if landing page is hidden OR app content is visible
+                    if (!landingPage || landingPage.classList.contains('hidden') || 
+                        landingPage.classList.contains('fade-out') ||
+                        (appContent && appContent.classList.contains('fade-in'))) {
+                        console.log('🛑 Stopping top bubble creation - app has been entered');
+                        clearInterval(topBubbleInterval);
+                        return;
                     }
+                    this.createTopBubbles();
                 }, 15000); // Refresh top bubbles every 15 seconds
+                this.bubbleIntervals.push(topBubbleInterval);
             } else {
                 console.warn('❌ Landing page not found for particles');
             }
         }, 1000);
+    }
+    
+    // Method to stop all bubble effects
+    stopBubbleEffects() {
+        console.log('🛑 Stopping all bubble effects');
+        if (this.bubbleIntervals) {
+            this.bubbleIntervals.forEach(interval => clearInterval(interval));
+            this.bubbleIntervals = [];
+        }
     }
 }
 

@@ -12,20 +12,7 @@ class ConfettiManager {
 
     async loadConfetti() {
         try {
-            // Try to load from node_modules first
-            if (window.location.protocol !== 'file:') {
-                try {
-                    const module = await import('/node_modules/canvas-confetti/dist/confetti.browser.js');
-                    this.confetti = module.default || window.confetti;
-                    this.isLoaded = true;
-                    console.log('✨ Confetti library loaded from node_modules');
-                    return;
-                } catch (npmError) {
-                    console.log('Node modules not available, trying CDN...');
-                }
-            }
-
-            // Fallback to CDN
+            // Skip node_modules loading to avoid 404s, go straight to CDN
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js';
             script.onload = () => {
