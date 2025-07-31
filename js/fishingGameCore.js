@@ -184,9 +184,18 @@ class FishingGameCore {
         console.log('🎮 [SCENES] Checking required scene classes...');
         
         // Debug: Log all available classes on window
-        console.log('🔍 [SCENES] Available window classes:', Object.keys(window).filter(key => 
-            typeof window[key] === 'function' && key.includes('Scene') || key.includes('Manager')
-        ));
+        const sceneClasses = Object.keys(window).filter(key => 
+            typeof window[key] === 'function' && (key.includes('Scene') || key.includes('Manager'))
+        );
+        console.log('🔍 [SCENES] Available Scene/Manager classes:', sceneClasses);
+        
+        // Check specifically for our required classes
+        console.log('🔍 [SCENES] Specific class checks:', {
+            SceneManager: typeof window.SceneManager,
+            MenuScene: typeof window.MenuScene,
+            FishingScene: typeof window.FishingScene,
+            GameOverScene: typeof window.GameOverScene
+        });
         
         // Check for required classes
         const requiredClasses = ['SceneManager', 'MenuScene', 'FishingScene', 'GameOverScene'];
