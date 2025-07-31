@@ -393,11 +393,81 @@ class GameAudioManager {
         }) || this.createTone(800, 0.1, { volume: 0.3 });
     }
 
-    playCatchSound() {
+    playCatchSound(quality = 1.0) {
         return this.playSound('catch', { 
-            volume: 0.8,
+            volume: 0.8 * quality,
+            playbackRate: 1.0 + (quality - 1.0) * 0.2
+        }) || this.createTone(523, 0.5, { volume: 0.4 * quality });
+    }
+
+    /**
+     * Enhanced fishing game audio methods
+     */
+    playFishRunSound() {
+        return this.playSound('fishRun', { 
+            volume: 0.6,
+            playbackRate: 1.2 + (Math.random() * 0.3)
+        }) || this.createTone(300, 0.4, { 
+            volume: 0.3,
+            type: 'sawtooth',
+            frequency: [300, 250, 200]
+        });
+    }
+
+    playLineTensionWarning() {
+        return this.playSound('tensionWarning', { 
+            volume: 0.5,
+            playbackRate: 1.0,
+            loop: false
+        }) || this.createTone(800, 0.2, { 
+            volume: 0.3,
+            type: 'triangle',
+            frequency: [800, 1000, 800]
+        });
+    }
+
+    playLineBreakSound() {
+        return this.playSound('lineBreak', { 
+            volume: 0.9,
             playbackRate: 1.0
-        }) || this.createTone(523, 0.5, { volume: 0.4 });
+        }) || this.createTone(200, 0.6, { 
+            volume: 0.5,
+            type: 'sawtooth',
+            frequency: [400, 200, 100]
+        });
+    }
+
+    playHookPulloutSound() {
+        return this.playSound('hookPullout', { 
+            volume: 0.7,
+            playbackRate: 0.9 + (Math.random() * 0.2)
+        }) || this.createTone(350, 0.3, { 
+            volume: 0.4,
+            type: 'triangle',
+            frequency: [350, 300, 250]
+        });
+    }
+
+    playNetSuccessSound(quality = 1.0) {
+        return this.playSound('netSuccess', { 
+            volume: 0.8 * quality,
+            playbackRate: 1.0 + (quality * 0.3)
+        }) || this.createTone(659, 0.4, { 
+            volume: 0.5 * quality,
+            type: 'sine',
+            frequency: [659, 784, 880] // E, G, A notes
+        });
+    }
+
+    playNetMissSound() {
+        return this.playSound('netMiss', { 
+            volume: 0.6,
+            playbackRate: 0.8
+        }) || this.createTone(220, 0.3, { 
+            volume: 0.3,
+            type: 'square',
+            frequency: [220, 196, 175]
+        });
     }
 
     /**

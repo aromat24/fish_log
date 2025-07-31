@@ -558,17 +558,92 @@ class FishingScene extends BaseScene {
         
         // Check if fish is still hooked and within strike window
         if (this.gameState.fishHooked && this.gameState.currentCatch) {
-            // Success - transition to fighting phase
-            this.gameState.currentPhase = 'fighting';
-            if (this.uiManager) {
-                this.uiManager.setPhase('fighting');
+            // Enhanced strike mechanics: require both button press AND upward motion
+            let strikeSuccess = true;
+            let strikeQuality = 1.0; // Base quality
+            
+            // Check for upward motion if motion sensors are available
+            if (this.game.inputManager && this.game.inputManager.isMotionControlsAvailable()) {
+                const motionState = this.game.inputManager.getInputState().motion;
+                const upwardAcceleration = motionState.acceleration.y; // Negative Y is upward in most devices
+                const motionThreshold = -2.0; // Require upward motion (negative Y)
+                
+                if (upwardAcceleration > motionThreshold) {
+                    // No upward motion detected
+                    strikeSuccess = false;
+                    this.ui.instructions = 'Strike failed! Need upward motion with button press!';
+                    console.log('Strike failed: insufficient upward motion', upwardAcceleration);
+                } else {
+                    // Calculate strike quality based on motion intensity
+                    const motionIntensity = Math.abs(upwardAcceleration);
+                    strikeQuality = Math.min(1.0, motionIntensity / 5.0); // Scale 0-1 based on motion
+                    console.log('Strike successful with motion quality:', strikeQuality);
+                }
             }
             
-            this.ui.instructions = 'Fish hooked! Use reel button and drag control to land it!';
-            
-            // Play hook sound
-            if (this.game.audioManager) {
-                this.game.audioManager.playCatchSound();
+            if (strikeSuccess) {
+                // Success - transition to fighting phase
+                this.gameState.currentPhase = 'fighting';
+                if (this.uiManager) {
+                    this.uiManager.setPhase('fighting');
+                }
+                
+                // Apply strike quality to hook strength
+                const fish = this.gameState.currentCatch;
+                fish.hookStrength = strikeQuality;
+                fish.baseTension = strikeQuality * 0.8; // Better strikes reduce initial tension
+                
+                this.ui.instructions = `Fish hooked! Strike quality: ${Math.round(strikeQuality * 100)}% - Use reel and drag control!`;
+                
+                // Play hook sound with quality-based intensity
+                if (this.game.audioManager) {
+                    this.game.audioManager.playCatchSound(strikeQuality);
+                }
+                
+                // Create hook success effect with quality-based intensity
+                this.game.particleSystem.emit({
+                    x: this.fishingLine.endX,
+                    y: this.fishingLine.endY,
+                    count: Math.round(15 * strikeQuality),
+                    type: 'hook',
+                    vx: 0,
+                    vy: -30 * strikeQuality,
+                    size: 2 + strikeQuality,
+                    life: 800 + (strikeQuality * 400),
+                    color: strikeQuality > 0.8 ? '#00ff00' : strikeQuality > 0.5 ? '#ffff00' : '#ff8800'
+                });
+                
+                // Trigger haptic feedback for successful strike
+                if (navigator.vibrate) {
+                    const vibrationPattern = strikeQuality > 0.8 ? [100, 50, 100] : [80];
+                    navigator.vibrate(vibrationPattern);
+                }
+            } else {
+                // Strike failed due to poor motion - give another chance
+                this.ui.instructions = 'Strike failed! Lift device upward while pressing STRIKE button!';
+                
+                // Create failed strike effect
+                this.game.particleSystem.emit({
+                    x: this.fishingLine.endX,
+                    y: this.fishingLine.endY,
+                    count: 8,
+                    type: 'miss',
+                    vx: 0,
+                    vy: -15,
+                    size: 1,
+                    life: 400,
+                    color: '#ff4444'
+                });
+                
+                // Reduce strike window time as penalty
+                if (this.uiManager && this.uiManager.buttons.strike.timeRemaining > 1000) {
+                    this.uiManager.buttons.strike.timeRemaining -= 1000; // 1 second penalty
+                }
+                
+                // Weak haptic feedback for failed attempt
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
             }
         } else {
             // Failed strike
@@ -587,6 +662,78 @@ class FishingScene extends BaseScene {
         }
         
         this.ui.instructions = 'Strike missed! Fish escaped. Cast again!';
+    }
+    
+    handleLineBroken() {
+        console.log('Line broken due to excessive tension!');
+        
+        // Play line break sound
+        if (this.game.audioManager) {
+            this.game.audioManager.playLineBreakSound();
+        }
+        
+        // Create line break effect
+        this.game.particleSystem.emit({
+            x: this.fishingLine.endX,
+            y: this.fishingLine.endY,
+            count: 25,
+            type: 'lineBreak',
+            vx: 0,
+            vy: -40,
+            size: 2,
+            life: 1200,
+            color: '#ff0000'
+        });
+        
+        // Strong haptic feedback for line break
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200, 100, 200]);
+        }
+        
+        // Reset to idle state
+        this.resetLine();
+        this.gameState.currentPhase = 'idle';
+        if (this.uiManager) {
+            this.uiManager.setPhase('idle');
+        }
+        
+        this.ui.instructions = 'LINE BROKEN! The tension was too high. Cast again!';
+    }
+    
+    handleHookPullout() {
+        console.log('Hook pulled out due to poor strike quality!');
+        
+        // Play hook pullout sound
+        if (this.game.audioManager) {
+            this.game.audioManager.playHookPulloutSound();
+        }
+        
+        // Create hook pullout effect
+        this.game.particleSystem.emit({
+            x: this.fishingLine.endX,
+            y: this.fishingLine.endY,
+            count: 15,
+            type: 'hookPullout',
+            vx: 0,
+            vy: -25,
+            size: 1.5,
+            life: 800,
+            color: '#ffaa00'
+        });
+        
+        // Medium haptic feedback for hook pullout
+        if (navigator.vibrate) {
+            navigator.vibrate([150, 100, 150]);
+        }
+        
+        // Reset to idle state
+        this.resetLine();
+        this.gameState.currentPhase = 'idle';
+        if (this.uiManager) {
+            this.uiManager.setPhase('idle');
+        }
+        
+        this.ui.instructions = 'Hook pulled out! Strike quality was too low. Cast again!';
     }
     
     handleUIReelStart() {
@@ -631,8 +778,134 @@ class FishingScene extends BaseScene {
         console.log('UI Net attempted');
         
         if (this.gameState.currentPhase === 'netting' && this.gameState.currentCatch) {
-            // Success - complete the catch
-            this.catchFish();
+            const fish = this.gameState.currentCatch;
+            
+            // Enhanced netting mechanics: require timing and optional motion
+            let nettingSuccess = true;
+            let nettingQuality = 1.0;
+            
+            // Check fish proximity more precisely
+            const dx = this.player.x - fish.x;
+            const dy = this.player.y - fish.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance > 100) {
+                nettingSuccess = false;
+                this.ui.instructions = 'Net failed! Fish is too far away!';
+                console.log('Net failed: fish too far', distance);
+            } else if (fish.fatigue < 0.6) {
+                nettingSuccess = false;
+                this.ui.instructions = 'Net failed! Fish is not tired enough!';
+                console.log('Net failed: fish not tired enough', fish.fatigue);
+            } else {
+                // Calculate netting quality based on distance and timing
+                const proximityQuality = Math.max(0.3, (100 - distance) / 100);
+                const fatigueQuality = Math.min(1.0, fish.fatigue / 0.8);
+                
+                // Check for downward motion if motion sensors available
+                let motionQuality = 1.0;
+                if (this.game.inputManager && this.game.inputManager.isMotionControlsAvailable()) {
+                    const motionState = this.game.inputManager.getInputState().motion;
+                    const downwardMotion = motionState.acceleration.y; // Positive Y is downward
+                    const motionThreshold = 1.5; // Require downward scooping motion
+                    
+                    if (downwardMotion < motionThreshold) {
+                        motionQuality = 0.6; // Reduced quality without motion
+                        console.log('Net motion quality reduced:', downwardMotion);
+                    } else {
+                        motionQuality = Math.min(1.0, downwardMotion / 4.0);
+                        console.log('Good net motion detected:', motionQuality);
+                    }
+                }
+                
+                nettingQuality = proximityQuality * fatigueQuality * motionQuality;
+                
+                // Success threshold - need at least 50% quality
+                if (nettingQuality < 0.5) {
+                    nettingSuccess = false;
+                    this.ui.instructions = 'Net failed! Poor technique - get closer and use scooping motion!';
+                }
+            }
+            
+            if (nettingSuccess) {
+                // Apply netting quality to final score bonus
+                const qualityBonus = Math.round(nettingQuality * 25); // Up to 25 bonus points
+                
+                console.log(`Netting successful! Quality: ${Math.round(nettingQuality * 100)}%, Bonus: ${qualityBonus}`);
+                
+                // Add quality-based score bonus
+                this.gameState.score += qualityBonus;
+                
+                // Create net success effect
+                this.game.particleSystem.emit({
+                    x: fish.x,
+                    y: fish.y,
+                    count: Math.round(20 * nettingQuality),
+                    type: 'netSuccess',
+                    vx: 0,
+                    vy: -35,
+                    size: 2 + nettingQuality,
+                    life: 1000 + (nettingQuality * 500),
+                    color: nettingQuality > 0.8 ? '#00ff00' : nettingQuality > 0.6 ? '#ffff00' : '#ff8800'
+                });
+                
+                // Success haptic feedback
+                if (navigator.vibrate) {
+                    const vibrationPattern = nettingQuality > 0.8 ? [150, 50, 150, 50, 150] : [120, 80, 120];
+                    navigator.vibrate(vibrationPattern);
+                }
+                
+                // Play net success sound
+                if (this.game.audioManager) {
+                    this.game.audioManager.playNetSuccessSound(nettingQuality);
+                }
+                
+                this.ui.instructions = `Perfect net! Quality: ${Math.round(nettingQuality * 100)}% (+${qualityBonus} bonus)`;
+                
+                // Complete the catch
+                this.catchFish();
+            } else {
+                // Netting failed - create failure effect
+                this.game.particleSystem.emit({
+                    x: fish.x,
+                    y: fish.y,
+                    count: 10,
+                    type: 'netFail',
+                    vx: 0,
+                    vy: -20,
+                    size: 1,
+                    life: 600,
+                    color: '#ff4444'
+                });
+                
+                // Failure haptic feedback
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 100, 100]);
+                }
+                
+                // Play net miss sound
+                if (this.game.audioManager) {
+                    this.game.audioManager.playNetMissSound();
+                }
+                
+                // Fish gets spooked and gains some energy back
+                fish.fatigue = Math.max(0.3, fish.fatigue - 0.2);
+                
+                // Return to fighting phase for another attempt
+                this.gameState.currentPhase = 'fighting';
+                if (this.uiManager) {
+                    this.uiManager.setPhase('fighting');
+                }
+                
+                // Move fish slightly away
+                const escapeAngle = Math.random() * Math.PI * 2;
+                fish.x += Math.cos(escapeAngle) * 30;
+                fish.y += Math.sin(escapeAngle) * 30;
+                
+                // Keep fish in bounds
+                fish.x = Math.max(50, Math.min(this.game.canvas.width - 50, fish.x));
+                fish.y = Math.max(this.water.level + 20, Math.min(this.game.canvas.height - 50, fish.y));
+            }
         }
     }
 
@@ -949,31 +1222,180 @@ class FishingScene extends BaseScene {
         if (!this.gameState.currentCatch) return;
         
         const fish = this.gameState.currentCatch;
+        const dt = deltaTime / 1000; // Convert to seconds
         
-        // Simple fish proximity check for netting
+        // Initialize fish fighting properties if not set
+        if (!fish.tension) fish.tension = fish.baseTension || 0.3;
+        if (!fish.fatigue) fish.fatigue = 0;
+        if (!fish.lastRunTime) fish.lastRunTime = 0;
+        if (!fish.runCooldown) fish.runCooldown = 0;
+        if (!fish.maxTension) fish.maxTension = 1.0;
+        if (!fish.fightingTimer) fish.fightingTimer = 0;
+        
+        fish.fightingTimer += dt;
+        
+        // Calculate distance and direction to player
         const dx = this.player.x - fish.x;
         const dy = this.player.y - fish.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        const dirX = dx / distance;
+        const dirY = dy / distance;
         
-        // If fish is close enough and being reeled, show net option
-        if (distance < 80 && this.gameState.isReeling && this.gameState.currentPhase === 'fighting') {
+        // Get current drag pressure (0-1 from UI slider)
+        const dragPressure = this.dragPressure || 0.5;
+        
+        // === LINE TENSION PHYSICS ===
+        
+        // Base tension from distance (further = less tension)
+        const distanceTension = Math.max(0, (300 - distance) / 300) * 0.4;
+        
+        // Species-specific fighting behavior
+        const species = fish.speciesData || { difficulty: 0.5, fightingStyle: 'moderate' };
+        const fightingStrength = species.difficulty || 0.5;
+        const fightingStyle = species.fightingStyle || 'moderate';
+        
+        // Calculate fish resistance based on species and fatigue
+        let fishResistance = fightingStrength * (1 - fish.fatigue * 0.7);
+        
+        // Fighting style modifies resistance patterns
+        switch (fightingStyle) {
+            case 'aggressive':
+                fishResistance *= 1.3 + Math.sin(fish.fightingTimer * 3) * 0.2;
+                break;
+            case 'steady':
+                fishResistance *= 1.1;
+                break;
+            case 'erratic':
+                fishResistance *= 0.9 + Math.sin(fish.fightingTimer * 7) * 0.4;
+                break;
+            default: // moderate
+                fishResistance *= 1.0 + Math.sin(fish.fightingTimer * 2) * 0.1;
+        }
+        
+        // Random fish "runs" (sudden bursts away from player)
+        fish.runCooldown -= dt;
+        const shouldRun = fish.runCooldown <= 0 && Math.random() < 0.02 && fish.fatigue < 0.8;
+        
+        if (shouldRun) {
+            fish.runCooldown = 3 + Math.random() * 4; // 3-7 second cooldown
+            fish.isRunning = true;
+            fish.runDuration = 1 + Math.random() * 2; // 1-3 second run
+            fish.runDirection = Math.random() * Math.PI * 2; // Random direction
+            console.log('Fish is making a run!');
+            
+            // Play fish run sound
+            if (this.game.audioManager) {
+                this.game.audioManager.playFishRunSound();
+            }
+        }
+        
+        // Handle fish runs
+        if (fish.isRunning && fish.runDuration > 0) {
+            fish.runDuration -= dt;
+            
+            // Fish swims away from player during run
+            const runSpeed = 40 * (1 - fish.fatigue * 0.5);
+            fish.x += Math.cos(fish.runDirection) * runSpeed * dt;
+            fish.y += Math.sin(fish.runDirection) * runSpeed * dt;
+            
+            // Increase tension during runs
+            fishResistance *= 1.8;
+            
+            if (fish.runDuration <= 0) {
+                fish.isRunning = false;
+                console.log('Fish run ended');
+            }
+        }
+        
+        // Calculate current line tension
+        let currentTension = distanceTension + fishResistance * 0.4;
+        
+        // Reeling increases tension
+        if (this.gameState.isReeling) {
+            currentTension += 0.3;
+            
+            // Apply drag pressure effect
+            const dragEffect = Math.max(0.1, dragPressure);
+            currentTension = currentTension * (1.2 - dragEffect * 0.8);
+            
+            // Move fish toward player when reeling (if tension allows)
+            if (currentTension < 0.9) {
+                const reelSpeed = 25 * dragEffect * (1 - fish.fatigue * 0.3);
+                fish.x += dirX * reelSpeed * dt;
+                fish.y += dirY * reelSpeed * dt;
+                
+                // Increase fish fatigue when being reeled successfully
+                fish.fatigue += dt * 0.15 * dragEffect;
+            }
+        } else {
+            // Fish recovers slightly when not being reeled
+            fish.fatigue = Math.max(0, fish.fatigue - dt * 0.05);
+            currentTension *= 0.85;
+        }
+        
+        // Apply tension limits
+        fish.tension = Math.max(0, Math.min(fish.maxTension, currentTension));
+        
+        // === LINE BREAK MECHANICS ===
+        
+        const lineBreakThreshold = 0.95;
+        const hookStrength = fish.hookStrength || 1.0;
+        
+        if (fish.tension > lineBreakThreshold) {
+            // High tension - risk of line break or fish escape
+            const breakChance = (fish.tension - lineBreakThreshold) * 0.1 * dt;
+            const hookFailChance = breakChance * (1 - hookStrength) * 2;
+            
+            if (Math.random() < breakChance) {
+                // Line breaks!
+                this.handleLineBroken();
+                return;
+            } else if (Math.random() < hookFailChance) {
+                // Hook pulls out!
+                this.handleHookPullout();
+                return;
+            }
+            
+            // Warning feedback for high tension
+            if (this.game.audioManager) {
+                this.game.audioManager.playLineTensionWarning();
+            }
+            
+            this.ui.instructions = 'DANGER! Line tension too high! Reduce drag or stop reeling!';
+        } else if (fish.tension > 0.8) {
+            this.ui.instructions = 'High tension! Be careful with the drag control!';
+        } else {
+            const fatiguePercent = Math.round(fish.fatigue * 100);
+            this.ui.instructions = `Fighting fish... Fatigue: ${fatiguePercent}% | Tension: ${Math.round(fish.tension * 100)}%`;
+        }
+        
+        // Update reel availability based on tension
+        const canReel = fish.tension < 0.9;
+        if (this.uiManager) {
+            this.uiManager.setReelAvailable(canReel);
+        }
+        
+        // Store tension in fishing line for visual effects
+        this.fishingLine.tension = fish.tension;
+        
+        // Update fishing line position
+        this.fishingLine.endX = fish.x;
+        this.fishingLine.endY = fish.y;
+        
+        // === NETTING PHASE CHECK ===
+        
+        // Fish must be close AND tired to be nettable
+        if (distance < 80 && fish.fatigue > 0.6 && this.gameState.currentPhase === 'fighting') {
             this.gameState.currentPhase = 'netting';
             if (this.uiManager) {
                 this.uiManager.setPhase('netting');
             }
-            this.ui.instructions = 'Fish is close! Use NET button to land it!';
+            this.ui.instructions = 'Fish is tired and close! Use NET button to land it!';
         }
         
-        // Simple fish movement towards player when reeling
-        if (this.gameState.isReeling && distance > 50) {
-            const moveSpeed = 1.0;
-            fish.x += (dx / distance) * moveSpeed;
-            fish.y += (dy / distance) * moveSpeed;
-            
-            // Update fishing line
-            this.fishingLine.endX = fish.x;
-            this.fishingLine.endY = fish.y;
-        }
+        // Keep fish within bounds
+        fish.x = Math.max(50, Math.min(this.game.canvas.width - 50, fish.x));
+        fish.y = Math.max(this.water.level + 20, Math.min(this.game.canvas.height - 50, fish.y));
     }
 
     updateFish(deltaTime) {
@@ -1101,14 +1523,50 @@ class FishingScene extends BaseScene {
             font: '20px Arial'
         });
 
-        // Draw fishing line
+        // Draw fishing line with tension visualization
         if (this.fishingLine.isVisible) {
-            ctx.strokeStyle = '#654321';
-            ctx.lineWidth = 2;
+            const tension = this.fishingLine.tension || 0;
+            
+            // Line color changes with tension
+            let lineColor = '#654321'; // Default brown
+            if (tension > 0.9) {
+                lineColor = '#ff0000'; // Red for dangerous tension
+            } else if (tension > 0.7) {
+                lineColor = '#ff6600'; // Orange for high tension
+            } else if (tension > 0.4) {
+                lineColor = '#ffaa00'; // Yellow for medium tension
+            }
+            
+            // Line thickness increases with tension
+            const lineWidth = 2 + (tension * 2);
+            
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = lineWidth;
             ctx.beginPath();
             ctx.moveTo(this.fishingLine.startX, this.fishingLine.startY);
-            ctx.lineTo(this.fishingLine.endX, this.fishingLine.endY);
+            
+            // Add line sag/curve based on tension (high tension = straighter line)
+            if (tension < 0.5) {
+                // Curved line for low tension
+                const midX = (this.fishingLine.startX + this.fishingLine.endX) / 2;
+                const midY = (this.fishingLine.startY + this.fishingLine.endY) / 2 + (20 * (1 - tension * 2));
+                ctx.quadraticCurveTo(midX, midY, this.fishingLine.endX, this.fishingLine.endY);
+            } else {
+                // Straight line for high tension
+                ctx.lineTo(this.fishingLine.endX, this.fishingLine.endY);
+            }
+            
             ctx.stroke();
+            
+            // Add tension warning glow for dangerous levels
+            if (tension > 0.9) {
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
+                ctx.lineWidth = lineWidth + 4;
+                ctx.beginPath();
+                ctx.moveTo(this.fishingLine.startX, this.fishingLine.startY);
+                ctx.lineTo(this.fishingLine.endX, this.fishingLine.endY);
+                ctx.stroke();
+            }
 
             // Draw hook
             renderer.drawCircle(this.fishingLine.endX, this.fishingLine.endY, 3, '#C0C0C0', true);
