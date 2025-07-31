@@ -178,8 +178,10 @@ class FishingGameIntegration {
             const loadingOverlay = document.getElementById('game-loading-overlay');
             if (loadingOverlay) {
                 loadingOverlay.style.opacity = '0';
+                loadingOverlay.style.visibility = 'hidden';
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
+                    console.log('🎮 [INTEGRATION] Loading overlay fully hidden');
                 }, 300);
             }
             
@@ -203,7 +205,24 @@ class FishingGameIntegration {
             // Hide loading overlay in case of error
             const loadingOverlay = document.getElementById('game-loading-overlay');
             if (loadingOverlay) {
+                loadingOverlay.style.opacity = '0';
+                loadingOverlay.style.visibility = 'hidden';
                 loadingOverlay.style.display = 'none';
+                console.log('🎮 [INTEGRATION] Loading overlay hidden due to error');
+            }
+            
+            // Also hide the game container to prevent black screen
+            if (this.gameContainer) {
+                this.gameContainer.classList.add('hidden');
+                this.isGameActive = false;
+                console.log('🎮 [INTEGRATION] Game container hidden due to error');
+            }
+            
+            // Restore main app content
+            if (this.originalAppContent) {
+                this.originalAppContent.style.display = 'block';
+                this.originalAppContent.style.opacity = '1';
+                console.log('🎮 [INTEGRATION] Main app content restored due to error');
             }
             
             // Show appropriate error message based on error type
