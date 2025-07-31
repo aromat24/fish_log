@@ -235,6 +235,9 @@ class FishingScene extends BaseScene {
         // Species mapper for realistic fish
         this.speciesMapper = null;
         
+        // Enhanced UI Manager
+        this.uiManager = null;
+        
         // Game state
         this.gameState = {
             isCasting: false,
@@ -243,10 +246,11 @@ class FishingScene extends BaseScene {
             fishHooked: false,
             currentCatch: null,
             score: 0,
-            timeRemaining: 60000 // 1 minute
+            timeRemaining: 60000, // 1 minute
+            currentPhase: 'idle' // idle, casting, waiting, striking, fighting, netting
         };
         
-        // UI elements
+        // UI elements (legacy - some still used)
         this.ui = {
             powerMeter: { visible: false, power: 0 },
             reelIndicator: { visible: false, speed: 0 },
@@ -265,6 +269,9 @@ class FishingScene extends BaseScene {
         
         // Initialize species mapper
         this.initializeSpeciesMapper();
+        
+        // Initialize enhanced UI manager
+        this.initializeUIManager();
         
         // Initialize audio for this scene
         this.currentReelSound = null;
@@ -291,6 +298,12 @@ class FishingScene extends BaseScene {
         if (this.currentReelSound && this.game.audioManager) {
             this.game.audioManager.stopSound(this.currentReelSound);
             this.currentReelSound = null;
+        }
+        
+        // Cleanup UI manager
+        if (this.uiManager) {
+            this.uiManager.cleanup();
+            this.uiManager = null;
         }
         
         console.log('Fishing scene exited');
@@ -344,6 +357,32 @@ class FishingScene extends BaseScene {
             console.log('Species mapper initialized for realistic fishing');
         } else {
             console.warn('Fish database or GameSpeciesMapper not available, using fallback fish types');
+        }
+    }
+    
+    initializeUIManager() {
+        // Initialize enhanced UI manager
+        if (window.GameUIManager) {
+            this.uiManager = new window.GameUIManager(this.game.canvas, this.game);
+            
+            // Register UI event callbacks
+            this.uiManager.registerCallback('castStart', () => this.handleUICastStart());
+            this.uiManager.registerCallback('castCharging', (data) => this.handleUICastCharging(data));
+            this.uiManager.registerCallback('castRelease', (data) => this.handleUICastRelease(data));
+            this.uiManager.registerCallback('strikeAttempt', () => this.handleUIStrikeAttempt());
+            this.uiManager.registerCallback('strikeMissed', () => this.handleUIStrikeMissed());
+            this.uiManager.registerCallback('reelStart', () => this.handleUIReelStart());
+            this.uiManager.registerCallback('reelStop', () => this.handleUIReelStop());
+            this.uiManager.registerCallback('dragChanged', (data) => this.handleUIDragChanged(data));
+            this.uiManager.registerCallback('netAttempt', () => this.handleUINetAttempt());
+            
+            // Set initial phase
+            this.uiManager.setPhase('idle');
+            this.gameState.currentPhase = 'idle';
+            
+            console.log('Enhanced UI Manager initialized');
+        } else {
+            console.warn('GameUIManager not available, using fallback UI');
         }
     }
 
@@ -471,6 +510,131 @@ class FishingScene extends BaseScene {
         // Update UI
         this.ui.instructions = 'Line cast! Wait for a bite...';
     }
+    
+    // Enhanced UI event handlers
+    handleUICastStart() {
+        console.log('UI Cast started - building momentum');
+        this.ui.instructions = 'Hold and move device back and forth to build momentum!';
+    }
+    
+    handleUICastCharging(data) {
+        // Visual feedback for momentum building
+        this.ui.powerMeter.visible = true;
+        this.ui.powerMeter.power = data.chargeLevel;
+        
+        // Update instruction based on charge level
+        if (data.chargeLevel > 0.8) {
+            this.ui.instructions = 'Perfect momentum! Release to cast!';
+        } else if (data.chargeLevel > 0.5) {
+            this.ui.instructions = 'Good momentum building...';
+        }
+    }
+    
+    handleUICastRelease(data) {
+        if (this.gameState.isCasting || this.gameState.lineInWater) return;
+        
+        console.log('UI Cast released:', data);
+        
+        // Set casting phase
+        this.gameState.isCasting = true;
+        this.gameState.currentPhase = 'casting';
+        if (this.uiManager) {
+            this.uiManager.setPhase('casting');
+        }
+        
+        // Calculate cast distance based on charge level and duration
+        const power = Math.max(0.3, data.chargeLevel); // Minimum 30% power
+        const castDistance = power * 250 + 100; // Enhanced distance calculation
+        const castAngle = -45;
+        
+        // Animate fishing line cast
+        this.animateCast(castDistance, castAngle);
+        
+        this.ui.instructions = 'Line cast! Wait for a bite...';
+    }
+    
+    handleUIStrikeAttempt() {
+        console.log('UI Strike attempted');
+        
+        // Check if fish is still hooked and within strike window
+        if (this.gameState.fishHooked && this.gameState.currentCatch) {
+            // Success - transition to fighting phase
+            this.gameState.currentPhase = 'fighting';
+            if (this.uiManager) {
+                this.uiManager.setPhase('fighting');
+            }
+            
+            this.ui.instructions = 'Fish hooked! Use reel button and drag control to land it!';
+            
+            // Play hook sound
+            if (this.game.audioManager) {
+                this.game.audioManager.playCatchSound();
+            }
+        } else {
+            // Failed strike
+            this.handleUIStrikeMissed();
+        }
+    }
+    
+    handleUIStrikeMissed() {
+        console.log('UI Strike missed - fish escaped');
+        
+        // Reset to idle state
+        this.resetLine();
+        this.gameState.currentPhase = 'idle';
+        if (this.uiManager) {
+            this.uiManager.setPhase('idle');
+        }
+        
+        this.ui.instructions = 'Strike missed! Fish escaped. Cast again!';
+    }
+    
+    handleUIReelStart() {
+        console.log('UI Reel started');
+        
+        if (this.gameState.currentPhase === 'fighting') {
+            this.gameState.isReeling = true;
+            
+            // Play reeling sound
+            if (this.game.audioManager && !this.currentReelSound) {
+                this.currentReelSound = this.game.audioManager.playReelSound(0.7);
+            }
+        }
+    }
+    
+    handleUIReelStop() {
+        console.log('UI Reel stopped');
+        
+        this.gameState.isReeling = false;
+        
+        // Stop reeling sound
+        if (this.currentReelSound && this.game.audioManager) {
+            this.game.audioManager.stopSound(this.currentReelSound);
+            this.currentReelSound = null;
+        }
+    }
+    
+    handleUIDragChanged(data) {
+        console.log('UI Drag changed:', data.value);
+        
+        // Store drag value for line tension calculations
+        this.dragPressure = data.value;
+        
+        // Update reel availability based on drag (placeholder logic)
+        const canReel = data.value < 0.8; // Can't reel if drag is too high
+        if (this.uiManager) {
+            this.uiManager.setReelAvailable(canReel);
+        }
+    }
+    
+    handleUINetAttempt() {
+        console.log('UI Net attempted');
+        
+        if (this.gameState.currentPhase === 'netting' && this.gameState.currentCatch) {
+            // Success - complete the catch
+            this.catchFish();
+        }
+    }
 
     handleReeling(data) {
         if (!this.gameState.lineInWater) return;
@@ -534,7 +698,13 @@ class FishingScene extends BaseScene {
                 // Cast complete
                 this.gameState.isCasting = false;
                 this.gameState.lineInWater = true;
+                this.gameState.currentPhase = 'waiting';
                 this.ui.powerMeter.visible = false;
+                
+                // Update UI phase
+                if (this.uiManager) {
+                    this.uiManager.setPhase('waiting');
+                }
                 
                 // Play splash sound when line hits water
                 if (this.game.audioManager) {
@@ -736,17 +906,33 @@ class FishingScene extends BaseScene {
         this.gameState.fishHooked = false;
         this.gameState.currentCatch = null;
         this.gameState.isReeling = false;
+        this.gameState.currentPhase = 'idle';
         this.ui.reelIndicator.visible = false;
         this.ui.instructions = 'Cast your line to fish again!';
+        
+        // Reset UI to idle phase
+        if (this.uiManager) {
+            this.uiManager.setPhase('idle');
+        }
     }
 
     update(deltaTime) {
+        // Update enhanced UI manager
+        if (this.uiManager) {
+            this.uiManager.update(deltaTime);
+        }
+        
         // Update fish AI
         this.updateFish(deltaTime);
         
         // Check for fish bites
-        if (this.gameState.lineInWater && !this.gameState.fishHooked) {
+        if (this.gameState.lineInWater && !this.gameState.fishHooked && this.gameState.currentPhase === 'waiting') {
             this.checkForBites();
+        }
+        
+        // Update fish fighting mechanics
+        if (this.gameState.currentPhase === 'fighting' && this.gameState.currentCatch) {
+            this.updateFishFighting(deltaTime);
         }
         
         // Update water waves
@@ -756,6 +942,37 @@ class FishingScene extends BaseScene {
         this.gameState.timeRemaining -= deltaTime;
         if (this.gameState.timeRemaining <= 0) {
             this.game.changeScene('gameOver');
+        }
+    }
+    
+    updateFishFighting(deltaTime) {
+        if (!this.gameState.currentCatch) return;
+        
+        const fish = this.gameState.currentCatch;
+        
+        // Simple fish proximity check for netting
+        const dx = this.player.x - fish.x;
+        const dy = this.player.y - fish.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // If fish is close enough and being reeled, show net option
+        if (distance < 80 && this.gameState.isReeling && this.gameState.currentPhase === 'fighting') {
+            this.gameState.currentPhase = 'netting';
+            if (this.uiManager) {
+                this.uiManager.setPhase('netting');
+            }
+            this.ui.instructions = 'Fish is close! Use NET button to land it!';
+        }
+        
+        // Simple fish movement towards player when reeling
+        if (this.gameState.isReeling && distance > 50) {
+            const moveSpeed = 1.0;
+            fish.x += (dx / distance) * moveSpeed;
+            fish.y += (dy / distance) * moveSpeed;
+            
+            // Update fishing line
+            this.fishingLine.endX = fish.x;
+            this.fishingLine.endY = fish.y;
         }
     }
 
@@ -800,14 +1017,20 @@ class FishingScene extends BaseScene {
                 // Fish bites!
                 this.gameState.fishHooked = true;
                 this.gameState.currentCatch = fish;
+                this.gameState.currentPhase = 'striking';
                 fish.isHooked = true;
+                
+                // Update UI to strike phase
+                if (this.uiManager) {
+                    this.uiManager.setPhase('striking');
+                }
                 
                 // Play bite sound
                 if (this.game.audioManager) {
                     this.game.audioManager.playBiteSound();
                 }
                 
-                this.ui.instructions = 'Fish on the line! Start reeling!';
+                this.ui.instructions = 'Fish bite detected! Hit STRIKE button quickly!';
                 
                 // Create bite effect
                 this.game.particleSystem.emit({
@@ -900,8 +1123,13 @@ class FishingScene extends BaseScene {
             renderer.drawCircle(fish.x + fish.size / 4, fish.y - fish.size / 4, 2, '#000000', true);
         });
 
-        // Draw UI
+        // Draw legacy UI
         this.renderUI(renderer);
+        
+        // Draw enhanced UI overlay
+        if (this.uiManager) {
+            this.uiManager.render();
+        }
     }
 
     renderUI(renderer) {
