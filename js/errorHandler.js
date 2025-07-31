@@ -208,7 +208,12 @@ class ErrorHandler {
                 font-size: 14px;
                 line-height: 1.4;
             `;
-            document.body.appendChild(errorElement);
+            if (document.body) {
+                document.body.appendChild(errorElement);
+            } else {
+                console.error('Cannot show error element: document.body is null');
+                return;
+            }
         }
 
         errorElement.textContent = message;

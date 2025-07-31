@@ -112,14 +112,45 @@ class FishingGameIntegration {
      * Setup Fish Now button handler
      */
     setupFishNowButton() {
-        const fishNowBtn = document.getElementById('fish-now-btn');
-        if (fishNowBtn) {
-            fishNowBtn.addEventListener('click', async () => {
-                await this.launchGame();
-            });
-            console.log('Fish Now button handler setup complete');
-        } else {
-            console.warn('Fish Now button not found');
+        const findAndSetupButton = () => {
+            console.log('🎣 [SETUP] Looking for Fish Now button...');
+            const fishNowBtn = document.getElementById('fish-now-btn');
+            if (fishNowBtn) {
+                console.log('🎣 [SETUP] Fish Now button found, setting up click handler...');
+                
+                // Remove any existing listeners first
+                const clonedBtn = fishNowBtn.cloneNode(true);
+                fishNowBtn.parentNode.replaceChild(clonedBtn, fishNowBtn);
+                
+                clonedBtn.addEventListener('click', async (e) => {
+                    console.log('🎣 [CLICK] Fish Now button clicked!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    try {
+                        await this.launchGame();
+                    } catch (error) {
+                        console.error('🎣 [CLICK] Error launching game:', error);
+                    }
+                });
+                
+                console.log('✅ [SETUP] Fish Now button handler setup complete');
+                return true;
+            } else {
+                console.warn('⚠️ [SETUP] Fish Now button not found in DOM');
+                return false;
+            }
+        };
+        
+        // Try to setup immediately
+        if (!findAndSetupButton()) {
+            console.log('🎣 [SETUP] Button not found, retrying in 100ms...');
+            // Retry after short delay in case DOM isn't fully ready
+            setTimeout(() => {
+                if (!findAndSetupButton()) {
+                    console.log('🎣 [SETUP] Button not found, retrying in 500ms...');
+                    setTimeout(findAndSetupButton, 500);
+                }
+            }, 100);
         }
     }
 
@@ -188,12 +219,12 @@ class FishingGameIntegration {
             
             // Hide loading overlay first before any permission requests
             console.log('🎮 [INTEGRATION] Hiding loading overlay...');
-            const loadingOverlay = document.getElementById('game-loading-overlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.opacity = '0';
-                loadingOverlay.style.visibility = 'hidden';
+            const hideLoadingOverlay = document.getElementById('game-loading-overlay');
+            if (hideLoadingOverlay) {
+                hideLoadingOverlay.style.opacity = '0';
+                hideLoadingOverlay.style.visibility = 'hidden';
                 setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
+                    hideLoadingOverlay.style.display = 'none';
                     console.log('🎮 [INTEGRATION] Loading overlay fully hidden');
                 }, 300);
             }
@@ -216,11 +247,11 @@ class FishingGameIntegration {
             console.error('❌ [INTEGRATION] Error stack:', error.stack);
             
             // Hide loading overlay in case of error
-            const loadingOverlay = document.getElementById('game-loading-overlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.opacity = '0';
-                loadingOverlay.style.visibility = 'hidden';
-                loadingOverlay.style.display = 'none';
+            let errorLoadingOverlay = document.getElementById('game-loading-overlay');
+            if (errorLoadingOverlay) {
+                errorLoadingOverlay.style.opacity = '0';
+                errorLoadingOverlay.style.visibility = 'hidden';
+                errorLoadingOverlay.style.display = 'none';
                 console.log('🎮 [INTEGRATION] Loading overlay hidden due to error');
             }
             
@@ -416,10 +447,10 @@ class FishingGameIntegration {
             }
             
             // Show loading overlay for next time
-            const loadingOverlay = document.getElementById('game-loading-overlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.style.opacity = '1';
+            let exitLoadingOverlay = document.getElementById('game-loading-overlay');
+            if (exitLoadingOverlay) {
+                exitLoadingOverlay.style.display = 'flex';
+                exitLoadingOverlay.style.opacity = '1';
             }
             
             console.log('✅ Exited fishing game successfully');

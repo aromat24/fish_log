@@ -241,6 +241,11 @@ window.enterApp = function () {
 
     // CRITICAL: Reset fullscreen modal when entering the app
     resetFullscreenModal();
+    
+    // Stop bubble effects when entering app
+    if (window.magicUI && window.magicUI.stopBubbleEffects) {
+        window.magicUI.stopBubbleEffects();
+    }
 
     const landingPage = document.getElementById('landing-page');
     const appContent = document.getElementById('app-content');
@@ -2370,6 +2375,40 @@ function setupDataOptions() {
                 showMessage('Failed to export game data: ' + error.message, 'error');
             }
             dataOptionsMenu.classList.add('hidden');
+        });
+    }
+
+    // Handle game data import
+    const importGameDataInput = document.getElementById('import-game-data-input');
+    if (importGameDataInput) {
+        importGameDataInput.addEventListener('change', async (event) => {
+            console.log('Import game data file selected');
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                if (window.gameLogManager) {
+                    await window.gameLogManager.importGameData(data);
+                    showMessage('Game data imported successfully!', 'success');
+                    
+                    // Refresh the game log display if it's currently visible
+                    if (currentTab === 'game-log') {
+                        displayGameLog();
+                    }
+                } else {
+                    throw new Error('Game log manager not available');
+                }
+            } catch (error) {
+                console.error('Error importing game data:', error);
+                showMessage('Error importing game data. Please check the file format.', 'error');
+            }
+
+            // Hide dropdown and reset input
+            dataOptionsMenu.classList.add('hidden');
+            importGameDataInput.value = ''; // Reset input
         });
     }
     
