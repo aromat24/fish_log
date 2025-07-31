@@ -45,8 +45,12 @@ class MotionPermissionUI {
         modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1400] p-4';
         
         modal.innerHTML = `
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md border-beam-container">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md border-beam-container relative">
                 <div class="border-beam"></div>
+                <!-- Close button -->
+                <button id="close-permission-modal" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-colors">
+                    ✕
+                </button>
                 <div class="space-y-4">
                     <div class="text-center">
                         <div class="text-6xl mb-4">🎣</div>
@@ -106,6 +110,17 @@ class MotionPermissionUI {
         
         modal.querySelector('#skip-motion-btn').addEventListener('click', () => {
             this.handleSkipMotion();
+        });
+        
+        modal.querySelector('#close-permission-modal').addEventListener('click', () => {
+            this.handleSkipMotion(); // Treat close as skip
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.handleSkipMotion();
+            }
         });
     }
 
@@ -240,6 +255,17 @@ class MotionPermissionUI {
         return new Promise((resolve) => {
             this.permissionCallbacks.set('permission', resolve);
             this.showModal(this.permissionModal);
+            
+            // Add timeout fallback to prevent hanging promises
+            setTimeout(() => {
+                const callback = this.permissionCallbacks.get('permission');
+                if (callback) {
+                    console.warn('Motion permission request timed out, auto-skipping');
+                    this.permissionCallbacks.delete('permission');
+                    this.hideCurrentModal();
+                    callback({ granted: false, skipped: true, timeout: true });
+                }
+            }, 30000); // 30 second timeout
         });
     }
 

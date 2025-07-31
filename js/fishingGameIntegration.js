@@ -169,34 +169,59 @@ class FishingGameIntegration {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 await this.initializeGame();
-                
-                // Request motion permissions for enhanced gameplay
-                console.log('🎮 [INTEGRATION] Requesting motion sensor permissions...');
-                await this.requestMotionPermissions();
             } else {
                 console.log('🎮 [INTEGRATION] Game already initialized, reusing instance');
             }
             
-            // Start the game
-            console.log('🎮 [INTEGRATION] Starting game...');
-            await this.fishingGame.start();
-            
-            // Hide loading overlay
+            // Hide loading overlay first before any permission requests
             console.log('🎮 [INTEGRATION] Hiding loading overlay...');
             const loadingOverlay = document.getElementById('game-loading-overlay');
             if (loadingOverlay) {
                 loadingOverlay.style.opacity = '0';
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
-                }, 500);
+                }, 300);
             }
+            
+            // Add small delay to ensure loading overlay is hidden
+            await new Promise(resolve => setTimeout(resolve, 400));
+            
+            // Request motion permissions for enhanced gameplay (only if needed)
+            console.log('🎮 [INTEGRATION] Checking motion sensor permissions...');
+            await this.requestMotionPermissions();
+            
+            // Start the game
+            console.log('🎮 [INTEGRATION] Starting game...');
+            await this.fishingGame.start();
             
             console.log('✅ [INTEGRATION] Fishing game launched successfully');
             
         } catch (error) {
             console.error('❌ [INTEGRATION] Failed to launch fishing game:', error);
             console.error('❌ [INTEGRATION] Error stack:', error.stack);
-            this.showGameError('Failed to launch game', error.message);
+            
+            // Hide loading overlay in case of error
+            const loadingOverlay = document.getElementById('game-loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+            
+            // Show appropriate error message based on error type
+            let errorTitle = 'Failed to launch game';
+            let errorMessage = error.message;
+            
+            if (error.message.includes('class not found')) {
+                errorTitle = 'Game files not loaded';
+                errorMessage = 'Some game files are missing or not loaded properly. Please refresh the page and try again.';
+            } else if (error.message.includes('motion')) {
+                errorTitle = 'Motion controls issue';
+                errorMessage = 'There was an issue with motion controls. The game will work with touch controls.';
+            } else if (error.message.includes('audio')) {
+                errorTitle = 'Audio system issue';
+                errorMessage = 'Audio system failed to initialize. The game will work without sound.';
+            }
+            
+            this.showGameError(errorTitle, errorMessage);
         }
     }
 
@@ -272,15 +297,33 @@ class FishingGameIntegration {
                 return { success: false, error: 'Game not initialized' };
             }
 
+            // Check if motion permissions have already been handled
+            const motionPermissionState = localStorage.getItem('motionPermissionState');
+            console.log('🎮 [MOTION] Checking stored permission state:', motionPermissionState);
+            
+            if (motionPermissionState === 'granted') {
+                console.log('✅ [MOTION] Motion permissions already granted (from storage)');
+                return { success: true, fromStorage: true };
+            } else if (motionPermissionState === 'denied' || motionPermissionState === 'skipped') {
+                console.log('ℹ️ [MOTION] Motion permissions previously denied/skipped, continuing without motion controls');
+                return { success: false, fromStorage: true, previouslyDenied: true };
+            }
+
             // Check if motion controls are enabled and available
             if (this.fishingGame.options.enableMotionControls && this.fishingGame.motionPermissionUI) {
-                console.log('🎮 [MOTION] Requesting motion sensor permissions...');
+                console.log('🎮 [MOTION] Requesting motion sensor permissions (first time)...');
                 const result = await this.fishingGame.requestMotionPermissions();
                 
+                // Store the permission result for future sessions
                 if (result.success) {
-                    console.log('✅ [MOTION] Motion permissions granted successfully');
+                    localStorage.setItem('motionPermissionState', 'granted');
+                    console.log('✅ [MOTION] Motion permissions granted and saved');
+                } else if (result.skipped) {
+                    localStorage.setItem('motionPermissionState', 'skipped');
+                    console.log('ℹ️ [MOTION] Motion permissions skipped and saved');
                 } else {
-                    console.log('ℹ️ [MOTION] Motion permissions not granted:', result.error);
+                    localStorage.setItem('motionPermissionState', 'denied');
+                    console.log('ℹ️ [MOTION] Motion permissions denied and saved');
                 }
                 
                 return result;
@@ -392,16 +435,9 @@ class FishingGameIntegration {
             }
 
             if (window.gameLogManager) {
-                const stats = window.gameLogManager.getGameStatistics();
                 const gameCatches = window.gameLogManager.getGameCatches();
                 
-                // Update statistics summary
-                document.getElementById('game-total-catches').textContent = stats.totalCatches;
-                document.getElementById('game-high-score').textContent = stats.highestScore;
-                document.getElementById('game-species-count').textContent = stats.uniqueSpecies;
-                document.getElementById('game-play-time').textContent = stats.totalGameTime + 'm';
-                
-                // Update catches list
+                // Update catches list (statistics are now shown in tab button)
                 this.renderGameCatchesList(gameCatches);
             }
         } catch (error) {

@@ -41,7 +41,42 @@ class MenuScene extends BaseScene {
             } else if (inputState.keyboard.keys.has('Enter') || inputState.keyboard.keys.has('Space')) {
                 this.handleMenuSelection();
             }
+            
+            // Handle touch/click navigation for mobile
+            if (inputState.touch.taps.length > 0) {
+                const tap = inputState.touch.taps[0];
+                this.handleTouchInput(tap.x, tap.y);
+            }
         }
+    }
+    
+    handleTouchInput(touchX, touchY) {
+        const canvas = this.game.canvas;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const isSmallScreen = canvas.width < 600 || canvas.height < 600;
+        const menuSpacing = isSmallScreen ? 60 : 50;
+        
+        // Check if touch hit any menu item
+        this.menuItems.forEach((item, index) => {
+            const y = centerY + (index - 1) * menuSpacing;
+            const fontSize = isSmallScreen ? 16 : 18;
+            const touchRadius = isSmallScreen ? 40 : 30; // Larger touch target for mobile
+            
+            // Check if touch is within menu item bounds
+            const distance = Math.sqrt(
+                Math.pow(touchX - centerX, 2) + 
+                Math.pow(touchY - y, 2)
+            );
+            
+            if (distance < touchRadius) {
+                this.selectedIndex = index;
+                // Small delay then execute to show selection
+                setTimeout(() => {
+                    this.handleMenuSelection();
+                }, 100);
+            }
+        });
     }
 
     handleMenuSelection() {
@@ -170,6 +205,19 @@ class MenuScene extends BaseScene {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
 
+        // Responsive calculations based on screen size
+        const isSmallScreen = canvas.width < 600 || canvas.height < 600;
+        const titleFontSize = isSmallScreen ? 24 : 32;
+        const menuFontSize = isSmallScreen ? 16 : 18;
+        const selectedMenuFontSize = isSmallScreen ? 18 : 20;
+        const statusFontSize = isSmallScreen ? 12 : 14;
+        const instructionFontSize = isSmallScreen ? 10 : 12;
+        
+        // Adjust spacing for smaller screens
+        const titleOffset = isSmallScreen ? 80 : 100;
+        const menuSpacing = isSmallScreen ? 60 : 50;
+        const statusOffset = isSmallScreen ? 120 : 150;
+
         // Clear with gradient background
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
         gradient.addColorStop(0, '#87CEEB'); // Sky blue
@@ -178,19 +226,33 @@ class MenuScene extends BaseScene {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw title
-        renderer.drawText('🎣 Fish Now!', centerX, centerY - 100, {
-            font: 'bold 32px Arial',
+        // Draw title with responsive sizing
+        renderer.drawText('🎣 Fish Now!', centerX, centerY - titleOffset, {
+            font: `bold ${titleFontSize}px Arial`,
             color: '#ffffff',
             align: 'center'
         });
 
-        // Draw menu items
+        // Draw menu items with responsive spacing and touch-friendly sizing
         this.menuItems.forEach((item, index) => {
-            const y = centerY + (index - 1) * 50;
+            const y = centerY + (index - 1) * menuSpacing;
             const isSelected = index === this.selectedIndex;
             const color = isSelected ? '#ffff00' : '#ffffff';
-            const font = isSelected ? 'bold 18px Arial' : '16px Arial';
+            const fontSize = isSelected ? selectedMenuFontSize : menuFontSize;
+            const font = isSelected ? `bold ${fontSize}px Arial` : `${fontSize}px Arial`;
+
+            // Add touch-friendly background for mobile
+            if (isSmallScreen && isSelected) {
+                const textWidth = ctx.measureText(item.text).width;
+                const padding = 20;
+                ctx.fillStyle = 'rgba(255, 255, 0, 0.2)';
+                ctx.fillRect(
+                    centerX - textWidth/2 - padding, 
+                    y - fontSize/2 - 10, 
+                    textWidth + padding * 2, 
+                    fontSize + 20
+                );
+            }
 
             renderer.drawText(item.text, centerX, y, {
                 font: font,
@@ -199,20 +261,21 @@ class MenuScene extends BaseScene {
             });
         });
 
-        // Draw motion controls status
+        // Draw motion controls status with responsive font
         const statusText = this.motionControlsAvailable ? 
             '📱 Motion Controls: Enabled' : 
             '📱 Motion Controls: Unavailable (Touch Controls)';
         
-        renderer.drawText(statusText, centerX, centerY + 150, {
-            font: '14px Arial',
+        renderer.drawText(statusText, centerX, centerY + statusOffset, {
+            font: `${statusFontSize}px Arial`,
             color: '#ffffff',
             align: 'center'
         });
 
-        // Draw instructions
-        renderer.drawText('Tap to start or use Space key', centerX, canvas.height - 30, {
-            font: '12px Arial',
+        // Draw instructions with responsive positioning
+        const instructionY = isSmallScreen ? canvas.height - 40 : canvas.height - 30;
+        renderer.drawText('Tap to start or use Space key', centerX, instructionY, {
+            font: `${instructionFontSize}px Arial`,
             color: '#ffffff',
             align: 'center'
         });
