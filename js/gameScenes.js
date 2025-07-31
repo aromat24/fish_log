@@ -30,7 +30,138 @@ class MenuScene extends BaseScene {
 
     update(deltaTime) {
         // Handle input for menu navigation
-        // This would be expanded with proper input handling
+        if (this.game.inputManager) {
+            const inputState = this.game.inputManager.getInputState();
+            
+            // Handle keyboard navigation
+            if (inputState.keyboard.keys.has('ArrowUp')) {
+                this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+            } else if (inputState.keyboard.keys.has('ArrowDown')) {
+                this.selectedIndex = Math.min(this.menuItems.length - 1, this.selectedIndex + 1);
+            } else if (inputState.keyboard.keys.has('Enter') || inputState.keyboard.keys.has('Space')) {
+                this.handleMenuSelection();
+            }
+        }
+    }
+
+    handleMenuSelection() {
+        const selectedItem = this.menuItems[this.selectedIndex];
+        
+        switch (selectedItem.action) {
+            case 'startGame':
+                this.game.changeScene('fishing');
+                break;
+            case 'motionSettings':
+                this.showSettingsModal();
+                break;
+            case 'backToLog':
+                // Exit game and return to main app
+                if (window.fishingGameIntegration) {
+                    window.fishingGameIntegration.exitGame();
+                }
+                break;
+        }
+    }
+
+    showSettingsModal() {
+        // Create settings modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[2000]';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+                <h3 class="text-xl font-bold mb-4">Game Settings</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Master Volume</label>
+                        <input type="range" id="master-volume" min="0" max="1" step="0.1" 
+                               value="${this.game.audioManager ? this.game.audioManager.options.masterVolume : 0.7}"
+                               class="w-full">
+                        <span id="volume-display" class="text-sm text-gray-600">70%</span>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Motion Sensitivity</label>
+                        <input type="range" id="motion-sensitivity" min="0.1" max="2.0" step="0.1" 
+                               value="${this.game.inputManager ? this.game.inputManager.reelingConfig.sensitivity : 0.7}"
+                               class="w-full">
+                        <span id="sensitivity-display" class="text-sm text-gray-600">70%</span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="audio-enabled" 
+                               ${this.game.audioManager ? 'checked' : ''} 
+                               class="mr-2">
+                        <label for="audio-enabled" class="text-sm">Enable Audio</label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-6">
+                    <button id="cancel-settings" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button id="save-settings" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Setup event handlers
+        const volumeSlider = modal.querySelector('#master-volume');
+        const volumeDisplay = modal.querySelector('#volume-display');
+        const sensitivitySlider = modal.querySelector('#motion-sensitivity');
+        const sensitivityDisplay = modal.querySelector('#sensitivity-display');
+
+        volumeSlider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            volumeDisplay.textContent = Math.round(value * 100) + '%';
+            if (this.game.audioManager) {
+                this.game.audioManager.setMasterVolume(value);
+            }
+        });
+
+        sensitivitySlider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            sensitivityDisplay.textContent = Math.round(value * 100) + '%';
+        });
+
+        modal.querySelector('#cancel-settings').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        modal.querySelector('#save-settings').addEventListener('click', () => {
+            // Save settings
+            const volume = parseFloat(volumeSlider.value);
+            const sensitivity = parseFloat(sensitivitySlider.value);
+            const audioEnabled = modal.querySelector('#audio-enabled').checked;
+
+            if (this.game.audioManager) {
+                this.game.audioManager.setMasterVolume(volume);
+            }
+
+            if (this.game.inputManager) {
+                this.game.inputManager.setMotionSensitivity(sensitivity);
+            }
+
+            // Save to local storage
+            const settings = {
+                masterVolume: volume,
+                motionSensitivity: sensitivity,
+                audioEnabled: audioEnabled
+            };
+            localStorage.setItem('fishingGameSettings', JSON.stringify(settings));
+
+            console.log('Settings saved:', settings);
+            modal.remove();
+        });
+
+        // Close on escape
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
     }
 
     render(renderer, interpolation) {
@@ -101,6 +232,9 @@ class FishingScene extends BaseScene {
         this.fish = [];
         this.water = null;
         
+        // Species mapper for realistic fish
+        this.speciesMapper = null;
+        
         // Game state
         this.gameState = {
             isCasting: false,
@@ -129,6 +263,21 @@ class FishingScene extends BaseScene {
         // Setup input callbacks
         this.setupInputHandlers();
         
+        // Initialize species mapper
+        this.initializeSpeciesMapper();
+        
+        // Initialize audio for this scene
+        this.currentReelSound = null;
+        
+        // Preload audio if available
+        if (this.game.audioManager && !this.game.audioManager.isInitialized) {
+            this.game.audioManager.initialize().then(() => {
+                console.log('Audio initialized for fishing scene');
+            }).catch(error => {
+                console.warn('Audio initialization failed:', error);
+            });
+        }
+        
         console.log('Fishing scene entered');
     }
 
@@ -137,6 +286,12 @@ class FishingScene extends BaseScene {
         
         // Clean up input handlers
         this.cleanupInputHandlers();
+        
+        // Stop any active audio
+        if (this.currentReelSound && this.game.audioManager) {
+            this.game.audioManager.stopSound(this.currentReelSound);
+            this.currentReelSound = null;
+        }
         
         console.log('Fishing scene exited');
     }
@@ -182,22 +337,99 @@ class FishingScene extends BaseScene {
         this.spawnFish();
     }
 
+    initializeSpeciesMapper() {
+        // Initialize species mapper with fish database
+        if (window.fishDB && window.GameSpeciesMapper) {
+            this.speciesMapper = new window.GameSpeciesMapper(window.fishDB);
+            console.log('Species mapper initialized for realistic fishing');
+        } else {
+            console.warn('Fish database or GameSpeciesMapper not available, using fallback fish types');
+        }
+    }
+
     spawnFish() {
         const fishCount = 5 + Math.floor(Math.random() * 5);
+        this.fish = []; // Clear existing fish
         
         for (let i = 0; i < fishCount; i++) {
-            this.fish.push({
+            // Determine fish rarity (common: 60%, rare: 35%, legendary: 5%)
+            let gameType = 'common';
+            const rarity = Math.random();
+            if (rarity > 0.95) {
+                gameType = 'legendary';
+            } else if (rarity > 0.6) {
+                gameType = 'rare';
+            }
+            
+            // Get realistic species data
+            let speciesData = null;
+            if (this.speciesMapper && this.speciesMapper.initialized) {
+                const species = this.speciesMapper.getRandomSpecies(gameType, 'lake');
+                speciesData = this.speciesMapper.generateRealisticCatch(species, rarity);
+            }
+            
+            // Create fish with enhanced properties
+            const fish = {
                 x: Math.random() * this.game.canvas.width,
                 y: this.water.level + 50 + Math.random() * 100,
                 vx: (Math.random() - 0.5) * 2,
                 vy: (Math.random() - 0.5) * 0.5,
-                size: 10 + Math.random() * 20,
-                type: Math.random() > 0.7 ? 'rare' : 'common',
-                color: Math.random() > 0.5 ? '#FFD700' : '#FF6B6B',
+                // Use realistic size or fallback
+                size: speciesData ? Math.max(10, speciesData.length * 0.8) : (10 + Math.random() * 20),
+                // Enhanced properties from species data
+                type: gameType,
+                speciesData: speciesData,
+                species: speciesData ? speciesData.species : (gameType === 'rare' ? 'Golden Trout' : 'Bass'),
+                length: speciesData ? speciesData.length : Math.round((10 + Math.random() * 20) * 2),
+                weight: speciesData ? speciesData.weight : Math.round((10 + Math.random() * 20) * 0.1 * 100) / 100,
+                edible: speciesData ? speciesData.edible : true,
+                difficulty: speciesData ? speciesData.difficulty : (gameType === 'rare' ? 0.7 : 0.3),
+                fightingStyle: speciesData ? speciesData.fightingStyle : 'moderate',
+                // Visual properties
+                color: this.getFishColor(gameType, speciesData),
                 isHooked: false,
-                biteChance: 0.01 + Math.random() * 0.02
-            });
+                biteChance: this.calculateBiteChance(gameType, speciesData)
+            };
+            
+            this.fish.push(fish);
         }
+        
+        console.log(`Spawned ${fishCount} fish:`, this.fish.map(f => `${f.species} (${f.type})`));
+    }
+    
+    getFishColor(gameType, speciesData) {
+        if (speciesData && speciesData.rarity) {
+            switch (speciesData.rarity) {
+                case 'legendary': return '#9D4EDD'; // Purple for legendary
+                case 'rare': return '#FFD700'; // Gold for rare
+                default: return '#4A90E2'; // Blue for common
+            }
+        }
+        
+        // Fallback colors
+        switch (gameType) {
+            case 'legendary': return '#9D4EDD';
+            case 'rare': return '#FFD700';
+            default: return '#4A90E2';
+        }
+    }
+    
+    calculateBiteChance(gameType, speciesData) {
+        let baseChance = 0.015; // 1.5% base chance
+        
+        if (speciesData && speciesData.difficulty) {
+            // Higher difficulty = lower bite chance
+            baseChance *= (1.2 - speciesData.difficulty);
+        } else {
+            // Fallback based on type
+            switch (gameType) {
+                case 'legendary': baseChance *= 0.3; break;
+                case 'rare': baseChance *= 0.6; break;
+                default: baseChance *= 1.0; break;
+            }
+        }
+        
+        return Math.max(0.005, Math.min(0.03, baseChance + Math.random() * 0.01));
     }
 
     setupInputHandlers() {
@@ -247,6 +479,11 @@ class FishingScene extends BaseScene {
         this.ui.reelIndicator.visible = true;
         this.ui.reelIndicator.speed = data.speed;
 
+        // Play reeling sound
+        if (this.game.audioManager && !this.currentReelSound) {
+            this.currentReelSound = this.game.audioManager.playReelSound(data.speed);
+        }
+
         // If fish is hooked, reel it in
         if (this.gameState.fishHooked && this.gameState.currentCatch) {
             this.reelInFish(data.speed);
@@ -270,6 +507,12 @@ class FishingScene extends BaseScene {
         const endX = this.player.x + Math.cos(angle * Math.PI / 180) * distance;
         const endY = Math.max(this.water.level + 20, this.player.y + Math.sin(angle * Math.PI / 180) * distance);
 
+        // Play cast sound with power-based intensity
+        if (this.game.audioManager) {
+            const power = this.ui.powerMeter.power;
+            this.game.audioManager.playCastSound(power);
+        }
+
         // Animate line to target position
         const animationDuration = 1000; // 1 second
         const startTime = Date.now();
@@ -292,6 +535,12 @@ class FishingScene extends BaseScene {
                 this.gameState.isCasting = false;
                 this.gameState.lineInWater = true;
                 this.ui.powerMeter.visible = false;
+                
+                // Play splash sound when line hits water
+                if (this.game.audioManager) {
+                    const intensity = this.ui.powerMeter.power * 0.8 + 0.2; // 0.2 to 1.0
+                    this.game.audioManager.playSplashSound(intensity);
+                }
                 
                 // Create splash effect
                 this.game.particleSystem.emit({
@@ -352,9 +601,38 @@ class FishingScene extends BaseScene {
     catchFish() {
         if (!this.gameState.currentCatch) return;
 
-        // Add to score
-        const points = this.gameState.currentCatch.type === 'rare' ? 100 : 50;
+        // Calculate points based on rarity and difficulty
+        let points = 50; // Base points
+        const fish = this.gameState.currentCatch;
+        
+        switch (fish.type) {
+            case 'legendary':
+                points = 200;
+                break;
+            case 'rare':
+                points = 100;
+                break;
+            default:
+                points = 50;
+        }
+        
+        // Bonus points for difficulty
+        if (fish.difficulty && fish.difficulty > 0.5) {
+            points += Math.round(points * (fish.difficulty - 0.5));
+        }
+        
         this.gameState.score += points;
+
+        // Play success sound
+        if (this.game.audioManager) {
+            this.game.audioManager.playCatchSound();
+        }
+
+        // Stop reeling sound if playing
+        if (this.currentReelSound && this.game.audioManager) {
+            this.game.audioManager.stopSound(this.currentReelSound);
+            this.currentReelSound = null;
+        }
 
         // Create celebration particles
         this.game.particleSystem.emit({
@@ -375,7 +653,21 @@ class FishingScene extends BaseScene {
         // Reset fishing state
         this.resetLine();
         
-        this.ui.instructions = `Nice catch! +${points} points. Cast again!`;
+        // Show species-specific celebration message
+        const fish = this.gameState.currentCatch;
+        let celebrationMsg = `Nice catch! +${points} points`;
+        
+        if (fish.species && fish.species !== 'Bass') {
+            celebrationMsg = `${fish.species} caught! +${points} points`;
+        }
+        
+        if (fish.type === 'legendary') {
+            celebrationMsg = `🌟 LEGENDARY ${fish.species}! +${points} points! 🌟`;
+        } else if (fish.type === 'rare') {
+            celebrationMsg = `✨ Rare ${fish.species}! +${points} points! ✨`;
+        }
+        
+        this.ui.instructions = celebrationMsg;
         
         // Respawn fish
         setTimeout(() => {
@@ -384,27 +676,33 @@ class FishingScene extends BaseScene {
     }
 
     logVirtualCatch(fish) {
-        // Log to separate game storage only (NEVER mix with real catches)
+        // Use realistic species data if available
         const virtualCatch = {
-            species: fish.type === 'rare' ? 'Golden Trout' : 'Bass',
-            length: Math.round(fish.size * 2), // Convert size to cm
-            weight: Math.round(fish.size * 0.1 * 100) / 100, // Convert to kg
+            species: fish.species || (fish.type === 'rare' ? 'Golden Trout' : 'Bass'),
+            length: fish.length || Math.round(fish.size * 2), // Use realistic length or fallback
+            weight: fish.weight || Math.round(fish.size * 0.1 * 100) / 100, // Use realistic weight or fallback
+            edible: fish.edible !== undefined ? fish.edible : true,
+            rarity: fish.type,
+            difficulty: fish.difficulty || (fish.type === 'rare' ? 0.7 : 0.3),
+            fightingStyle: fish.fightingStyle || 'moderate',
             gameScore: this.gameState.score,
             motionAccuracy: Math.random() * 0.3 + 0.7, // Simulated accuracy between 70-100%
-            gameDifficulty: 'normal',
+            gameDifficulty: fish.difficulty ? (fish.difficulty > 0.6 ? 'hard' : 'normal') : 'normal',
             timeToLand: Math.round(Math.random() * 15) + 5, // 5-20 seconds
             baitUsed: 'Virtual Worm',
             weatherCondition: 'Sunny',
             waterDepth: Math.floor(Math.random() * 50) + 10,
+            habitat: fish.speciesData ? fish.speciesData.habitat : 'lake',
             gameMetrics: {
                 castAccuracy: Math.random() * 0.4 + 0.6, // 60-100%
                 reelingConsistency: Math.random() * 0.3 + 0.7, // 70-100%
                 totalGameTime: Math.floor(Date.now() / 1000) % 3600, // Game time in seconds
-                sensorDataQuality: 'good'
+                sensorDataQuality: 'good',
+                speciesMapper: this.speciesMapper ? 'enabled' : 'disabled'
             }
         };
 
-        console.log('Virtual catch logged:', virtualCatch);
+        console.log('Virtual catch logged with realistic data:', virtualCatch);
         
         // Use GameLogManager for separate storage
         if (window.gameLogManager) {
@@ -425,6 +723,12 @@ class FishingScene extends BaseScene {
     }
 
     resetLine() {
+        // Stop any active reeling sound
+        if (this.currentReelSound && this.game.audioManager) {
+            this.game.audioManager.stopSound(this.currentReelSound);
+            this.currentReelSound = null;
+        }
+
         this.fishingLine.isVisible = false;
         this.fishingLine.endX = this.player.x;
         this.fishingLine.endY = this.player.y - 20;
@@ -497,6 +801,11 @@ class FishingScene extends BaseScene {
                 this.gameState.fishHooked = true;
                 this.gameState.currentCatch = fish;
                 fish.isHooked = true;
+                
+                // Play bite sound
+                if (this.game.audioManager) {
+                    this.game.audioManager.playBiteSound();
+                }
                 
                 this.ui.instructions = 'Fish on the line! Start reeling!';
                 
