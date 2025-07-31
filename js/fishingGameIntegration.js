@@ -169,6 +169,10 @@ class FishingGameIntegration {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 await this.initializeGame();
+                
+                // Request motion permissions for enhanced gameplay
+                console.log('🎮 [INTEGRATION] Requesting motion sensor permissions...');
+                await this.requestMotionPermissions();
             } else {
                 console.log('🎮 [INTEGRATION] Game already initialized, reusing instance');
             }
@@ -255,6 +259,38 @@ class FishingGameIntegration {
             console.error('❌ [INIT] Failed to initialize fishing game:', error);
             console.error('❌ [INIT] Error stack:', error.stack);
             throw error;
+        }
+    }
+
+    /**
+     * Request motion sensor permissions for enhanced gameplay
+     */
+    async requestMotionPermissions() {
+        try {
+            if (!this.fishingGame) {
+                console.log('🎮 [MOTION] Game not initialized, skipping motion permissions');
+                return { success: false, error: 'Game not initialized' };
+            }
+
+            // Check if motion controls are enabled and available
+            if (this.fishingGame.options.enableMotionControls && this.fishingGame.motionPermissionUI) {
+                console.log('🎮 [MOTION] Requesting motion sensor permissions...');
+                const result = await this.fishingGame.requestMotionPermissions();
+                
+                if (result.success) {
+                    console.log('✅ [MOTION] Motion permissions granted successfully');
+                } else {
+                    console.log('ℹ️ [MOTION] Motion permissions not granted:', result.error);
+                }
+                
+                return result;
+            } else {
+                console.log('ℹ️ [MOTION] Motion controls not available or disabled');
+                return { success: false, error: 'Motion controls not available' };
+            }
+        } catch (error) {
+            console.error('❌ [MOTION] Failed to request motion permissions:', error);
+            return { success: false, error: error.message };
         }
     }
 
