@@ -147,6 +147,15 @@ class FishingGameIntegration {
             this.gameContainer.classList.remove('hidden');
             this.isGameActive = true;
             
+            // Ensure loading overlay is initially visible on first load
+            const loadingOverlay = document.getElementById('game-loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex';
+                loadingOverlay.style.opacity = '1';
+                loadingOverlay.style.visibility = 'visible';
+                console.log('🎮 [INTEGRATION] Loading overlay ensured visible');
+            }
+            
             // Hide main app content (fade out effect)
             console.log('🎮 [INTEGRATION] Hiding main app content...');
             const appContent = document.getElementById('app-content');
@@ -172,6 +181,10 @@ class FishingGameIntegration {
             } else {
                 console.log('🎮 [INTEGRATION] Game already initialized, reusing instance');
             }
+            
+            // Ensure loading overlay is shown for at least 800ms for better UX
+            console.log('🎮 [INTEGRATION] Ensuring minimum loading time...');
+            await new Promise(resolve => setTimeout(resolve, 800));
             
             // Hide loading overlay first before any permission requests
             console.log('🎮 [INTEGRATION] Hiding loading overlay...');

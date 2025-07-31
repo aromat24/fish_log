@@ -52,9 +52,12 @@ class MenuScene extends BaseScene {
     
     handleTouchInput(touchX, touchY) {
         const canvas = this.game.canvas;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const isSmallScreen = canvas.width < 600 || canvas.height < 600;
+        // Use CSS dimensions for touch calculations
+        const cssWidth = canvas.clientWidth || window.innerWidth;
+        const cssHeight = canvas.clientHeight || window.innerHeight;
+        const centerX = cssWidth / 2;
+        const centerY = cssHeight / 2;
+        const isSmallScreen = cssWidth < 600 || cssHeight < 600;
         const menuSpacing = isSmallScreen ? 60 : 50;
         
         // Check if touch hit any menu item
@@ -202,11 +205,17 @@ class MenuScene extends BaseScene {
     render(renderer, interpolation) {
         const ctx = renderer.ctx;
         const canvas = ctx.canvas;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        
+        // Use CSS dimensions for positioning, not scaled canvas dimensions
+        const cssWidth = canvas.clientWidth || window.innerWidth;
+        const cssHeight = canvas.clientHeight || window.innerHeight;
+        const centerX = cssWidth / 2;
+        const centerY = cssHeight / 2;
 
-        // Responsive calculations based on screen size
-        const isSmallScreen = canvas.width < 600 || canvas.height < 600;
+        // Responsive calculations based on CSS screen size (not scaled canvas size)
+        const isSmallScreen = cssWidth < 600 || cssHeight < 600;
+        
+        console.log(`Menu render: CSS ${cssWidth}x${cssHeight}, Canvas ${canvas.width}x${canvas.height}, Small screen: ${isSmallScreen}`);
         const titleFontSize = isSmallScreen ? 24 : 32;
         const menuFontSize = isSmallScreen ? 16 : 18;
         const selectedMenuFontSize = isSmallScreen ? 18 : 20;
@@ -218,7 +227,7 @@ class MenuScene extends BaseScene {
         const menuSpacing = isSmallScreen ? 60 : 50;
         const statusOffset = isSmallScreen ? 120 : 150;
 
-        // Clear with gradient background
+        // Clear with gradient background using actual canvas dimensions
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
         gradient.addColorStop(0, '#87CEEB'); // Sky blue
         gradient.addColorStop(1, '#4682B4'); // Steel blue

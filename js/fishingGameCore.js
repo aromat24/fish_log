@@ -157,10 +157,11 @@ class FishingGameCore {
         this.canvas.width = viewportWidth * pixelRatio;
         this.canvas.height = viewportHeight * pixelRatio;
         
-        // Scale context to match pixel ratio
-        this.ctx.scale(pixelRatio, pixelRatio);
+        // Scale context to match pixel ratio but preserve coordinate system
+        this.ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         
         console.log(`Canvas resized: ${viewportWidth}x${viewportHeight} CSS, ${this.canvas.width}x${this.canvas.height} actual (${pixelRatio}x ratio)`);
+        console.log(`Canvas clientWidth: ${this.canvas.clientWidth}, clientHeight: ${this.canvas.clientHeight}`);
         
         // Update UI positions if UI manager exists
         if (this.uiManager) {
