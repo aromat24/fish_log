@@ -129,20 +129,69 @@ class FishingGameCore {
      * Setup canvas for optimal performance
      */
     setupCanvas() {
-        // Set canvas to match device pixel ratio for crisp graphics
-        const pixelRatio = window.devicePixelRatio || 1;
-        const rect = this.canvas.getBoundingClientRect();
+        // Force canvas to fill viewport for mobile
+        this.resizeCanvas();
         
-        this.canvas.width = rect.width * pixelRatio;
-        this.canvas.height = rect.height * pixelRatio;
-        
-        this.ctx.scale(pixelRatio, pixelRatio);
+        // Setup resize listener for orientation changes
+        window.addEventListener('resize', () => this.resizeCanvas());
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => this.resizeCanvas(), 100); // Delay for orientation change
+        });
         
         // Optimize canvas for mobile performance
         this.ctx.imageSmoothingEnabled = this.options.enableImageSmoothing !== false;
         this.ctx.imageSmoothingQuality = 'low'; // Prioritize performance over quality
+    }
+
+    resizeCanvas() {
+        // Get actual viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
         
-        console.log(`Canvas initialized: ${this.canvas.width}x${this.canvas.height} (${pixelRatio}x pixel ratio)`);
+        // Set canvas CSS size to fill viewport
+        this.canvas.style.width = viewportWidth + 'px';
+        this.canvas.style.height = viewportHeight + 'px';
+        
+        // Set canvas actual size with device pixel ratio for crisp graphics
+        const pixelRatio = window.devicePixelRatio || 1;
+        this.canvas.width = viewportWidth * pixelRatio;
+        this.canvas.height = viewportHeight * pixelRatio;
+        
+        // Scale context to match pixel ratio
+        this.ctx.scale(pixelRatio, pixelRatio);
+        
+        console.log(`Canvas resized: ${viewportWidth}x${viewportHeight} CSS, ${this.canvas.width}x${this.canvas.height} actual (${pixelRatio}x ratio)`);
+        
+        // Update UI positions if UI manager exists
+        if (this.uiManager) {
+            this.updateUIPositions();
+        }
+    }
+
+    updateUIPositions() {
+        // Update button positions for new canvas size
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        // Update cast button position (bottom left)
+        this.uiManager.buttons.cast.y = height - 120;
+        
+        // Update reel button position (bottom right)
+        this.uiManager.buttons.reel.x = width - 80;
+        this.uiManager.buttons.reel.y = height - 120;
+        
+        // Update strike button position (center)
+        this.uiManager.buttons.strike.x = width / 2;
+        this.uiManager.buttons.strike.y = height / 2;
+        
+        // Update net button position (bottom center)
+        this.uiManager.buttons.net.x = width / 2;
+        this.uiManager.buttons.net.y = height - 80;
+        
+        // Update drag slider position (left side, center vertical)
+        this.uiManager.dragSlider.y = height / 2 - 100;
+        
+        console.log('UI positions updated for canvas size:', width, 'x', height);
     }
 
     /**

@@ -54,10 +54,23 @@ class FishingGameIntegration {
         this.gameContainer = document.createElement('div');
         this.gameContainer.id = 'fishing-game-container';
         this.gameContainer.className = 'hidden fixed inset-0 bg-black z-[1500]';
+        
+        // Add mobile-specific styles
+        this.gameContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            background-color: black;
+            z-index: 1500;
+            overflow: hidden;
+        `;
         this.gameContainer.innerHTML = `
             <div class="relative w-full h-full">
                 <!-- Game Canvas -->
-                <canvas id="fishing-game-canvas" class="w-full h-full"></canvas>
+                <canvas id="fishing-game-canvas" class="w-full h-full" style="display: block; width: 100%; height: 100%;"></canvas>
                 
                 <!-- Game UI Overlay -->
                 <div class="absolute top-4 left-4 right-4 flex justify-between items-start z-10 pointer-events-none">
