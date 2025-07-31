@@ -1775,7 +1775,7 @@ class GameOverScene extends BaseScene {
         });
 
         // Instructions
-        renderer.drawText('Tap to play again or press ESC to return to log', centerX, centerY + 80, {
+        renderer.drawText('Tap to play again or return to log', centerX, centerY + 80, {
             font: '14px Arial',
             color: '#ffffff',
             align: 'center'

@@ -309,7 +309,7 @@ class FishingGameIntegration {
             console.log('🎮 [INIT] Creating FishingGameCore instance...');
             this.fishingGame = new FishingGameCore(this.gameCanvas, {
                 enableMotionControls: true,
-                enableDebugMode: true, // Enable debug mode to see more logs
+                enableDebugMode: false, // Disable debug mode for production
                 targetFPS: 60,
                 adaptiveQuality: true,
                 maxParticles: 300 // Reduced for mobile performance

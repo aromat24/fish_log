@@ -162,37 +162,6 @@ class FishingGameCore {
         
         console.log(`Canvas resized: ${viewportWidth}x${viewportHeight} CSS, ${this.canvas.width}x${this.canvas.height} actual (${pixelRatio}x ratio)`);
         console.log(`Canvas clientWidth: ${this.canvas.clientWidth}, clientHeight: ${this.canvas.clientHeight}`);
-        
-        // Update UI positions if UI manager exists
-        if (this.uiManager) {
-            this.updateUIPositions();
-        }
-    }
-
-    updateUIPositions() {
-        // Update button positions for new canvas size
-        const width = this.canvas.clientWidth;
-        const height = this.canvas.clientHeight;
-        
-        // Update cast button position (bottom left)
-        this.uiManager.buttons.cast.y = height - 120;
-        
-        // Update reel button position (bottom right)
-        this.uiManager.buttons.reel.x = width - 80;
-        this.uiManager.buttons.reel.y = height - 120;
-        
-        // Update strike button position (center)
-        this.uiManager.buttons.strike.x = width / 2;
-        this.uiManager.buttons.strike.y = height / 2;
-        
-        // Update net button position (bottom center)
-        this.uiManager.buttons.net.x = width / 2;
-        this.uiManager.buttons.net.y = height - 80;
-        
-        // Update drag slider position (left side, center vertical)
-        this.uiManager.dragSlider.y = height / 2 - 100;
-        
-        console.log('UI positions updated for canvas size:', width, 'x', height);
     }
 
     /**
