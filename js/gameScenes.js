@@ -1097,7 +1097,6 @@ class FishingScene extends BaseScene {
         this.resetLine();
         
         // Show species-specific celebration message
-        const fish = this.gameState.currentCatch;
         let celebrationMsg = `Nice catch! +${points} points`;
         
         if (fish.species && fish.species !== 'Bass') {
