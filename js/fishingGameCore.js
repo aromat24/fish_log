@@ -183,10 +183,17 @@ class FishingGameCore {
     initializeSceneManager() {
         console.log('🎮 [SCENES] Checking required scene classes...');
         
+        // Debug: Log all available classes on window
+        console.log('🔍 [SCENES] Available window classes:', Object.keys(window).filter(key => 
+            typeof window[key] === 'function' && key.includes('Scene') || key.includes('Manager')
+        ));
+        
         // Check for required classes
         const requiredClasses = ['SceneManager', 'MenuScene', 'FishingScene', 'GameOverScene'];
         for (const className of requiredClasses) {
             if (typeof window[className] === 'undefined') {
+                console.error(`❌ [SCENES] ${className} class not found!`);
+                console.error('Available classes:', Object.keys(window).filter(key => typeof window[key] === 'function'));
                 throw new Error(`${className} class not found! Make sure all game files are loaded.`);
             }
             console.log(`✅ [SCENES] ${className} class found`);

@@ -150,6 +150,11 @@ class FishingGameIntegration {
             // Initialize game if not already created
             if (!this.fishingGame) {
                 console.log('🎮 [INTEGRATION] Game not initialized, initializing...');
+                
+                // Add small delay to ensure all scripts are loaded
+                console.log('🎮 [INTEGRATION] Waiting for scripts to load...');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 await this.initializeGame();
             } else {
                 console.log('🎮 [INTEGRATION] Game already initialized, reusing instance');
