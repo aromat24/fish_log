@@ -149,19 +149,32 @@ class FishingGameCore {
      * Initialize the rendering system
      */
     initializeRenderer() {
-        console.log('🎮 [RENDERER] Checking GameRenderer class availability...');
-        if (typeof GameRenderer === 'undefined') {
-            throw new Error('GameRenderer class not found! Make sure gameComponents.js is loaded.');
+        try {
+            console.log('🎮 [RENDERER] Checking GameRenderer class availability...');
+            if (typeof GameRenderer === 'undefined') {
+                throw new Error('GameRenderer class not found! Make sure gameComponents.js is loaded.');
+            }
+            
+            console.log('🎮 [RENDERER] Creating GameRenderer instance...');
+            this.renderer = new GameRenderer(this.ctx, {
+                enableDebugMode: this.options.enableDebugMode,
+                adaptiveQuality: this.options.adaptiveQuality,
+                maxLayers: 5 // Background, water, entities, particles, UI
+            });
+            
+            // Validate renderer methods
+            const requiredMethods = ['clear', 'drawText', 'drawCircle', 'drawRect'];
+            for (const method of requiredMethods) {
+                if (typeof this.renderer[method] !== 'function') {
+                    throw new Error(`GameRenderer missing required method: ${method}`);
+                }
+            }
+            
+            console.log('✅ [RENDERER] Renderer initialized and validated:', this.renderer);
+        } catch (error) {
+            console.error('❌ [RENDERER] Failed to initialize renderer:', error);
+            throw error;
         }
-        
-        console.log('🎮 [RENDERER] Creating GameRenderer instance...');
-        this.renderer = new GameRenderer(this.ctx, {
-            enableDebugMode: this.options.enableDebugMode,
-            adaptiveQuality: this.options.adaptiveQuality,
-            maxLayers: 5 // Background, water, entities, particles, UI
-        });
-        
-        console.log('✅ [RENDERER] Renderer initialized:', this.renderer);
     }
 
     /**
@@ -204,13 +217,22 @@ class FishingGameCore {
      * Initialize input management
      */
     initializeInputManager() {
-        this.inputManager = new InputManager(this.canvas);
-        
-        // Setup basic touch/mouse controls
-        this.inputManager.setupTouchControls();
-        this.inputManager.setupKeyboardControls();
-        
-        console.log('Input manager initialized');
+        try {
+            if (typeof InputManager === 'undefined') {
+                throw new Error('InputManager class not found! Make sure inputManager.js is loaded.');
+            }
+
+            this.inputManager = new InputManager(this.canvas);
+            
+            // Setup basic touch/mouse controls
+            this.inputManager.setupTouchControls();
+            this.inputManager.setupKeyboardControls();
+            
+            console.log('Input manager initialized');
+        } catch (error) {
+            console.error('❌ Failed to initialize InputManager:', error);
+            throw error;
+        }
     }
 
     /**
@@ -218,15 +240,28 @@ class FishingGameCore {
      */
     async initializeMotionControls() {
         try {
+            // Check for required classes
+            if (typeof MotionSensorManager === 'undefined') {
+                throw new Error('MotionSensorManager class not found! Make sure motionSensorManager.js is loaded.');
+            }
+            
+            if (typeof MotionPermissionUI === 'undefined') {
+                console.warn('MotionPermissionUI class not found, motion controls will work without permission UI');
+            }
+
             // Initialize motion sensor manager
             this.motionSensorManager = new MotionSensorManager();
             
-            // Initialize permission UI
-            this.motionPermissionUI = new MotionPermissionUI();
-            this.motionPermissionUI.setMotionSensorManager(this.motionSensorManager);
+            // Initialize permission UI if available
+            if (typeof MotionPermissionUI !== 'undefined') {
+                this.motionPermissionUI = new MotionPermissionUI();
+                this.motionPermissionUI.setMotionSensorManager(this.motionSensorManager);
+            }
             
             // Connect to input manager
-            this.inputManager.setMotionSensorManager(this.motionSensorManager);
+            if (this.inputManager) {
+                this.inputManager.setMotionSensorManager(this.motionSensorManager);
+            }
             
             console.log('Motion controls initialized');
             
@@ -240,13 +275,24 @@ class FishingGameCore {
      * Initialize audio system
      */
     initializeAudioSystem() {
-        this.audioManager = new GameAudioManager({
-            enableSpatialAudio: true,
-            maxConcurrentSounds: 8,
-            masterVolume: 0.7
-        });
-        
-        console.log('Audio system initialized');
+        try {
+            if (typeof GameAudioManager === 'undefined') {
+                console.warn('GameAudioManager class not found, audio will be disabled');
+                this.audioManager = null;
+                return;
+            }
+
+            this.audioManager = new GameAudioManager({
+                enableSpatialAudio: true,
+                maxConcurrentSounds: 8,
+                masterVolume: 0.7
+            });
+            
+            console.log('Audio system initialized');
+        } catch (error) {
+            console.warn('Audio system initialization failed:', error);
+            this.audioManager = null;
+        }
     }
 
     /**

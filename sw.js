@@ -14,7 +14,7 @@ const ASSETS_TO_CACHE = [
     '/js/eventManager.js',
     '/js/swUpdateManager.js',
     '/css/beautiful-buttons.css',
-    '/Splashscreen.jpg'
+    '/Splashscreen.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -78,21 +78,32 @@ class InputManager {
         this.motionSensorManager = motionSensorManager;
         
         if (motionSensorManager) {
-            // Initialize sensor data processor
-            this.sensorDataProcessor = new SensorFilters.SensorDataProcessor({
-                enableFiltering: true,
-                enableDeadzone: true,
-                deadzoneThreshold: 0.1,
-                minCutoff: 1.0,
-                beta: 0.007
-            });
+            try {
+                // Initialize sensor data processor if available
+                if (typeof SensorFilters !== 'undefined' && SensorFilters.SensorDataProcessor) {
+                    this.sensorDataProcessor = new SensorFilters.SensorDataProcessor({
+                        enableFiltering: true,
+                        enableDeadzone: true,
+                        deadzoneThreshold: 0.1,
+                        minCutoff: 1.0,
+                        beta: 0.007
+                    });
+                    console.log('Sensor data processor initialized');
+                } else {
+                    console.warn('SensorFilters not available, using raw sensor data');
+                    this.sensorDataProcessor = null;
+                }
 
-            // Register for sensor data callbacks
-            motionSensorManager.registerCallback('inputManager', (sensorData) => {
-                this.handleMotionSensorData(sensorData);
-            });
-            
-            console.log('Motion sensor manager connected to InputManager');
+                // Register for sensor data callbacks
+                motionSensorManager.registerCallback('inputManager', (sensorData) => {
+                    this.handleMotionSensorData(sensorData);
+                });
+                
+                console.log('Motion sensor manager connected to InputManager');
+            } catch (error) {
+                console.error('Failed to setup motion sensor processing:', error);
+                this.sensorDataProcessor = null;
+            }
         }
     }
 
@@ -254,29 +265,41 @@ class InputManager {
      * Handle motion sensor data
      */
     handleMotionSensorData(rawSensorData) {
-        if (!this.sensorDataProcessor) return;
+        try {
+            let processedData = rawSensorData;
 
-        // Process raw sensor data through filters
-        const processedData = this.sensorDataProcessor.process(rawSensorData);
-        
-        // Update motion input state
-        this.inputState.motion = {
-            isActive: true,
-            acceleration: processedData.acceleration,
-            rotation: processedData.rotation,
-            magnitude: processedData.accelerationMagnitude,
-            isCasting: false,
-            isReeling: false,
-            castPower: 0,
-            reelSpeed: 0
-        };
+            // Process raw sensor data through filters if available
+            if (this.sensorDataProcessor) {
+                processedData = this.sensorDataProcessor.process(rawSensorData);
+            } else {
+                // Add acceleration magnitude if not present
+                if (!processedData.accelerationMagnitude) {
+                    const acc = processedData.acceleration;
+                    processedData.accelerationMagnitude = Math.sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
+                }
+            }
+            
+            // Update motion input state
+            this.inputState.motion = {
+                isActive: true,
+                acceleration: processedData.acceleration,
+                rotation: processedData.rotation,
+                magnitude: processedData.accelerationMagnitude,
+                isCasting: false,
+                isReeling: false,
+                castPower: 0,
+                reelSpeed: 0
+            };
 
-        // Detect fishing gestures
-        this.detectCastingMotion(processedData);
-        this.detectReelingMotion(processedData);
+            // Detect fishing gestures
+            this.detectCastingMotion(processedData);
+            this.detectReelingMotion(processedData);
 
-        // Trigger motion callbacks
-        this.triggerCallback('motionData', processedData);
+            // Trigger motion callbacks
+            this.triggerCallback('motionData', processedData);
+        } catch (error) {
+            console.error('Error handling motion sensor data:', error);
+        }
     }
 
     /**
