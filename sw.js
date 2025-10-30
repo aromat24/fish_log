@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ghoti-fishing-cache-v7-force-refresh';
+const CACHE_NAME = 'ghoti-fishing-cache-v8-emergency-fix';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
