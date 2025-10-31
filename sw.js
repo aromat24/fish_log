@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ghoti-fishing-cache-v7-force-refresh';
+const CACHE_NAME = 'ghoti-fishing-cache-v11-main-fixed';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -13,15 +13,29 @@ const ASSETS_TO_CACHE = [
     '/js/utils.js',
     '/js/eventManager.js',
     '/js/swUpdateManager.js',
+    '/js/magicui-components.js',
+    '/js/confetti-effects.js',
     '/css/beautiful-buttons.css',
-    '/Splashscreen.jpg'
+    '/Splashscreen.png'
 ];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => {
-                return cache.addAll(ASSETS_TO_CACHE);
+            .then(async (cache) => {
+                // Cache files individually to prevent atomic failure
+                // This prevents the entire SW from failing if any single file 404s
+                const cachePromises = ASSETS_TO_CACHE.map(async (url) => {
+                    try {
+                        await cache.add(url);
+                        console.log('SW: Cached', url);
+                    } catch (err) {
+                        // Don't fail installation if optional files are missing
+                        console.warn('SW: Failed to cache (continuing anyway):', url, err.message);
+                    }
+                });
+                await Promise.all(cachePromises);
+                console.log('SW: Installation complete');
             })
             .then(() => self.skipWaiting())
             .catch((err) => {
@@ -31,16 +45,23 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+    console.log('SW: Activating new service worker...');
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
+        caches.keys().then(async (cacheNames) => {
+            // Delete ALL old caches aggressively to prevent stale content
+            const deletePromises = cacheNames.map(async (cacheName) => {
+                if (cacheName !== CACHE_NAME) {
+                    console.log('SW: Deleting old cache:', cacheName);
+                    await caches.delete(cacheName);
+                }
+            });
+            await Promise.all(deletePromises);
+            console.log('SW: All old caches cleared');
+        })
+        .then(() => {
+            console.log('SW: Taking control of all pages');
+            return self.clients.claim();
+        })
         .catch((err) => {
             console.error('Service Worker activate error:', err);
         })

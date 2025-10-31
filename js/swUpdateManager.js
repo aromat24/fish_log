@@ -234,6 +234,41 @@ class ServiceWorkerUpdateManager {
             controller: !!navigator.serviceWorker.controller
         };
     }
+
+    // Force clear all caches and unregister service workers
+    async forceReset() {
+        logger.log('Force resetting app - clearing all caches and service workers...');
+
+        try {
+            // Clear all caches
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => {
+                logger.log('Deleting cache:', name);
+                return caches.delete(name);
+            }));
+
+            // Unregister all service workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(reg => {
+                    logger.log('Unregistering service worker');
+                    return reg.unregister();
+                }));
+            }
+
+            logger.log('Force reset complete - reloading app...');
+
+            // Reload the page after a short delay
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 500);
+
+            return true;
+        } catch (error) {
+            logger.error('Force reset failed:', error);
+            return false;
+        }
+    }
 }
 
 // Auto-initialize when DOM is ready
