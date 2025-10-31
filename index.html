@@ -20,6 +20,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/beautiful-buttons.css">
   <style>
+    /* Safe area insets for notched devices (iPhone X, etc.) */
+    :root {
+      --safe-area-inset-top: env(safe-area-inset-top, 0px);
+      --safe-area-inset-right: env(safe-area-inset-right, 0px);
+      --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    }
+
     .lucide {
       font-size: 1.25rem;
       /* Adjust icon size */

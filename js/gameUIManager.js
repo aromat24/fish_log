@@ -8,13 +8,19 @@ class GameUIManager {
         this.canvas = canvas;
         this.game = game;
         this.ctx = canvas.getContext('2d');
-        
-        // Button definitions with touch-optimized positioning
+
+        // Get safe area insets (for notched phones)
+        this.safeArea = this.calculateSafeArea();
+
+        // CRITICAL: Use clientWidth/clientHeight for CSS dimensions
+        // canvas.width/height are scaled by DPR and DO NOT represent visible screen area
+        // All UI positioning MUST use CSS dimensions (clientWidth/clientHeight)
+
+        // Initialize button structures (positions will be set by updateLayout)
         this.buttons = {
             cast: {
                 id: 'cast',
-                x: 80,
-                y: canvas.height - 120,
+                x: 0, y: 0, // Will be set by updateLayout
                 radius: 50,
                 visible: true,
                 enabled: true,
@@ -28,15 +34,14 @@ class GameUIManager {
             },
             strike: {
                 id: 'strike',
-                x: canvas.width / 2,
-                y: canvas.height / 2,
+                x: 0, y: 0, // Will be set by updateLayout
                 radius: 60,
                 visible: false,
                 enabled: false,
                 pressed: false,
                 urgent: true,
                 timeRemaining: 0,
-                maxTime: 5000, // 5 seconds
+                maxTime: 5000,
                 label: 'STRIKE!',
                 color: '#ef4444',
                 pressedColor: '#dc2626',
@@ -44,8 +49,7 @@ class GameUIManager {
             },
             reel: {
                 id: 'reel',
-                x: canvas.width - 80,
-                y: canvas.height - 120,
+                x: 0, y: 0, // Will be set by updateLayout
                 radius: 40,
                 visible: false,
                 enabled: false,
@@ -58,8 +62,7 @@ class GameUIManager {
             },
             net: {
                 id: 'net',
-                x: canvas.width / 2,
-                y: canvas.height - 80,
+                x: 0, y: 0, // Will be set by updateLayout
                 radius: 45,
                 visible: false,
                 enabled: false,
@@ -70,37 +73,146 @@ class GameUIManager {
                 disabledColor: '#6b7280'
             }
         };
-        
+
         // Drag control slider (left thumb)
         this.dragSlider = {
-            x: 40,
-            y: canvas.height / 2 - 100,
+            x: 0, y: 0, // Will be set by updateLayout
             width: 30,
             height: 200,
             visible: false,
             enabled: false,
-            value: 0.5, // 0-1 range
+            value: 0.5,
             isDragging: false,
             label: 'DRAG',
             color: '#8b5cf6',
             trackColor: '#e5e7eb',
             thumbColor: '#ffffff'
         };
-        
+
+        // Circular reel wheel control (right side)
+        this.reelWheel = {
+            x: 0, y: 0, // Will be set by updateLayout
+            radius: 60,
+            innerRadius: 20,
+            visible: false,
+            enabled: false,
+            rotation: 0,
+            lastAngle: 0,
+            isDragging: false,
+            reelingSpeed: 0,
+            totalRotation: 0,
+            label: 'REEL',
+            color: '#dc2626',
+            accentColor: '#991b1b',
+            handleColor: '#ffffff',
+            indicatorColor: '#fbbf24',
+            segments: 8,
+            lastHapticAngle: 0,
+            hapticThreshold: Math.PI / 4
+        };
+
+        // Tension gauges (top of screen)
+        this.tensionGauges = {
+            visible: false,
+            x: 0, y: 0, // Will be set by updateLayout
+            width: 0, // Will be set by updateLayout
+            height: 60,
+            rod: { value: 0, max: 0.8, color: '#fbbf24', label: 'ROD' },
+            line: { value: 0, max: 1.0, color: '#ef4444', label: 'LINE' },
+            reel: { value: 0, max: 0.9, color: '#3b82f6', label: 'REEL' }
+        };
+
+        // Fish fight indicators
+        this.fightIndicators = {
+            visible: false,
+            fishStamina: { value: 1.0, max: 1.0, label: 'FISH' },
+            lineLength: { value: 50, max: 100, label: 'DISTANCE' },
+            x: 0, y: 0, // Will be set by updateLayout
+            width: 150,
+            height: 40
+        };
+
         // Touch tracking
         this.activeTouches = new Map();
         this.touchStartTime = new Map();
-        
+
         // UI state
-        this.currentPhase = 'idle'; // idle, casting, fighting, striking, netting
-        
+        this.currentPhase = 'idle';
+
         // Callbacks for button interactions
         this.callbacks = new Map();
-        
+
+        // Calculate initial layout
+        this.updateLayout();
+
         // Initialize touch event handlers
         this.initializeTouchEvents();
-        
-        console.log('GameUIManager initialized');
+
+        console.log('GameUIManager initialized with CSS dimensions:', this.canvas.clientWidth, 'x', this.canvas.clientHeight);
+        console.log('Safe area insets:', this.safeArea);
+    }
+
+    /**
+     * Calculate safe area insets for notched phones
+     */
+    calculateSafeArea() {
+        // Try to get safe area insets from CSS environment variables
+        const getEnvValue = (varName) => {
+            const style = getComputedStyle(document.documentElement);
+            const value = style.getPropertyValue(varName).trim();
+            return value ? parseInt(value) : 0;
+        };
+
+        return {
+            top: getEnvValue('--safe-area-inset-top') || 0,
+            right: getEnvValue('--safe-area-inset-right') || 0,
+            bottom: getEnvValue('--safe-area-inset-bottom') || 0,
+            left: getEnvValue('--safe-area-inset-left') || 0
+        };
+    }
+
+    /**
+     * Update UI element positions based on current canvas CSS dimensions
+     * CRITICAL: This MUST be called whenever canvas size changes
+     */
+    updateLayout() {
+        // CRITICAL: Use clientWidth/clientHeight (CSS dimensions), NOT width/height (scaled by DPR)
+        const cssWidth = this.canvas.clientWidth;
+        const cssHeight = this.canvas.clientHeight;
+
+        console.log('📱 [UI] Updating layout for CSS dimensions:', cssWidth, 'x', cssHeight);
+
+        // Update button positions
+        this.buttons.cast.x = 80 + this.safeArea.left;
+        this.buttons.cast.y = cssHeight - 120 - this.safeArea.bottom;
+
+        this.buttons.strike.x = cssWidth / 2;
+        this.buttons.strike.y = cssHeight / 2;
+
+        this.buttons.reel.x = cssWidth - 80 - this.safeArea.right;
+        this.buttons.reel.y = cssHeight - 120 - this.safeArea.bottom;
+
+        this.buttons.net.x = cssWidth / 2;
+        this.buttons.net.y = cssHeight - 80 - this.safeArea.bottom;
+
+        // Update drag slider position
+        this.dragSlider.x = 40 + this.safeArea.left;
+        this.dragSlider.y = cssHeight / 2 - 100;
+
+        // Update reel wheel position
+        this.reelWheel.x = cssWidth - 100 - this.safeArea.right;
+        this.reelWheel.y = cssHeight - 150 - this.safeArea.bottom;
+
+        // Update tension gauges position
+        this.tensionGauges.x = cssWidth / 2;
+        this.tensionGauges.y = 40 + this.safeArea.top;
+        this.tensionGauges.width = Math.min(cssWidth - 40 - this.safeArea.left - this.safeArea.right, 400);
+
+        // Update fight indicators position
+        this.fightIndicators.x = 20 + this.safeArea.left;
+        this.fightIndicators.y = cssHeight - 60 - this.safeArea.bottom;
+
+        console.log('✅ [UI] Layout updated - Timer position:', this.buttons.strike.x, this.buttons.strike.y);
     }
     
     /**
@@ -172,11 +284,29 @@ class GameUIManager {
                     this.dragSlider.isDragging = true;
                     this.activeTouches.set(touchId, 'dragSlider');
                     this.updateDragSlider(touchY);
-                    
+
                     if (navigator.vibrate) {
                         navigator.vibrate(30);
                     }
                 }
+                return;
+            }
+
+            // Check reel wheel touch
+            if (this.isPointInReelWheel(touchX, touchY)) {
+                if (this.reelWheel.visible && this.reelWheel.enabled) {
+                    this.reelWheel.isDragging = true;
+                    this.activeTouches.set(touchId, 'reelWheel');
+
+                    // Calculate initial touch angle
+                    const angle = this.calculateReelWheelAngle(touchX, touchY);
+                    this.reelWheel.lastAngle = angle;
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate(30);
+                    }
+                }
+                return;
             }
         }
     }
@@ -194,9 +324,11 @@ class GameUIManager {
             const touchId = touch.identifier;
             
             const activeElement = this.activeTouches.get(touchId);
-            
+
             if (activeElement === 'dragSlider' && this.dragSlider.isDragging) {
                 this.updateDragSlider(touchY);
+            } else if (activeElement === 'reelWheel' && this.reelWheel.isDragging) {
+                this.updateReelWheel(touchX, touchY);
             } else if (activeElement === 'cast' && this.buttons.cast.charging) {
                 // Update cast charge based on touch duration
                 const pressDuration = Date.now() - this.touchStartTime.get(touchId);
@@ -221,13 +353,17 @@ class GameUIManager {
             if (activeElement && this.buttons[activeElement]) {
                 const button = this.buttons[activeElement];
                 button.pressed = false;
-                
+
                 // Handle button release
                 this.handleButtonRelease(activeElement, touchId);
             } else if (activeElement === 'dragSlider') {
                 this.dragSlider.isDragging = false;
+            } else if (activeElement === 'reelWheel') {
+                this.reelWheel.isDragging = false;
+                this.reelWheel.reelingSpeed = 0; // Stop reeling
+                this.triggerCallback('reelStop');
             }
-            
+
             this.activeTouches.delete(touchId);
             this.touchStartTime.delete(touchId);
         });
@@ -300,7 +436,69 @@ class GameUIManager {
                y >= this.dragSlider.y &&
                y <= this.dragSlider.y + this.dragSlider.height;
     }
-    
+
+    /**
+     * Check if point is within reel wheel bounds
+     */
+    isPointInReelWheel(x, y) {
+        if (!this.reelWheel.visible) return false;
+        const dx = x - this.reelWheel.x;
+        const dy = y - this.reelWheel.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance <= this.reelWheel.radius && distance >= this.reelWheel.innerRadius;
+    }
+
+    /**
+     * Calculate angle of touch relative to reel wheel center
+     */
+    calculateReelWheelAngle(x, y) {
+        const dx = x - this.reelWheel.x;
+        const dy = y - this.reelWheel.y;
+        return Math.atan2(dy, dx);
+    }
+
+    /**
+     * Update reel wheel rotation based on touch movement
+     */
+    updateReelWheel(touchX, touchY) {
+        const currentAngle = this.calculateReelWheelAngle(touchX, touchY);
+
+        // Calculate delta angle (change in rotation)
+        let deltaAngle = currentAngle - this.reelWheel.lastAngle;
+
+        // Handle angle wrapping (crossing from -PI to +PI or vice versa)
+        if (deltaAngle > Math.PI) {
+            deltaAngle -= 2 * Math.PI;
+        } else if (deltaAngle < -Math.PI) {
+            deltaAngle += 2 * Math.PI;
+        }
+
+        // Update rotation
+        this.reelWheel.rotation += deltaAngle;
+        this.reelWheel.totalRotation += deltaAngle;
+        this.reelWheel.lastAngle = currentAngle;
+
+        // Calculate reeling speed (-1 to 1, clockwise is positive)
+        // Speed is based on how fast the angle is changing
+        this.reelWheel.reelingSpeed = Math.max(-1, Math.min(1, deltaAngle * 5));
+
+        // Haptic feedback on rotation milestones
+        const totalRotation = Math.abs(this.reelWheel.totalRotation);
+        if (totalRotation - Math.abs(this.reelWheel.lastHapticAngle) >= this.reelWheel.hapticThreshold) {
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+            this.reelWheel.lastHapticAngle = totalRotation;
+        }
+
+        // Trigger reeling callback
+        this.triggerCallback('reeling', {
+            speed: this.reelWheel.reelingSpeed,
+            rotation: this.reelWheel.rotation,
+            totalRotation: this.reelWheel.totalRotation
+        });
+    }
+
     /**
      * Handle button press events
      */
@@ -400,38 +598,50 @@ class GameUIManager {
         });
         this.dragSlider.visible = false;
         this.dragSlider.enabled = false;
-        
+        this.reelWheel.visible = false;
+        this.reelWheel.enabled = false;
+        this.tensionGauges.visible = false;
+        this.fightIndicators.visible = false;
+
         // Configure buttons for current phase
         switch (phase) {
             case 'idle':
                 this.buttons.cast.visible = true;
                 this.buttons.cast.enabled = true;
                 break;
-                
+
             case 'casting':
                 // No buttons during cast animation
                 break;
-                
+
             case 'waiting':
                 // Line is in water, waiting for bite
                 break;
-                
+
             case 'striking':
                 this.buttons.strike.visible = true;
                 this.buttons.strike.enabled = true;
                 this.buttons.strike.timeRemaining = this.buttons.strike.maxTime;
                 break;
-                
+
             case 'fighting':
-                this.buttons.reel.visible = true;
-                this.buttons.reel.enabled = true;
+                // Show all fighting UI elements
+                this.reelWheel.visible = true;
+                this.reelWheel.enabled = true;
                 this.dragSlider.visible = true;
                 this.dragSlider.enabled = true;
+                this.tensionGauges.visible = true;
+                this.fightIndicators.visible = true;
+
+                // Reset reel wheel state
+                this.reelWheel.totalRotation = 0;
+                this.reelWheel.reelingSpeed = 0;
                 break;
-                
+
             case 'netting':
                 this.buttons.net.visible = true;
                 this.buttons.net.enabled = true;
+                this.fightIndicators.visible = true; // Keep showing distance
                 break;
         }
     }
@@ -502,19 +712,34 @@ class GameUIManager {
     render() {
         // Save context state
         this.ctx.save();
-        
+
+        // Render tension gauges (top of screen)
+        if (this.tensionGauges.visible) {
+            this.renderTensionGauges();
+        }
+
+        // Render fight indicators (bottom left)
+        if (this.fightIndicators.visible) {
+            this.renderFightIndicators();
+        }
+
         // Render drag slider
         if (this.dragSlider.visible) {
             this.renderDragSlider();
         }
-        
+
+        // Render reel wheel
+        if (this.reelWheel.visible) {
+            this.renderReelWheel();
+        }
+
         // Render buttons
         Object.values(this.buttons).forEach(button => {
             if (button.visible) {
                 this.renderButton(button);
             }
         });
-        
+
         // Restore context state
         this.ctx.restore();
     }
@@ -648,7 +873,234 @@ class GameUIManager {
         const percentage = Math.round(slider.value * 100);
         ctx.fillText(`${percentage}%`, slider.x, slider.y + slider.height + 20);
     }
-    
+
+    /**
+     * Render circular reel wheel
+     */
+    renderReelWheel() {
+        const ctx = this.ctx;
+        const wheel = this.reelWheel;
+
+        // Draw outer circle (rim)
+        ctx.beginPath();
+        ctx.arc(wheel.x, wheel.y, wheel.radius, 0, Math.PI * 2);
+        ctx.fillStyle = wheel.color;
+        ctx.fill();
+        ctx.strokeStyle = wheel.accentColor;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Draw segments (make it look like a fishing reel)
+        ctx.save();
+        ctx.translate(wheel.x, wheel.y);
+        ctx.rotate(wheel.rotation);
+
+        for (let i = 0; i < wheel.segments; i++) {
+            const angle = (i / wheel.segments) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.moveTo(wheel.innerRadius * Math.cos(angle), wheel.innerRadius * Math.sin(angle));
+            ctx.lineTo(wheel.radius * Math.cos(angle), wheel.radius * Math.sin(angle));
+            ctx.strokeStyle = wheel.accentColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Draw rotation indicator (handle)
+        ctx.beginPath();
+        ctx.arc(wheel.radius * 0.7, 0, 8, 0, Math.PI * 2);
+        ctx.fillStyle = wheel.handleColor;
+        ctx.fill();
+        ctx.strokeStyle = wheel.indicatorColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Draw inner circle (center)
+        ctx.beginPath();
+        ctx.arc(wheel.x, wheel.y, wheel.innerRadius, 0, Math.PI * 2);
+        ctx.fillStyle = wheel.accentColor;
+        ctx.fill();
+
+        // Draw label
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(wheel.label, wheel.x, wheel.y);
+
+        // Draw speed indicator
+        if (wheel.isDragging && Math.abs(wheel.reelingSpeed) > 0.1) {
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = '10px Arial';
+            ctx.fillText(`${(wheel.reelingSpeed * 100).toFixed(0)}%`, wheel.x, wheel.y + wheel.radius + 20);
+        }
+    }
+
+    /**
+     * Render tension gauges (rod, line, reel stress)
+     */
+    renderTensionGauges() {
+        const ctx = this.ctx;
+        const gauges = this.tensionGauges;
+
+        // Background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(gauges.x - gauges.width / 2, gauges.y - 10, gauges.width, gauges.height);
+
+        // Border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(gauges.x - gauges.width / 2, gauges.y - 10, gauges.width, gauges.height);
+
+        const barHeight = 15;
+        const spacing = 3;
+        let currentY = gauges.y;
+
+        // Render each gauge (rod, line, reel)
+        ['rod', 'line', 'reel'].forEach((type, index) => {
+            const gauge = gauges[type];
+            const barWidth = gauges.width - 20;
+            const fillWidth = Math.min(barWidth * (gauge.value / gauge.max), barWidth);
+
+            // Background track
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fillRect(gauges.x - barWidth / 2, currentY, barWidth, barHeight);
+
+            // Determine color based on stress level
+            let color = gauge.color;
+            const stressPercent = gauge.value / gauge.max;
+            if (stressPercent > 0.9) {
+                color = '#ef4444'; // Red - critical
+            } else if (stressPercent > 0.7) {
+                color = '#f59e0b'; // Orange - warning
+            } else if (stressPercent > 0.5) {
+                color = gauge.color; // Original color
+            } else {
+                color = '#22c55e'; // Green - safe
+            }
+
+            // Fill bar
+            ctx.fillStyle = color;
+            ctx.fillRect(gauges.x - barWidth / 2, currentY, fillWidth, barHeight);
+
+            // Border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(gauges.x - barWidth / 2, currentY, barWidth, barHeight);
+
+            // Label
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(gauge.label, gauges.x - barWidth / 2 - 45, currentY + barHeight / 2 + 3);
+
+            // Percentage
+            ctx.textAlign = 'right';
+            ctx.fillText(`${Math.round(stressPercent * 100)}%`, gauges.x + barWidth / 2 + 45, currentY + barHeight / 2 + 3);
+
+            currentY += barHeight + spacing;
+        });
+    }
+
+    /**
+     * Render fight indicators (fish stamina, distance)
+     */
+    renderFightIndicators() {
+        const ctx = this.ctx;
+        const indicators = this.fightIndicators;
+
+        // Background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(indicators.x, indicators.y, indicators.width, indicators.height);
+
+        // Border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(indicators.x, indicators.y, indicators.width, indicators.height);
+
+        const barHeight = 12;
+        let currentY = indicators.y + 5;
+
+        // Fish stamina
+        const staminaPercent = indicators.fishStamina.value / indicators.fishStamina.max;
+        const staminaWidth = (indicators.width - 20) * staminaPercent;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(indicators.x + 10, currentY, indicators.width - 20, barHeight);
+
+        ctx.fillStyle = staminaPercent > 0.5 ? '#3b82f6' : '#ef4444';
+        ctx.fillRect(indicators.x + 10, currentY, staminaWidth, barHeight);
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.strokeRect(indicators.x + 10, currentY, indicators.width - 20, barHeight);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('FISH', indicators.x + 10, currentY - 2);
+
+        currentY += barHeight + 8;
+
+        // Distance
+        const distancePercent = indicators.lineLength.value / indicators.lineLength.max;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(indicators.x + 10, currentY, indicators.width - 20, barHeight);
+
+        ctx.fillStyle = distancePercent < 0.3 ? '#22c55e' : '#fbbf24';
+        ctx.fillRect(indicators.x + 10, currentY, (indicators.width - 20) * distancePercent, barHeight);
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.strokeRect(indicators.x + 10, currentY, indicators.width - 20, barHeight);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(`DIST ${indicators.lineLength.value.toFixed(0)}m`, indicators.x + 10, currentY - 2);
+    }
+
+    /**
+     * Update tension gauge values
+     * @param {Object} tension - {rod: 0-1, line: 0-1, reel: 0-1}
+     */
+    updateTension(tension) {
+        if (tension.rod !== undefined) this.tensionGauges.rod.value = tension.rod;
+        if (tension.line !== undefined) this.tensionGauges.line.value = tension.line;
+        if (tension.reel !== undefined) this.tensionGauges.reel.value = tension.reel;
+    }
+
+    /**
+     * Update fight indicator values
+     * @param {Object} indicators - {fishStamina: 0-1, lineLength: number}
+     */
+    updateFightIndicators(indicators) {
+        if (indicators.fishStamina !== undefined) {
+            this.fightIndicators.fishStamina.value = indicators.fishStamina * this.fightIndicators.fishStamina.max;
+        }
+        if (indicators.lineLength !== undefined) {
+            this.fightIndicators.lineLength.value = indicators.lineLength;
+        }
+    }
+
+    /**
+     * Get current reel wheel state
+     */
+    getReelWheelState() {
+        return {
+            isReeling: this.reelWheel.isDragging,
+            speed: this.reelWheel.reelingSpeed,
+            totalRotation: this.reelWheel.totalRotation
+        };
+    }
+
+    /**
+     * Get current drag setting
+     */
+    getDragSetting() {
+        return this.dragSlider.value;
+    }
+
     /**
      * Clean up resources
      */

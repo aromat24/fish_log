@@ -490,8 +490,23 @@ class FishingScene extends BaseScene {
             this.uiManager.cleanup();
             this.uiManager = null;
         }
-        
+
         console.log('Fishing scene exited');
+    }
+
+    /**
+     * Handle canvas resize - update UI layout
+     */
+    onResize(canvasWidth, canvasHeight) {
+        console.log('📱 [SCENE] Fishing scene resize:', canvasWidth, 'x', canvasHeight);
+
+        // Update UI Manager layout
+        if (this.uiManager) {
+            this.uiManager.updateLayout();
+        }
+
+        // Reinitialize game objects with new dimensions
+        this.initializeGameObjects();
     }
 
     initializeGameObjects() {
@@ -1782,27 +1797,66 @@ class FishingScene extends BaseScene {
         ctx.fillStyle = this.boat.accentColor;
         ctx.fillRect(boatX - boatW / 2 + 15, boatY + 5, boatW - 30, boatH - 15);
 
-        // Draw FISHING ROD (motion-controlled arc)
+        // Draw FISHING ROD (motion-controlled arc with tension bending)
         const rodAngleRad = (this.player.rodAngle * Math.PI) / 180;
         const rodBaseX = boatX;
         const rodBaseY = boatY + 5; // Rod starts from front of boat
-        const rodTipX = rodBaseX + Math.cos(rodAngleRad) * this.player.rodLength;
-        const rodTipY = rodBaseY + Math.sin(rodAngleRad) * this.player.rodLength;
 
-        // Rod itself (brown/tan gradient)
+        // Calculate rod tip position (base position without bending)
+        let rodTipX = rodBaseX + Math.cos(rodAngleRad) * this.player.rodLength;
+        let rodTipY = rodBaseY + Math.sin(rodAngleRad) * this.player.rodLength;
+
+        // Calculate rod bend based on line tension
+        const tension = this.fishingLine.tension || 0;
+        const bendAmount = tension * 30; // Max 30 pixels bend at full tension
+
+        // Bend direction is perpendicular to rod angle (downward)
+        const bendAngle = rodAngleRad + Math.PI / 2; // Perpendicular to rod
+        const bendX = Math.cos(bendAngle) * bendAmount;
+        const bendY = Math.sin(bendAngle) * bendAmount;
+
+        // Calculate control point for bezier curve (midpoint with bend)
+        const midX = (rodBaseX + rodTipX) / 2 + bendX;
+        const midY = (rodBaseY + rodTipY) / 2 + bendY;
+
+        // Update rod tip position with bend
+        rodTipX += bendX * 0.5; // Tip bends less than middle
+        rodTipY += bendY * 0.5;
+
+        // Rod gradient
         const rodGradient = ctx.createLinearGradient(rodBaseX, rodBaseY, rodTipX, rodTipY);
         rodGradient.addColorStop(0, '#8B7355');
         rodGradient.addColorStop(1, '#D2B48C');
 
         ctx.strokeStyle = rodGradient;
         ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(rodBaseX, rodBaseY);
-        ctx.lineTo(rodTipX, rodTipY);
+
+        // Draw curved rod when tension, straight when no tension
+        if (tension > 0.1) {
+            // Use quadratic curve for smooth bending
+            ctx.quadraticCurveTo(midX, midY, rodTipX, rodTipY);
+        } else {
+            // Straight line when no tension
+            ctx.lineTo(rodTipX, rodTipY);
+        }
         ctx.stroke();
 
         // Rod tip highlight
         renderer.drawCircle(rodTipX, rodTipY, 3, '#FFD700', true);
+
+        // Visual stress indicator when high tension
+        if (tension > 0.7) {
+            ctx.strokeStyle = tension > 0.9 ? '#ff0000' : '#ff6600';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(rodBaseX, rodBaseY, 15, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset dash
+        }
 
         // Update fishing line start position to rod tip
         this.fishingLine.startX = rodTipX;

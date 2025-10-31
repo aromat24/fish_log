@@ -223,8 +223,9 @@ class MotionSensorManager {
 
     /**
      * Attempt to initialize DeviceMotion API
+     * @param {boolean} skipPermissionRequest - Set to true if permission already requested
      */
-    async tryDeviceMotionAPI() {
+    async tryDeviceMotionAPI(skipPermissionRequest = false) {
         try {
             // Check for DeviceMotion support
             if (!('DeviceMotionEvent' in window)) {
@@ -232,10 +233,10 @@ class MotionSensorManager {
                 return false;
             }
 
-            // Handle iOS 13+ permission requirement
-            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            // Handle iOS 13+ permission requirement (if not already done)
+            if (!skipPermissionRequest && typeof DeviceMotionEvent.requestPermission === 'function') {
                 console.log('Requesting DeviceMotion permission (iOS 13+)...');
-                
+
                 try {
                     const permission = await DeviceMotionEvent.requestPermission();
                     if (permission !== 'granted') {
@@ -250,9 +251,9 @@ class MotionSensorManager {
 
             // Setup DeviceMotion event listener
             window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this), { passive: true });
-            
+
             this.isPermissionGranted = true;
-            
+
             // Test if we're getting data (longer timeout for slower Android devices)
             return new Promise((resolve) => {
                 let testTimeout;
@@ -595,18 +596,67 @@ class MotionSensorManager {
 
     /**
      * Request permission with user-friendly UI
+     * CRITICAL: This must be called directly from a user gesture (button click)
+     * to maintain synchronous call stack for iOS Safari
      */
     async requestPermissionWithUI() {
         try {
-            // This will be called from a user interaction event
-            if (!this.isInitialized) {
+            console.log('📱 [PERMISSION] requestPermissionWithUI called from user gesture');
+
+            // If already initialized and permission granted, return success
+            if (this.isInitialized && this.isPermissionGranted) {
+                console.log('✅ [PERMISSION] Already initialized and granted');
+                return { success: true, type: this.sensorType };
+            }
+
+            // Detect platform for API priority
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+
+            console.log('📱 [PERMISSION] Platform:', { isIOS, isAndroid });
+
+            // CRITICAL: Call permission request DIRECTLY without intermediate awaits
+            // This maintains the user gesture call stack
+            let permissionGranted = false;
+
+            // iOS: Request DeviceMotion permission synchronously
+            if (isIOS && typeof DeviceMotionEvent.requestPermission === 'function') {
+                console.log('📱 [PERMISSION] Requesting iOS DeviceMotion permission...');
+                try {
+                    // CRITICAL: No await before this call - keep synchronous stack
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    permissionGranted = (permission === 'granted');
+                    console.log('📱 [PERMISSION] iOS permission result:', permission);
+
+                    if (permissionGranted) {
+                        // Now initialize the rest asynchronously
+                        // Skip permission request since we just did it
+                        const result = await this.tryDeviceMotionAPI(true);
+                        if (result) {
+                            this.sensorType = 'devicemotion';
+                            this.isInitialized = true;
+                            this.isPermissionGranted = true;
+                            this.loadCalibration();
+                            return { success: true, type: 'devicemotion' };
+                        }
+                    }
+                } catch (error) {
+                    console.error('📱 [PERMISSION] iOS permission request failed:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            // Android/Other: Initialize normally
+            if (!permissionGranted) {
+                console.log('📱 [PERMISSION] Non-iOS or fallback - calling initialize()');
                 const result = await this.initialize();
                 return result;
             }
-            return { success: true, type: this.sensorType };
-            
+
+            return { success: false, error: 'Permission not granted' };
+
         } catch (error) {
-            console.error('Permission request failed:', error);
+            console.error('📱 [PERMISSION] Request failed:', error);
             return { success: false, error: error.message };
         }
     }
