@@ -499,9 +499,28 @@ class FishingScene extends BaseScene {
         this.player = {
             x: this.game.canvas.width / 2,
             y: this.game.canvas.height - 100,
-            rodAngle: 0,
+            rodAngle: -45, // Default rod angle (degrees, negative = pointing up-right)
+            rodLength: 100, // Rod visual length in pixels
             isAnimating: false
         };
+
+        // Boat rendering properties
+        this.boat = {
+            width: 120,
+            height: 50,
+            bodyColor: '#8B4513', // Dark brown
+            accentColor: '#A0522D', // Medium brown
+            rimColor: '#DC143C' // Red rim
+        };
+
+        // Water layers for depth/ripple effect (matches visual layout)
+        this.waterLayers = [
+            { depth: 0, yOffset: 0, waveSpeed: 0.5, waveHeight: 3, alpha: 0.8 },
+            { depth: 1, yOffset: 50, waveSpeed: 0.4, waveHeight: 4, alpha: 0.7 },
+            { depth: 2, yOffset: 100, waveSpeed: 0.3, waveHeight: 5, alpha: 0.6 },
+            { depth: 3, yOffset: 150, waveSpeed: 0.25, waveHeight: 4, alpha: 0.5 }
+        ];
+        this.waveTime = 0; // Animation time for wave motion
 
         // Initialize fishing line
         this.fishingLine = {
@@ -1374,11 +1393,29 @@ class FishingScene extends BaseScene {
     }
 
     update(deltaTime) {
+        // Update rod angle from motion sensors
+        if (this.game.inputManager && this.game.inputManager.isMotionControlsAvailable()) {
+            const motionState = this.game.inputManager.getInputState().motion;
+
+            // Map device rotation (gamma) to rod angle
+            // Gamma: -90 to 90 degrees (left tilt to right tilt)
+            // Map to rod angle: -75 (left) to -15 (right) degrees
+            const gamma = motionState.rotation.gamma || 0;
+            const clampedGamma = Math.max(-90, Math.min(90, gamma));
+
+            // Convert gamma to rod angle (inverted for natural feel)
+            // Tilt device left = rod goes left, tilt right = rod goes right
+            this.player.rodAngle = -45 - (clampedGamma * 0.33); // -45 is center, ±30 degrees range
+        }
+
+        // Update wave animation time for ripples
+        this.waveTime += deltaTime * 0.001; // Convert to seconds
+
         // Update enhanced UI manager
         if (this.uiManager) {
             this.uiManager.update(deltaTime);
         }
-        
+
         // Update fish AI
         this.updateFish(deltaTime);
         
@@ -1681,31 +1718,85 @@ class FishingScene extends BaseScene {
         ctx.fillStyle = this.water.color;
         ctx.fillRect(0, this.water.level, canvas.width, canvas.height - this.water.level);
 
-        // Draw water waves
-        ctx.strokeStyle = '#5BA3D4';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        for (let i = 0; i < this.water.waves.length - 1; i++) {
-            const wave = this.water.waves[i];
-            const nextWave = this.water.waves[i + 1];
-            
-            if (i === 0) {
-                ctx.moveTo(wave.x, wave.currentY);
+        // Draw layered water with animated ripples/wakes (matches visual layout)
+        this.waterLayers.forEach((layer, index) => {
+            const layerY = this.water.level + layer.yOffset;
+            const waveCount = 20;
+            const waveWidth = canvas.width / waveCount;
+
+            ctx.strokeStyle = `rgba(91, 163, 212, ${layer.alpha})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            for (let i = 0; i <= waveCount; i++) {
+                const x = i * waveWidth;
+                // Animated wave using sine function with layer-specific speed
+                const waveOffset = Math.sin((x * 0.01) + (this.waveTime * layer.waveSpeed)) * layer.waveHeight;
+                const y = layerY + waveOffset;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
             }
-            
-            const cpX = (wave.x + nextWave.x) / 2;
-            const cpY = (wave.currentY + nextWave.currentY) / 2;
-            ctx.quadraticCurveTo(wave.x, wave.currentY, cpX, cpY);
-        }
-        
+
+            ctx.stroke();
+        });
+
+        // Draw BOAT at bottom (red/brown as per visual layout)
+        const boatX = this.player.x;
+        const boatY = this.player.y;
+        const boatW = this.boat.width;
+        const boatH = this.boat.height;
+
+        // Boat hull (rounded trapezoid shape)
+        ctx.fillStyle = this.boat.bodyColor;
+        ctx.beginPath();
+        ctx.moveTo(boatX - boatW / 2 + 10, boatY); // Left top
+        ctx.lineTo(boatX + boatW / 2 - 10, boatY); // Right top
+        ctx.lineTo(boatX + boatW / 2, boatY + boatH); // Right bottom
+        ctx.lineTo(boatX - boatW / 2, boatY + boatH); // Left bottom
+        ctx.closePath();
+        ctx.fill();
+
+        // Boat rim (red accent)
+        ctx.strokeStyle = this.boat.rimColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(boatX - boatW / 2 + 10, boatY);
+        ctx.lineTo(boatX + boatW / 2 - 10, boatY);
         ctx.stroke();
 
-        // Draw player
-        renderer.drawCircle(this.player.x, this.player.y, 15, '#8B4513', true);
-        renderer.drawText('🎣', this.player.x - 10, this.player.y + 5, {
-            font: '20px Arial'
-        });
+        // Boat interior shading
+        ctx.fillStyle = this.boat.accentColor;
+        ctx.fillRect(boatX - boatW / 2 + 15, boatY + 5, boatW - 30, boatH - 15);
+
+        // Draw FISHING ROD (motion-controlled arc)
+        const rodAngleRad = (this.player.rodAngle * Math.PI) / 180;
+        const rodBaseX = boatX;
+        const rodBaseY = boatY + 5; // Rod starts from front of boat
+        const rodTipX = rodBaseX + Math.cos(rodAngleRad) * this.player.rodLength;
+        const rodTipY = rodBaseY + Math.sin(rodAngleRad) * this.player.rodLength;
+
+        // Rod itself (brown/tan gradient)
+        const rodGradient = ctx.createLinearGradient(rodBaseX, rodBaseY, rodTipX, rodTipY);
+        rodGradient.addColorStop(0, '#8B7355');
+        rodGradient.addColorStop(1, '#D2B48C');
+
+        ctx.strokeStyle = rodGradient;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(rodBaseX, rodBaseY);
+        ctx.lineTo(rodTipX, rodTipY);
+        ctx.stroke();
+
+        // Rod tip highlight
+        renderer.drawCircle(rodTipX, rodTipY, 3, '#FFD700', true);
+
+        // Update fishing line start position to rod tip
+        this.fishingLine.startX = rodTipX;
+        this.fishingLine.startY = rodTipY;
 
         // Draw fishing line with tension visualization
         if (this.fishingLine.isVisible) {
