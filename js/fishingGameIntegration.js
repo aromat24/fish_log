@@ -515,6 +515,12 @@ class FishingGameIntegration {
         const gameListContainer = document.getElementById('game-catches-list');
         if (!gameListContainer) return;
 
+        // Safety check: ensure gameCatches is an array
+        if (!gameCatches || !Array.isArray(gameCatches)) {
+            console.warn('gameCatches is not an array:', gameCatches);
+            gameCatches = [];
+        }
+
         if (gameCatches.length === 0) {
             gameListContainer.innerHTML = '<p class="italic text-gray-500 text-center py-8">No game catches yet. Play the fishing game to start logging virtual catches!</p>';
             return;

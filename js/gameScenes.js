@@ -55,18 +55,20 @@ class MenuScene extends BaseScene {
         // Handle input for menu navigation
         if (this.game.inputManager) {
             const inputState = this.game.inputManager.getInputState();
-            
+
             // Handle keyboard navigation
-            if (inputState.keyboard.keys.has('ArrowUp')) {
-                this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-            } else if (inputState.keyboard.keys.has('ArrowDown')) {
-                this.selectedIndex = Math.min(this.menuItems.length - 1, this.selectedIndex + 1);
-            } else if (inputState.keyboard.keys.has('Enter') || inputState.keyboard.keys.has('Space')) {
-                this.handleMenuSelection();
+            if (inputState.keyboard && inputState.keyboard.keys) {
+                if (inputState.keyboard.keys.has('ArrowUp')) {
+                    this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+                } else if (inputState.keyboard.keys.has('ArrowDown')) {
+                    this.selectedIndex = Math.min(this.menuItems.length - 1, this.selectedIndex + 1);
+                } else if (inputState.keyboard.keys.has('Enter') || inputState.keyboard.keys.has('Space')) {
+                    this.handleMenuSelection();
+                }
             }
-            
+
             // Handle touch/click navigation for mobile
-            if (inputState.touch.taps.length > 0) {
+            if (inputState.touch && inputState.touch.taps && inputState.touch.taps.length > 0) {
                 const tap = inputState.touch.taps[0];
                 this.handleTouchInput(tap.x, tap.y);
             }
@@ -81,28 +83,38 @@ class MenuScene extends BaseScene {
         const centerX = cssWidth / 2;
         const centerY = cssHeight / 2;
         const isSmallScreen = cssWidth < 600 || cssHeight < 600;
-        const menuSpacing = isSmallScreen ? 60 : 50;
-        
+        const menuSpacing = isSmallScreen ? 70 : 60; // Increased spacing for mobile
+
+        console.log('Touch input:', touchX, touchY, 'Canvas:', cssWidth, cssHeight);
+
         // Check if touch hit any menu item
+        let hitDetected = false;
         this.menuItems.forEach((item, index) => {
             const y = centerY + (index - 1) * menuSpacing;
-            const fontSize = isSmallScreen ? 16 : 18;
-            const touchRadius = isSmallScreen ? 40 : 30; // Larger touch target for mobile
-            
+            const touchRadius = isSmallScreen ? 80 : 60; // Much larger touch target for mobile
+
             // Check if touch is within menu item bounds
             const distance = Math.sqrt(
-                Math.pow(touchX - centerX, 2) + 
+                Math.pow(touchX - centerX, 2) +
                 Math.pow(touchY - y, 2)
             );
-            
+
+            console.log(`Menu item ${index} (${item.text}): y=${y}, distance=${distance}, radius=${touchRadius}`);
+
             if (distance < touchRadius) {
+                hitDetected = true;
                 this.selectedIndex = index;
+                console.log('Menu item selected:', item.text);
                 // Small delay then execute to show selection
                 setTimeout(() => {
                     this.handleMenuSelection();
                 }, 100);
             }
         });
+
+        if (!hitDetected) {
+            console.log('No menu item hit detected');
+        }
     }
 
     handleMenuSelection() {
