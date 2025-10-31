@@ -157,12 +157,12 @@ class MotionSensorManager {
 
             // Initialize sensors with error handling
             try {
-                this.sensors.accelerometer = new Accelerometer({ 
+                this.sensors.accelerometer = new Accelerometer({
                     frequency: this.updateFrequency,
                     referenceFrame: 'screen'
                 });
-                
-                this.sensors.gyroscope = new Gyroscope({ 
+
+                this.sensors.gyroscope = new Gyroscope({
                     frequency: this.updateFrequency,
                     referenceFrame: 'screen'
                 });
@@ -174,22 +174,43 @@ class MotionSensorManager {
 
                 this.sensors.accelerometer.addEventListener('error', (event) => {
                     console.error('Accelerometer error:', event.error);
-                    this.handleSensorError(event.error);
+                    // Don't call handleSensorError for permission errors - let them propagate
+                    if (event.error.name !== 'NotAllowedError' && event.error.name !== 'NotReadableError') {
+                        this.handleSensorError(event.error);
+                    }
                 });
 
                 this.sensors.gyroscope.addEventListener('error', (event) => {
                     console.error('Gyroscope error:', event.error);
-                    this.handleSensorError(event.error);
+                    // Don't call handleSensorError for permission errors - let them propagate
+                    if (event.error.name !== 'NotAllowedError' && event.error.name !== 'NotReadableError') {
+                        this.handleSensorError(event.error);
+                    }
                 });
 
-                // Start sensors
+                // CRITICAL: Start sensors - this triggers permission prompt on Android
+                // If permission denied, will throw NotAllowedError
+                console.log('📱 Starting Generic Sensor API sensors (will prompt for permission)...');
                 this.sensors.accelerometer.start();
                 this.sensors.gyroscope.start();
 
+                // Wait a moment to ensure sensors started successfully
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                console.log('✅ Generic Sensor API sensors started successfully');
                 this.isPermissionGranted = true;
                 return true;
 
             } catch (error) {
+                console.log('❌ Generic Sensor API error:', error.name, error.message);
+
+                // If permission denied, this is expected - user declined
+                if (error.name === 'NotAllowedError') {
+                    console.log('🚫 Generic Sensor permission denied by user');
+                    return false;
+                }
+
+                // Other errors - sensor not available
                 console.log('Failed to initialize Generic Sensor API:', error.message);
                 return false;
             }

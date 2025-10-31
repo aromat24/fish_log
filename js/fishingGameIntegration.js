@@ -453,23 +453,39 @@ class FishingGameIntegration {
     }
 
     /**
-     * Resize canvas to fit container
+     * Resize canvas to fit container with proper device pixel ratio for mobile
      */
     resizeCanvas() {
         if (!this.gameCanvas || !this.gameContainer) return;
-        
+
         const container = this.gameContainer;
         const rect = container.getBoundingClientRect();
-        
-        // Set canvas size to match container
-        this.gameCanvas.width = rect.width;
-        this.gameCanvas.height = rect.height;
-        
-        // Update canvas CSS size
+
+        // CRITICAL: Account for device pixel ratio (2x, 3x on mobile)
+        const dpr = window.devicePixelRatio || 1;
+
+        // Set canvas internal resolution (high-DPI)
+        this.gameCanvas.width = rect.width * dpr;
+        this.gameCanvas.height = rect.height * dpr;
+
+        // Set canvas CSS size (actual display size)
         this.gameCanvas.style.width = rect.width + 'px';
         this.gameCanvas.style.height = rect.height + 'px';
-        
-        console.log(`Canvas resized to: ${rect.width}x${rect.height}`);
+
+        // Scale context to account for device pixel ratio
+        const ctx = this.gameCanvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        console.log(`📱 Canvas resized - CSS: ${rect.width}x${rect.height}, Internal: ${this.gameCanvas.width}x${this.gameCanvas.height}, DPR: ${dpr}`);
+
+        // CRITICAL: Reinitialize game objects after resize (positions depend on canvas size)
+        if (this.fishingGame && this.fishingGame.sceneManager) {
+            const activeScene = this.fishingGame.sceneManager.getActiveScene();
+            if (activeScene && activeScene.initializeGameObjects) {
+                console.log('📱 Reinitializing game objects after resize');
+                activeScene.initializeGameObjects();
+            }
+        }
     }
 
     /**

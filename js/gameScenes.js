@@ -495,10 +495,17 @@ class FishingScene extends BaseScene {
     }
 
     initializeGameObjects() {
+        // CRITICAL: Use CSS dimensions for positioning (not canvas.width/height which is scaled by DPR)
+        const canvas = this.game.canvas;
+        const cssWidth = canvas.clientWidth || canvas.getBoundingClientRect().width;
+        const cssHeight = canvas.clientHeight || canvas.getBoundingClientRect().height;
+
+        console.log('🎮 Initializing game objects - CSS:', cssWidth, 'x', cssHeight, 'Canvas:', canvas.width, 'x', canvas.height);
+
         // Initialize player
         this.player = {
-            x: this.game.canvas.width / 2,
-            y: this.game.canvas.height - 100,
+            x: cssWidth / 2,
+            y: cssHeight - 100,
             rodAngle: -45, // Default rod angle (degrees, negative = pointing up-right)
             rodLength: 100, // Rod visual length in pixels
             isAnimating: false
@@ -535,13 +542,13 @@ class FishingScene extends BaseScene {
 
         // Initialize water
         this.water = {
-            level: this.game.canvas.height - 200,
+            level: cssHeight - 200,
             waves: [],
             color: 'rgba(64, 164, 223, 0.8)'
         };
 
         // Generate water waves
-        for (let i = 0; i < this.game.canvas.width; i += 20) {
+        for (let i = 0; i < cssWidth; i += 20) {
             this.water.waves.push({
                 x: i,
                 amplitude: 5 + Math.random() * 5,
@@ -611,9 +618,12 @@ class FishingScene extends BaseScene {
                 speciesData = this.speciesMapper.generateRealisticCatch(species, rarity);
             }
             
+            // CRITICAL: Use CSS width for fish positioning
+            const cssWidth = this.game.canvas.clientWidth || this.game.canvas.getBoundingClientRect().width;
+
             // Create fish with enhanced properties
             const fish = {
-                x: Math.random() * this.game.canvas.width,
+                x: Math.random() * cssWidth,
                 y: this.water.level + 50 + Math.random() * 100,
                 vx: (Math.random() - 0.5) * 2,
                 vy: (Math.random() - 0.5) * 0.5,
