@@ -112,7 +112,17 @@ class InputManager {
      */
     setupTouchControls() {
         // Touch events for mobile
+        console.log('🎮 [INPUT] Setting up touch controls on canvas');
+
         this.canvas.addEventListener('touchstart', (e) => {
+            console.log('📱 [TOUCH] touchstart event fired', {
+                touches: e.touches.length,
+                clientX: e.touches[0]?.clientX,
+                clientY: e.touches[0]?.clientY,
+                canvasRect: this.canvas.getBoundingClientRect(),
+                canvasStyle: { width: this.canvas.style.width, height: this.canvas.style.height },
+                canvasActual: { width: this.canvas.width, height: this.canvas.height }
+            });
             e.preventDefault();
             const touch = e.touches[0];
             this.handleTouchStart(touch.clientX, touch.clientY, touch.force || 1);
@@ -125,6 +135,7 @@ class InputManager {
         }, { passive: false });
 
         this.canvas.addEventListener('touchend', (e) => {
+            console.log('📱 [TOUCH] touchend event fired');
             e.preventDefault();
             this.handleTouchEnd();
         }, { passive: false });
@@ -174,6 +185,15 @@ class InputManager {
         const canvasX = x - rect.left;
         const canvasY = y - rect.top;
 
+        console.log('📱 [TOUCH] handleTouchStart called', {
+            rawX: x,
+            rawY: y,
+            rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+            canvasX: canvasX,
+            canvasY: canvasY,
+            pressure: pressure
+        });
+
         this.inputState.touch = {
             isActive: true,
             startX: canvasX,
@@ -184,6 +204,8 @@ class InputManager {
             deltaY: 0,
             pressure: pressure
         };
+
+        console.log('📱 [TOUCH] inputState.touch updated:', this.inputState.touch);
 
         this.triggerCallback('touchStart', {
             x: canvasX,

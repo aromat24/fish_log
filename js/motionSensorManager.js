@@ -37,7 +37,7 @@ class MotionSensorManager {
 
     /**
      * Initialize motion sensors with progressive enhancement
-     * Tries DeviceMotion API first (better mobile support), falls back to Generic Sensor API
+     * Tries appropriate API based on platform (Android prefers Generic Sensor, iOS prefers DeviceMotion)
      */
     async initialize() {
         try {
@@ -52,20 +52,66 @@ class MotionSensorManager {
                 throw new Error('Motion sensors require HTTPS in production');
             }
 
-            // Try DeviceMotion API first (Safari iOS, Firefox, better mobile support)
-            if (await this.tryDeviceMotionAPI()) {
-                this.sensorType = 'devicemotion';
-                this.isInitialized = true;
-                console.log('✅ DeviceMotion API initialized successfully');
-                return { success: true, type: 'devicemotion' };
-            }
+            // Detect platform to determine API priority
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-            // Fallback to Generic Sensor API (Chrome Android, Samsung Internet)
-            if (await this.tryGenericSensorAPI()) {
-                this.sensorType = 'generic-sensor';
-                this.isInitialized = true;
-                console.log('✅ Generic Sensor API initialized successfully');
-                return { success: true, type: 'generic-sensor' };
+            console.log('📱 [INIT] Platform detection:', { isAndroid, isIOS, userAgent: navigator.userAgent });
+
+            // Android Chrome/Samsung Internet prefer Generic Sensor API
+            if (isAndroid) {
+                console.log('📱 [INIT] Android detected - trying Generic Sensor API first');
+
+                // Try Generic Sensor API first on Android
+                if (await this.tryGenericSensorAPI()) {
+                    this.sensorType = 'generic-sensor';
+                    this.isInitialized = true;
+                    console.log('✅ Generic Sensor API initialized successfully (Android)');
+
+                    // Load saved calibration if available
+                    this.loadCalibration();
+
+                    return { success: true, type: 'generic-sensor' };
+                }
+
+                // Fallback to DeviceMotion on Android
+                if (await this.tryDeviceMotionAPI()) {
+                    this.sensorType = 'devicemotion';
+                    this.isInitialized = true;
+                    console.log('✅ DeviceMotion API initialized successfully (Android fallback)');
+
+                    // Load saved calibration if available
+                    this.loadCalibration();
+
+                    return { success: true, type: 'devicemotion' };
+                }
+            } else {
+                // iOS, desktop, and other platforms prefer DeviceMotion API first
+                console.log('📱 [INIT] Non-Android platform - trying DeviceMotion API first');
+
+                // Try DeviceMotion API first (Safari iOS, Firefox, better iOS support)
+                if (await this.tryDeviceMotionAPI()) {
+                    this.sensorType = 'devicemotion';
+                    this.isInitialized = true;
+                    console.log('✅ DeviceMotion API initialized successfully');
+
+                    // Load saved calibration if available
+                    this.loadCalibration();
+
+                    return { success: true, type: 'devicemotion' };
+                }
+
+                // Fallback to Generic Sensor API
+                if (await this.tryGenericSensorAPI()) {
+                    this.sensorType = 'generic-sensor';
+                    this.isInitialized = true;
+                    console.log('✅ Generic Sensor API initialized successfully (fallback)');
+
+                    // Load saved calibration if available
+                    this.loadCalibration();
+
+                    return { success: true, type: 'generic-sensor' };
+                }
             }
 
             // No sensor support available
@@ -186,24 +232,26 @@ class MotionSensorManager {
             
             this.isPermissionGranted = true;
             
-            // Test if we're getting data
+            // Test if we're getting data (longer timeout for slower Android devices)
             return new Promise((resolve) => {
                 let testTimeout;
                 const testHandler = (event) => {
                     if (event.accelerationIncludingGravity) {
                         clearTimeout(testTimeout);
                         window.removeEventListener('devicemotion', testHandler);
+                        console.log('✅ DeviceMotion test successful - receiving data');
                         resolve(true);
                     }
                 };
-                
+
                 window.addEventListener('devicemotion', testHandler, { passive: true });
-                
+
+                // Increased timeout from 2s to 5s for slower Android devices
                 testTimeout = setTimeout(() => {
                     window.removeEventListener('devicemotion', testHandler);
-                    console.log('DeviceMotion test timeout - no data received');
+                    console.log('❌ DeviceMotion test timeout - no data received after 5s');
                     resolve(false);
-                }, 2000);
+                }, 5000);
             });
 
         } catch (error) {
@@ -359,9 +407,90 @@ class MotionSensorManager {
             ...this.fallbackData
         };
         this.isCalibrated = true;
-        
-        console.log('✅ Sensors calibrated to current position');
+
+        // Save calibration to localStorage for persistence
+        try {
+            const calibrationData = {
+                acceleration: this.lastCalibration.acceleration,
+                rotation: this.lastCalibration.rotation,
+                timestamp: this.lastCalibration.timestamp,
+                sensorType: this.sensorType
+            };
+
+            localStorage.setItem('motionSensorCalibration', JSON.stringify(calibrationData));
+            console.log('✅ Sensors calibrated to current position and saved to localStorage');
+        } catch (error) {
+            console.warn('Failed to save calibration to localStorage:', error);
+            // Continue anyway - calibration still works for this session
+            console.log('✅ Sensors calibrated to current position (not persisted)');
+        }
+
         return true;
+    }
+
+    /**
+     * Load calibration from localStorage
+     */
+    loadCalibration() {
+        try {
+            const savedCalibration = localStorage.getItem('motionSensorCalibration');
+
+            if (!savedCalibration) {
+                console.log('📱 [CALIBRATION] No saved calibration found');
+                return false;
+            }
+
+            const calibrationData = JSON.parse(savedCalibration);
+
+            // Validate calibration data structure
+            if (!calibrationData.acceleration || !calibrationData.rotation) {
+                console.warn('📱 [CALIBRATION] Invalid calibration data structure');
+                localStorage.removeItem('motionSensorCalibration');
+                return false;
+            }
+
+            // Check if calibration is for the same sensor type (optional compatibility check)
+            if (calibrationData.sensorType && calibrationData.sensorType !== this.sensorType) {
+                console.log(`📱 [CALIBRATION] Calibration was for ${calibrationData.sensorType}, current is ${this.sensorType} - using anyway`);
+            }
+
+            // Apply loaded calibration
+            this.lastCalibration = {
+                acceleration: calibrationData.acceleration,
+                rotation: calibrationData.rotation,
+                timestamp: calibrationData.timestamp
+            };
+            this.isCalibrated = true;
+
+            console.log('✅ [CALIBRATION] Loaded saved calibration from localStorage:', {
+                sensorType: calibrationData.sensorType,
+                timestamp: new Date(calibrationData.timestamp).toLocaleString()
+            });
+
+            return true;
+
+        } catch (error) {
+            console.warn('📱 [CALIBRATION] Failed to load calibration from localStorage:', error);
+            // Clear corrupted data
+            localStorage.removeItem('motionSensorCalibration');
+            return false;
+        }
+    }
+
+    /**
+     * Clear calibration from localStorage
+     */
+    clearSavedCalibration() {
+        try {
+            localStorage.removeItem('motionSensorCalibration');
+            this.lastCalibration = null;
+            this.isCalibrated = false;
+            console.log('✅ [CALIBRATION] Cleared saved calibration');
+            return true;
+        } catch (error) {
+            console.warn('Failed to clear saved calibration:', error);
+            return false;
+        }
     }
 
     /**
@@ -369,7 +498,7 @@ class MotionSensorManager {
      */
     setupTouchFallback() {
         console.log('Setting up touch fallback controls...');
-        
+
         // This will be expanded to provide alternative control methods
         return {
             type: 'touch-fallback',

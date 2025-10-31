@@ -235,7 +235,19 @@ class FishingGameIntegration {
             // Request motion permissions for enhanced gameplay (only if needed)
             console.log('🎮 [INTEGRATION] Checking motion sensor permissions...');
             await this.requestMotionPermissions();
-            
+
+            // CRITICAL: Re-assert overflow:hidden after calibration modal closes
+            // The calibration modal restores body overflow, but we need it hidden for fullscreen game
+            document.body.style.overflow = 'hidden';
+            console.log('🎮 [INTEGRATION] Re-asserted body overflow:hidden after calibration');
+
+            // Ensure game container is still visible and focused
+            if (this.gameContainer) {
+                this.gameContainer.classList.remove('hidden');
+                this.gameContainer.style.zIndex = '1500';
+                console.log('🎮 [INTEGRATION] Game container visibility re-confirmed');
+            }
+
             // Start the game
             console.log('🎮 [INTEGRATION] Starting game...');
             await this.fishingGame.start();
@@ -366,9 +378,33 @@ class FishingGameIntegration {
             
             if (motionPermissionState === 'granted') {
                 console.log('✅ [MOTION] Motion permissions already granted (from storage)');
+
+                // CRITICAL: Ensure loading overlay is hidden even when permissions are cached
+                const cachedLoadingOverlay = document.getElementById('game-loading-overlay');
+                if (cachedLoadingOverlay && cachedLoadingOverlay.style.display !== 'none') {
+                    console.log('🎮 [MOTION] Hiding loading overlay (cached permissions)');
+                    cachedLoadingOverlay.style.opacity = '0';
+                    cachedLoadingOverlay.style.visibility = 'hidden';
+                    setTimeout(() => {
+                        cachedLoadingOverlay.style.display = 'none';
+                    }, 300);
+                }
+
                 return { success: true, fromStorage: true };
             } else if (motionPermissionState === 'denied' || motionPermissionState === 'skipped') {
                 console.log('ℹ️ [MOTION] Motion permissions previously denied/skipped, continuing without motion controls');
+
+                // Ensure loading overlay is hidden even when permissions were previously denied
+                const deniedLoadingOverlay = document.getElementById('game-loading-overlay');
+                if (deniedLoadingOverlay && deniedLoadingOverlay.style.display !== 'none') {
+                    console.log('🎮 [MOTION] Hiding loading overlay (cached denial)');
+                    deniedLoadingOverlay.style.opacity = '0';
+                    deniedLoadingOverlay.style.visibility = 'hidden';
+                    setTimeout(() => {
+                        deniedLoadingOverlay.style.display = 'none';
+                    }, 300);
+                }
+
                 return { success: false, fromStorage: true, previouslyDenied: true };
             }
 
