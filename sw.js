@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ghoti-fishing-cache-v8-emergency-fix';
+const CACHE_NAME = 'ghoti-fishing-cache-v9-with-game';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -13,6 +13,20 @@ const ASSETS_TO_CACHE = [
     '/js/utils.js',
     '/js/eventManager.js',
     '/js/swUpdateManager.js',
+    '/js/fishingGameCore.js',
+    '/js/fishingGameIntegration.js',
+    '/js/gameAudioManager.js',
+    '/js/gameComponents.js',
+    '/js/gameLogManager.js',
+    '/js/gameScenes.js',
+    '/js/gameSpeciesMapper.js',
+    '/js/gameUIManager.js',
+    '/js/inputManager.js',
+    '/js/motionPermissionUI.js',
+    '/js/motionSensorManager.js',
+    '/js/sensorFilters.js',
+    '/js/confetti-effects.js',
+    '/js/magicui-components.js',
     '/css/beautiful-buttons.css',
     '/Splashscreen.png'
 ];

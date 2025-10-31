@@ -1,9 +1,18 @@
-name: Deploy Production (Main Branch)
+name: Deploy Production
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      deploy_branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - experimental-dev
 
 permissions:
   contents: read
@@ -20,7 +29,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+      with:
+        ref: ${{ github.event.inputs.deploy_branch || github.ref }}
+
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
@@ -55,9 +66,24 @@ jobs:
         cp fish_algorithms.json dist/ 2>/dev/null || true
         cp _config.yml dist/ 2>/dev/null || true
         
-        # Update service worker cache version for production
+        # Update service worker cache for the deployed branch
+        DEPLOY_BRANCH="${{ github.event.inputs.deploy_branch || 'main' }}"
         if [ -f dist/sw.js ]; then
-          sed -i "s/const CACHE_VERSION = .*/const CACHE_VERSION = 'production-$(date +%s)';/" dist/sw.js
+          # Update cache name with branch and timestamp
+          sed -i "s/const CACHE_NAME = .*/const CACHE_NAME = 'ghoti-${DEPLOY_BRANCH}-$(date +%s)';/" dist/sw.js
+
+          # If deploying main branch (without game), remove game files from service worker cache
+          if [ "$DEPLOY_BRANCH" = "main" ]; then
+            # Remove game-related files from ASSETS_TO_CACHE array
+            sed -i "/fishingGame/d" dist/sw.js
+            sed -i "/game[A-Z]/d" dist/sw.js
+            sed -i "/motionPermission/d" dist/sw.js
+            sed -i "/motionSensor/d" dist/sw.js
+            sed -i "/sensorFilters/d" dist/sw.js
+            sed -i "/inputManager/d" dist/sw.js
+            sed -i "/confetti-effects/d" dist/sw.js
+            sed -i "/magicui-components/d" dist/sw.js
+          fi
         fi
         
     - name: Upload artifact
