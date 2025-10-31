@@ -182,13 +182,22 @@ class InputManager {
      */
     handleTouchStart(x, y, pressure) {
         const rect = this.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
+
+        // CRITICAL: Scale from CSS pixels to canvas pixels
+        // Canvas might be 800x600 internally but displayed as 400x300 CSS pixels
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
+        const canvasX = (x - rect.left) * scaleX;
+        const canvasY = (y - rect.top) * scaleY;
 
         console.log('📱 [TOUCH] handleTouchStart called', {
             rawX: x,
             rawY: y,
             rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+            canvasSize: { width: this.canvas.width, height: this.canvas.height },
+            scale: { x: scaleX, y: scaleY },
+            cssCoords: { x: x - rect.left, y: y - rect.top },
             canvasX: canvasX,
             canvasY: canvasY,
             pressure: pressure
@@ -221,8 +230,13 @@ class InputManager {
         if (!this.inputState.touch.isActive) return;
 
         const rect = this.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
+
+        // CRITICAL: Scale from CSS pixels to canvas pixels
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
+        const canvasX = (x - rect.left) * scaleX;
+        const canvasY = (y - rect.top) * scaleY;
 
         this.inputState.touch.deltaX = canvasX - this.inputState.touch.currentX;
         this.inputState.touch.deltaY = canvasY - this.inputState.touch.currentY;

@@ -375,9 +375,20 @@ class FishingGameIntegration {
             // Check if motion permissions have already been handled
             const motionPermissionState = localStorage.getItem('motionPermissionState');
             console.log('🎮 [MOTION] Checking stored permission state:', motionPermissionState);
-            
-            if (motionPermissionState === 'granted') {
-                console.log('✅ [MOTION] Motion permissions already granted (from storage)');
+
+            // CRITICAL: Even if localStorage says "granted", verify sensors are ACTUALLY initialized
+            const sensorStatus = this.fishingGame.motionSensorManager?.getStatus();
+            const sensorsActuallyWorking = sensorStatus?.isInitialized && sensorStatus?.isPermissionGranted;
+
+            console.log('🎮 [MOTION] Sensor actual status:', {
+                isInitialized: sensorStatus?.isInitialized,
+                isPermissionGranted: sensorStatus?.isPermissionGranted,
+                sensorType: sensorStatus?.sensorType,
+                cachedPermission: motionPermissionState
+            });
+
+            if (motionPermissionState === 'granted' && sensorsActuallyWorking) {
+                console.log('✅ [MOTION] Motion permissions granted AND sensors initialized');
 
                 // CRITICAL: Ensure loading overlay is hidden even when permissions are cached
                 const cachedLoadingOverlay = document.getElementById('game-loading-overlay');
@@ -391,6 +402,11 @@ class FishingGameIntegration {
                 }
 
                 return { success: true, fromStorage: true };
+            } else if (motionPermissionState === 'granted' && !sensorsActuallyWorking) {
+                console.warn('⚠️ [MOTION] localStorage says granted but sensors not initialized - requesting again');
+                // Clear cached permission and request again
+                localStorage.removeItem('motionPermissionState');
+                // Continue to request permissions below
             } else if (motionPermissionState === 'denied' || motionPermissionState === 'skipped') {
                 console.log('ℹ️ [MOTION] Motion permissions previously denied/skipped, continuing without motion controls');
 

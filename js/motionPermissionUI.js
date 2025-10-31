@@ -42,7 +42,7 @@ class MotionPermissionUI {
     createPermissionModal() {
         const modal = document.createElement('div');
         modal.id = 'motion-permission-modal';
-        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1400] p-4';
+        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1600] p-4';
         
         modal.innerHTML = `
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md border-beam-container relative">
@@ -130,7 +130,7 @@ class MotionPermissionUI {
     createErrorModal() {
         const modal = document.createElement('div');
         modal.id = 'motion-error-modal';
-        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1400] p-4';
+        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1600] p-4';
         
         modal.innerHTML = `
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
@@ -189,7 +189,7 @@ class MotionPermissionUI {
     createCalibrationModal() {
         const modal = document.createElement('div');
         modal.id = 'motion-calibration-modal';
-        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1400] p-4';
+        modal.className = 'hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1600] p-4';
         
         modal.innerHTML = `
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
