@@ -20,7 +20,9 @@ class InputManager {
                 currentY: 0,
                 deltaX: 0,
                 deltaY: 0,
-                pressure: 0
+                pressure: 0,
+                taps: [], // Array of recent taps for menu navigation
+                startTime: 0
             },
             
             // Motion sensor input
@@ -188,8 +190,10 @@ class InputManager {
         const scaleX = this.canvas.width / rect.width;
         const scaleY = this.canvas.height / rect.height;
 
-        const canvasX = (x - rect.left) * scaleX;
-        const canvasY = (y - rect.top) * scaleY;
+        const cssX = x - rect.left;  // CSS coordinate (for menu positioning)
+        const cssY = y - rect.top;   // CSS coordinate (for menu positioning)
+        const canvasX = cssX * scaleX; // Scaled canvas coordinate (for game rendering)
+        const canvasY = cssY * scaleY; // Scaled canvas coordinate (for game rendering)
 
         console.log('📱 [TOUCH] handleTouchStart called', {
             rawX: x,
@@ -197,9 +201,8 @@ class InputManager {
             rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
             canvasSize: { width: this.canvas.width, height: this.canvas.height },
             scale: { x: scaleX, y: scaleY },
-            cssCoords: { x: x - rect.left, y: y - rect.top },
-            canvasX: canvasX,
-            canvasY: canvasY,
+            cssCoords: { x: cssX, y: cssY },
+            canvasCoords: { x: canvasX, y: canvasY },
             pressure: pressure
         });
 
@@ -209,9 +212,15 @@ class InputManager {
             startY: canvasY,
             currentX: canvasX,
             currentY: canvasY,
+            cssStartX: cssX,   // Store CSS coords for menu system
+            cssStartY: cssY,
+            cssCurrentX: cssX,
+            cssCurrentY: cssY,
             deltaX: 0,
             deltaY: 0,
-            pressure: pressure
+            pressure: pressure,
+            taps: this.inputState.touch.taps || [], // Preserve taps array
+            startTime: Date.now()
         };
 
         console.log('📱 [TOUCH] inputState.touch updated:', this.inputState.touch);
@@ -235,13 +244,17 @@ class InputManager {
         const scaleX = this.canvas.width / rect.width;
         const scaleY = this.canvas.height / rect.height;
 
-        const canvasX = (x - rect.left) * scaleX;
-        const canvasY = (y - rect.top) * scaleY;
+        const cssX = x - rect.left;
+        const cssY = y - rect.top;
+        const canvasX = cssX * scaleX;
+        const canvasY = cssY * scaleY;
 
         this.inputState.touch.deltaX = canvasX - this.inputState.touch.currentX;
         this.inputState.touch.deltaY = canvasY - this.inputState.touch.currentY;
         this.inputState.touch.currentX = canvasX;
         this.inputState.touch.currentY = canvasY;
+        this.inputState.touch.cssCurrentX = cssX;
+        this.inputState.touch.cssCurrentY = cssY;
         this.inputState.touch.pressure = pressure;
 
         this.triggerCallback('touchMove', {
@@ -258,17 +271,61 @@ class InputManager {
      */
     handleTouchEnd() {
         const touchData = { ...this.inputState.touch };
-        
-        this.inputState.touch = {
-            isActive: false,
-            startX: 0,
-            startY: 0,
-            currentX: 0,
-            currentY: 0,
-            deltaX: 0,
-            deltaY: 0,
-            pressure: 0
-        };
+
+        // CRITICAL: Detect tap (short touch with minimal movement for menu interaction)
+        const touchDuration = Date.now() - (touchData.startTime || 0);
+        const movement = Math.sqrt(
+            Math.pow(touchData.currentX - touchData.startX, 2) +
+            Math.pow(touchData.currentY - touchData.startY, 2)
+        );
+
+        const isTap = touchDuration < 300 && movement < 20; // Quick touch, minimal drag
+
+        console.log('📱 [TOUCH] touchEnd - duration:', touchDuration, 'movement:', movement, 'isTap:', isTap);
+
+        if (isTap) {
+            // Add tap to taps array for menu system
+            // CRITICAL: Use CSS coordinates for menu system (not scaled canvas coords)
+            const tap = {
+                x: touchData.cssCurrentX || touchData.currentX, // CSS coordinates for menu
+                y: touchData.cssCurrentY || touchData.currentY,
+                canvasX: touchData.currentX, // Canvas coordinates for game rendering
+                canvasY: touchData.currentY,
+                timestamp: Date.now()
+            };
+
+            // Keep only recent taps (clear old ones)
+            const taps = this.inputState.touch.taps.filter(t => Date.now() - t.timestamp < 100);
+            taps.push(tap);
+
+            console.log('📱 [TAP] Tap detected at CSS:', tap.x, tap.y, 'Canvas:', tap.canvasX, tap.canvasY);
+
+            this.inputState.touch = {
+                isActive: false,
+                startX: 0,
+                startY: 0,
+                currentX: 0,
+                currentY: 0,
+                deltaX: 0,
+                deltaY: 0,
+                pressure: 0,
+                taps: taps, // Preserve taps for menu to read
+                startTime: 0
+            };
+        } else {
+            this.inputState.touch = {
+                isActive: false,
+                startX: 0,
+                startY: 0,
+                currentX: 0,
+                currentY: 0,
+                deltaX: 0,
+                deltaY: 0,
+                pressure: 0,
+                taps: [], // Clear taps on drag
+                startTime: 0
+            };
+        }
 
         this.triggerCallback('touchEnd', touchData);
     }
