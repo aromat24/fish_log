@@ -37,12 +37,12 @@ class MotionSensorManager {
 
     /**
      * Initialize motion sensors with progressive enhancement
-     * Tries Generic Sensor API first, falls back to DeviceMotion
+     * Tries DeviceMotion API first (better mobile support), falls back to Generic Sensor API
      */
     async initialize() {
         try {
             console.log('Initializing motion sensors...');
-            
+
             // Reset error state
             this.errorState = null;
             this.retryCount = 0;
@@ -52,20 +52,20 @@ class MotionSensorManager {
                 throw new Error('Motion sensors require HTTPS in production');
             }
 
-            // Try Generic Sensor API first (Chrome Android, Samsung Internet)
-            if (await this.tryGenericSensorAPI()) {
-                this.sensorType = 'generic-sensor';
-                this.isInitialized = true;
-                console.log('✅ Generic Sensor API initialized successfully');
-                return { success: true, type: 'generic-sensor' };
-            }
-
-            // Fallback to DeviceMotion (Safari, Firefox)
+            // Try DeviceMotion API first (Safari iOS, Firefox, better mobile support)
             if (await this.tryDeviceMotionAPI()) {
                 this.sensorType = 'devicemotion';
                 this.isInitialized = true;
                 console.log('✅ DeviceMotion API initialized successfully');
                 return { success: true, type: 'devicemotion' };
+            }
+
+            // Fallback to Generic Sensor API (Chrome Android, Samsung Internet)
+            if (await this.tryGenericSensorAPI()) {
+                this.sensorType = 'generic-sensor';
+                this.isInitialized = true;
+                console.log('✅ Generic Sensor API initialized successfully');
+                return { success: true, type: 'generic-sensor' };
             }
 
             // No sensor support available
@@ -75,8 +75,8 @@ class MotionSensorManager {
             console.error('❌ Motion sensor initialization failed:', error);
             this.errorState = error.message;
             this.isInitialized = false;
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: error.message,
                 fallback: this.setupTouchFallback()
             };

@@ -20,12 +20,35 @@ class MenuScene extends BaseScene {
 
     onEnter() {
         super.onEnter();
-        
-        // Check if motion controls are available
-        this.motionControlsAvailable = this.game.motionSensorManager && 
+
+        // Check if motion controls are available and permission status
+        this.motionControlsAvailable = this.game.motionSensorManager &&
             this.game.motionSensorManager.getStatus().isInitialized;
-        
-        console.log('Menu scene entered');
+
+        const motionStatus = this.game.motionSensorManager?.getStatus();
+        const permissionGranted = motionStatus?.isPermissionGranted || false;
+
+        // Rebuild menu items dynamically based on motion permission status
+        this.menuItems = [
+            { text: 'Start Fishing', action: 'startGame' }
+        ];
+
+        // Add "Enable Motion Controls" button if not granted and available
+        if (this.game.options.enableMotionControls && !permissionGranted && !motionStatus?.errorState) {
+            this.menuItems.push({
+                text: '📱 Enable Motion Controls',
+                action: 'requestMotion',
+                highlight: true  // Visual indicator this is important
+            });
+        }
+
+        this.menuItems.push({ text: 'Motion Settings', action: 'motionSettings' });
+        this.menuItems.push({ text: 'Back to Log', action: 'backToLog' });
+
+        // Reset selection to first item
+        this.selectedIndex = 0;
+
+        console.log('Menu scene entered - Motion permission:', permissionGranted);
     }
 
     update(deltaTime) {
@@ -84,10 +107,14 @@ class MenuScene extends BaseScene {
 
     handleMenuSelection() {
         const selectedItem = this.menuItems[this.selectedIndex];
-        
+
         switch (selectedItem.action) {
             case 'startGame':
                 this.game.changeScene('fishing');
+                break;
+            case 'requestMotion':
+                // Request motion permissions
+                this.requestMotionPermissions();
                 break;
             case 'motionSettings':
                 this.showSettingsModal();
@@ -99,6 +126,80 @@ class MenuScene extends BaseScene {
                 }
                 break;
         }
+    }
+
+    async requestMotionPermissions() {
+        try {
+            console.log('📱 Requesting motion permissions from menu...');
+            const result = await this.game.requestMotionPermissions();
+
+            if (result.granted) {
+                console.log('✅ Motion permissions granted');
+                // Refresh menu to remove the button
+                this.onEnter();
+            } else {
+                console.warn('⚠️ Motion permissions denied');
+                // Show user-friendly message
+                this.showPermissionDeniedMessage();
+            }
+        } catch (error) {
+            console.error('❌ Error requesting motion permissions:', error);
+            this.showPermissionErrorMessage(error);
+        }
+    }
+
+    showPermissionDeniedMessage() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[2000]';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+                <h3 class="text-xl font-bold mb-4">Motion Permissions Needed</h3>
+
+                <p class="mb-4">
+                    To use motion controls for casting and reeling, please grant permission to access your device's motion sensors.
+                </p>
+
+                <p class="text-sm text-gray-600 mb-4">
+                    ${navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome') ?
+                        '<strong>Safari users:</strong> If you accidentally denied permission, you may need to restart Safari and try again.' :
+                        'You can try again or use touch controls instead.'}
+                </p>
+
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex-1"
+                            onclick="this.closest('div[class*=\\'fixed\\']').remove()">
+                        OK
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
+    showPermissionErrorMessage(error) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[2000]';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+                <h3 class="text-xl font-bold mb-4">Motion Controls Error</h3>
+
+                <p class="mb-4">
+                    ${error.message || 'An error occurred while requesting motion permissions.'}
+                </p>
+
+                <p class="text-sm text-gray-600 mb-4">
+                    You can still play using touch controls. Motion controls are optional.
+                </p>
+
+                <button class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        onclick="this.closest('div[class*=\\'fixed\\']').remove()">
+                    OK
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
     }
 
     showSettingsModal() {

@@ -367,7 +367,7 @@ class FishingGameCore {
      */
     async start() {
         console.log('🎮 [START] Starting fishing game...');
-        
+
         if (!this.gameState.isInitialized) {
             console.log('🎮 [START] Game not initialized, initializing now...');
             const initResult = await this.initialize();
@@ -381,18 +381,38 @@ class FishingGameCore {
             return;
         }
 
+        // Auto-request motion permissions if enabled and not yet granted
+        if (this.options.enableMotionControls && this.motionSensorManager) {
+            const status = this.motionSensorManager.getStatus();
+            console.log('🎮 [START] Motion sensor status:', status);
+
+            if (!status.isPermissionGranted && !status.errorState) {
+                console.log('📱 [START] Motion permissions not granted, requesting automatically...');
+                try {
+                    await this.requestMotionPermissions();
+                    console.log('✅ [START] Motion permissions requested successfully');
+                } catch (error) {
+                    console.warn('⚠️ [START] Motion permission request failed (continuing with touch controls):', error);
+                }
+            } else if (status.isPermissionGranted) {
+                console.log('✅ [START] Motion permissions already granted');
+            } else if (status.errorState) {
+                console.warn('⚠️ [START] Motion sensors in error state, falling back to touch controls');
+            }
+        }
+
         console.log('🎮 [START] Setting game state to running...');
         this.gameState.isRunning = true;
         this.gameState.isPaused = false;
         this.lastUpdateTime = performance.now();
-        
+
         console.log('🎮 [START] Current scene:', this.sceneManager.getActiveScene());
         console.log('🎮 [START] Canvas dimensions:', this.canvas.width, 'x', this.canvas.height);
-        
+
         // Start the game loop
         console.log('🎮 [START] Starting game loop...');
         this.gameLoop();
-        
+
         console.log('✅ [START] Fishing game started successfully');
     }
 

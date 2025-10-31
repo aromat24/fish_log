@@ -392,6 +392,150 @@ class SensorDataProcessor {
     }
 }
 
+/**
+ * Filter Profile Manager
+ * Manages different filter configurations for different fishing gestures
+ */
+class FilterProfileManager {
+    constructor() {
+        // Define filter profiles for different gesture types
+        this.profiles = {
+            // Casting: Fast, sudden motion - needs high responsiveness
+            casting: {
+                minCutoff: 1.5,      // Higher = less smoothing, more responsive
+                beta: 0.05,          // Higher = more responsive to speed changes
+                derivateCutoff: 1.5,
+                description: 'Optimized for fast casting motions'
+            },
+
+            // Reeling: Continuous, smooth circular motion
+            reeling: {
+                minCutoff: 1.0,      // Balanced smoothing
+                beta: 0.007,         // Lower = smoother, less jittery
+                derivateCutoff: 1.0,
+                description: 'Optimized for smooth reeling motions'
+            },
+
+            // Fighting: Erratic fish movements requiring moderate response
+            fighting: {
+                minCutoff: 1.2,      // Moderate smoothing
+                beta: 0.02,          // Moderate responsiveness
+                derivateCutoff: 1.2,
+                description: 'Optimized for fighting fish movements'
+            },
+
+            // Idle: Very smooth, minimal motion expected
+            idle: {
+                minCutoff: 0.5,      // Low = more smoothing
+                beta: 0.001,         // Very low = very smooth
+                derivateCutoff: 0.5,
+                description: 'Optimized for idle state'
+            },
+
+            // Default: Balanced for general use
+            default: {
+                minCutoff: 1.0,
+                beta: 0.007,
+                derivateCutoff: 1.0,
+                description: 'Balanced default profile'
+            }
+        };
+
+        this.currentProfile = 'default';
+        this.transitionDuration = 200; // ms to blend between profiles
+        this.transitionStartTime = null;
+        this.fromProfile = null;
+        this.toProfile = null;
+    }
+
+    /**
+     * Get filter parameters for a specific gesture type
+     */
+    getProfile(gestureType) {
+        return this.profiles[gestureType] || this.profiles.default;
+    }
+
+    /**
+     * Set the current active profile with smooth transition
+     */
+    setProfile(gestureType) {
+        if (gestureType === this.currentProfile) return;
+
+        if (this.profiles[gestureType]) {
+            this.fromProfile = this.currentProfile;
+            this.toProfile = gestureType;
+            this.transitionStartTime = Date.now();
+            this.currentProfile = gestureType;
+
+            console.log(`Filter profile transitioning: ${this.fromProfile} → ${this.toProfile}`);
+        } else {
+            console.warn(`Unknown gesture type: ${gestureType}, using default`);
+        }
+    }
+
+    /**
+     * Get current filter parameters with smooth transition
+     */
+    getCurrentParameters() {
+        if (this.transitionStartTime) {
+            const elapsed = Date.now() - this.transitionStartTime;
+            const t = Math.min(elapsed / this.transitionDuration, 1.0);
+
+            if (t >= 1.0) {
+                // Transition complete
+                this.transitionStartTime = null;
+                this.fromProfile = null;
+                this.toProfile = null;
+                return this.profiles[this.currentProfile];
+            }
+
+            // Interpolate between profiles
+            const from = this.profiles[this.fromProfile];
+            const to = this.profiles[this.toProfile];
+
+            return {
+                minCutoff: this.lerp(from.minCutoff, to.minCutoff, t),
+                beta: this.lerp(from.beta, to.beta, t),
+                derivateCutoff: this.lerp(from.derivateCutoff, to.derivateCutoff, t),
+                description: `Transitioning: ${from.description} → ${to.description}`
+            };
+        }
+
+        return this.profiles[this.currentProfile];
+    }
+
+    /**
+     * Linear interpolation helper
+     */
+    lerp(a, b, t) {
+        return a + (b - a) * t;
+    }
+
+    /**
+     * Get all available profiles
+     */
+    getAllProfiles() {
+        return Object.keys(this.profiles).map(key => ({
+            name: key,
+            ...this.profiles[key]
+        }));
+    }
+
+    /**
+     * Add or update a custom profile
+     */
+    addProfile(name, params) {
+        this.profiles[name] = {
+            minCutoff: params.minCutoff || 1.0,
+            beta: params.beta || 0.007,
+            derivateCutoff: params.derivateCutoff || 1.0,
+            description: params.description || `Custom profile: ${name}`
+        };
+
+        console.log(`Filter profile added: ${name}`, this.profiles[name]);
+    }
+}
+
 // Export classes for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -400,7 +544,8 @@ if (typeof module !== 'undefined' && module.exports) {
         MovingAverageFilter,
         ComplementaryFilter,
         Vector3DFilter,
-        SensorDataProcessor
+        SensorDataProcessor,
+        FilterProfileManager
     };
 } else {
     window.SensorFilters = {
@@ -409,6 +554,7 @@ if (typeof module !== 'undefined' && module.exports) {
         MovingAverageFilter,
         ComplementaryFilter,
         Vector3DFilter,
-        SensorDataProcessor
+        SensorDataProcessor,
+        FilterProfileManager
     };
 }
