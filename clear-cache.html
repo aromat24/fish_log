@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache - Ghoti Fishing Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Clear App Cache</h1>
+
+        <div id="status" class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-800">
+            <p>Use this page if you're experiencing app issues or errors.</p>
+        </div>
+
+        <div class="space-y-4">
+            <button onclick="clearAllCaches()"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Clear All Caches & Reload
+            </button>
+
+            <button onclick="unregisterServiceWorkers()"
+                    class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Unregister Service Workers
+            </button>
+
+            <button onclick="fullReset()"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Full Reset (Nuclear Option)
+            </button>
+
+            <a href="index.html"
+               class="block w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg text-center transition-colors">
+                Return to App
+            </a>
+        </div>
+
+        <div id="log" class="mt-6 p-4 bg-gray-50 rounded-lg max-h-64 overflow-y-auto">
+            <p class="text-sm text-gray-600 font-mono">Logs will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-blue-600',
+                success: 'text-green-600',
+                error: 'text-red-600',
+                warning: 'text-orange-600'
+            };
+            logDiv.innerHTML += `<p class="text-sm font-mono ${colors[type]}">[${timestamp}] ${message}</p>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const colors = {
+                info: 'bg-blue-50 text-blue-800',
+                success: 'bg-green-50 text-green-800',
+                error: 'bg-red-50 text-red-800',
+                warning: 'bg-orange-50 text-orange-800'
+            };
+            statusDiv.className = `mb-6 p-4 rounded-lg ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+
+        async function clearAllCaches() {
+            log('Starting cache clearing...', 'info');
+            updateStatus('Clearing caches...', 'info');
+
+            try {
+                const cacheNames = await caches.keys();
+                log(`Found ${cacheNames.length} caches`, 'info');
+
+                for (const name of cacheNames) {
+                    await caches.delete(name);
+                    log(`Deleted cache: ${name}`, 'success');
+                }
+
+                log('All caches cleared successfully!', 'success');
+                updateStatus('Caches cleared! Reloading in 2 seconds...', 'success');
+
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 2000);
+            } catch (error) {
+                log(`Error clearing caches: ${error.message}`, 'error');
+                updateStatus('Error clearing caches. Check logs.', 'error');
+            }
+        }
+
+        async function unregisterServiceWorkers() {
+            log('Starting service worker unregistration...', 'info');
+            updateStatus('Unregistering service workers...', 'info');
+
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    log(`Found ${registrations.length} service workers`, 'info');
+
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        log('Unregistered service worker', 'success');
+                    }
+
+                    log('All service workers unregistered!', 'success');
+                    updateStatus('Service workers unregistered! Reload the page manually.', 'success');
+                } else {
+                    log('Service workers not supported', 'warning');
+                    updateStatus('Service workers not supported in this browser', 'warning');
+                }
+            } catch (error) {
+                log(`Error unregistering service workers: ${error.message}`, 'error');
+                updateStatus('Error unregistering service workers. Check logs.', 'error');
+            }
+        }
+
+        async function fullReset() {
+            log('Starting full reset (nuclear option)...', 'warning');
+            updateStatus('Performing full reset...', 'warning');
+
+            try {
+                // Clear all caches
+                const cacheNames = await caches.keys();
+                for (const name of cacheNames) {
+                    await caches.delete(name);
+                    log(`Deleted cache: ${name}`, 'success');
+                }
+
+                // Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        log('Unregistered service worker', 'success');
+                    }
+                }
+
+                // Clear localStorage
+                localStorage.clear();
+                log('Cleared localStorage', 'success');
+
+                // Clear sessionStorage
+                sessionStorage.clear();
+                log('Cleared sessionStorage', 'success');
+
+                // Clear IndexedDB (for the fish log data)
+                if ('indexedDB' in window) {
+                    const dbs = await indexedDB.databases();
+                    for (const db of dbs) {
+                        indexedDB.deleteDatabase(db.name);
+                        log(`Deleted database: ${db.name}`, 'success');
+                    }
+                }
+
+                log('Full reset complete!', 'success');
+                updateStatus('Full reset complete! Reloading in 3 seconds...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+            } catch (error) {
+                log(`Error during full reset: ${error.message}`, 'error');
+                updateStatus('Error during full reset. Check logs.', 'error');
+            }
+        }
+
+        // Log initial info
+        log('Cache clearing utility loaded', 'info');
+        log('Use the buttons above to clear caches or reset the app', 'info');
+    </script>
+</body>
+</html>

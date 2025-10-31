@@ -39,15 +39,41 @@ The deployment workflow automatically:
 
 ## Troubleshooting
 
-### Users seeing old cached version
-- Users may need to hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+### Users seeing old cached version or app not working
+**Quick Fix:**
+1. Navigate to: `https://your-site-url/clear-cache.html`
+2. Click "Clear All Caches & Reload"
+3. App will reload with fresh content
+
+**Manual Fix:**
+- Hard refresh: `Ctrl+Shift+R` (Windows/Linux) or `Cmd+Shift+R` (Mac)
+- Mobile: Clear browser cache in settings
 - Service worker will auto-update within 24 hours
+
+### Mobile app completely broken
+1. Open `https://your-site-url/clear-cache.html` on mobile
+2. Click "Full Reset (Nuclear Option)"
+3. Wait for automatic reload
+
+**Note:** Full reset will delete all saved fishing logs. Export your data first if possible.
 
 ### Deployment failed
 - Check GitHub Actions logs for errors
 - Ensure all files referenced in sw.js exist in the branch
+- Verify service worker cache names are being updated
 
 ### Game not working on live site
-- Verify you deployed `experimental-dev` branch
-- Check browser console for errors
+- Verify you deployed `experimental-dev` branch via Actions tab
+- Check browser console for errors (F12)
 - Ensure motion sensor permissions are granted (on mobile)
+- Clear cache if switching between branches
+
+### Developer Console Commands
+Open browser console (F12) and run:
+```javascript
+// Force clear all caches and service workers
+window.swUpdateManager.forceReset();
+
+// Check service worker status
+window.swUpdateManager.getStatus();
+```
