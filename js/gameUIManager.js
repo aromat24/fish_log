@@ -195,6 +195,10 @@ class GameUIManager {
         this.buttons.net.x = cssWidth / 2;
         this.buttons.net.y = cssHeight - 80 - this.safeArea.bottom;
 
+        // DEBUG: Log button positions
+        console.log('🎯 [LAYOUT] Strike button positioned at:', this.buttons.strike.x.toFixed(1), this.buttons.strike.y.toFixed(1), 'radius:', this.buttons.strike.radius);
+        console.log('🎯 [LAYOUT] Cast button positioned at:', this.buttons.cast.x.toFixed(1), this.buttons.cast.y.toFixed(1), 'radius:', this.buttons.cast.radius);
+
         // Update drag slider position
         this.dragSlider.x = 40 + this.safeArea.left;
         this.dragSlider.y = cssHeight / 2 - 100;
@@ -251,28 +255,40 @@ class GameUIManager {
      */
     handleTouchStart(e) {
         const rect = this.canvas.getBoundingClientRect();
-        
+
         for (let i = 0; i < e.touches.length; i++) {
             const touch = e.touches[i];
             const touchX = touch.clientX - rect.left;
             const touchY = touch.clientY - rect.top;
             const touchId = touch.identifier;
-            
+
+            console.log('🎯 [TOUCH] Touch at CSS coords:', touchX.toFixed(1), touchY.toFixed(1));
+
             // Check button touches
             for (const [buttonId, button] of Object.entries(this.buttons)) {
+                if (button.visible) {
+                    const dx = touchX - button.x;
+                    const dy = touchY - button.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    console.log(`🎯 [TOUCH] ${buttonId}: pos(${button.x.toFixed(1)},${button.y.toFixed(1)}) radius:${button.radius} dist:${distance.toFixed(1)} visible:${button.visible} enabled:${button.enabled}`);
+                }
+
                 if (this.isPointInButton(touchX, touchY, button)) {
                     if (button.visible && button.enabled) {
+                        console.log(`✅ [TOUCH] Hit ${buttonId}!`);
                         button.pressed = true;
                         this.activeTouches.set(touchId, buttonId);
                         this.touchStartTime.set(touchId, Date.now());
-                        
+
                         // Handle button-specific logic
                         this.handleButtonPress(buttonId);
-                        
+
                         // Trigger haptic feedback if available
                         if (navigator.vibrate) {
                             navigator.vibrate(50);
                         }
+                    } else {
+                        console.warn(`⚠️ [TOUCH] ${buttonId} not active - visible:${button.visible} enabled:${button.enabled}`);
                     }
                     return;
                 }
